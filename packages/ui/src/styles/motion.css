@@ -1,0 +1,477 @@
+/*
+ * Langage de mouvement v2 : « le geste d'archiviste » (docs/DESIGN.md §8).
+ * Classes utilitaires et images-clés partagées par les primitives, le jeu et le site.
+ * Règles : n'animer que transform, opacity, filter ; rien ne bloque l'interaction ; les
+ * entrées ont fill-mode « backwards » (l'état de départ tient pendant le retard, puis le
+ * style de repos reprend la main : survols et transitions restent actifs) ; chaque
+ * entrée = un fondu (--dur-fade*) + un geste (transform) dont les tokens tombent à ~0 en
+ * mouvement réduit : il reste un fondu court. Les boucles d'ambiance lisent --idle-state
+ * (paused en mouvement réduit) et base.css force une seule itération en filet de sécurité.
+ * Index de cascade : style="--i: 3" (retard = --i × --stagger-deal, ou × --stagger).
+ */
+
+/* ── Images-clés ─────────────────────────────────────────────────── */
+@keyframes m-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes m-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+/* Fiche distribuée : arrive de biais, glisse et se cale à son inclinaison de repos */
+@keyframes m-deal {
+  from {
+    transform: translate(var(--deal-x, calc(var(--deal-distance) * -0.6)), var(--deal-distance))
+      rotate(calc(var(--deal-rotate) * var(--deal-dir, -1) + var(--tilt, 0deg)));
+  }
+  to {
+    transform: rotate(var(--tilt, 0deg));
+  }
+}
+/* La feuille se pose (léger rebond) */
+@keyframes m-settle {
+  from {
+    transform: translateY(calc(var(--rise) * 3)) rotate(calc(var(--tilt, 0deg) - 1deg)) scale(0.985);
+  }
+  to {
+    transform: rotate(var(--tilt, 0deg));
+  }
+}
+/* Feuille tirée d'une chemise : monte de la poche, pivote, se pose */
+@keyframes m-sheet {
+  from {
+    transform: translateY(calc(var(--rise) * 6)) rotate(-2.5deg) scale(0.97);
+  }
+  60% {
+    transform: translateY(calc(var(--rise) * -0.5)) rotate(0.6deg) scale(1.005);
+  }
+  to {
+    transform: rotate(var(--tilt, 0deg));
+  }
+}
+@keyframes m-sheet-out {
+  to {
+    transform: translateY(calc(var(--rise) * 5)) rotate(2deg) scale(0.97);
+    opacity: 0;
+  }
+}
+@keyframes m-rise {
+  from {
+    transform: translateY(var(--rise));
+  }
+}
+/* L'encre sèche : flou → net */
+@keyframes m-ink {
+  from {
+    filter: blur(var(--blur-ink));
+  }
+}
+/* Le tampon frappe : tombe de haut, écrase, rebondit à peine */
+@keyframes m-stamp {
+  0% {
+    transform: rotate(calc(var(--stamp-rot, -6deg) - 8deg)) scale(var(--stamp-from));
+  }
+  55% {
+    transform: rotate(var(--stamp-rot, -6deg)) scale(0.94);
+  }
+  78% {
+    transform: rotate(var(--stamp-rot, -6deg)) scale(1.03);
+  }
+  100% {
+    transform: rotate(var(--stamp-rot, -6deg)) scale(1);
+  }
+}
+/* L'encre s'étale autour du tampon (halo flou qui s'élargit puis s'efface) */
+@keyframes m-spread {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.55;
+    filter: blur(1px);
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+    filter: blur(6px);
+  }
+}
+/* Le support encaisse le coup (une frame) */
+@keyframes m-thud {
+  0%,
+  100% {
+    transform: none;
+  }
+  30% {
+    transform: translateY(1.5px) scale(0.995);
+  }
+  60% {
+    transform: translateY(-0.5px);
+  }
+}
+/* Anneau d'onde (verrouillage, appui) */
+@keyframes m-ripple {
+  from {
+    transform: scale(0.6);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+/* Case qui se verrouille : pressée puis relâchée */
+@keyframes m-lock {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(0.965);
+  }
+  70% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+/* Froissement : petite oscillation amortie */
+@keyframes m-rustle {
+  0% {
+    transform: rotate(var(--tilt, 0deg));
+  }
+  25% {
+    transform: rotate(calc(var(--tilt, 0deg) - 1.2deg)) translateX(-1px);
+  }
+  55% {
+    transform: rotate(calc(var(--tilt, 0deg) + 0.8deg)) translateX(1px);
+  }
+  80% {
+    transform: rotate(calc(var(--tilt, 0deg) - 0.3deg));
+  }
+  100% {
+    transform: rotate(var(--tilt, 0deg));
+  }
+}
+/* Pastille qui change de valeur */
+@keyframes m-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+/* Onglet de chemise qui sort */
+@keyframes m-tab {
+  from {
+    transform: translateY(40%);
+  }
+}
+/* Changement d'écran : la lampe s'allume sur le bureau */
+@keyframes m-screen-in {
+  from {
+    transform: scale(1.035);
+    filter: blur(6px) brightness(0.6);
+  }
+}
+@keyframes m-screen-out {
+  to {
+    transform: scale(0.97);
+    filter: blur(4px) brightness(0.5);
+    opacity: 0;
+  }
+}
+/* Révélation par balayage d'encre (transform seul, deux couches contraires) */
+@keyframes m-wipe-outer {
+  from {
+    transform: translateX(var(--wipe-from, -101%));
+  }
+}
+@keyframes m-wipe-inner {
+  from {
+    transform: translateX(calc(var(--wipe-from, -101%) * -1));
+  }
+}
+/* Ambiance : vacillement de lampe (irrégulier, jamais un clignotement > 3 Hz) */
+@keyframes m-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  6% {
+    opacity: 0.86;
+  }
+  8% {
+    opacity: 0.97;
+  }
+  41% {
+    opacity: 1;
+  }
+  44% {
+    opacity: 0.9;
+  }
+  49% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 0.94;
+  }
+}
+@keyframes m-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+/* Feuille épinglée qui se balance à peine */
+@keyframes m-sway {
+  0%,
+  100% {
+    transform: rotate(calc(var(--tilt, 0deg) - var(--sway-angle)));
+  }
+  50% {
+    transform: rotate(calc(var(--tilt, 0deg) + var(--sway-angle)));
+  }
+}
+/* Poussière dans la lumière : dérive lente + scintillement */
+@keyframes m-dust {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--mote-o, 0.8);
+  }
+  50% {
+    transform: translate(var(--mote-dx, 20px), var(--mote-dy, -30px));
+    opacity: calc(var(--mote-o, 0.8) * 0.5);
+  }
+  85% {
+    opacity: var(--mote-o, 0.8);
+  }
+  100% {
+    transform: translate(calc(var(--mote-dx, 20px) * 1.6), calc(var(--mote-dy, -30px) * 2));
+    opacity: 0;
+  }
+}
+/* Confettis de papier (branche révélée) */
+@keyframes m-confetti {
+  0% {
+    transform: translate(0, 0) rotate(0deg) scale(0.4);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+    transform: translate(calc(var(--cx) * 0.3), calc(var(--cy) * 0.3 - 30px)) rotate(90deg) scale(1);
+  }
+  100% {
+    transform: translate(var(--cx), calc(var(--cy) + 60px)) rotate(var(--cr, 540deg)) scale(0.9);
+    opacity: 0;
+  }
+}
+@keyframes m-scroll-drift {
+  from {
+    transform: translateY(var(--parallax, 40px));
+  }
+  to {
+    transform: translateY(calc(var(--parallax, 40px) * -1));
+  }
+}
+
+/* ── Entrées (une fois, au montage) ──────────────────────────────── */
+.mv-deal {
+  animation:
+    m-fade-in var(--dur-fade) var(--ease-out) backwards,
+    m-deal var(--dur-deal) var(--ease-deal) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger-deal));
+}
+.mv-settle {
+  animation:
+    m-fade-in var(--dur-fade) var(--ease-out) backwards,
+    m-settle var(--dur-open) var(--ease-paper) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger-deal));
+}
+.mv-sheet {
+  transform-origin: 50% 100%;
+  animation:
+    m-fade-in var(--dur-fade-fast) var(--ease-out) backwards,
+    m-sheet var(--dur-sheet) var(--ease-out) backwards;
+}
+.mv-sheet-out {
+  transform-origin: 50% 100%;
+  animation: m-sheet-out var(--dur-base) var(--ease-flick) both;
+}
+.mv-rise {
+  animation:
+    m-fade-in var(--dur-fade) var(--ease-out) backwards,
+    m-rise var(--dur-slow) var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger-deal));
+}
+.mv-ink {
+  animation:
+    m-fade-in var(--dur-fade) var(--ease-out) backwards,
+    m-ink var(--dur-slow) var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+.mv-stamp {
+  animation:
+    m-fade-in var(--dur-fade-fast) linear backwards,
+    m-stamp var(--dur-stamp) var(--ease-stamp) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+/* Halo d'encre : à poser sur un ::after ou un élément frère positionné derrière le tampon */
+.mv-spread {
+  pointer-events: none;
+  animation: m-spread var(--dur-spread) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger) + var(--dur-stamp) * 0.5);
+}
+.mv-thud {
+  animation: m-thud var(--dur-fast) var(--ease-out) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger) + var(--dur-stamp) * 0.5);
+}
+.mv-lock {
+  animation: m-lock var(--dur-slow) var(--ease-snap) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+.mv-ripple {
+  pointer-events: none;
+  animation: m-ripple var(--dur-slow) var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+.mv-rustle {
+  animation: m-rustle var(--dur-rustle) var(--ease-out);
+}
+.mv-pop {
+  animation: m-pop var(--dur-base) var(--ease-snap);
+}
+.mv-tab {
+  animation:
+    m-fade-in var(--dur-fade-fast) var(--ease-out) backwards,
+    m-tab var(--dur-base) var(--ease-snap) backwards;
+  animation-delay: calc(var(--i, 0) * 40ms);
+}
+.mv-screen-in {
+  animation:
+    m-fade-in var(--dur-fade) var(--ease-out) backwards,
+    m-screen-in var(--dur-screen) var(--ease-out) backwards;
+}
+.mv-screen-out {
+  animation: m-screen-out var(--dur-base) var(--ease-flick) both;
+}
+/* Balayage d'encre : <div class="mv-wipe"><div class="mv-wipe-inner">…</div></div>.
+   Le bord qui avance est adouci par un masque fixe (alpha seul, non animé). */
+.mv-wipe {
+  overflow: hidden;
+  animation: m-wipe-outer var(--dur-draw) var(--ease-ink) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger) * 2);
+}
+.mv-wipe-inner {
+  animation: m-wipe-inner var(--dur-draw) var(--ease-ink) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger) * 2);
+}
+
+/* ── Boucles d'ambiance (« le bureau vit ») ──────────────────────── */
+.mv-flicker {
+  animation: m-flicker var(--dur-flicker) steps(1, end) infinite;
+  animation-play-state: var(--idle-state);
+}
+.mv-breathe {
+  animation: m-breathe var(--dur-breathe) var(--ease-sway) infinite;
+  animation-play-state: var(--idle-state);
+}
+.mv-sway {
+  transform-origin: 50% 0;
+  animation: m-sway var(--dur-sway) var(--ease-sway) infinite;
+  animation-delay: calc(var(--i, 0) * -1.3s);
+  animation-play-state: var(--idle-state);
+}
+.mv-dust {
+  animation: m-dust var(--mote-d, var(--dur-dust)) linear infinite;
+  animation-delay: var(--mote-delay, 0s);
+  animation-play-state: var(--idle-state);
+}
+
+/* ── Micro-interactions génériques (éléments sur mesure du jeu et du site) ── */
+/* Objet qu'on peut prendre : se soulève et pivote d'un rien au survol, s'enfonce à l'appui */
+.mv-liftable {
+  transition:
+    transform var(--dur-base) var(--ease-paper),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+@media (hover: hover) {
+  .mv-liftable:hover {
+    transform: translateY(var(--lift)) rotate(calc(var(--tilt, 0deg) - 0.4deg));
+  }
+}
+.mv-liftable:active {
+  transform: translateY(0) rotate(var(--tilt, 0deg)) scale(0.99);
+  transition-duration: var(--dur-instant);
+}
+.mv-pressable {
+  transition: transform var(--dur-instant) var(--ease-out);
+}
+.mv-pressable:active {
+  transform: translateY(var(--press-depth));
+}
+/* Objet saisi (glisser) : plus haut, incliné, ombre portée longue */
+.mv-held {
+  transform: scale(1.04) rotate(2deg);
+  box-shadow: var(--shadow-lifted);
+  transition: transform var(--dur-fast) var(--ease-snap);
+}
+
+/* ── Révélation au défilement (site) ─────────────────────────────── */
+/* L'action `reveal` (motion.ts) pose data-reveal="pending" au montage puis "in" quand
+   l'élément entre dans la vue. Sans JavaScript, rien n'est masqué. */
+[data-reveal='pending'] {
+  opacity: 0;
+  transform: translateY(calc(var(--rise) * 4)) rotate(var(--reveal-tilt, 0deg));
+}
+[data-reveal='in'] {
+  animation:
+    m-fade-in var(--dur-fade) var(--ease-out) backwards,
+    m-deal var(--dur-deal) var(--ease-deal) backwards;
+  animation-delay: calc(var(--i, 0) * var(--stagger-deal));
+  --deal-x: 0px;
+}
+/* Parallaxe légère pilotée par le défilement (CSS seul, là où c'est pris en charge) */
+@supports (animation-timeline: view()) {
+  .mv-parallax {
+    animation: m-scroll-drift linear both;
+    animation-timeline: view();
+  }
+}
+
+/* ── Mouvement réduit : les boucles s'arrêtent, la parallaxe disparaît ── */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) .mv-flicker,
+  :root:not([data-motion='full']) .mv-breathe,
+  :root:not([data-motion='full']) .mv-sway,
+  :root:not([data-motion='full']) .mv-dust,
+  :root:not([data-motion='full']) .mv-parallax {
+    animation: none;
+  }
+  :root:not([data-motion='full']) .mv-dust {
+    opacity: 0;
+  }
+}
+:root[data-motion='reduced'] .mv-flicker,
+:root[data-motion='reduced'] .mv-breathe,
+:root[data-motion='reduced'] .mv-sway,
+:root[data-motion='reduced'] .mv-dust,
+:root[data-motion='reduced'] .mv-parallax {
+  animation: none;
+}
+:root[data-motion='reduced'] .mv-dust {
+  opacity: 0;
+}

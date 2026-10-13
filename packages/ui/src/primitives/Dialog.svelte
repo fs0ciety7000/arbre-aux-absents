@@ -126,15 +126,28 @@
       overlay var(--dur-fade) allow-discrete,
       display var(--dur-fade) allow-discrete;
   }
+  /* v2 : la fiche tombe sur le bureau, de biais, et se cale ; à la fermeture elle s'escamote */
   .dialog:not([open]) {
     opacity: 0;
-    transform: translateY(var(--rise)) scale(0.985);
+    transform: translateY(calc(var(--rise) * 2)) rotate(calc(var(--deal-rotate) * 0.2)) scale(0.97);
+    transition-timing-function: var(--ease-flick);
+    transition-duration: var(--dur-fade-fast), var(--dur-base);
   }
   @starting-style {
     .dialog[open] {
       opacity: 0;
-      transform: translateY(var(--rise)) scale(0.985);
+      transform: translateY(calc(var(--rise) * -3)) rotate(calc(var(--deal-rotate) * -0.3))
+        scale(1.03);
     }
+  }
+  /* Sous-main surpiqué (surface bureau) */
+  .dialog:not(.paper)::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    pointer-events: none;
+    border: 1.5px dashed var(--stitch);
+    border-radius: calc(var(--radius-l) - 4px);
   }
   .s {
     --dialog-w: 26rem;
@@ -176,17 +189,19 @@
     padding: var(--space-4) var(--space-2) var(--space-3) var(--space-5);
   }
   .kicker {
+    font-family: var(--font-label);
     font-size: var(--step--1);
-    font-weight: var(--weight-semibold);
-    letter-spacing: var(--tracking-caps);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-stamp);
     text-transform: uppercase;
     color: var(--text-muted);
     margin-block-end: var(--space-1);
   }
   .title {
     font-family: var(--font-display);
-    font-size: var(--step-2);
-    font-weight: var(--weight-semibold);
+    font-variation-settings: var(--display-settings);
+    font-size: var(--step-3);
+    font-weight: var(--weight-display);
     line-height: var(--leading-snug);
     padding-block-start: var(--space-2);
   }
@@ -242,6 +257,10 @@
       max-height: 100dvh;
       border-radius: 0;
       border: 0;
+    }
+    .dialog.m-sheet::after,
+    .dialog.m-fullscreen::after {
+      border-radius: 0;
     }
     .actions {
       flex-direction: column-reverse;

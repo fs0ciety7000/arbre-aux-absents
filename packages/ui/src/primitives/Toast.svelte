@@ -61,6 +61,7 @@
 
 <div
   class="toast {tone}"
+  data-surface="paper"
   {role}
   onpointerenter={() => (paused = true)}
   onpointerleave={() => (paused = false)}
@@ -87,23 +88,24 @@
     gap: var(--space-3);
     width: min(26rem, calc(100vw - 2 * var(--gutter)));
     padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4);
-    background: var(--surface-2);
+    /* v2 : bande de télégramme (papier) glissée sur le bureau, de biais */
+    background: var(--surface-1);
     color: var(--text);
-    border: var(--border) solid var(--line);
-    border-inline-start: 4px solid var(--tone);
-    border-radius: var(--radius-m);
-    box-shadow: var(--shadow-3);
+    border: 0;
+    border-inline-start: 5px solid var(--tone);
+    border-radius: var(--radius-paper);
+    box-shadow: var(--shadow-lifted);
     --tone: var(--info);
     opacity: 1;
-    transform: none;
+    transform: rotate(-0.6deg);
     transition:
       opacity var(--dur-fade) var(--ease-out),
-      transform var(--dur-base) var(--ease-out);
+      transform var(--dur-deal) var(--ease-deal);
   }
   @starting-style {
     .toast {
       opacity: 0;
-      transform: translateY(var(--rise));
+      transform: translateX(var(--deal-distance)) rotate(var(--deal-rotate));
     }
   }
   .success {
@@ -129,7 +131,10 @@
     padding-block: var(--space-1);
   }
   .title {
-    font-weight: var(--weight-semibold);
+    font-family: var(--font-type);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
   }
   .message {
     font-size: var(--step--1);

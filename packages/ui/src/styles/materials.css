@@ -1,0 +1,235 @@
+/*
+ * Matières v2 : les fournitures du bureau de l'enquêteur (docs/DESIGN.md §6).
+ * Classes utilisables sans Svelte (site prérendu, maquettes) ; les primitives Folder,
+ * IndexCard, PaperSheet, Tape, DymoLabel… les composent. Ne lisent que des tokens.
+ */
+
+/* ── Le bureau : sous-main en bleu de Prusse, grain, lampe, coins dans l'ombre ── */
+.desk-surface {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--canvas);
+  color: var(--text);
+}
+.desk-surface::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      70% 60% at var(--lamp-x, 30%) var(--lamp-y, -5%),
+      var(--lamp-glow),
+      transparent 70%
+    ),
+    radial-gradient(140% 120% at 50% 40%, transparent 55%, var(--vignette)), var(--desk-grain-image);
+  opacity: 1;
+}
+/* Sous-main : panneau de bureau à surpiqûre (le décor des panneaux « desk ») */
+.blotter {
+  position: relative;
+  background: var(--surface-1);
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-2);
+}
+.blotter::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  pointer-events: none;
+  border: 1.5px dashed var(--stitch);
+  border-radius: calc(var(--radius-l) - 4px);
+}
+
+/* ── Papier ───────────────────────────────────────────────────────── */
+.mat-paper {
+  position: relative;
+  isolation: isolate;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius-paper);
+  box-shadow: var(--shadow-paper);
+}
+.mat-paper::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image: var(--paper-grain-image);
+  opacity: var(--paper-grain);
+  mix-blend-mode: multiply;
+}
+/* Bords : déchiré (bas) ou perforé (haut, feuille de carnet arrachée) — masques alpha */
+.edge-torn {
+  -webkit-mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - 9px) no-repeat,
+    var(--edge-torn) bottom / 120px 10px repeat-x;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - 9px) no-repeat,
+    var(--edge-torn) bottom / 120px 10px repeat-x;
+}
+.edge-perforated {
+  -webkit-mask:
+    var(--edge-perforated) top / 14px 8px repeat-x,
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - 8px) no-repeat;
+  mask:
+    var(--edge-perforated) top / 14px 8px repeat-x,
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - 8px) no-repeat;
+}
+
+/* ── Kraft et manille (chemises) ─────────────────────────────────── */
+.mat-kraft {
+  position: relative;
+  isolation: isolate;
+  background: var(--kraft);
+  color: var(--kraft-ink);
+}
+.mat-kraft::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image: var(--kraft-fiber-image);
+  mix-blend-mode: multiply;
+}
+.mat-manila {
+  background: var(--manila);
+  color: var(--kraft-ink);
+}
+
+/* ── Fiche bristol (réglure bleue, ligne de tête rouge) ───────────── */
+.mat-card {
+  --rule-gap: 1.75rem;
+  --head-h: 2.6rem;
+  position: relative;
+  background-color: var(--card);
+  background-image:
+    linear-gradient(var(--card-margin), var(--card-margin)),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 calc(var(--rule-gap) - 1px),
+      var(--card-rule) calc(var(--rule-gap) - 1px) var(--rule-gap)
+    );
+  background-size:
+    100% 2px,
+    100% calc(100% - var(--head-h));
+  background-position:
+    0 var(--head-h),
+    0 var(--head-h);
+  background-repeat: no-repeat;
+  color: var(--ink);
+  border-radius: var(--radius-xs);
+  box-shadow: var(--shadow-paper);
+}
+
+/* ── Ruban adhésif mat (extrémités dentelées) ────────────────────── */
+.mat-tape {
+  display: block;
+  width: var(--tape-w, 88px);
+  height: var(--tape-h, 26px);
+  background: var(--tape);
+  box-shadow: 0 0 0 1px var(--tape-edge);
+  transform: rotate(var(--tape-r, -4deg));
+  -webkit-mask: var(--tape-mask);
+  mask: var(--tape-mask);
+  --tape-mask:
+    conic-gradient(from -45deg at 0 50%, #0000 90deg, #000 0) 0 0 / 51% 6px repeat-y,
+    conic-gradient(from 135deg at 100% 50%, #0000 90deg, #000 0) 100% 0 / 51% 6px repeat-y;
+}
+
+/* ── Étiqueteuse à relief (bande plastique, lettres embossées) ───── */
+.mat-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.18em 0.7em 0.14em;
+  background: var(--label-tape);
+  color: var(--label-tape-text);
+  font-family: var(--font-label);
+  font-weight: var(--weight-medium);
+  font-size: var(--step--1);
+  line-height: 1.2;
+  letter-spacing: calc(0.14em + var(--tracking-extra));
+  text-transform: uppercase;
+  border-radius: 2px;
+  /* relief : lettres légèrement en creux/bosse, bande brillante */
+  text-shadow:
+    0 1px 0 var(--label-emboss),
+    0 -1px 0 var(--label-sheen);
+  box-shadow:
+    inset 0 1px 0 var(--label-sheen),
+    inset 0 -1px 0 var(--label-emboss),
+    var(--shadow-1);
+}
+.mat-label.red {
+  background: var(--label-tape-red);
+}
+
+/* ── Typographie de caractère ────────────────────────────────────── */
+/* Surtitre d'étiquette : Oswald en capitales, tiret vermillon */
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-stamp);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.kicker::before {
+  content: '';
+  width: 1.4em;
+  height: 2px;
+  background: var(--brand);
+  border-radius: 2px;
+}
+/* Titrage d'affiche : Fraunces très douce, bancale, serrée */
+.display {
+  font-family: var(--font-display);
+  font-variation-settings: var(--display-settings);
+  font-weight: var(--weight-display-black);
+  font-size: var(--step-6);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+.display em,
+.display-italic {
+  font-style: italic;
+  font-weight: var(--weight-display);
+}
+/* Accent de marque dans un titre (« aux ») : grand texte vermillon (≥ 3:1) */
+.brand-ink {
+  color: var(--brand);
+}
+
+@media (forced-colors: active) {
+  .desk-surface::before,
+  .mat-paper::after,
+  .mat-kraft::after {
+    display: none;
+  }
+  .blotter::after {
+    border-color: CanvasText;
+  }
+  .mat-card {
+    background-image: none;
+    border: 1px solid CanvasText;
+  }
+  .mat-label {
+    forced-color-adjust: none;
+    background: CanvasText;
+    color: Canvas;
+    text-shadow: none;
+  }
+  .kicker::before {
+    background: CanvasText;
+  }
+}

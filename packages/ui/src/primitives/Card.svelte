@@ -2,7 +2,11 @@
 	Carte / fiche / document (DESIGN.md §9.5). Trois matières :
 	- `fiche`    : fiche d'interface sur le bureau (résultat du Catalogue, entrée du Carnet, emplacement) ;
 	- `document` : feuille de papier (aperçu d'archive, document posé) ;
-	- `photo`    : tirage à bord blanc, légende manuscrite.
+	- `photo`    : tirage à bord blanc, légende manuscrite ;
+	- `index`    : v2, fiche bristol réglée (ligne de tête vermillon, titre dactylographié) :
+	               résultats du Catalogue, entrées du Carnet.
+	v2 : survol = la fiche se soulève et pivote d'un rien ; appui = elle s'écrase ; `deal`
+	(rang) = elle est distribuée à l'apparition (cascade --stagger-deal).
 	Interactive si `href` ou `onactivate` : le titre devient le lien/bouton et sa zone
 	couvre toute la carte (les boutons du pied restent cliquables au-dessus).
 -->
@@ -12,7 +16,7 @@
 
   type Verb = 'look' | 'take' | 'write' | 'pin' | 'use';
   interface Props {
-    variant?: 'fiche' | 'document' | 'photo';
+    variant?: 'fiche' | 'document' | 'photo' | 'index';
     title: string;
     headingLevel?: 2 | 3 | 4;
     /** Surtitre : type de document, rubrique… */
@@ -27,6 +31,8 @@
     /** Inclinaison décorative en degrés (bornée à ±1,5°). */
     tilt?: number;
     verb?: Verb;
+    /** Rang de distribution (0, 1, 2…) : la fiche arrive en cascade à l'apparition. */
+    deal?: number;
     media?: Snippet;
     children?: Snippet;
     footer?: Snippet;
@@ -46,6 +52,7 @@
     pinned = false,
     tilt = 0,
     verb,
+    deal,
     media,
     children,
     footer,
@@ -62,6 +69,8 @@
   class:interactive
   class:selected
   class:grain={variant === 'document'}
+  class:mv-deal={deal !== undefined}
+  style:--i={deal}
   data-surface={paper ? 'paper' : undefined}
   data-verb={interactive ? (verb ?? 'look') : undefined}
   style:--card-tilt="{angle}deg"
@@ -103,14 +112,60 @@
     flex-direction: column;
     min-width: 0;
     color: var(--text);
+    --tilt: var(--card-tilt);
     transform: rotate(var(--card-tilt));
-    transition: transform var(--dur-base) var(--ease-paper);
+    transition:
+      transform var(--dur-base) var(--ease-paper),
+      box-shadow var(--dur-base) var(--ease-out);
   }
+  /* Fiche de bureau : sous-main surpiqué */
   .fiche {
     background: var(--surface-1);
     border: var(--border) solid var(--line);
     border-radius: var(--radius-m);
     box-shadow: var(--shadow-1);
+  }
+  .fiche::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    pointer-events: none;
+    border: 1px dashed var(--stitch);
+    border-radius: calc(var(--radius-m) - 3px);
+  }
+  /* Fiche bristol : réglure bleue, ligne de tête vermillon, titre tapé à la machine */
+  .index {
+    --rule-gap: 1.6rem;
+    background-color: var(--card);
+    border-radius: var(--radius-xs);
+    box-shadow: var(--shadow-paper);
+  }
+  .index .title {
+    font-family: var(--font-type);
+    font-weight: var(--weight-bold);
+    font-size: var(--step-0);
+    font-variation-settings: normal;
+    color: var(--ink-type);
+    /* ligne de tête vermillon sous le titre, quelle que soit sa hauteur */
+    padding-block-end: var(--space-2);
+    border-block-end: 2px solid var(--card-margin);
+  }
+  /* Réglure : chaque bloc sous la tête écrit sur ses lignes (interligne = pas de réglure) */
+  .index .meta,
+  .index .body {
+    margin: 0;
+    line-height: var(--rule-gap);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 calc(var(--rule-gap) - 1px),
+      var(--card-rule) calc(var(--rule-gap) - 1px) var(--rule-gap)
+    );
+  }
+  .index .body :global(p) {
+    margin: 0;
+  }
+  .index .content {
+    padding-block-start: var(--space-2);
   }
   .document {
     background: var(--canvas);
@@ -148,9 +203,10 @@
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    font-family: var(--font-label);
     font-size: var(--step--1);
-    font-weight: var(--weight-semibold);
-    letter-spacing: var(--tracking-caps);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-stamp);
     text-transform: uppercase;
     color: var(--text-muted);
   }
@@ -168,12 +224,14 @@
   }
   .title {
     font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
     font-size: var(--step-1);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-display);
     line-height: var(--leading-snug);
   }
   .document .title {
     font-family: var(--font-read);
+    font-variation-settings: normal;
   }
   .meta {
     font-size: var(--step--1);
@@ -203,8 +261,14 @@
     inset: 0;
     border-radius: inherit;
   }
-  .interactive:hover {
-    transform: rotate(var(--card-tilt)) translateY(var(--lift));
+  @media (hover: hover) {
+    .interactive:hover {
+      transform: rotate(calc(var(--card-tilt) - 0.5deg)) translateY(var(--lift));
+      box-shadow: var(--shadow-lifted);
+    }
+  }
+  .fiche.interactive:hover {
+    box-shadow: var(--shadow-2);
   }
   .interactive:hover.fiche {
     border-color: var(--line-strong);
@@ -214,7 +278,8 @@
     outline-offset: 3px;
   }
   .interactive:active {
-    transform: rotate(var(--card-tilt)) translateY(0);
+    transform: rotate(var(--card-tilt)) translateY(0) scale(0.99);
+    transition-duration: var(--dur-instant);
   }
   .selected {
     outline: var(--border-strong) solid var(--accent);

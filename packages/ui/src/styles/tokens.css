@@ -1,12 +1,14 @@
 /*
- * L'Arbre aux absents — tokens du design system (« Le bureau sous la lampe »).
+ * L'Arbre aux absents — tokens du design system v2 (« Le dossier vivant », oct. 2026).
  * Source de vérité documentée : docs/DESIGN.md. Tout ajout ici est documenté là-bas
  * dans le même changement. Contrastes : node packages/ui/scripts/contrast.mjs
  *
  * Trois couches :
  *   1. palette brute  --raw-*            jamais lue par un composant
  *   2. sémantique     --canvas, --text…  seule couche lue par les composants
+ *                     + matières        --kraft, --card, --tape… (fournitures du bureau)
  *   3. contextes      [data-surface='paper'] remappe la sémantique sur le papier ;
+ *                     [data-surface='kraft'] sur le carton d'une chemise ;
  *                     :root[data-contrast='high'] remappe tout en contraste élevé.
  * Réglages joueur (posés sur <html> par le jeu, cf. Settings et settings-dom.ts) :
  *   data-text-scale, data-reading-font, data-line-spacing, data-letter-spacing,
@@ -18,26 +20,49 @@
   color-scheme: dark;
 
   /* ── 1. Palette brute ─────────────────────────────────────────────── */
-  /* Nuit : bleu d'encre du bureau, du plus profond au plus clair */
-  --raw-night-1000: oklch(0.14 0.02 258);
-  --raw-night-950: oklch(0.17 0.022 258);
-  --raw-night-900: oklch(0.215 0.024 258);
-  --raw-night-850: oklch(0.255 0.026 258);
-  --raw-night-800: oklch(0.3 0.028 258);
-  --raw-night-700: oklch(0.37 0.026 258);
-  --raw-night-500: oklch(0.6 0.03 258);
-  --raw-night-400: oklch(0.66 0.025 258);
+  /* Encre de nuit : le mur et le sous-main, du plus profond au plus clair (v2 : accordé à l'art
+     clé, teinte 260 du papier peint — art/keyart) */
+  --raw-night-1000: oklch(0.15 0.042 260);
+  --raw-night-950: oklch(0.2 0.054 260);
+  --raw-night-900: oklch(0.245 0.058 259);
+  --raw-night-850: oklch(0.285 0.06 258);
+  --raw-night-800: oklch(0.31 0.058 257);
+  --raw-night-700: oklch(0.41 0.056 256);
+  --raw-night-500: oklch(0.66 0.055 252);
+  --raw-night-400: oklch(0.72 0.046 250);
   /* Vélin : blancs chauds du texte sous la lampe */
-  --raw-vellum-100: oklch(0.95 0.012 88);
-  --raw-vellum-300: oklch(0.81 0.018 85);
-  /* Laiton : la lampe, unique couleur d'action */
-  --raw-brass-300: oklch(0.87 0.11 84);
-  --raw-brass-400: oklch(0.81 0.125 78);
-  --raw-brass-600: oklch(0.48 0.1 66);
-  --raw-brass-700: oklch(0.43 0.095 62);
+  --raw-vellum-100: oklch(0.96 0.014 88);
+  --raw-vellum-300: oklch(0.84 0.024 85);
+  /* Safran : la lumière de la lampe, unique couleur d'action */
+  --raw-brass-300: oklch(0.91 0.12 92);
+  --raw-brass-400: oklch(0.84 0.155 80);
+  --raw-brass-500: oklch(0.66 0.13 70); /* tranche du bouton (relief) */
+  --raw-brass-600: oklch(0.485 0.112 62);
+  --raw-brass-700: oklch(0.44 0.105 58);
+  /* Vermillon : l'administration (chemises, étiquettes, fil du tableau) — jamais un état */
+  --raw-vermilion-400: oklch(0.72 0.17 36);
+  --raw-vermilion-500: oklch(0.62 0.2 33);
+  --raw-vermilion-600: oklch(0.53 0.19 30);
+  --raw-vermilion-700: oklch(0.46 0.17 29);
+  /* Céladon : la fougère, le verre, le vert-de-gris */
+  --raw-celadon-300: oklch(0.86 0.07 172);
+  --raw-celadon-400: oklch(0.79 0.09 172);
+  --raw-celadon-700: oklch(0.45 0.075 178);
+  /* Kraft, manille et carton des chemises */
+  --raw-kraft-200: oklch(0.89 0.055 88); /* manille (chemise claire) */
+  --raw-kraft-400: oklch(0.76 0.08 72); /* kraft */
+  --raw-kraft-500: oklch(0.68 0.09 66); /* kraft ombré, dos de chemise */
+  --raw-kraft-700: oklch(0.47 0.075 58); /* tranche du carton */
   /* Encre violette des tampons administratifs : « Établi » */
-  --raw-stamp-300: oklch(0.76 0.12 300);
+  --raw-stamp-300: oklch(0.77 0.13 300);
   --raw-stamp-700: oklch(0.46 0.16 300);
+  /* Bois du bureau et crépuscule de la fenêtre (art clé) : décor seulement, jamais du texte */
+  --raw-wood-700: oklch(0.36 0.05 40); /* plateau dans l'ombre */
+  --raw-wood-500: oklch(0.59 0.065 46); /* plateau sous la lampe */
+  --raw-velvet: oklch(0.49 0.05 358); /* rideau de velours */
+  --raw-dusk-rose: oklch(0.85 0.05 0);
+  --raw-dusk-lilac: oklch(0.84 0.045 291);
+  --raw-dusk-peach: oklch(0.86 0.06 55);
   /* États */
   --raw-red-300: oklch(0.75 0.14 25);
   --raw-red-700: oklch(0.48 0.16 25);
@@ -48,19 +73,22 @@
   --raw-blue-300: oklch(0.8 0.08 230);
   --raw-blue-700: oklch(0.47 0.1 240);
   /* Papiers et encres des documents */
-  --raw-paper-new: oklch(0.978 0.01 92);
-  --raw-paper: oklch(0.955 0.018 90);
-  --raw-paper-aged: oklch(0.925 0.024 88);
-  --raw-paper-stain: oklch(0.89 0.03 84);
-  --raw-paper-line: oklch(0.84 0.025 86);
-  --raw-ink-gall: oklch(0.27 0.045 264); /* encre ferro-gallique bleu-noir */
-  --raw-ink-gall-muted: oklch(0.44 0.045 262);
-  --raw-ink-gall-faint: oklch(0.58 0.035 262);
-  --raw-ink-pen: oklch(0.38 0.1 258); /* encre bleue de plume */
+  --raw-paper-new: oklch(0.978 0.012 92);
+  --raw-paper: oklch(0.955 0.02 90);
+  --raw-paper-aged: oklch(0.925 0.028 88);
+  --raw-paper-stain: oklch(0.89 0.034 84);
+  --raw-paper-line: oklch(0.84 0.03 86);
+  --raw-ink-gall: oklch(0.27 0.05 262); /* encre ferro-gallique bleu-noir */
+  --raw-ink-gall-muted: oklch(0.44 0.05 260);
+  --raw-ink-gall-faint: oklch(0.58 0.04 258);
+  --raw-ink-pen: oklch(0.38 0.11 258); /* encre bleue de plume */
   --raw-ink-ribbon: oklch(0.26 0.012 260); /* ruban de machine à écrire */
+  --raw-rule-blue: oklch(0.76 0.07 236); /* réglure des fiches bristol */
+  --raw-steel: oklch(0.8 0.012 250); /* trombone, punaise */
 
   /* ── 2. Sémantique : contexte « lampe » (défaut, bureau sombre) ───── */
   --canvas: var(--raw-night-950);
+  --desk: var(--raw-night-950); /* le bureau lui-même : jamais remappé par papier ou kraft */
   --surface-1: var(--raw-night-900);
   --surface-2: var(--raw-night-850);
   --surface-3: var(--raw-night-800);
@@ -72,7 +100,8 @@
   --accent: var(--raw-brass-400);
   --accent-strong: var(--raw-brass-300);
   --accent-contrast: var(--raw-night-1000);
-  --accent-tint: oklch(0.81 0.125 78 / 0.14);
+  --accent-edge: var(--raw-brass-500); /* tranche du bouton principal (relief pressable) */
+  --accent-tint: oklch(0.84 0.155 80 / 0.15);
   --focus: var(--raw-brass-300);
   --focus-halo: var(--raw-night-1000);
   --danger: var(--raw-red-300);
@@ -82,10 +111,63 @@
   --established: var(--raw-stamp-300);
   --established-contrast: var(--raw-night-1000);
   --keyword: var(--raw-brass-400);
-  --selection: oklch(0.6 0.1 78 / 0.45);
-  --scrim: oklch(0.1 0.02 258 / 0.66);
-  --lamp-glow: oklch(0.81 0.125 78 / 0.07);
-  --edge-light: oklch(1 0 0 / 0.06); /* liseré haut des surfaces : la lumière de la lampe */
+  --selection: oklch(0.6 0.12 78 / 0.45);
+  --scrim: oklch(0.1 0.04 260 / 0.7);
+  /* Voile posé sur l'art clé sous un menu ou un titre (zone calme, §8.5) : assez dense pour
+     que --text-muted reste ≥ 4,5:1 même devant une feuille claire de l'illustration */
+  --scrim-art: oklch(0.14 0.045 260 / 0.9);
+  --lamp-glow: oklch(0.84 0.155 80 / 0.1);
+  --lamp-pool: oklch(0.9 0.1 88 / 0.2); /* cœur du cône de la lampe (LampLight) */
+  --lamp-dust: oklch(0.95 0.06 90 / 0.55); /* poussières dans la lumière */
+  --vignette: oklch(0.08 0.04 260 / 0.55); /* coins du bureau dans l'ombre */
+  --edge-light: oklch(1 0 0 / 0.07); /* liseré haut des surfaces : la lumière de la lampe */
+  --stitch: oklch(0.66 0.06 246 / 0.55); /* surpiqûre du sous-main (décor, < 3:1 assumé) */
+
+  /* Couleurs de marque (décor : titres, onglets, fil, étiquettes). Jamais un état. */
+  --brand: var(--raw-vermilion-400); /* sur le bureau : grand texte, filets, ornements */
+  --brand-strong: var(--raw-vermilion-500);
+  --brand-contrast: var(--raw-paper-new); /* texte sur aplat vermillon (--brand-fill) */
+  --brand-fill: var(--raw-vermilion-600);
+  --fern: var(--raw-celadon-400); /* fougère : ornements, célébration */
+  --fern-deep: var(--raw-celadon-700);
+
+  /* ── Matières : les fournitures du bureau (DESIGN §6) ─────────────── */
+  --kraft: var(--raw-kraft-400);
+  --kraft-shade: var(--raw-kraft-500);
+  --kraft-edge: var(--raw-kraft-700);
+  --manila: var(--raw-kraft-200);
+  --kraft-ink: var(--raw-ink-gall); /* texte sur kraft et manille */
+  --card: var(--raw-paper-new); /* fiche bristol */
+  --card-rule: var(--raw-rule-blue);
+  --card-margin: var(--raw-vermilion-500); /* ligne de tête rouge des fiches */
+  --tape: oklch(0.93 0.045 95 / 0.78); /* ruban adhésif mat, translucide */
+  --tape-edge: oklch(0.8 0.05 90 / 0.6);
+  --label-tape: oklch(0.36 0.12 257); /* étiqueteuse à relief (bande bleue) */
+  --label-tape-red: var(--raw-vermilion-600);
+  --label-tape-text: oklch(0.97 0.01 90);
+  --label-sheen: oklch(1 0 0 / 0.18); /* reflet de la bande plastique */
+  --label-emboss: oklch(0 0 0 / 0.3); /* creux des lettres embossées */
+  --string: var(--raw-vermilion-500); /* fil rouge du tableau d'épingles */
+  --metal: var(--raw-steel);
+  --metal-shade: oklch(0.55 0.015 250);
+  --pin-head: var(--raw-vermilion-500);
+  --wood: var(--raw-wood-700); /* bois du bureau (bords, lampe) */
+  --wood-lit: var(--raw-wood-500); /* bois dans la flaque de lumière */
+  --velvet: var(--raw-velvet);
+  /* Crépuscule (fenêtre de l'art clé) : ciels, aube de la célébration, héros du site */
+  --dusk-rose: var(--raw-dusk-rose);
+  --dusk-lilac: var(--raw-dusk-lilac);
+  --dusk-peach: var(--raw-dusk-peach);
+  --dusk-sky: linear-gradient(
+    to bottom,
+    var(--raw-dusk-lilac),
+    var(--raw-dusk-rose) 62%,
+    var(--raw-dusk-peach)
+  );
+  --desk-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55 .9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .62 0 0 0 0 .85 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  /* Bord déchiré / perforé (masques alpha, aucune couleur) */
+  --edge-torn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' preserveAspectRatio='none'%3E%3Cpath d='M0 0V4l6 2 5-3 7 3 6-4 5 3 8-2 6 3 5-4 7 4 6-3 5 2 7-3 6 4 5-2 8 3 6-4 5 3 7-2 6 3l4-3V0z'/%3E%3C/svg%3E");
+  --edge-perforated: radial-gradient(circle at 50% 0, transparent 3.5px, black 4px);
 
   /* Papier (global : les documents sont toujours sur papier, même sous la lampe) */
   --paper-new: var(--raw-paper-new);
@@ -101,8 +183,10 @@
   --ink-type: var(--raw-ink-ribbon);
   --paper-accent: var(--raw-brass-600);
   --paper-accent-strong: var(--raw-brass-700);
-  --paper-grain: 0.5; /* opacité du grain de papier (0 avec data-texture='off') */
+  --paper-grain: 0.55; /* opacité du grain de papier (0 avec data-texture='off') */
   --paper-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  /* Fibres du kraft (masque de couleur sombre, alpha faible) */
+  --kraft-fiber-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='k'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.04 .9' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .2 0 0 0 0 .1 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23k)'/%3E%3C/svg%3E");
 
   /* Encrage irrégulier des tampons (masque alpha, aucune couleur) */
   --stamp-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.6 0 0 0 2.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
@@ -116,8 +200,11 @@
 
   /* ── Typographie ─────────────────────────────────────────────────── */
   --font-read: 'Literata', 'Literata fallback', Georgia, serif;
-  --font-display: var(--font-read);
+  /* Titrage v2 : Fraunces (« old style wonky », axes SOFT/WONK/opsz) — l'affiche de 1974 */
+  --font-display: 'Fraunces', 'Fraunces fallback', Georgia, serif;
   --font-ui: 'Instrument Sans', 'Instrument Sans fallback', system-ui, sans-serif;
+  /* Étiquettes, onglets, boutons, surtitres : Oswald (gothique condensée d'étiqueteuse) */
+  --font-label: 'Oswald', 'Oswald fallback', 'Arial Narrow', sans-serif-condensed, sans-serif;
   --font-type: 'Courier Prime', 'Courier New', monospace;
   --font-hand: 'Caveat', 'Segoe Print', cursive;
   --font-legible: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
@@ -125,6 +212,12 @@
      sur Atkinson Hyperlegible Next (embarquée), puis Verdana. Aucun téléchargement. */
   --font-dyslexic:
     'OpenDyslexic', 'OpenDyslexic3', 'Atkinson Hyperlegible Next', Verdana, system-ui, sans-serif;
+  /* Axes de Fraunces : douceur (0–100) et « bancal » (0/1) — la patte des années 70 */
+  --display-soft: 100;
+  --display-wonk: 1;
+  --display-settings: 'SOFT' var(--display-soft), 'WONK' var(--display-wonk);
+  --weight-display: 640;
+  --weight-display-black: 900;
 
   --text-scale: 1;
   --step--1: calc(clamp(0.875rem, 0.8505rem + 0.1087vw, 0.9375rem) * var(--text-scale));
@@ -135,20 +228,25 @@
   --step-3: calc(clamp(1.625rem, 1.4293rem + 0.8696vw, 2.125rem) * var(--text-scale));
   --step-4: calc(clamp(2rem, 1.6087rem + 1.7391vw, 3rem) * var(--text-scale));
   --step-5: calc(clamp(2.5rem, 1.8152rem + 3.0435vw, 4.25rem) * var(--text-scale));
+  /* v2 : titre du jeu (écran titre, hero du site) 52 → 128 px */
+  --step-6: calc(clamp(3.25rem, 1.3913rem + 8.2609vw, 8rem) * var(--text-scale));
   --hand-boost: 1.3; /* Caveat a un petit œil : ×1,3 pour le même confort que le romain */
 
   --leading-tight: 1.1;
   --leading-snug: 1.3;
   --leading-ui: 1.4;
   --leading-read: 1.6;
+  --leading-display: 0.92; /* titrage Fraunces très serré (titre, hero) */
   --paragraph-gap: 0.9em; /* entre paragraphes de .reading */
   /* Approche additionnelle du réglage « espacement des lettres » (0 par défaut) : ajoutée
      à chaque approche ci-dessous et, réglage actif, à tout élément (base.css). */
   --tracking-extra: 0em;
   --word-spacing: 0em;
   --tracking-tight: calc(-0.01em + var(--tracking-extra)); /* titres, onglets compacts */
+  --tracking-display: calc(-0.025em + var(--tracking-extra)); /* titrage Fraunces */
   --tracking-caps: calc(0.08em + var(--tracking-extra));
   --tracking-label: calc(0.02em + var(--tracking-extra));
+  --tracking-stamp: calc(0.06em + var(--tracking-extra)); /* Oswald en capitales */
   --tracking-read: calc(0em + var(--tracking-extra));
   --weight-regular: 400;
   --weight-medium: 500;
@@ -174,12 +272,14 @@
   --space-24: 6rem;
   --gutter: clamp(1rem, 0.6087rem + 1.7391vw, 2rem);
 
+  /* v2 : rayons resserrés — des objets découpés, pas des cartes d'application */
   --radius-paper: 2px;
-  --radius-xs: 4px;
-  --radius-s: 6px;
-  --radius-m: 10px;
-  --radius-l: 16px;
-  --radius-xl: 24px;
+  --radius-xs: 3px;
+  --radius-s: 5px;
+  --radius-m: 7px;
+  --radius-l: 10px;
+  --radius-xl: 16px;
+  --radius-tab: 9px; /* coin d'onglet de chemise */
   --radius-pill: 999px;
   --border: 1px;
   --border-strong: 2px;
@@ -204,17 +304,27 @@
   --sheet-w: 480px;
   --slot-w: 144px;
   --slot-h: 168px;
+  --tab-h: 34px; /* hauteur d'un onglet de chemise (Folder) */
   --container: 76rem;
   --container-narrow: 44rem;
 
   /* ── Profondeur ──────────────────────────────────────────────────── */
-  --shadow-1: 0 1px 0 var(--edge-light) inset, 0 1px 2px oklch(0.05 0.02 258 / 0.5);
-  --shadow-2: 0 1px 0 var(--edge-light) inset, 0 6px 16px -4px oklch(0.05 0.02 258 / 0.55);
-  --shadow-3: 0 1px 0 var(--edge-light) inset, 0 24px 48px -12px oklch(0.05 0.02 258 / 0.7);
-  --shadow-inset: inset 0 1px 2px oklch(0.05 0.02 258 / 0.35);
-  --shadow-paper: 0 1px 1px oklch(0.1 0.03 60 / 0.3), 0 8px 18px -6px oklch(0.05 0.02 258 / 0.6);
+  --shadow-1: 0 1px 0 var(--edge-light) inset, 0 1px 2px oklch(0.06 0.04 260 / 0.55);
+  --shadow-2:
+    0 1px 0 var(--edge-light) inset, 0 2px 3px oklch(0.06 0.04 260 / 0.35),
+    0 10px 22px -8px oklch(0.06 0.04 260 / 0.65);
+  --shadow-3:
+    0 1px 0 var(--edge-light) inset, 0 4px 6px oklch(0.06 0.04 260 / 0.3),
+    0 28px 56px -14px oklch(0.05 0.04 260 / 0.8);
+  --shadow-inset: inset 0 1px 3px oklch(0.06 0.04 260 / 0.45);
+  /* Papier posé : contact net + ombre portée chaude, comme sous une lampe en hauteur */
+  --shadow-paper:
+    0 1px 1px oklch(0.12 0.04 60 / 0.35), 0 3px 6px -2px oklch(0.06 0.04 260 / 0.45),
+    0 16px 30px -12px oklch(0.05 0.04 260 / 0.7);
   --shadow-lifted:
-    0 2px 2px oklch(0.1 0.03 60 / 0.25), 0 22px 40px -10px oklch(0.05 0.02 258 / 0.75);
+    0 2px 2px oklch(0.12 0.04 60 / 0.25), 0 12px 20px -6px oklch(0.06 0.04 260 / 0.45),
+    0 34px 60px -16px oklch(0.05 0.04 260 / 0.8);
+  --shadow-press: 0 3px 0 var(--accent-edge); /* tranche d'un bouton qui s'enfonce */
 
   --z-desk: 0;
   --z-raised: 1;
@@ -228,12 +338,18 @@
   --z-drag: 80;
   --z-skip: 100;
 
-  /* ── Mouvement ───────────────────────────────────────────────────── */
+  /* ── Mouvement (catalogue complet : DESIGN §8) ────────────────────── */
+  /* Courbes : personnalité « geste d'archiviste » — net, lesté, un rebond court au contact */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
   --ease-paper: cubic-bezier(0.22, 1.2, 0.36, 1); /* la feuille se pose : léger rebond */
   --ease-stamp: cubic-bezier(0.55, 0, 0.3, 1.45); /* le tampon frappe */
+  --ease-deal: cubic-bezier(0.18, 0.89, 0.32, 1.12); /* la fiche est distribuée, glisse et cale */
+  --ease-snap: cubic-bezier(0.3, 1.5, 0.5, 1); /* l'onglet claque, l'interrupteur bascule */
+  --ease-flick: cubic-bezier(0.6, 0, 0.9, 0.4); /* sortie : la feuille est escamotée */
+  --ease-sway: cubic-bezier(0.37, 0, 0.63, 1); /* boucles d'ambiance (sinus) */
+  --ease-ink: cubic-bezier(0.7, 0, 0.2, 1); /* l'encre se répand, la carte se dessine */
   --dur-instant: 80ms;
   --dur-fast: 140ms;
   --dur-base: 220ms;
@@ -241,43 +357,67 @@
   --dur-slow: 420ms;
   --dur-stamp: 320ms;
   --dur-camera: 600ms;
+  --dur-deal: 480ms; /* distribution d'une fiche */
+  --dur-flip: 560ms; /* recto / verso */
+  --dur-sheet: 520ms; /* feuille tirée d'une chemise */
+  --dur-screen: 720ms; /* changement d'écran (titre → bureau) */
+  --dur-draw: 1600ms; /* la carte s'encre (couche par couche) */
+  --dur-spread: 900ms; /* l'encre du tampon s'étale */
+  --dur-celebrate: 1800ms; /* branche révélée */
+  --dur-rustle: 360ms; /* froissement */
   --stagger: 120ms;
+  --stagger-deal: 55ms; /* entre deux fiches distribuées (≤ 12 fiches animées) */
   --dur-loop: 1000ms; /* boucles : spinner, plume du Loader */
+  --dur-flicker: 6400ms; /* vacillement de la lampe (titre) */
+  --dur-sway: 7000ms; /* balancement d'une feuille épinglée */
+  --dur-dust: 16000ms; /* dérive d'une poussière dans la lumière */
+  --dur-breathe: 5200ms; /* respiration du halo de lampe */
   --dur-fade-fast: 140ms;
   --dur-fade: 220ms;
   --rise: 8px;
   --lift: -3px;
+  --press-depth: 2px; /* enfoncement d'un bouton (tranche --shadow-press) */
   --tilt-max: 1.5deg;
+  --deal-distance: 56px; /* d'où arrive une fiche distribuée */
+  --deal-rotate: 7deg;
+  --sway-angle: 0.6deg;
   --blur-ink: 3px;
   --stamp-from: 1.35;
   --toast-timeout: 6000ms;
   --tooltip-delay: 400ms;
   --long-press: 400ms;
+  /* Interrupteur des boucles d'ambiance : running | paused (paused en mouvement réduit) */
+  --idle-state: running;
 
   /* ── Curseurs contextuels (verbes point & click) ─────────────────── */
-  /* Flèche d'encre + pastille du verbe ; couleurs figées (une image de curseur ne lit pas les var()). */
+  /* v2 : flèche taillée à l'encre de Prusse, liseré vélin, pastille safran du verbe dessinée
+     à la plume. Couleurs figées (une image de curseur ne lit pas les var()). 32 px, point (3, 2). */
+  --cursor-default:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M5.2 6.5l.2 10.8' stroke='%23f2b33d' stroke-width='1.2' stroke-linecap='round' opacity='.85'/%3E%3C/svg%3E")
+      3 2,
+    default;
   --cursor-look:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Ccircle cx='22' cy='22' r='3.3' fill='none' stroke='%23161b26' stroke-width='1.7'/%3E%3Cpath d='M24.5 24.5l2.6 2.6' stroke='%23161b26' stroke-width='1.9' stroke-linecap='round'/%3E%3C/svg%3E")
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M21.6 18.6c2 0 3.6 1.6 3.5 3.6s-1.7 3.4-3.6 3.4-3.4-1.7-3.4-3.6 1.6-3.4 3.5-3.4z' fill='none' stroke='%23182039' stroke-width='1.7'/%3E%3Cpath d='M24.4 24.6l2.9 2.7' stroke='%23182039' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E")
       3 2,
     zoom-in;
   --cursor-take:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Cpath d='M19.5 23.5v-3m2 2.5v-4.5m2 4.5v-4m2 4.5v-3m-6 3c0 2.5 1.5 4 3.5 4s3.5-1.5 3.5-4' fill='none' stroke='%23161b26' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M19.4 23.6v-3.1m2.1 2.6v-4.6m2 4.6v-4.1m2.1 4.6v-3m-6.2 3.1c.1 2.6 1.6 4.1 3.6 4s3.5-1.6 3.4-4.1' fill='none' stroke='%23182039' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
       3 2,
     grab;
   --cursor-hold:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Cpath d='M23 18.5v9m-4.5-4.5h9m-7.5-2l-1.5 2 1.5 2m6-4l1.5 2-1.5 2' fill='none' stroke='%23161b26' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M23.1 18.4l-.1 9.2m-4.5-4.6h9.1m-7.6-2.1l-1.5 2.1 1.6 1.9m6-4l1.5 2.1-1.5 2' fill='none' stroke='%23182039' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
       3 2,
     grabbing;
   --cursor-write:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Cpath d='M19.5 26.5l1-3.5 5.5-5.5 2.5 2.5-5.5 5.5zm1-3.5l2.5 2.5' fill='none' stroke='%23161b26' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E")
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M19.3 26.8l1.1-3.6 5.6-5.4 2.4 2.6-5.6 5.4zm1.1-3.6l2.4 2.6' fill='none' stroke='%23182039' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E")
       3 2,
     text;
   --cursor-pin:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Cpath d='M20 18.5h6m-4.8 0v3.5l-1.7 1.5h7l-1.7-1.5v-3.5m-1.3 5v4' fill='none' stroke='%23161b26' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M23 17.6c1.5 0 2.7 1.2 2.7 2.7s-1.2 2.6-2.7 2.6-2.7-1.2-2.7-2.7 1.2-2.6 2.7-2.6z' fill='%23e5482d' stroke='%23182039' stroke-width='1.3'/%3E%3Cpath d='M23 22.9l-.1 5' stroke='%23182039' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
       3 2,
     copy;
   --cursor-use:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Cpath d='M19 23h8m-3-3l3 3-3 3' fill='none' stroke='%23161b26' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M18.8 23.1l8.2-.2m-3.1-3l3.1 3-3 3.1' fill='none' stroke='%23182039' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
       3 2,
     alias;
 }
@@ -296,7 +436,8 @@
   --accent: var(--paper-accent);
   --accent-strong: var(--paper-accent-strong);
   --accent-contrast: var(--paper-new);
-  --accent-tint: oklch(0.48 0.1 66 / 0.12);
+  --accent-edge: var(--raw-brass-700);
+  --accent-tint: oklch(0.485 0.112 62 / 0.12);
   --focus: var(--paper-accent);
   --focus-halo: var(--paper-new);
   --danger: var(--raw-red-700);
@@ -306,17 +447,62 @@
   --established: var(--raw-stamp-700);
   --established-contrast: var(--paper-new);
   --keyword: var(--paper-accent);
+  --brand: var(--raw-vermilion-600);
+  --brand-strong: var(--raw-vermilion-700);
+  --fern: var(--raw-celadon-700);
   --selection: oklch(0.86 0.09 85 / 0.6);
   --edge-light: oklch(1 0 0 / 0.5);
-  --shadow-1: 0 1px 2px oklch(0.3 0.04 70 / 0.18);
-  --shadow-2: 0 4px 12px -4px oklch(0.3 0.04 70 / 0.25);
-  --shadow-3: 0 18px 40px -12px oklch(0.3 0.04 70 / 0.35);
-  --shadow-inset: inset 0 1px 2px oklch(0.3 0.04 70 / 0.14);
+  --stitch: oklch(0.58 0.04 258 / 0.45);
+  --shadow-1: 0 1px 2px oklch(0.3 0.04 70 / 0.2);
+  --shadow-2: 0 4px 12px -4px oklch(0.3 0.04 70 / 0.28);
+  --shadow-3: 0 18px 40px -12px oklch(0.3 0.04 70 / 0.38);
+  --shadow-inset: inset 0 1px 2px oklch(0.3 0.04 70 / 0.16);
+}
+
+/* ── 3a bis. Contexte « kraft » : chemises cartonnées (Folder) ─────────
+ * Le texte reste à l'encre ; l'accent devient le laiton bruni du papier. Les contrôles posés
+ * sur le kraft prennent le papier neuf comme surface (étiquettes collées). */
+[data-surface='kraft'] {
+  color-scheme: light;
+  --canvas: var(--kraft);
+  --surface-1: var(--manila);
+  --surface-2: var(--paper-aged);
+  --surface-3: var(--paper-stain);
+  --line: var(--kraft-shade);
+  --line-strong: var(--kraft-edge);
+  --text: var(--kraft-ink);
+  --text-muted: oklch(0.36 0.06 255);
+  --text-faint: oklch(0.42 0.05 255);
+  --accent: var(--paper-accent-strong);
+  --accent-strong: oklch(0.38 0.09 56);
+  --accent-contrast: var(--paper-new);
+  --accent-edge: oklch(0.3 0.07 55);
+  --accent-tint: oklch(0.44 0.105 58 / 0.14);
+  --focus: var(--kraft-ink);
+  --focus-halo: var(--manila);
+  --danger: var(--raw-red-700);
+  --success: var(--raw-green-700);
+  --warning: var(--raw-orange-700);
+  --info: var(--raw-blue-700);
+  --established: var(--raw-stamp-700);
+  --established-contrast: var(--paper-new);
+  --keyword: var(--paper-accent-strong);
+  --brand: var(--raw-vermilion-700);
+  --brand-strong: var(--raw-vermilion-700);
+  --fern: var(--raw-celadon-700);
+  --selection: oklch(0.9 0.09 88 / 0.7);
+  --edge-light: oklch(1 0 0 / 0.35);
+  --stitch: oklch(0.47 0.075 58 / 0.5);
+  --shadow-1: 0 1px 2px oklch(0.3 0.05 60 / 0.25);
+  --shadow-2: 0 4px 12px -4px oklch(0.3 0.05 60 / 0.3);
+  --shadow-3: 0 18px 40px -12px oklch(0.3 0.05 60 / 0.4);
+  --shadow-inset: inset 0 1px 2px oklch(0.3 0.05 60 / 0.2);
 }
 
 /* ── 3b. Contraste élevé (option Accessibilité, AAA pour le texte) ─── */
 :root[data-contrast='high'] {
   --canvas: oklch(0.1 0 0);
+  --desk: oklch(0.1 0 0);
   --surface-1: oklch(0.13 0 0);
   --surface-2: oklch(0.17 0 0);
   --surface-3: oklch(0.21 0 0);
@@ -328,6 +514,7 @@
   --accent: oklch(0.9 0.125 90);
   --accent-strong: oklch(0.96 0.06 95);
   --accent-contrast: oklch(0.1 0 0);
+  --accent-edge: oklch(1 0 0);
   --accent-tint: oklch(0.9 0.125 90 / 0.16);
   --focus: oklch(0.9 0.125 90);
   --focus-halo: oklch(0 0 0);
@@ -340,7 +527,35 @@
   --keyword: oklch(0.9 0.125 90);
   --selection: oklch(0.42 0.12 260 / 0.9);
   --lamp-glow: transparent;
+  --lamp-pool: transparent;
+  --scrim: oklch(0 0 0 / 0.88);
+  --scrim-art: oklch(0 0 0 / 0.94);
+  --lamp-dust: transparent;
+  --vignette: transparent;
   --edge-light: transparent;
+  --stitch: oklch(0.7 0 0);
+  --brand: oklch(0.86 0.075 40);
+  --brand-strong: oklch(0.9 0.07 45);
+  --brand-fill: oklch(0.36 0.14 30);
+  --brand-contrast: oklch(1 0 0);
+  --fern: oklch(0.9 0.08 172);
+
+  --kraft: oklch(0.97 0 0);
+  --kraft-shade: oklch(0.9 0 0);
+  --kraft-edge: oklch(0.13 0.02 264);
+  --manila: oklch(1 0 0);
+  --kraft-ink: oklch(0.13 0.02 264);
+  --card: oklch(1 0 0);
+  --card-rule: oklch(0.55 0 0);
+  --card-margin: oklch(0.45 0.16 29);
+  --tape: oklch(0.9 0 0 / 0.9);
+  --tape-edge: oklch(0.13 0 0);
+  --label-tape: oklch(0.1 0 0);
+  --label-tape-red: oklch(0.1 0 0);
+  --label-tape-text: oklch(1 0 0);
+  --label-sheen: transparent;
+  --label-emboss: transparent;
+  --desk-grain-image: none;
 
   --paper-new: oklch(1 0 0);
   --paper: oklch(1 0 0);
@@ -364,15 +579,42 @@
 }
 :root[data-contrast='high'] [data-surface='paper'] {
   --accent-tint: oklch(0.38 0.085 62 / 0.1);
+  --accent-edge: oklch(0.13 0.02 264);
   --danger: oklch(0.4 0.15 25);
   --success: oklch(0.38 0.09 155);
   --warning: oklch(0.42 0.11 50);
   --info: oklch(0.38 0.085 240);
   --established: oklch(0.38 0.15 300);
+  --brand: oklch(0.42 0.16 29);
+  --brand-strong: oklch(0.36 0.14 29);
+  --fern: oklch(0.36 0.07 178);
   --selection: oklch(0.88 0.1 90 / 0.8);
+  --stitch: oklch(0.25 0.02 264);
   --shadow-1: none;
   --shadow-2: 0 0 0 2px var(--ink);
   --shadow-3: 0 0 0 2px var(--ink);
+}
+:root[data-contrast='high'] [data-surface='kraft'] {
+  --text-muted: oklch(0.28 0.03 264);
+  --text-faint: oklch(0.42 0.03 264);
+  --accent: oklch(0.38 0.085 62);
+  --accent-strong: oklch(0.3 0.07 60);
+  --accent-edge: oklch(0.13 0.02 264);
+  --accent-tint: oklch(0.38 0.085 62 / 0.1);
+  --danger: oklch(0.4 0.15 25);
+  --success: oklch(0.38 0.09 155);
+  --warning: oklch(0.42 0.11 50);
+  --info: oklch(0.38 0.085 240);
+  --established: oklch(0.38 0.15 300);
+  --keyword: oklch(0.38 0.085 62);
+  --brand: oklch(0.42 0.16 29);
+  --brand-strong: oklch(0.36 0.14 29);
+  --fern: oklch(0.36 0.07 178);
+  --selection: oklch(0.88 0.1 90 / 0.8);
+  --stitch: oklch(0.13 0.02 264);
+  --shadow-1: none;
+  --shadow-2: 0 0 0 2px var(--kraft-ink);
+  --shadow-3: 0 0 0 2px var(--kraft-ink);
 }
 
 /* ── 3c. Vision des couleurs (option Accessibilité, data-color-vision) ──
@@ -385,7 +627,7 @@
  * cyan : danger rouge, succès vert d'eau clair, info bleu moyen, établi violet sombre. */
 :root[data-color-vision='protanopia'],
 :root[data-color-vision='deuteranopia'] {
-  --danger: oklch(0.75 0.15 45);
+  --danger: oklch(0.765 0.135 45);
   --warning: oklch(0.89 0.14 95);
   --success: oklch(0.82 0.09 245);
   --info: oklch(0.91 0.04 200);
@@ -574,21 +816,24 @@
 :root[data-text-scale='2'] {
   --text-scale: 2;
 }
-/* Police de lisibilité : remplace la serif de lecture ET la sans d'interface */
+/* Police de lisibilité : remplace la serif de lecture, la sans d'interface ET les étiquettes
+   condensées (Oswald). Le titrage (Fraunces) reste : grands corps, peu de texte. */
 :root[data-reading-font='hyperlegible'] {
   --font-read: var(--font-legible);
   --font-ui: var(--font-legible);
-  --font-display: 'Literata', 'Literata fallback', Georgia, serif;
+  --font-label: var(--font-legible);
   --leading-read: 1.8;
   --tracking-read: calc(0.05em + var(--tracking-extra));
+  --tracking-stamp: calc(0.04em + var(--tracking-extra));
 }
 /* Police pour lecteurs dyslexiques (repli documenté sur --font-dyslexic) */
 :root[data-reading-font='dyslexic'] {
   --font-read: var(--font-dyslexic);
   --font-ui: var(--font-dyslexic);
-  --font-display: 'Literata', 'Literata fallback', Georgia, serif;
+  --font-label: var(--font-dyslexic);
   --leading-read: 1.8;
   --tracking-read: calc(0.05em + var(--tracking-extra));
+  --tracking-stamp: calc(0.04em + var(--tracking-extra));
   --word-spacing: 0.12em;
   --paragraph-gap: 1.2em;
 }
@@ -599,6 +844,7 @@
   --leading-snug: 1.45;
   --leading-ui: 1.6;
   --leading-read: 1.95;
+  --leading-display: 1.1;
   --paragraph-gap: 1.4em;
 }
 :root[data-line-spacing='wider'] {
@@ -606,6 +852,7 @@
   --leading-snug: 1.6;
   --leading-ui: 1.8;
   --leading-read: 2.2;
+  --leading-display: 1.3;
   --paragraph-gap: 2em;
 }
 /* Espacement des lettres et des mots : valeurs WCAG 1.4.12 (0,12 em / 0,16 em) */
@@ -620,10 +867,13 @@
 }
 :root[data-texture='off'] {
   --paper-grain: 0;
+  --desk-grain-image: none;
+  --kraft-fiber-image: none;
   --stamp-texture: none; /* tampons à encrage plein, sans usure */
 }
 
-/* Mouvement réduit : système (sauf si le joueur force « complet ») ou réglage en jeu */
+/* Mouvement réduit : système (sauf si le joueur force « complet ») ou réglage en jeu.
+   Les gestes deviennent des fondus courts ; les boucles d'ambiance s'arrêtent (--idle-state). */
 @media (prefers-reduced-motion: reduce) {
   :root:not([data-motion='full']) {
     --dur-instant: 0.01ms;
@@ -633,13 +883,27 @@
     --dur-slow: 0.01ms;
     --dur-stamp: 0.01ms;
     --dur-camera: 0.01ms;
+    --dur-deal: 0.01ms;
+    --dur-flip: 0.01ms;
+    --dur-sheet: 0.01ms;
+    --dur-screen: 150ms;
+    --dur-draw: 150ms;
+    --dur-spread: 0.01ms;
+    --dur-celebrate: 0.01ms;
+    --dur-rustle: 0.01ms;
     --stagger: 0ms;
+    --stagger-deal: 0ms;
     --dur-fade-fast: 100ms;
     --dur-fade: 150ms;
     --rise: 0px;
     --lift: 0px;
+    --press-depth: 0px;
+    --deal-distance: 0px;
+    --deal-rotate: 0deg;
+    --sway-angle: 0deg;
     --blur-ink: 0px;
     --stamp-from: 1;
+    --idle-state: paused;
   }
 }
 :root[data-motion='reduced'] {
@@ -650,11 +914,25 @@
   --dur-slow: 0.01ms;
   --dur-stamp: 0.01ms;
   --dur-camera: 0.01ms;
+  --dur-deal: 0.01ms;
+  --dur-flip: 0.01ms;
+  --dur-sheet: 0.01ms;
+  --dur-screen: 150ms;
+  --dur-draw: 150ms;
+  --dur-spread: 0.01ms;
+  --dur-celebrate: 0.01ms;
+  --dur-rustle: 0.01ms;
   --stagger: 0ms;
+  --stagger-deal: 0ms;
   --dur-fade-fast: 100ms;
   --dur-fade: 150ms;
   --rise: 0px;
   --lift: 0px;
+  --press-depth: 0px;
+  --deal-distance: 0px;
+  --deal-rotate: 0deg;
+  --sway-angle: 0deg;
   --blur-ink: 0px;
   --stamp-from: 1;
+  --idle-state: paused;
 }

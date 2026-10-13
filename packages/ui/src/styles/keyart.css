@@ -1,0 +1,188 @@
+/*
+ * L'art clé vivant (DESIGN.md §8.5) : animations des groupes de art/keyart/keyart-desk*.svg.
+ * Actives seulement sous un ancêtre `.keyart-live` (posé par <KeyArt animate />).
+ * Origines en unités de viewBox (transform-box: view-box), relevées dans art/keyart/README.md.
+ * Uniquement transform et opacity. Mouvement réduit : tout est figé, l'image est complète
+ * à l'arrêt (aucun groupe ne dépend d'une animation pour être visible).
+ */
+
+.keyart-live [id$='-lamp-light'],
+.keyart-live [id$='-dust-far'],
+.keyart-live [id$='-dust-near'],
+.keyart-live [id$='-steam'],
+.keyart-live [id$='-curtain'],
+.keyart-live [id$='-pages'],
+.keyart-live [id$='-pages-shadow'] {
+  transform-box: view-box;
+  animation-play-state: var(--idle-state);
+  will-change: transform, opacity;
+}
+
+/* Origines : 16:9 (keyart-desk) puis 4:5 (keyart-desk-tall) */
+.keyart-live #keyart-desk-lamp-light {
+  transform-origin: 748px 278px;
+}
+.keyart-live #keyart-desk-tall-lamp-light {
+  transform-origin: 285px 304px;
+}
+.keyart-live #keyart-desk-dust-far,
+.keyart-live #keyart-desk-dust-near {
+  transform-origin: 789px 423px;
+}
+.keyart-live #keyart-desk-tall-dust-far,
+.keyart-live #keyart-desk-tall-dust-near {
+  transform-origin: 319px 460px;
+}
+.keyart-live #keyart-desk-steam {
+  transform-origin: 1270px 467px;
+}
+.keyart-live #keyart-desk-tall-steam {
+  transform-origin: 170px 357px;
+}
+.keyart-live #keyart-desk-curtain {
+  transform-origin: 512px 2px;
+}
+.keyart-live #keyart-desk-tall-curtain {
+  transform-origin: 422px 4px;
+}
+.keyart-live #keyart-desk-pages,
+.keyart-live #keyart-desk-pages-shadow {
+  transform-origin: 141px 644px;
+}
+.keyart-live #keyart-desk-tall-pages,
+.keyart-live #keyart-desk-tall-pages-shadow {
+  transform-origin: 13px 844px;
+}
+
+/* Lampe : vacillement irrégulier, deux boucles de périodes premières entre elles */
+.keyart-live [id$='-lamp-light'] {
+  animation:
+    k-lamp var(--dur-flicker) steps(1, end) infinite,
+    k-lamp-soft calc(var(--dur-flicker) * 0.71) var(--ease-sway) infinite alternate;
+}
+@keyframes k-lamp {
+  0%,
+  41%,
+  47%,
+  100% {
+    opacity: 1;
+  }
+  42% {
+    opacity: 0.86;
+  }
+  44% {
+    opacity: 0.94;
+  }
+  45% {
+    opacity: 0.82;
+  }
+  78% {
+    opacity: 0.9;
+  }
+  79% {
+    opacity: 1;
+  }
+}
+@keyframes k-lamp-soft {
+  to {
+    transform: scale(1.012);
+  }
+}
+
+/* Poussières : deux plans, aller-retour (parallaxe de profondeur) */
+.keyart-live [id$='-dust-far'] {
+  animation: k-dust-far calc(var(--dur-dust) * 0.875) var(--ease-sway) infinite alternate;
+}
+.keyart-live [id$='-dust-near'] {
+  animation: k-dust-near calc(var(--dur-dust) * 0.5625) var(--ease-sway) infinite alternate;
+}
+@keyframes k-dust-far {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    transform: translate(6px, -18px);
+    opacity: 1;
+  }
+}
+@keyframes k-dust-near {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    transform: translate(-10px, -26px);
+    opacity: 1;
+  }
+}
+
+/* Vapeur du thé : monte, s'élargit, s'évanouit */
+.keyart-live [id$='-steam'] {
+  animation: k-steam calc(var(--dur-breathe) * 0.96) var(--ease-sway) infinite;
+}
+@keyframes k-steam {
+  0% {
+    opacity: 0;
+    transform: none;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px) scaleX(1.15);
+  }
+}
+
+/* Rideau : un souffle d'air de la fenêtre entrouverte */
+.keyart-live [id$='-curtain'] {
+  animation: k-curtain var(--dur-sway) var(--ease-sway) infinite alternate;
+}
+@keyframes k-curtain {
+  from {
+    transform: rotate(-0.8deg) skewX(-1.2deg);
+  }
+  to {
+    transform: rotate(0.8deg) skewX(1.2deg);
+  }
+}
+
+/* Feuille volante : se soulève une fois toutes les ~10 s, l'ombre pâlit */
+.keyart-live [id$='-pages'] {
+  animation: k-pages calc(var(--dur-sway) * 1.45) var(--ease-paper) infinite;
+}
+.keyart-live [id$='-pages-shadow'] {
+  animation: k-pages-shadow calc(var(--dur-sway) * 1.45) var(--ease-paper) infinite;
+}
+@keyframes k-pages {
+  0%,
+  78%,
+  100% {
+    transform: none;
+  }
+  86% {
+    transform: rotate(-4deg) skewY(-2deg);
+  }
+  92% {
+    transform: rotate(-1.2deg) skewY(-0.5deg);
+  }
+}
+@keyframes k-pages-shadow {
+  0%,
+  78%,
+  100% {
+    opacity: 1;
+  }
+  86% {
+    opacity: 0.5;
+  }
+}
+
+/* ── Mouvement réduit : l'image est figée, complète ─────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) .keyart-live [id] {
+    animation: none;
+  }
+}
+:root[data-motion='reduced'] .keyart-live [id] {
+  animation: none;
+}

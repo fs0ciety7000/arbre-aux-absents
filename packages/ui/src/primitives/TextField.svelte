@@ -120,6 +120,23 @@
     outline: 3px solid var(--focus);
     outline-offset: 2px;
   }
+  /* v2 : au focus, un trait d'encre se tire sous le champ (de gauche à droite) */
+  .control::after {
+    content: '';
+    position: absolute;
+    inset-inline: var(--space-2);
+    inset-block-end: 3px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-slow) var(--ease-ink);
+    pointer-events: none;
+  }
+  .control:focus-within::after {
+    transform: scaleX(1);
+  }
   .multiline {
     align-items: stretch;
   }

@@ -10,11 +10,13 @@
     "./styles/*": "./src/styles/*",
     "./art-classes": "./src/art-classes.ts",
     "./primitives": "./src/primitives/index.ts",
-    "./fonts/*": "./src/fonts/*"
+    "./fonts/*": "./src/fonts/*",
+    "./motion": "./src/motion.ts"
   },
   "scripts": {
     "typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
-    "contrast:check": "node scripts/contrast.mjs --strict"
+    "contrast:check": "node scripts/contrast.mjs --strict",
+    "icons:ink": "node scripts/ink-icons.mjs && prettier --write src/primitives/icons.ts src/primitives/ornaments.ts"
   },
   "svelte": "./src/index.ts",
   "peerDependencies": {

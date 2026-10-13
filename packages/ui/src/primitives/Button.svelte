@@ -98,7 +98,10 @@
 {/if}
 
 <style>
+  /* v2 : étiquette en relief. Le primaire a une tranche (--shadow-press) qui s'écrase à
+     l'appui ; tous les boutons se soulèvent d'1 px au survol et s'enfoncent à l'appui. */
   .btn {
+    --edge: 0 0 0 transparent;
     position: relative;
     isolation: isolate;
     display: inline-flex;
@@ -110,16 +113,18 @@
     padding: 0 var(--space-4);
     border: var(--border) solid transparent;
     border-radius: var(--radius-s);
-    font-family: var(--font-ui);
+    font-family: var(--font-label);
     font-size: var(--step-0);
-    font-weight: var(--weight-semibold);
+    font-weight: var(--weight-medium);
     line-height: 1.1;
-    letter-spacing: var(--tracking-label);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
     user-select: none;
-    transition: transform var(--dur-instant) var(--ease-out);
+    box-shadow: var(--edge), var(--shadow-1);
+    transition: transform var(--dur-fast) var(--ease-snap);
   }
   .btn::before {
     /* couche de survol : seule son opacité est animée */
@@ -131,15 +136,28 @@
     opacity: 0;
     transition: opacity var(--dur-fade-fast) var(--ease-out);
   }
+  .btn :global(.icon) {
+    transition: transform var(--dur-base) var(--ease-snap);
+  }
+  @media (hover: hover) {
+    .btn:hover:not(:disabled, [aria-disabled='true']) {
+      transform: translateY(-1px);
+    }
+    .btn:hover:not(:disabled, [aria-disabled='true']) :global(.icon) {
+      transform: rotate(-8deg) scale(1.08);
+    }
+  }
   .btn:hover::before {
     opacity: 1;
   }
   .btn:active:not(:disabled, [aria-disabled='true']) {
-    transform: translateY(1px);
+    transform: translateY(var(--press-depth));
+    box-shadow: var(--shadow-1);
+    transition-duration: var(--dur-instant);
   }
   .l {
     min-height: var(--hit-l);
-    padding: 0 var(--space-5);
+    padding: 0 var(--space-6);
     font-size: var(--step-1);
   }
   .block {
@@ -152,18 +170,19 @@
   }
 
   .primary {
+    --edge: var(--shadow-press);
     background: var(--accent);
     color: var(--accent-contrast);
-    box-shadow: var(--shadow-1);
+    font-weight: var(--weight-semibold);
   }
   .primary::before {
     background: var(--accent-strong);
   }
   .secondary {
+    --edge: 0 2px 0 var(--line);
     background: var(--surface-2);
     color: var(--text);
     border-color: var(--line-strong);
-    box-shadow: var(--shadow-1);
   }
   .secondary::before {
     background: var(--surface-3);
@@ -171,6 +190,7 @@
   .ghost {
     background: transparent;
     color: var(--text);
+    box-shadow: none;
   }
   .ghost::before {
     background: var(--accent-tint);
@@ -179,6 +199,7 @@
     background: transparent;
     color: var(--danger);
     border-color: currentColor;
+    box-shadow: none;
   }
   .danger::before {
     background: var(--surface-2);
@@ -186,7 +207,7 @@
 
   .btn:focus-visible {
     outline: 3px solid var(--focus);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
   .btn:disabled {
     cursor: not-allowed;

@@ -134,8 +134,17 @@
     background: var(--text);
     border: 3px solid var(--accent);
     box-shadow: var(--shadow-1);
+    transition: transform var(--dur-base) var(--ease-snap);
+  }
+  /* v2 : le curseur grossit quand on le saisit */
+  input:active::-webkit-slider-thumb {
+    transform: scale(1.18);
+  }
+  input:active::-moz-range-thumb {
+    transform: scale(1.18);
   }
   input::-moz-range-thumb {
+    transition: transform var(--dur-base) var(--ease-snap);
     width: 1.5rem;
     height: 1.5rem;
     border-radius: var(--radius-pill);

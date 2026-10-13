@@ -74,7 +74,7 @@
     color: var(--text-muted);
     background: transparent;
     cursor: pointer;
-    transition: transform var(--dur-instant) var(--ease-out);
+    transition: transform var(--dur-fast) var(--ease-snap);
   }
   .l {
     width: var(--hit-l);
@@ -97,7 +97,16 @@
     opacity: 1;
   }
   .ibtn:active:not(:disabled) {
-    transform: scale(0.94);
+    transform: scale(0.92);
+  }
+  /* v2 : l'icône pivote d'un rien au survol (outil qu'on prend en main) */
+  .ibtn :global(.icon) {
+    transition: transform var(--dur-base) var(--ease-snap);
+  }
+  @media (hover: hover) {
+    .ibtn:hover:not(:disabled) :global(.icon) {
+      transform: rotate(-10deg) scale(1.08);
+    }
   }
   .secondary {
     background: var(--surface-2);
@@ -143,22 +152,33 @@
     font-weight: var(--weight-bold);
     line-height: 1;
     box-shadow: 0 0 0 2px var(--canvas);
+    animation: m-pop var(--dur-base) var(--ease-snap);
   }
 
+  /* Info-bulle v2 : bande d'étiqueteuse (lettres en relief), qui se colle d'un coup sec */
   .tip {
     position: absolute;
     z-index: var(--z-tooltip);
     padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-xs);
-    background: var(--text);
-    color: var(--canvas);
+    border-radius: 2px;
+    background: var(--label-tape);
+    color: var(--label-tape-text);
+    font-family: var(--font-label);
     font-size: var(--step--1);
     font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
     white-space: nowrap;
     pointer-events: none;
+    box-shadow:
+      inset 0 1px 0 var(--label-sheen),
+      0 0 0 1px var(--focus-halo),
+      var(--shadow-2);
     opacity: 0;
-    transform: translate(var(--tx, -50%), var(--ty, 0));
-    transition: opacity var(--dur-fade-fast) var(--ease-out);
+    transform: translate(var(--tx, -50%), var(--ty, 0)) scale(0.9);
+    transition:
+      opacity var(--dur-fade-fast) var(--ease-out),
+      transform var(--dur-base) var(--ease-snap);
   }
   .tip.bottom {
     inset-block-start: calc(100% + var(--space-2));
@@ -183,6 +203,7 @@
   .ibtn:hover .tip,
   .ibtn:focus-visible .tip {
     opacity: 1;
+    transform: translate(var(--tx, -50%), var(--ty, 0));
     transition-delay: var(--tooltip-delay);
   }
   .ibtn:focus-visible .tip {

@@ -37,20 +37,30 @@
 </script>
 
 <span
-  class="stamp {tone} {size} {className}"
+  class="stamp-wrap {size} {className}"
   class:animate
   style:--stamp-rot="{rotate}deg"
-  style:--stamp-delay="calc(var(--stagger) * {delay})"
+  style:--i={delay}
   role="img"
   aria-label={label ?? text}
 >
-  <span class="inner" aria-hidden="true">
-    {#if icon}{@render icon()}{/if}
-    {text}
+  {#if animate}<span class="spread {tone}" aria-hidden="true"></span>{/if}
+  <span class="stamp {tone}" aria-hidden="true">
+    <span class="inner">
+      {#if icon}{@render icon()}{/if}
+      {text}
+    </span>
   </span>
 </span>
 
 <style>
+  /* v2 : le tampon frappe (chute, écrasement, rebond court), l'encre s'étale en halo flou
+     derrière lui ; en mouvement réduit, fondu de 100 ms (durées et échelle à ~0). */
+  .stamp-wrap {
+    position: relative;
+    display: inline-flex;
+    transform: rotate(var(--stamp-rot));
+  }
   .stamp {
     --tone: var(--established);
     display: inline-flex;
@@ -58,7 +68,6 @@
     border: var(--border-strong) solid var(--tone);
     border-radius: var(--radius-xs);
     color: var(--tone);
-    transform: rotate(var(--stamp-rot));
     -webkit-mask-image: var(--stamp-texture);
     mask-image: var(--stamp-texture);
     -webkit-mask-size: 120px 120px;
@@ -78,10 +87,10 @@
     padding: var(--space-0-5) var(--space-2);
     border: var(--border) solid var(--tone);
     border-radius: 2px;
-    font-family: var(--font-type);
+    font-family: var(--font-label);
     font-weight: var(--weight-bold);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: calc(0.12em + var(--tracking-extra));
     line-height: 1.1;
     white-space: nowrap;
   }
@@ -95,25 +104,36 @@
     font-size: var(--step-2);
     padding: var(--space-1) var(--space-3);
   }
-  .animate {
+  /* Halo d'encre : même couleur, flou, s'élargit puis disparaît */
+  .spread {
+    --tone: var(--established);
+    position: absolute;
+    inset: -6px -10px;
+    border-radius: 40%;
+    background: radial-gradient(closest-side, var(--tone), transparent);
+    opacity: 0;
+    pointer-events: none;
+    animation: m-spread var(--dur-spread) var(--ease-out) both;
+    animation-delay: calc(var(--i, 0) * var(--stagger) + var(--dur-stamp) * 0.5);
+  }
+  .animate .stamp {
     animation:
-      stamp-fade var(--dur-fade-fast) linear var(--stamp-delay) both,
-      stamp-press var(--dur-stamp) var(--ease-stamp) var(--stamp-delay) both;
+      m-fade-in var(--dur-fade-fast) linear backwards,
+      m-stamp-local var(--dur-stamp) var(--ease-stamp) backwards;
+    animation-delay: calc(var(--i, 0) * var(--stagger));
   }
-  @keyframes stamp-fade {
-    from {
-      opacity: 0;
+  @keyframes m-stamp-local {
+    0% {
+      transform: rotate(-8deg) scale(var(--stamp-from));
     }
-    to {
-      opacity: 1;
+    55% {
+      transform: scale(0.94);
     }
-  }
-  @keyframes stamp-press {
-    from {
-      transform: rotate(var(--stamp-rot)) scale(var(--stamp-from));
+    78% {
+      transform: scale(1.03);
     }
-    to {
-      transform: rotate(var(--stamp-rot)) scale(1);
+    100% {
+      transform: none;
     }
   }
   :global(:root[data-contrast='high']) .stamp {
@@ -125,6 +145,9 @@
       -webkit-mask-image: none;
       mask-image: none;
       border-color: CanvasText;
+    }
+    .spread {
+      display: none;
     }
   }
 </style>

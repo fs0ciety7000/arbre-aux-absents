@@ -73,17 +73,23 @@
     max-width: min(18rem, 80vw);
     width: max-content;
     padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-xs);
-    background: var(--text);
-    color: var(--canvas);
+    /* v2 : bande d'étiqueteuse, qui se colle d'un coup sec */
+    border-radius: 2px;
+    background: var(--label-tape);
+    color: var(--label-tape-text);
     font-size: var(--step--1);
+    font-weight: var(--weight-medium);
     line-height: var(--leading-snug);
+    box-shadow:
+      inset 0 1px 0 var(--label-sheen),
+      0 0 0 1px var(--focus-halo),
+      var(--shadow-2);
     pointer-events: none;
     opacity: 0;
-    transform: translate(-50%, var(--ty));
+    transform: translate(-50%, var(--ty)) scale(0.92);
     transition:
       opacity var(--dur-fade-fast) var(--ease-out),
-      transform var(--dur-fast) var(--ease-out);
+      transform var(--dur-base) var(--ease-snap);
   }
   .top {
     inset-block-end: calc(100% + var(--space-2));
@@ -96,6 +102,7 @@
   .visible {
     opacity: 1;
     --ty: 0px;
+    transform: translate(-50%, 0);
   }
   @media (forced-colors: active) {
     .tip {

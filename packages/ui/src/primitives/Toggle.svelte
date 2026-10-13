@@ -136,7 +136,15 @@
     border-radius: var(--radius-pill);
     background: var(--text-muted);
     color: var(--surface-1);
-    transition: transform var(--dur-base) var(--ease-out);
+    box-shadow: var(--shadow-1);
+    /* v2 : le curseur bascule d'un coup sec (léger dépassement) */
+    transition: transform var(--dur-slow) var(--ease-snap);
+  }
+  .switch:active:not(:disabled) .track {
+    transform: scale(0.96);
+  }
+  .track {
+    transition: transform var(--dur-instant) var(--ease-out);
   }
   [aria-checked='true'] .track {
     background: var(--accent);

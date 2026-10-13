@@ -34,6 +34,8 @@ const ROOT = ':root';
 const PAPER = "[data-surface='paper']";
 const HC = ":root[data-contrast='high']";
 const HC_PAPER = ":root[data-contrast='high'] [data-surface='paper']";
+const KRAFT = "[data-surface='kraft']";
+const HC_KRAFT = ":root[data-contrast='high'] [data-surface='kraft']";
 const NIGHT = '.art.on-night';
 const HC_NIGHT = ":root[data-contrast='high'] .art.on-night";
 const VISIONS = { protanopia: 'protan', deuteranopia: 'deutan', tritanopia: 'tritan' };
@@ -51,6 +53,10 @@ const contexts = {
   'carte HC': [ROOT, HC],
   'carte nuit': [ROOT, NIGHT],
   'carte nuit HC': [ROOT, HC, NIGHT, HC_NIGHT],
+  matières: [ROOT],
+  'matières HC': [ROOT, HC],
+  kraft: [ROOT, KRAFT],
+  'kraft HC': [ROOT, HC, KRAFT, HC_KRAFT],
 };
 /** Contexte de base (palette par défaut) de chaque contexte « vision des couleurs ». */
 const visionBase = {};
@@ -110,6 +116,7 @@ function oklchToSrgb(L, C, h) {
 }
 
 function parseColor(str) {
+  if (str === 'transparent') return { rgb: [0, 0, 0], alpha: 0, outOfGamut: false };
   const m = str.match(
     /^oklch\(\s*([\d.]+)(%?)\s+([\d.]+)\s+([\d.]+)\s*(?:\/\s*([\d.]+)(%?))?\s*\)$/,
   );
@@ -219,6 +226,53 @@ const night = (min) => [
   ['--art-ink-soft', ['--canvas'], min, 'légende sur le bureau'],
   ['--art-ink-faint', ['--canvas'], NT, 'trait fin sur le bureau (non-texte)'],
 ];
+// v2 : matières du bureau (chemises, fiches, ruban, étiqueteuse, vermillon de marque)
+const materials = (min) => [
+  ['--kraft-ink', ['--kraft'], min, 'texte sur kraft (chemise)'],
+  ['--kraft-ink', ['--kraft-shade'], min, 'texte sur kraft ombré (dos de chemise)'],
+  ['--kraft-ink', ['--manila'], min, 'texte sur manille (étiquette, onglet clair)'],
+  ['--kraft-edge', ['--kraft'], NT, 'tranche du carton (contour, non-texte)'],
+  ['--ink', ['--card'], min, 'texte sur fiche bristol'],
+  ['--card-margin', ['--card'], NT, 'ligne de tête rouge (non-texte)'],
+  ['--ink', ['--tape', '--paper'], min, 'texte sous ruban adhésif'],
+  ['--label-tape-text', ['--label-tape'], min, 'étiqueteuse : lettres en relief (bleu)'],
+  ['--label-tape-text', ['--label-tape-red'], min, 'étiqueteuse : lettres en relief (rouge)'],
+  ['--brand-contrast', ['--brand-fill'], min, 'texte sur aplat vermillon'],
+  ['--brand', ['--canvas'], NT, 'vermillon : grand titre, filet (≥ 3)'],
+  ['--brand', ['--surface-1'], NT, 'vermillon : ornement sur panneau (≥ 3)'],
+  ['--fern', ['--canvas'], NT, 'fougère : ornement (≥ 3)'],
+  ['--accent-contrast', ['--accent-edge'], NT, 'tranche du bouton principal (non-texte)'],
+  ['--text', ['--lamp-pool', '--canvas'], min, 'texte dans le cône de la lampe'],
+  // Art clé : voile de zone calme posé sur la feuille la plus claire de l'image (pire cas)
+  ['--text-muted', ['--scrim-art', '--paper-new'], min, 'texte sur l’art clé (voile, pire cas)'],
+  ['--brand', ['--scrim-art', '--paper-new'], min, '« aux » du titre sur l’art clé (pire cas)'],
+];
+// Chemise kraft (contexte [data-surface='kraft']) : les états ne vont que sur une étiquette
+// (--surface-1 = manille), jamais à même le carton.
+const kraftPairs = (min) => [
+  ['--text', ['--canvas'], min, 'texte'],
+  ['--text', ['--surface-1'], min, 'texte'],
+  ['--text', ['--surface-2'], min, 'texte'],
+  ['--text-muted', ['--canvas'], min, 'texte secondaire'],
+  ['--text-muted', ['--surface-1'], min, 'texte secondaire'],
+  ['--text-faint', ['--surface-1'], NT, 'grand texte, désactivé'],
+  ['--line-strong', ['--canvas'], NT, 'bordure de contrôle'],
+  ['--line-strong', ['--surface-1'], NT, 'bordure de contrôle'],
+  ['--accent', ['--surface-1'], T, 'lien, texte d’action'],
+  ['--accent', ['--canvas'], NT, 'accent (grand texte, icône)'],
+  ['--accent-contrast', ['--accent'], T, 'texte du bouton principal'],
+  ['--focus', ['--canvas'], NT, 'anneau de focus'],
+  ['--focus', ['--surface-1'], NT, 'anneau de focus'],
+  ['--keyword', ['--surface-1'], T, 'mot-clé souligné'],
+  ['--danger', ['--surface-1'], T, 'erreur (étiquette)'],
+  ['--success', ['--surface-1'], T, 'succès (étiquette)'],
+  ['--warning', ['--surface-1'], T, 'avertissement (étiquette)'],
+  ['--info', ['--surface-1'], T, 'information (étiquette)'],
+  ['--established', ['--surface-1'], T, 'tampon « Établi » (étiquette)'],
+  ['--established', ['--canvas'], NT, 'tampon « Établi » sur le carton (grand, ≥ 3)'],
+  ['--brand', ['--canvas'], NT, 'vermillon sur kraft (≥ 3)'],
+  ['--brand', ['--surface-1'], T, 'vermillon sur manille (texte)'],
+];
 const STATES = ['--danger', '--warning', '--success', '--info', '--established'];
 const isStatePair = ([fg, bgs]) => [fg, ...bgs].some((t) => STATES.includes(t));
 const pairs = {
@@ -230,6 +284,10 @@ const pairs = {
   papier: [...common(T), ...paperOnly(T)],
   'lampe HC': common(AAA),
   'papier HC': [...common(AAA), ...paperOnly(AAA)],
+  matières: materials(T),
+  'matières HC': materials(AAA),
+  kraft: kraftPairs(T),
+  'kraft HC': kraftPairs(AAA),
 };
 // Vision des couleurs : seuls les tons d'état changent → paires qui en impliquent un
 for (const [name, { base }] of Object.entries(visionBase)) {

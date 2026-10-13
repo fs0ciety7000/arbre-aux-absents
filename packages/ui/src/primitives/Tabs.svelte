@@ -1,9 +1,10 @@
 <!--
 	Onglets (DESIGN.md §9.3), motif ARIA « tabs » avec tabindex itinérant.
 	Variantes : `line` (onglets d'un volet), `bar` (barre basse du téléphone, 64 px),
-	`rail` (rail vertical d'icônes du Bureau, 64 px). Le snippet `children` reçoit l'id actif
+	`rail` (rail vertical d'icônes du Bureau, 64 px), `folder` (v2 : onglets de chemise kraft,
+	l'actif sort devant et se raccorde au panneau, qui passe en contexte kraft). Le snippet `children` reçoit l'id actif
 	et est rendu dans le tabpanel.
-	`line` compact : quand les libellés débordent (`compact="auto"`, défaut) ou toujours
+	`line` et `folder` compacts : quand les libellés débordent (`compact="auto"`, défaut) ou toujours
 	(`compact`), les onglets passent en icônes seules (libellé caché + info-bulle) si tous ont
 	une icône ; sinon la liste défile horizontalement avec fondus de bord visibles.
 	Tabindex itinérant : si `value` ne désigne aucun onglet (panneau ouvert ailleurs), le
@@ -32,7 +33,7 @@
     value?: string;
     /** Nom accessible de la liste d'onglets. */
     label: string;
-    variant?: 'line' | 'bar' | 'rail';
+    variant?: 'line' | 'bar' | 'rail' | 'folder';
     /** `line` seulement : icônes seules si les libellés débordent (`auto`), toujours (`true`) ou jamais. */
     compact?: boolean | 'auto';
     /** `auto` : la flèche active l'onglet ; `manual` : Entrée/Espace active. */
@@ -66,11 +67,13 @@
   let scrollStart = $state(false);
   let scrollEnd = $state(false);
   const allIcons = $derived(items.length > 0 && items.every((t) => t.icon));
+  /** Variantes horizontales mesurées : `line` et `folder` passent en icônes si ça déborde. */
+  const measured = $derived(variant === 'line' || variant === 'folder');
   const iconOnly = $derived(
-    variant === 'line' && allIcons && (compact === true || (compact === 'auto' && labelsOverflow)),
+    measured && allIcons && (compact === true || (compact === 'auto' && labelsOverflow)),
   );
   /** Débordement résiduel (pas d'icônes, ou icônes elles-mêmes trop nombreuses) : défilement. */
-  const scrolling = $derived(variant === 'line' && (scrollStart || scrollEnd));
+  const scrolling = $derived(measured && (scrollStart || scrollEnd));
 
   function measure() {
     if (!listEl) return;
@@ -82,7 +85,7 @@
   }
 
   $effect(() => {
-    if (variant !== 'line' || !listEl) return;
+    if (!measured || !listEl) return;
     const ro = new ResizeObserver(() => measure());
     ro.observe(listEl);
     if (measureEl) ro.observe(measureEl);
@@ -92,7 +95,7 @@
 
   // Garde l'onglet actif visible quand la liste défile (sans animer la page)
   $effect(() => {
-    if (variant !== 'line' || !listEl) return;
+    if (!measured || !listEl) return;
     void iconOnly;
     void value;
     const el = listEl.querySelector<HTMLElement>('[aria-selected="true"]');
@@ -142,8 +145,12 @@
   const hasSelected = $derived(items.some((t) => t.id === value));
 </script>
 
-<div class="tabs {variant} {className}" class:icon-only={iconOnly}>
-  {#if variant === 'line' && allIcons && compact === 'auto'}
+<div
+  class="tabs {variant} {className}"
+  class:icon-only={iconOnly}
+  data-surface={variant === 'folder' ? 'kraft' : undefined}
+>
+  {#if measured && allIcons && compact === 'auto'}
     <!-- Copie invisible des libellés : sert seulement à savoir s'ils tiennent -->
     <div class="measure-box" aria-hidden="true" inert>
       <div class="list measure" bind:this={measureEl}>
@@ -165,9 +172,9 @@
     aria-label={label}
     aria-orientation={vertical ? 'vertical' : 'horizontal'}
     bind:this={listEl}
-    onscroll={variant === 'line' ? measure : undefined}
+    onscroll={measured ? measure : undefined}
   >
-    {#each items as item (item.id)}
+    {#each items as item, i (item.id)}
       {@const selected = item.id === value}
       <button
         type="button"
@@ -178,6 +185,7 @@
         tabindex={item.id === tabbable ? 0 : -1}
         disabled={item.disabled}
         class="tab"
+        style:--i={i}
         onclick={() => select(item.id)}
         onkeydown={(e) => onkeydown(e, item)}
         onfocus={() => (focusedId = item.id)}
@@ -243,7 +251,8 @@
     width: max-content;
     overflow: visible;
   }
-  .line {
+  .line,
+  .folder {
     position: relative;
   }
   /* Défilement résiduel : fondus de bord (masque, non animé) + barre fine visible */
@@ -319,15 +328,29 @@
     border: 0;
     background: transparent;
     color: var(--text-muted);
-    font-family: var(--font-ui);
+    font-family: var(--font-label);
     font-size: var(--step-0);
     font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
     white-space: nowrap;
     cursor: pointer;
     border-radius: var(--radius-s);
   }
   .tab:hover {
     color: var(--text);
+  }
+  /* Micro-interactions v2 : l'icône pivote d'un rien au survol, l'onglet s'enfonce à l'appui */
+  .tab :global(.icon) {
+    transition: transform var(--dur-base) var(--ease-snap);
+  }
+  @media (hover: hover) {
+    .tab:hover:not(:disabled) :global(.icon) {
+      transform: rotate(-8deg) scale(1.06);
+    }
+  }
+  .tab:active:not(:disabled) {
+    transform: translateY(1px);
   }
   .tab[aria-selected='true'] {
     color: var(--text);
@@ -394,15 +417,67 @@
     height: var(--hit-l);
     padding: 0;
   }
+  .rail .tab {
+    border-radius: var(--radius-pill);
+  }
+  /* Rail : l'onglet actif est « sous la lampe » (pastille de lumière + couleur + barre) */
   .rail .tab[aria-selected='true'] {
     color: var(--accent);
-    background: var(--accent-tint);
+    background: radial-gradient(closest-side, var(--accent-tint), transparent);
   }
   .rail .tab::after {
     inset-inline-start: calc((var(--rail-w) - var(--hit-l)) / -2);
     inset-block: var(--space-2);
     width: 3px;
     transform: scaleY(0.3);
+  }
+
+  /* ── Onglets de chemise (v2) ─────────────────────────────────────── */
+  .folder .list {
+    align-items: flex-end;
+    gap: var(--space-0-5);
+    padding-inline: var(--space-3);
+    margin-block-end: -1px;
+    position: relative;
+    z-index: var(--z-raised);
+  }
+  .folder .tab {
+    flex: none;
+    min-height: var(--hit);
+    padding: 0 var(--space-4);
+    background: var(--kraft-shade);
+    color: var(--text);
+    border-radius: var(--radius-tab) var(--radius-tab) 0 0;
+    box-shadow: inset 0 1px 0 var(--edge-light);
+    transform: translateY(6px);
+    transition: transform var(--dur-base) var(--ease-snap);
+  }
+  @media (hover: hover) {
+    .folder .tab:hover:not(:disabled, [aria-selected='true']) {
+      transform: translateY(2px);
+    }
+  }
+  .folder .tab:active:not(:disabled) {
+    transform: translateY(7px);
+  }
+  .folder .tab[aria-selected='true'] {
+    background: var(--kraft);
+    font-weight: var(--weight-semibold);
+    transform: none;
+    z-index: 1;
+  }
+  .folder .tab::after {
+    inset-inline: var(--space-4);
+    inset-block-start: var(--space-1);
+    height: 3px;
+    background: var(--brand);
+    transform: scaleX(0.3);
+  }
+  .folder .panel {
+    background: var(--kraft);
+    border-radius: 0 var(--radius-m) var(--radius-m) var(--radius-m);
+    box-shadow: var(--shadow-paper);
+    color: var(--text);
   }
 
   .badge {
@@ -414,9 +489,13 @@
     border-radius: var(--radius-pill);
     background: var(--accent);
     color: var(--accent-contrast);
+    font-family: var(--font-ui);
     font-size: 0.75rem;
     font-weight: var(--weight-bold);
+    letter-spacing: 0;
     line-height: 1;
+    /* la pastille « saute » quand sa valeur change (bloc {#key} côté appelant) ou à l'apparition */
+    animation: m-pop var(--dur-base) var(--ease-snap);
   }
   .bar .badge,
   .rail .badge,
