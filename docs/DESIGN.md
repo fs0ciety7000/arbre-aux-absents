@@ -1095,6 +1095,15 @@ Captures : `captures/ds2-system-*.png`, `ds2-mock-{title,desk,hero}-*.png`, `ds2
 Chaque recette dit **quoi poser**, avec quelles primitives, et le mouvement. Les valeurs viennent
 toutes des tokens.
 
+### 13.0 Écran fixe (téléphone)
+
+Le jeu ne se zoome pas et ne glisse pas latéralement comme une page web : viewport
+`maximum-scale=1, user-scalable=no` (`apps/game/index.html`), `touch-action: pan-x pan-y` et
+`overscroll-behavior: none` sur `html`, `overflow-x: clip` sur `html` et `body` (`App.svelte`).
+Le pincement reste disponible là où il a un sens (arbre, carte), géré par le jeu ; la lisibilité
+passe par la taille du texte des options (87,5 % à 200 %), pas par le zoom du navigateur.
+Le site vitrine, lui, garde le zoom.
+
 ### 13.1 Écran titre
 
 - **Fond** : `<KeyArt svg={keyartDesk} anchor="start" fade="none" />` plein cadre (16:9) ; sous

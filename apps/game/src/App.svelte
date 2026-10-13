@@ -174,6 +174,17 @@
 <div class="visually-hidden" aria-live="assertive" aria-atomic="true">{announcer.assertive}</div>
 
 <style>
+  /* Écran fixe sur téléphone (DESIGN §13.0) : ni zoom ni défilement latéral de la page. Le zoom
+     reste dans le jeu (arbre, carte : touch-action: none, pincement géré par le jeu) et la
+     taille du texte se règle dans les options (87,5 % à 200 %). */
+  :global(html) {
+    touch-action: pan-x pan-y;
+    overscroll-behavior: none;
+  }
+  :global(html),
+  :global(body) {
+    overflow-x: clip;
+  }
   .app {
     position: relative;
     min-height: 100dvh;
