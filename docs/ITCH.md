@@ -318,7 +318,8 @@ sh scripts/itch-push.sh artefacts <compte>/arbre-aux-absents             # envoi
   requis : `BUTLER_API_KEY` (sinon le job ne fait rien) et, pour un APK signé, `ANDROID_KEYSTORE_B64`,
   `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`, `ANDROID_STORE_PASSWORD` (sinon le canal android est
   sauté). Pour publier une mise à jour : monter la version dans `apps/game/package.json`, puis
-  `git tag v1.0.1 && git push origin v1.0.1`.
+  pousser un tag `v<version>` ou un commit dont le message contient `[itch]` (sans tag ni release
+  GitHub : c'est la voie des sessions Claude, qui ne peuvent pas pousser de tag).
 
 ## 8. Avant d'ouvrir la page
 

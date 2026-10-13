@@ -47,7 +47,8 @@ jobs:
     if: >-
       ${{ !cancelled() && needs.release.result != 'failure' &&
       (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' ||
-      contains(github.event.head_commit.message, '[tauri]')) }}
+      contains(github.event.head_commit.message, '[tauri]') ||
+      contains(github.event.head_commit.message, '[itch]')) }}
     strategy:
       fail-fast: false
       matrix:
@@ -144,7 +145,8 @@ jobs:
     if: >-
       ${{ !cancelled() && needs.release.result != 'failure' &&
       (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' ||
-      contains(github.event.head_commit.message, '[tauri]')) }}
+      contains(github.event.head_commit.message, '[tauri]') ||
+      contains(github.event.head_commit.message, '[itch]')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -251,12 +253,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "${{ github.ref_name }}" android-out/* --repo "$GITHUB_REPOSITORY" --clobber
 
-  # Sur un tag v* seulement : envoi sur itch.io avec butler (docs/ITCH.md §7). Sauté sans le
-  # secret BUTLER_API_KEY ; le canal android est sauté si l'APK n'a pas pu être signé.
+  # Sur un tag v*, ou un commit dont le message contient « [itch] » (une session Claude ne peut
+  # pas pousser de tag) : envoi sur itch.io avec butler (docs/ITCH.md §7). Sauté sans le secret
+  # BUTLER_API_KEY ; le canal android est sauté si l'APK n'a pas pu être signé.
   itch:
     name: itch.io (butler)
     needs: [desktop, android]
-    if: ${{ !cancelled() && startsWith(github.ref, 'refs/tags/v') }}
+    if: >-
+      ${{ !cancelled() && (startsWith(github.ref, 'refs/tags/v') ||
+      contains(github.event.head_commit.message, '[itch]')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
