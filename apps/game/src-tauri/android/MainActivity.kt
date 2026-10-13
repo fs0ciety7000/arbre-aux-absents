@@ -3,6 +3,7 @@
 // la barre d'état recouvre le haut du jeu et la barre de navigation le menu du bas.
 package org.cardormedia.arbreauxabsents
 
+import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -13,6 +14,10 @@ import androidx.core.view.WindowInsetsCompat
 class MainActivity : TauriActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    // Téléphone : portrait (l'interface y est pensée) ; tablette : libre.
+    if (resources.configuration.smallestScreenWidthDp < 600) {
+      requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+    }
     // Bord à bord sur toutes les versions, pour que le décalage ci-dessous soit le même partout.
     WindowCompat.setDecorFitsSystemWindows(window, false)
     // Fond des bandes système : --canvas (#07152e), icônes claires.

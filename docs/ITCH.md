@@ -278,7 +278,8 @@ aucune référence absolue (`/assets/…`, `url(/…)`) dans le HTML, le JS et l
 ### Réglages de l'intégration navigateur
 
 - Embed options : taille **1280 × 800** (fenêtre par défaut du bureau, `tauri.conf.json`), bouton
-  plein écran activé, « Mobile friendly » coché (orientation : automatique ; le jeu tient à 360 px),
+  plein écran activé, « Mobile friendly » coché (orientation : **Portrait**, décidé le 13/10 : en
+  paysage sur téléphone, le titre et la pause défilent ; l'appli Android est verrouillée en portrait sur téléphone),
   « Automatically start on page load » décoché.
 - SharedArrayBuffer : inutile.
 - Sauvegardes : stockage du navigateur dans l'iframe itch.io (IndexedDB). Rappeler dans la
