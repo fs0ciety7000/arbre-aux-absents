@@ -57,6 +57,27 @@ export interface EndingSpec {
   file: string;
   when: OutcomeCondition;
   priority: number;
+  /**
+   * Paragraphes conditionnels : clé = étiquette d'une section `## [étiquette] Titre` du fichier
+   * de fin ; une section sans clé ici (ou `[commun]`) s'affiche toujours.
+   */
+  sections?: Record<string, OutcomeCondition>;
+}
+
+/** Option d'une question du rapport final ; visible quand `availableWhen` est vraie. */
+export interface ReportOption {
+  id: string;
+  label: string;
+  availableWhen?: Condition;
+}
+/** Question (ou choix moral) du rapport final, posée au dénouement avant `finish`. */
+export interface ReportQuestion {
+  id: string;
+  prompt: string;
+  kind: 'question' | 'choice';
+  /** La question n'est posée que si cette condition est vraie (ex. un choix qui dépend d'une réponse). */
+  askedWhen?: OutcomeCondition;
+  options: ReportOption[];
 }
 
 export interface DemoSpec {
@@ -73,6 +94,8 @@ export interface Progression {
   occupationsUnlock?: Record<OccupationId, Condition>;
   secrets: Secret[];
   endings: EndingSpec[];
+  /** Rapport final : questions et choix posés avant le dénouement. */
+  report?: ReportQuestion[];
   demo?: DemoSpec;
 }
 
@@ -137,6 +160,21 @@ export const EndingSpecSchema = z.strictObject({
   file: z.string().regex(ENDING_FILE, { error: 'Chemin attendu : endings/<id>.md' }),
   when: OutcomeConditionSchema,
   priority: z.number().int(),
+  sections: z.record(z.string().min(1).max(40), OutcomeConditionSchema).optional(),
+});
+
+export const ReportOptionSchema = z.strictObject({
+  id: IdSchema,
+  label: TextSchema,
+  availableWhen: ConditionSchema.optional(),
+});
+
+export const ReportQuestionSchema = z.strictObject({
+  id: IdSchema,
+  prompt: TextSchema,
+  kind: z.enum(['question', 'choice']),
+  askedWhen: OutcomeConditionSchema.optional(),
+  options: z.array(ReportOptionSchema).min(2),
 });
 
 export const DemoSpecSchema = z.strictObject({
@@ -153,6 +191,7 @@ export const ProgressionSchema = z.strictObject({
   occupationsUnlock: z.record(IdSchema, ConditionSchema).optional(),
   secrets: z.array(SecretSchema),
   endings: z.array(EndingSpecSchema).min(1),
+  report: z.array(ReportQuestionSchema).optional(),
   demo: DemoSpecSchema.optional(),
 });
 

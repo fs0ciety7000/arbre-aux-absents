@@ -16,8 +16,16 @@ export type Condition =
   | { any: Condition[] };
 
 /** Réservée aux fins et aux succès : autorise `not`. */
+/** Réponse donnée au rapport final (question ou choix → option). Réservée aux fins et succès. */
+export interface AnsweredCondition {
+  answered: { question: string; option: string };
+}
 export type OutcomeCondition =
-  Condition | { not: OutcomeCondition } | { all: OutcomeCondition[] } | { any: OutcomeCondition[] };
+  | Condition
+  | AnsweredCondition
+  | { not: OutcomeCondition }
+  | { all: OutcomeCondition[] }
+  | { any: OutcomeCondition[] };
 
 const leafConditionSchemas = [
   z.strictObject({ read: IdSchema }),
@@ -41,6 +49,7 @@ export const ConditionSchema: z.ZodType<Condition> = z.lazy(() =>
 export const OutcomeConditionSchema: z.ZodType<OutcomeCondition> = z.lazy(() =>
   z.union([
     ...leafConditionSchemas,
+    z.strictObject({ answered: z.strictObject({ question: IdSchema, option: IdSchema }) }),
     z.strictObject({ not: OutcomeConditionSchema }),
     z.strictObject({ all: z.array(OutcomeConditionSchema).min(1) }),
     z.strictObject({ any: z.array(OutcomeConditionSchema).min(1) }),

@@ -192,6 +192,7 @@ export const saveState: SaveState = {
   createdAt: 1_700_000_000_000,
   updatedAt: 1_700_000_100_000,
   elapsedMs: 100_000,
+  report: {},
   unlocked: { 'lettre-notaire': 1_700_000_000_000 },
   read: { 'lettre-notaire': 1_700_000_001_000 },
   searched: ['ostel'],
@@ -308,10 +309,16 @@ export const compiledCase: CompiledCase = {
     secrets: progression.secrets,
   },
   endings: {
-    silence: { when: { lockedCount: { gte: 0 } }, priority: 1, title: 'Le silence', body: [] },
+    silence: {
+      when: { lockedCount: { gte: 0 } },
+      priority: 1,
+      title: 'Le silence',
+      sections: [{ label: null, title: null, body: [] }],
+    },
   },
   hints,
   achievements,
+  report: [],
   candidates: { given: ['Aldo', 'Mira'], family: ['Vellard', 'Ostel'] },
 };
 

@@ -40,6 +40,7 @@ export type Action =
   | { type: 'useHint'; id: HintId; at: number }
   /** Borné à [0, 5000]. */
   | { type: 'tick'; deltaMs: number }
+  | { type: 'answer'; question: string; option: string; at: number }
   | { type: 'finish'; at: number };
 
 export type ActionType = Action['type'];

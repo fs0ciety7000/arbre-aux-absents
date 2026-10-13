@@ -81,6 +81,7 @@ export type Condition =
   | { all: Condition[] } | { any: Condition[] };
 /** Réservée aux fins et aux succès : autorise `not`. */
 export type OutcomeCondition = Condition | { not: OutcomeCondition }
+  | { answered: { question: string; option: string } }   // réponse au rapport final
   | { all: OutcomeCondition[] } | { any: OutcomeCondition[] };
 ```
 
@@ -153,9 +154,13 @@ export interface Progression {
   keywords: Keyword[]; places: CasePlace[];
   occupationsUnlock?: Record<OccupationId, Condition>;
   secrets: { id: SecretId; title: string; discoveredBy: Condition }[];
-  endings: { id: EndingId; file: string /* endings/<id>.md */; when: OutcomeCondition; priority: number }[];
+  endings: { id: EndingId; file: string /* endings/<id>.md */; when: OutcomeCondition; priority: number;
+    sections?: Record<string /* étiquette `## [S2] …` */, OutcomeCondition> }[];
+  report?: ReportQuestion[];   // rapport final, posé au dénouement avant `finish`
   demo?: { documents: DocumentId[]; slots: SlotId[]; end: DocumentId };
 }
+export interface ReportQuestion { id: string; prompt: string; kind: 'question' | 'choice';
+  askedWhen?: OutcomeCondition; options: { id: string; label: string; availableWhen?: Condition }[] /* ≥ 2 */ }
 // hints.json, achievements.json (level-designer) : tableaux racine Hint[] et Achievement[]
 export interface Hint { id: HintId; target: { slot: SlotId } | { group: GroupId }; level: 1 | 2 | 3; text: string; availableWhen: Condition }
 export type AchievementCondition = OutcomeCondition
@@ -183,7 +188,9 @@ export interface CompiledCase {
   groups: ValidationGroup[]; portraits: Record<PortraitId, Portrait & { svg: string }>; occupations: Record<OccupationId, Occupation>;
   places: Record<PlaceId, Place & Omit<CasePlace, 'place'>>;
   progression: Pick<Progression, 'start' | 'unlocks' | 'occupationsUnlock' | 'secrets'>;
-  endings: Record<EndingId, { when: OutcomeCondition; priority: number; title: string; body: Block[] }>;
+  endings: Record<EndingId, { when: OutcomeCondition; priority: number; title: string;
+    sections: { label: string | null; title: string | null; when?: OutcomeCondition; body: Block[] }[] }>;
+  report: ReportQuestion[];
   hints: Hint[]; achievements: Achievement[];
   // illustrations SVG : écrites à part (generated/assets.<édition>.json), clé = chemin `illustrations/<file>`
   candidates: { given: string[]; family: string[] }; // noms proposables (lus dans les documents), pour la saisie par liste
@@ -210,6 +217,7 @@ export interface SaveState {
     highlights: { doc: DocumentId; path: number[]; start: number; end: number; color: 1 | 2 | 3 | 4 | 5 }[];
     notes: { id: string; target?: Pin; text: string /* ≤ 2000 */; at: number }[];
   };
+  report: Record<string /* question */, string /* option */>;
   ending: EndingId | null;
 }
 export interface SaveSlotSummary { slot: SaveSlotId; caseTitle: string; updatedAt: number; elapsedMs: number; mode: SaveState['mode']; progress: number }
@@ -246,6 +254,7 @@ export type Action =
   | { type: 'note'; id?: string; target?: Pin; text: string; at: number }
   | { type: 'deleteNote'; id: string; at: number }
   | { type: 'useHint'; id: HintId; at: number }
+  | { type: 'answer'; question: string; option: string; at: number } // rapport final, avant `finish`
   | { type: 'tick'; deltaMs: number }   // borné à [0, 5000]
   | { type: 'finish'; at: number };
 export type GameEvent =
@@ -274,6 +283,15 @@ knownKeywords, availablePortraits, availableOccupations, availableNames, visible
 cases non verrouillées dont les quatre champs sont justes ; si ce nombre atteint
 `min(threshold, cases restantes du groupe)`, ces cases se verrouillent ; sinon `validationFailed`,
 sans détail. Une case n'est vérifiée que si ses quatre champs sont remplis.
+
+**Rapport final et fins à sections** : au dénouement, le jeu pose les questions de `report`
+(celles dont `askedWhen` est vraie, options filtrées par `availableWhen`) ; chaque réponse est une
+action `answer` (refusée si la question n'est pas posée ou l'option indisponible ; modifiable tant
+que `finish` n'a pas eu lieu). `finish` choisit la fin (priorité, conditions pouvant utiliser
+`answered`), puis l'écran affiche ses sections dont `when` est vraie. Dans `endings/<id>.md`, une
+section commence par `## [étiquette] Titre` ; le texte avant la première section ou étiqueté
+`[commun]` s'affiche toujours. Le solveur vérifie qu'au moins une combinaison de réponses mène à
+chaque fin.
 
 ### 3.6 Fichiers de contenu
 

@@ -96,6 +96,8 @@ export interface SaveState {
   secrets: Record<SecretId, number>;
   hintsUsed: Record<HintId, number>;
   notebook: Notebook;
+  /** Réponses au rapport final : question → option. */
+  report: Record<string, string>;
   ending: EndingId | null;
 }
 
@@ -175,5 +177,6 @@ export const SaveStateSchema = z.strictObject({
   secrets: z.record(IdSchema, MsSchema),
   hintsUsed: z.record(IdSchema, MsSchema),
   notebook: NotebookSchema,
+  report: z.record(IdSchema, IdSchema),
   ending: IdSchema.nullable(),
 });

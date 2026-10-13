@@ -12,7 +12,14 @@ import type {
   PortraitId,
   SlotId,
 } from './ids';
-import type { Achievement, CasePlace, Hint, Keyword, Progression } from './progression';
+import type {
+  Achievement,
+  CasePlace,
+  Hint,
+  Keyword,
+  Progression,
+  ReportQuestion,
+} from './progression';
 import type { Edition, SlotGuess } from './save';
 import type { TreeSlot, ValidationGroup } from './tree';
 import type { Place } from './world';
@@ -48,7 +55,13 @@ export interface CompiledEnding {
   when: OutcomeCondition;
   priority: number;
   title: string;
-  body: Block[];
+  /** Sections dans l'ordre du fichier ; `when` absent = toujours affichée. */
+  sections: {
+    label: string | null;
+    title: string | null;
+    when?: OutcomeCondition;
+    body: Block[];
+  }[];
 }
 
 /** Seule donnée lue par le jeu (produite par `content:build`). */
@@ -71,6 +84,7 @@ export interface CompiledCase {
   places: Record<PlaceId, CompiledPlace>;
   progression: Pick<Progression, 'start' | 'unlocks' | 'occupationsUnlock' | 'secrets'>;
   endings: Record<EndingId, CompiledEnding>;
+  report: ReportQuestion[];
   hints: Hint[];
   achievements: Achievement[];
   /** Noms proposables (lus dans les documents), pour la saisie par liste. */
