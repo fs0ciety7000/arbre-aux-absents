@@ -250,3 +250,49 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "${{ github.ref_name }}" android-out/* --repo "$GITHUB_REPOSITORY" --clobber
+
+  # Sur un tag v* seulement : envoi sur itch.io avec butler (docs/ITCH.md §7). Sauté sans le
+  # secret BUTLER_API_KEY ; le canal android est sauté si l'APK n'a pas pu être signé.
+  itch:
+    name: itch.io (butler)
+    needs: [desktop, android]
+    if: ${{ !cancelled() && startsWith(github.ref, 'refs/tags/v') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+      ITCH_TARGET: cardorinteractive/arbre-aux-absents
+    steps:
+      - name: Clé butler présente ?
+        id: key
+        run: |
+          if [ -n "$BUTLER_API_KEY" ]; then echo "ok=true" >> "$GITHUB_OUTPUT"
+          else echo "::notice::Secret BUTLER_API_KEY absent : rien n'est envoyé sur itch.io."; fi
+      - uses: actions/checkout@v5
+        if: steps.key.outputs.ok == 'true'
+      - uses: actions/setup-node@v5
+        if: steps.key.outputs.ok == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Zip web (index.html à la racine)
+        if: steps.key.outputs.ok == 'true'
+        run: |
+          npm ci
+          npm run package:itch
+      - uses: actions/download-artifact@v5
+        if: steps.key.outputs.ok == 'true'
+        with:
+          path: artefacts
+      - name: butler
+        if: steps.key.outputs.ok == 'true'
+        run: |
+          curl -fsSL -o butler.zip https://broth.itch.zone/butler/linux-amd64/LATEST/archive/default
+          mkdir -p "$HOME/.butler" && unzip -q butler.zip -d "$HOME/.butler"
+          chmod +x "$HOME/.butler/butler" && echo "$HOME/.butler" >> "$GITHUB_PATH"
+      - name: Envoi
+        if: steps.key.outputs.ok == 'true'
+        run: |
+          cp dist/itch/arbre-aux-absents-web.zip artefacts/
+          butler -V
+          sh scripts/itch-push.sh --channels "html5 windows macos linux android" artefacts "$ITCH_TARGET"

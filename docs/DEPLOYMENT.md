@@ -170,7 +170,7 @@ Envoi : `scripts/itch-push.sh [--dry-run] [--channels "…"] <artefacts> <compte
 des artefacts de `ci.yml` (`itch-zips`) et de `tauri.yml` (`desktop-windows`,
 `desktop-macos-universal`, `desktop-linux`, `android`), avec `--userversion` = version de
 `apps/game/package.json`. Clé `BUTLER_API_KEY` lue dans l'environnement seulement ; `--dry-run`
-affiche les commandes sans rien envoyer. Un workflow `itch.yml` pourra le reprendre plus tard.
+affiche les commandes sans rien envoyer. Le job `itch` de `tauri.yml` le lance sur chaque tag `v*`.
 
 ## 3. CI (GitHub Actions)
 
@@ -224,7 +224,7 @@ Aucun secret dans le repo ; `.env.example` en est le miroir.
 | `APPLE_CERTIFICATE_PASSWORD` | mot de passe du `.p12` |
 | `APPLE_SIGNING_IDENTITY` | ex. `Developer ID Application: … (TEAMID)` |
 | `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID` | notarisation (mot de passe d'application) |
-| `BUTLER_API_KEY` | plus tard, publication itch.io (`itch.yml`) ; en local, exportée dans le shell pour `scripts/itch-push.sh` |
+| `BUTLER_API_KEY` | secret GitHub : publication itch.io sur tag `v*` (job `itch` de `tauri.yml`) ; en local, exportée dans le shell pour `scripts/itch-push.sh` |
 
 `GITHUB_TOKEN` (automatique) suffit pour les releases. Coolify et Cloudflare se configurent dans
 leurs interfaces ; leurs jetons d'API restent sur le poste de l'opérateur.

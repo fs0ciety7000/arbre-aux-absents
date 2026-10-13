@@ -85,8 +85,8 @@ for channel in $channels; do
     macos) pattern='*.dmg' ;;
     linux) pattern='*.AppImage' ;;
     android)
-      pattern='*.apk'
-      exclude='*-debug.apk'
+      # APK signé seulement (arbre-aux-absents-<version>.apk) : ni -unsigned ni -debug.
+      pattern='*[0-9].apk'
       ;;
     *)
       echo "itch-push: canal inconnu : $channel" >&2
@@ -95,8 +95,8 @@ for channel in $channels; do
   esac
   file=$(find_one "$pattern" "$exclude")
   if [ -z "$file" ]; then
-    if [ "$channel" = android ] && [ -n "$(find_one '*-debug.apk')" ]; then
-      echo "itch-push: $channel sauté, seul un APK debug est présent (secrets de signature absents)" >&2
+    if [ "$channel" = android ] && [ -n "$(find_one '*-unsigned.apk')$(find_one '*-debug.apk')" ]; then
+      echo "itch-push: $channel sauté, APK non signé seulement (secrets de signature absents)" >&2
     else
       echo "itch-push: $channel sauté, aucun fichier « $pattern » sous $artifacts" >&2
     fi

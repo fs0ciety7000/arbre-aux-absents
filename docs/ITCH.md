@@ -312,8 +312,13 @@ sh scripts/itch-push.sh artefacts <compte>/arbre-aux-absents             # envoi
   sauté avec un message.
 - Le script cherche les fichiers dans tout le dossier : la structure de `gh run download`
   (un sous-dossier par artefact) comme un dossier à plat conviennent.
-- Un workflow `itch.yml` (envoi sur tag `v*`, secret `BUTLER_API_KEY`) pourra reprendre ce script
-  plus tard.
+- **Envoi automatique** : sur un tag `v*`, le job `itch` de `.github/workflows/tauri.yml` attend
+  les builds natifs, refait le zip web, installe butler et lance ce script sur les canaux
+  `html5 windows macos linux android` de `cardorinteractive/arbre-aux-absents`. Secrets GitHub
+  requis : `BUTLER_API_KEY` (sinon le job ne fait rien) et, pour un APK signé, `ANDROID_KEYSTORE_B64`,
+  `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`, `ANDROID_STORE_PASSWORD` (sinon le canal android est
+  sauté). Pour publier une mise à jour : monter la version dans `apps/game/package.json`, puis
+  `git tag v1.0.1 && git push origin v1.0.1`.
 
 ## 8. Avant d'ouvrir la page
 
