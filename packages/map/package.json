@@ -2,16 +2,22 @@
   "name": "@arbre/map",
   "version": "0.0.0",
   "private": true,
-  "description": "Carte du monde : caméra pure et MapView Svelte, portés de carte-mons (squelette, lot 0).",
+  "description": "Carte du monde : caméra pure et MapView Svelte, portés de carte-mons.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./camera": "./src/camera/index.ts"
+    "./camera": "./src/camera/index.ts",
+    "./svelte": "./src/svelte/index.ts"
   },
+  "svelte": "./src/svelte/index.ts",
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json && svelte-check --tsconfig ./tsconfig.svelte.json --fail-on-warnings"
   },
   "dependencies": {
-    "@arbre/contract": "*"
+    "@arbre/contract": "*",
+    "@arbre/ui": "*"
+  },
+  "peerDependencies": {
+    "svelte": "^5"
   }
 }

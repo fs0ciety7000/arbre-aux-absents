@@ -49,23 +49,25 @@ Code copié puis adapté depuis le dépôt `fs0ciety7000/carte-mons` (mode **lec
 
 Couverture (v8, `packages/map/src/**`) : 100 % lignes et fonctions, 99 % branches.
 
-## 2. À porter ensuite (frontend-jeu) : `src/svelte/**`
+## 2. Composants Svelte (lot B1b, frontend-jeu) : `src/svelte/**`
 
-Fichiers de `src/lib/carte/` au même commit. Dépendances `#lib/…` de la source à remplacer comme
-indiqué.
+Fichiers de `src/lib/carte/` au même commit (`c5990ad493a854f97674f8e77c6050559203e59d`).
+Sous-chemin `@arbre/map/svelte` (export `./svelte`, `svelte ^5` en peerDependency) ; vérifié par
+`tsconfig.svelte.json` (lib DOM), la caméra garde son `tsconfig.json` sans DOM.
 
-| Fichier source | Rôle | Dépendances à résoudre ici |
+| Fichier ici | Repris de | Nature |
 |---|---|---|
-| `gestures.ts` | glisser, pincer, molette au curseur, double-clic / double-tap ; `wheelFactor`, `NO_GESTURE_ATTR` | aucune (DOM seul). Ajouter l'échantillonnage `PanSample` pour l'inertie (`releaseVelocity`, `coastStep`) ; renommer l'attribut `data-carte-no-gesture` |
-| `SvgRenderer.ts` | implémente `Renderer<HTMLElement>` : couches SVG inline + chargement différé, transform CSS, `setMoving` (`will-change`) | `mapSizePx` (`@arbre/map/camera`) ; `ArtLayer` → `MapLayer` et ordre `MAP_LAYERS` (`@arbre/contract`) ; noms de fichiers hachés produits par `content:build` (`apps/*/src/generated/`) |
-| `Viewport.svelte` | la carte : scène, caméra, gestes, clavier, hotspots, étiquette survol/focus, première vue CSS (`.vp--pre`) | `clamp`, `panBy`, `zoomAt`, `toScreen`, `mapSizePx`, `startTransition`/`cameraAt`, `keyAction`/`applyKeyAction`, `firstView`, `focusOn`, `reveal`, `boundsFromWorldMap`, `overview` (`@arbre/map/camera`) ; `Manifest`/`ManifestPlace` → `WorldMap` + `Place[]` ; `HatchDefs.svelte` et tokens `--carte-*` (durées, focus, espaces, textes, ombres) → `packages/ui` ; `hitRadius` par lieu absent de `Place` (rayon par défaut ou évolution du contrat à proposer) |
-| `CarteMons.svelte` | composant public (→ `MapView.svelte`) : carte, liste des lieux, fiche, statut des couches, boutons zoom | `Viewport.svelte`, `PlaceSheet.svelte` (import dynamique), `tokens.css`, `art.css`, `VisuallyHidden`, `Icon`, `IconButton` (`packages/ui`) ; textes d'UI vers `apps/game/src/messages.fr.ts` |
-| `PlaceSheet.svelte` | fiche d'un lieu en dialogue | `Dialog`, `Button` (`packages/ui`), `labels.ts` (`placeKicker`), `PlaceBody.svelte` |
-| `PlaceBody.svelte` | corps de fiche | `Button` (`packages/ui`), `PlaceLinks.svelte` ; à adapter à `Place.description` |
-| `PlaceLinks.svelte` | liens d'un lieu (jeu, artbook…) | `Button`, `Icon`, `Tag`, `VisuallyHidden`, `labels.ts` — probablement sans objet ici (pas de liens externes) |
-| `labels.ts` | libellés FR (types de lieu, couches, crédits), `withSlash` | `Manifest` → `Place.kind` (`PLACE_KINDS`) ; crédits sans référence externe au monde réel |
-| `art.css` | classes d'art des SVG → tokens | `ART_CLASSES` (`src/lib/contract/map.ts` de la source, absent de `@arbre/contract` : à proposer au contrat) ; `packages/ui/src/styles/art.css` existe déjà (design-lead) |
-| `index.ts` | API publique de la carte | à refaire pour `src/svelte/index.ts` |
+| `svelte/gestures.ts` | `gestures.ts` | glisser, pincer, molette au curseur, double-clic / double-tap repris ; attribut renommé `data-map-no-gesture` ; **échantillons `PanSample`** passés à `onend` pour l'inertie |
+| `svelte/SvgRenderer.ts` | `SvgRenderer.ts` | `Renderer<HTMLElement>` : couches dans l'ordre `MAP_LAYERS`, transform CSS, `setMoving` ; couches reçues **en chaînes** (`world.layers` compilé) au lieu de fichiers hachés chargés en différé ; `setPlaceStates()` nouveau (états `mentioned/open/exhausted` sur les `<g id="place-…">`, lieux inconnus masqués) |
+| `svelte/svg.ts` | — (nouveau) | `parseSvg()` (DOMParser, retire script/foreignObject/style, `on*`, `href` externes) et action `svgContent` : SVG de contenu inséré **sans `{@html}`** |
+| `svelte/MapView.svelte` | `Viewport.svelte` + `CarteMons.svelte` | scène, caméra pure, gestes + inertie, clavier (flèches, + / −, 0, voisin directionnel sur un lieu), hotspots HTML ≥ 44 px (`Place.hitRadius`, déf. 24) avec pastilles `Badge`, étiquette survol/focus, focus caméra (`Place.focusZoom`), boutons zoom `IconButton`, mouvement réduit (`data-motion` ou `prefers-reduced-motion`, durées lues dans `--dur-*`). **Rendu de secours** sans couches d'art (papier, hachures, cadre, rose des vents, cartouche, points des lieux). |
+| `svelte/index.ts` | `index.ts` | API publique refaite |
+
+Non portés : `PlaceSheet.svelte`, `PlaceBody.svelte`, `PlaceLinks.svelte` (la fiche de lieu est
+le panneau `apps/game/src/panels/MapPanel.svelte`, sans liens externes), `labels.ts` (textes dans
+`apps/game/src/panels/messages.ts`), `art.css` (déjà dans `packages/ui/src/styles/art.css`),
+`HatchDefs.svelte` (→ `ArtDefs` de `@arbre/ui`). Tokens `--carte-*` remplacés par ceux de
+`packages/ui`.
 
 Côté outillage (backend, `packages/content-tools`) : règles SVG de `src/lib/content/svg.ts` et
 `validate.ts` (+ fixtures et tests) pour la règle 8 de `content:check`.
