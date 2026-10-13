@@ -1,7 +1,7 @@
 # DEPLOYMENT
 
 > Maintenu par l'agent `devops`. Procédure de mise en ligne : skill `/deploy-coolify`.
-> **Rien n'est mis en ligne sans le feu vert de l'utilisateur** (ROADMAP › Décisions).
+> **Site en ligne depuis le 13/10/2026** (feu vert de l'utilisateur) : https://arbre.fs0ciety.org
 
 Deux livrables, deux chaînes :
 
@@ -15,11 +15,11 @@ Deux livrables, deux chaînes :
 | Élément | Valeur |
 |---|---|
 | Hébergeur | Coolify — `coolify.fs0ciety.org` |
-| Domaine | `arbre.fs0ciety.org` (défaut), Cloudflare proxied |
+| Domaine | `https://arbre.fs0ciety.org`, Cloudflare proxied |
 | Build | `Dockerfile` à la racine, contexte `.` (liste blanche `.dockerignore` : racine, `packages/`, `apps/site/`, `scripts/`, `content/`, `art/`, `static/`) |
 | Port exposé | `8080` (nginx non-root) |
 | Healthcheck | `GET /healthz` → `200 ok` (aussi `HEALTHCHECK` Docker) |
-| Branche déployée | `main` (auto-deploy), après feu vert |
+| Branche déployée | `claude/project-thread-kdwfab` (auto-deploy) tant que `main` n'est pas fusionnée |
 | Variables d'exécution | aucune |
 
 ### Image
@@ -61,16 +61,47 @@ docker run --rm -p 8080:8080 arbre-site     # http://localhost:8080 , curl local
 sh scripts/docker-smoke.sh arbre-site 8080  # démarre, attend « healthy », vérifie santé, CSP, cache, 404
 ```
 
-### Coolify (à faire au feu vert, skill `/deploy-coolify`)
+### Coolify (en production)
 
-1. Nouvelle ressource « Application » depuis le repo GitHub, Build Pack **Dockerfile**, branche `main`.
-2. Port exposé `8080`, domaine `https://arbre.fs0ciety.org`.
-3. Healthcheck : chemin `/healthz`, port `8080` (le `HEALTHCHECK` de l'image suffit aussi).
-4. Aucune variable d'environnement. Optionnel : conteneur en lecture seule + tmpfs `/tmp`.
+| Élément | Valeur |
+|---|---|
+| Instance | `https://coolify.fs0ciety.org` (Coolify 4.4.6), serveur `localhost` (`r0os4cws004gs88k840wckok`) |
+| Projet | « Arbre aux absents » — uuid `9ncijjge9recntgn78krbybu`, environnement `production` (`rxkljsm57zpadq9seov0vffl`) |
+| Application | `arbre-aux-absents-site` — uuid **`eweadblfcqdmi41stteqeskr`** |
+| Source | GitHub App de l'instance (la même que les autres apps), repo `fs0ciety7000/arbre-aux-absents` |
+| Branche | `claude/project-thread-kdwfab`, **auto-deploy** à chaque push |
+| Build pack | Dockerfile (`/Dockerfile`), port exposé `8080` |
+| Healthcheck Coolify | `GET http://127.0.0.1:8080/healthz` (hôte `127.0.0.1` et non `localhost` : nginx n'écoute qu'en IPv4) |
+| Variables d'env | aucune |
+
+Le nom du projet n'a pas d'apostrophe : l'API Coolify la refuse dans les noms de projet.
+
+**Redéployer** :
+- normalement : `git push origin claude/project-thread-kdwfab` (auto-deploy via la GitHub App) ;
+- à la main : Coolify › projet « Arbre aux absents » › `arbre-aux-absents-site` › *Redeploy* ;
+- par l'API (jeton dans l'environnement de l'opérateur, jamais dans le repo) :
+
+```bash
+curl -sS -X POST -H "Authorization: Bearer $COOLIFY_API_TOKEN" -H 'Content-Type: application/json' \
+  "$COOLIFY_API_URL/api/v1/deploy" -d '{"uuid":"eweadblfcqdmi41stteqeskr","force":false}'
+# suivi : GET $COOLIFY_API_URL/api/v1/deployments/<deployment_uuid>
+```
+
+**Passage sur `main`** (après fusion, avec l'accord de l'utilisateur) : changer la branche de
+l'application (Coolify › Configuration › Git, ou `PATCH /api/v1/applications/eweadblfcqdmi41stteqeskr`
+avec `{"git_branch":"main"}`), redéployer, puis mettre à jour ce tableau.
+
+Vérification après déploiement : `curl -sI https://arbre.fs0ciety.org/` (200 + CSP),
+`curl https://arbre.fs0ciety.org/healthz` (`ok`), une URL inconnue → 404. Au tout premier
+déploiement Cloudflare répond **526** une à deux minutes, le temps que Traefik obtienne le
+certificat Let's Encrypt d'origine.
 
 ### DNS Cloudflare
 
-- Zone `fs0ciety.org` : **CNAME** `arbre` → `fs0ciety.org`, **proxied** (convention de la zone).
+- Zone `fs0ciety.org` : **CNAME** `arbre` → `fs0ciety.org`, **proxied** (convention de la zone),
+  créé le 13/10/2026 (id d'enregistrement `4508d1e26c873cca239e70206f8713e5`).
+- HSTS : l'en-tête vu par le navigateur est celui de Cloudflare (`max-age=86400`, réglage de la zone),
+  qui remplace celui de nginx (1 an).
 - SSL/TLS « Full (strict) » ; le certificat d'origine est géré par Coolify (Let's Encrypt).
 - Autre domaine : zone ajoutée à Cloudflare (NS changés chez le registrar), enregistrement vers le
   serveur Coolify, proxied.

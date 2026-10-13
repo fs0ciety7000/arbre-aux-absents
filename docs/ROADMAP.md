@@ -25,12 +25,22 @@ Fait :
 `npm run test:e2e` 44/44 ; image Docker du site testée (`docker-smoke.sh`) à partir du build local
 (le build Docker complet ne peut pas télécharger npm dans le bac à sable : à valider en CI).
 
+## Session 0 bis — 13 oct. 2026 (mise en ligne du site)
+
+- [x] DNS Cloudflare : CNAME `arbre` → `fs0ciety.org`, proxied
+- [x] Coolify : projet « Arbre aux absents » (`9ncijjge9recntgn78krbybu`), app `eweadblfcqdmi41stteqeskr`,
+      Dockerfile, port 8080, santé `/healthz`, auto-deploy sur `claude/project-thread-kdwfab`
+- [x] Build Docker complet validé sur le serveur (premier essai), conteneur « healthy »
+- [x] Vérifié en prod : 7 pages 200, `/healthz` ok, CSP présente, `/art/*.svg` et `/_app/immutable/`
+      en cache `immutable`, 404 propre, aucune erreur console/CSP (Playwright Chromium)
+
 ## Backlog
 
 - Tests sur appareils réels (Windows, macOS, Linux/Steam Deck, Android téléphone et tablette).
 - Signature macOS (Developer ID) et Windows avant la vente ; keystore Android hors repo.
 - Page itch.io et `itch.yml` (butler).
-- Mise en ligne du site (feu vert de l'utilisateur), puis ajout aux catalogues mons-corp et occ-studios.
+- Site en ligne (https://arbre.fs0ciety.org) : ajout aux catalogues mons-corp et occ-studios ; basculer
+  l'app Coolify sur `main` après fusion (DEPLOYMENT §1).
 - Affaires supplémentaires (contenu seul).
 - Builds natifs Tauri (Windows, macOS, Linux, Android) : à lancer en CI (`tauri.yml`), jamais testés ici.
 - Musique et ambiances (le moteur audio est prêt, `playMusic` ne joue rien).
@@ -70,3 +80,4 @@ Fait :
 | 13/10 | Art généré par scripts déterministes (`art/tools/**`, graine fixe) | Cohérence visages/photos, régénération après correction de la bible. |
 | 13/10 | Site : CSS inline hachée en CSP, carte et portraits en SVG autonomes | LCP mobile 2,5 s → 1,3 s sans `'unsafe-inline'` pour `<style>`. |
 | 13/10 | Jeu : splash HTML et chargement à la demande (affaire, illustrations, carte) | LCP Slow 4G 11,5 s → 0,7 s ; format de content-tools inchangé. |
+| 13/10 | Site déployé depuis la branche de travail `claude/project-thread-kdwfab` (auto-deploy) tant que `main` n'est pas fusionnée | Mise en ligne demandée ; `main` ne contient que le commit initial et ne bouge pas sans accord. |
