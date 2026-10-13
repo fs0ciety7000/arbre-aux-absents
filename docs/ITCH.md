@@ -105,6 +105,19 @@ son enfant, la délation et la mort de proches. Ces faits passent par des docume
 fiches, avis, lettres) : aucune scène violente n'est montrée. Pas de contenu sexuel, pas de
 langage grossier.
 
+### Installation
+
+Les versions Windows et macOS ne sont pas signées. Au premier lancement :
+
+- **Windows** : SmartScreen affiche « Windows a protégé votre ordinateur ». Cliquez sur
+  « Informations complémentaires », puis « Exécuter quand même ».
+- **macOS** : ouvrez le fichier `.dmg`, glissez le jeu dans Applications, puis faites un clic droit
+  sur l'application et choisissez « Ouvrir » (une seule fois). Si macOS refuse encore : Réglages
+  Système › Confidentialité et sécurité › « Ouvrir quand même ».
+- **Linux** : rendez l'AppImage exécutable (`chmod +x`), ou installez le paquet `.deb` / `.rpm`.
+- **Android** : autorisez l'installation depuis le navigateur ou l'application itch quand Android
+  le demande.
+
 ### Crédits
 
 Développé par **CM Interactive**, écrit et illustré par **CM Creative Lab**, une production
@@ -124,8 +137,6 @@ Notes pour la relecture du texte :
 - Manette : l'implémentation actuelle (`apps/game/src/input/controller.ts`) navigue par focus ; le
   curseur virtuel et la loupe au clic du stick, décrits dans `docs/game/ECRANS.md` §4.4, ne sont pas
   annoncés. Le clic du stick droit bascule original / transcription.
-- Les crédits en jeu (`creditsScreen.fonts`) omettent Fraunces et Oswald, présents sur le site :
-  à aligner avant la sortie.
 
 ## 3. Mots-clés (10 au plus)
 
@@ -227,7 +238,7 @@ Remarques :
   l'application itch, il faudrait des artefacts « portables » (dossier de l'exécutable Windows,
   bundle `.app` archivé), à ajouter à `tauri.yml` plus tard (backlog).
 - Signature : sans certificat, macOS (Gatekeeper) et Windows (SmartScreen) avertissent au premier
-  lancement (DEPLOYMENT §2). À indiquer dans la description tant que ce n'est pas réglé.
+  lancement (DEPLOYMENT §2) : c'est la section « Installation » de la description (§2).
 
 ### Zips HTML5 : vérifiés
 
@@ -299,7 +310,7 @@ Choix du propriétaire : **jeu payant + démo gratuite sur une page séparée**,
 
 | Page | URL prévue | Canaux | Prix |
 |---|---|---|---|
-| Jeu complet | `cardorinteractive.itch.io/arbre-aux-absents` | `html5`, `windows`, `macos`, `linux`, `android` | environ 12 € minimum, « payer plus » ouvert ; téléchargements et version navigateur réservés aux acheteurs |
+| Jeu complet | `cardorinteractive.itch.io/arbre-aux-absents` | `html5`, `windows`, `macos`, `linux`, `android` | **12 €** minimum (décidé le 13/10), « payer plus » ouvert ; téléchargements et version navigateur réservés aux acheteurs |
 | Démo | `cardorinteractive.itch.io/arbre-aux-absents-demo` | `html5-demo` (jouable dans le navigateur) | gratuite, lien vers la page complète en fin de démo |
 
 Envoi : `sh scripts/itch-push.sh <artefacts> cardorinteractive/arbre-aux-absents` puis, pour la
@@ -307,9 +318,9 @@ démo, `--channels html5-demo` vers `cardorinteractive/arbre-aux-absents-demo`.
 
 ## 10. Questions ouvertes pour le propriétaire
 
-1. ~~Modèle~~ et ~~compte~~ : décidés (§9). Reste : prix exact, devise, réduction de lancement.
+1. ~~Modèle~~, ~~compte~~ et ~~prix (12 €)~~ : décidés (§9). Reste : réduction de lancement éventuelle.
 4. **Classification d'âge** : itch.io n'a qu'un indicateur « contenu pour adultes » ; vu
    l'avertissement de contenu (§2), proposition : non coché, avec la mention « déconseillé aux moins
    de 12 ans » dans la description. Faut-il viser une classification formelle (IARC, utile pour
    le Play Store) ?
-5. Signature macOS et Windows avant la vente, ou publication non signée avec avertissement ?
+5. ~~Signature~~ : publication **non signée**, avec la section « Installation » de la description (décidé le 13/10).
