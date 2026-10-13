@@ -1,0 +1,32 @@
+# Liste blanche : seul ce qui sert au build du SITE entre dans le contexte Docker.
+# (Le jeu, Tauri, les docs, la CI, les secrets locaux restent dehors.)
+*
+
+!package.json
+!package-lock.json
+!tsconfig.base.json
+!tsconfig.scripts.json
+!.npmrc
+!nginx.conf
+!scripts/
+!packages/
+!apps/site/
+!content/
+!art/
+!static/
+# Les workspaces doivent tous être déclarés pour que `npm ci` respecte le lockfile.
+!apps/game/package.json
+
+# Jamais dans le contexte, même sous un dossier autorisé.
+**/node_modules
+**/.svelte-kit
+**/build
+**/dist
+**/dist-*
+**/coverage
+**/*.log
+**/.env
+**/.env.*
+**/.DS_Store
+**/*.test.ts
+**/*.spec.ts

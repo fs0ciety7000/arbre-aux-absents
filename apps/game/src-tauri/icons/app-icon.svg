@@ -1,0 +1,18 @@
+<!-- Icône PROVISOIRE de L'Arbre aux absents (à remplacer par le cartographe / design-lead).
+     Régénérer les PNG/ICO/ICNS : npm run tauri:icons -w @arbre/game -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <rect width="1024" height="1024" rx="224" fill="#1f2a24"/>
+  <g fill="none" stroke="#e9dcc0" stroke-width="28" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M512 860V560"/>
+    <path d="M512 560L330 430M512 560L694 430M512 560V380"/>
+    <path d="M330 430L250 300M330 430L410 300M694 430L614 300M694 430L774 300"/>
+  </g>
+  <g stroke="#e9dcc0" stroke-width="24">
+    <circle cx="250" cy="250" r="58" fill="#c58b4a"/>
+    <circle cx="410" cy="250" r="58" fill="#c58b4a"/>
+    <circle cx="614" cy="250" r="58" fill="#1f2a24" stroke-dasharray="30 22"/>
+    <circle cx="774" cy="250" r="58" fill="#c58b4a"/>
+    <circle cx="512" cy="330" r="58" fill="#c58b4a"/>
+  </g>
+  <path d="M380 870h264" stroke="#e9dcc0" stroke-width="28" stroke-linecap="round"/>
+</svg>

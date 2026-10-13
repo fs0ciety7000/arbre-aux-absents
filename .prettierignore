@@ -21,3 +21,4 @@ content/**/*.md
 static/
 art/
 **/*.svg
+apps/game/dist-demo/

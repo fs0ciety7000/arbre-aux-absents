@@ -1,0 +1,3 @@
+# Générés par Cargo / Tauri (aussi listés dans le .gitignore racine)
+/target/
+/gen/

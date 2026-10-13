@@ -1,0 +1,178 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+  NPM_CONFIG_AUDIT: false
+  NPM_CONFIG_FUND: false
+
+jobs:
+  check:
+    name: check (prettier, eslint, types, vitest, contenu)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # Les modules générés (gitignorés) sont nécessaires à svelte-check.
+      - run: npm run content:build
+      - run: npm run check
+
+  build:
+    name: build (jeu web, démo, site)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Build complet (content:build + jeu web + site)
+        run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: game-web
+          path: apps/game/dist/
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: apps/site/build/
+          if-no-files-found: error
+          retention-days: 14
+      # Édition démo : contenu physiquement réduit (ARCHITECTURE §3, ROADMAP › Décisions),
+      # construite à part dans apps/game/dist-demo, puis l'édition complète est restaurée.
+      - name: Build démo
+        run: |
+          npm run content:build -- --edition demo
+          npm run build -w @arbre/game -- --outDir dist-demo --emptyOutDir
+          npm run content:build -- --edition full
+      - uses: actions/upload-artifact@v4
+        with:
+          name: game-web-demo
+          path: apps/game/dist-demo/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Zips itch.io (complet + démo)
+        run: |
+          if npm run | grep -q '^  package:itch$'; then
+            npm run package:itch -- --skip-build
+          else
+            echo "::notice::script package:itch absent : zips non produits."
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: itch-zips
+          path: dist/itch/*.zip
+          if-no-files-found: ignore
+          retention-days: 14
+
+  e2e:
+    name: e2e (Playwright chromium + webkit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - name: Présence des tests e2e
+        id: detect
+        run: |
+          if [ -d tests/e2e ] && [ -n "$(ls -A tests/e2e)" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::tests/e2e absent : job e2e sauté."
+          fi
+      - uses: actions/setup-node@v5
+        if: steps.detect.outputs.present == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - if: steps.detect.outputs.present == 'true'
+        run: npm ci
+      - if: steps.detect.outputs.present == 'true'
+        run: npm run build
+      - name: Navigateurs Playwright
+        if: steps.detect.outputs.present == 'true'
+        run: npx playwright install --with-deps chromium webkit
+      - name: Tests e2e
+        if: steps.detect.outputs.present == 'true'
+        run: |
+          if npm run | grep -q '^  test:e2e$'; then
+            npm run test:e2e
+          else
+            npx playwright test --project=chromium --project=webkit
+          fi
+      - uses: actions/upload-artifact@v4
+        if: failure() && steps.detect.outputs.present == 'true'
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  docker:
+    name: docker (site, /healthz)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-buildx-action@v3
+      - name: docker build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          push: false
+          tags: arbre-site:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: docker run + curl /healthz
+        run: sh scripts/docker-smoke.sh arbre-site:ci 8080
+
+  rust-lint:
+    name: rust-lint (cargo fmt, clippy)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: apps/game/src-tauri
+    steps:
+      - uses: actions/checkout@v5
+      - name: Bibliothèques système (WebKitGTK 4.1)
+        working-directory: .
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libwebkit2gtk-4.1-dev libxdo-dev libssl-dev librsvg2-dev libayatana-appindicator3-dev
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/game/src-tauri -> target
+      - run: cargo fmt --all --check
+      # generate_context! exige que frontendDist existe ; le contenu réel n'est pas nécessaire ici.
+      - name: frontendDist factice
+        run: test -f ../dist/index.html || { mkdir -p ../dist && echo '<!doctype html>' > ../dist/index.html; }
+      - run: cargo clippy --locked --all-targets -- -D warnings

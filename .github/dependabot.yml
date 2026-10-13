@@ -1,0 +1,32 @@
+# Mises à jour groupées et hebdomadaires : images Docker (digests), actions, npm, crates Tauri.
+version: 2
+updates:
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      tauri:
+        patterns: ['@tauri-apps/*']
+      dev-tooling:
+        dependency-type: development
+        update-types: [minor, patch]
+  - package-ecosystem: cargo
+    directory: /apps/game/src-tauri
+    schedule:
+      interval: weekly
+    groups:
+      tauri:
+        patterns: ['tauri*']
