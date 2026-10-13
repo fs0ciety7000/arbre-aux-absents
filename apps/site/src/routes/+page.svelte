@@ -13,7 +13,7 @@
   import PortraitPlate from '#lib/components/PortraitPlate.svelte';
   import Seo from '#lib/components/Seo.svelte';
   import VineDivider from '#lib/components/VineDivider.svelte';
-  import { SITE_DESCRIPTION, SITE_NAME } from '#lib/site';
+  import { ITCH_URL, SITE_DESCRIPTION, SITE_NAME } from '#lib/site';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
@@ -135,7 +135,9 @@
     </div>
     <div class="platforms-line mv-rise" style:--i="8">
       <DymoLabel text="Windows · macOS · Linux · Android" tilt={-1} />
-      <span class="demo-note"><Icon name="clock" size="1rem" /> Gratuit, aussi sur itch.io</span>
+      <a class="demo-note" href={ITCH_URL} rel="external"
+        ><Icon name="save" size="1rem" /> Gratuit · à télécharger sur itch.io</a
+      >
     </div>
   </div>
 </section>
@@ -286,22 +288,25 @@
       headingLevel={2}
     >
       <div class="folder-body">
-        <p class="folder-lede">Sur ordinateur, sur téléphone, et bientôt dans le navigateur.</p>
+        <p class="folder-lede">
+          Sur ordinateur, sur téléphone et dans le navigateur. Gratuit, sur <a
+            href={ITCH_URL}
+            rel="external">itch.io</a
+          >.
+        </p>
         <ul class="platforms">
           {#each platforms as p, i (p)}
             <li>
               <DymoLabel text={p} tilt={i % 2 ? 1 : -1} />
-              <span class="status">En développement</span>
+              <span class="status">Disponible</span>
             </li>
           {/each}
           <li class="demo">
-            <DymoLabel text="Démo web" tone="red" tilt={-1.5} />
-            <span class="status">Bientôt sur itch.io</span>
+            <DymoLabel text="Navigateur" tone="red" tilt={-1.5} />
+            <a class="status" href="/jouer/" rel="external">Jouer ici</a>
           </li>
         </ul>
-        <p class="folder-note">
-          Jeu en français, en solo, de six à dix heures. Prix et date de sortie à annoncer.
-        </p>
+        <p class="folder-note">Jeu en français, en solo, de six à dix heures. Gratuit.</p>
       </div>
     </Folder>
   </div>

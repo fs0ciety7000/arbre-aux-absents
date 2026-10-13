@@ -1,14 +1,15 @@
 # DEPLOYMENT
 
 > Maintenu par l'agent `devops`. Procédure de mise en ligne : skill `/deploy-coolify`.
-> **Site en ligne depuis le 13/10/2026** (feu vert de l'utilisateur) : https://arbre.fs0ciety.org
+> **Site en ligne depuis le 13/10/2026** (feu vert de l'utilisateur) : https://arbre.cardormedia.com
+> (domaine de production depuis le 13/10 au soir ; `arbre.fs0ciety.org` redirige en 301, `nginx.conf`).
 
 Deux livrables, deux chaînes :
 
 | Livrable | Où | Chaîne |
 |---|---|---|
-| Site vitrine (`apps/site`) | `arbre.fs0ciety.org`, Coolify | `Dockerfile` → nginx statique |
-| Jeu web (`apps/game`, build Vite) | `arbre.fs0ciety.org/jouer/`, même image | copié dans le site au build Docker, CSP propre (`nginx.conf`) |
+| Site vitrine (`apps/site`) | `arbre.cardormedia.com` (ancien : `arbre.fs0ciety.org` → 301), Coolify | `Dockerfile` → nginx statique |
+| Jeu web (`apps/game`, build Vite) | `arbre.cardormedia.com/jouer/`, même image | copié dans le site au build Docker, CSP propre (`nginx.conf`) |
 | Jeu (`apps/game`) | Windows, macOS, Linux, Android ; démo HTML5 itch.io | `.github/workflows/tauri.yml` ; build web dans `ci.yml` |
 
 ## 1. Site vitrine (Coolify)
@@ -16,7 +17,7 @@ Deux livrables, deux chaînes :
 | Élément | Valeur |
 |---|---|
 | Hébergeur | Coolify — `coolify.fs0ciety.org` |
-| Domaine | `https://arbre.fs0ciety.org`, Cloudflare proxied |
+| Domaine | `https://arbre.cardormedia.com` (zone `cardormedia.com` : **A** `arbre` → `152.53.176.13`, proxied, comme les autres sous-domaines) ; `https://arbre.fs0ciety.org` gardé dans Coolify pour la redirection 301 |
 | Build | `Dockerfile` à la racine, contexte `.` (liste blanche `.dockerignore` : racine, `packages/`, `apps/site/`, `scripts/`, `content/`, `art/`, `static/`) |
 | Port exposé | `8080` (nginx non-root) |
 | Healthcheck | `GET /healthz` → `200 ok` (aussi `HEALTHCHECK` Docker) |

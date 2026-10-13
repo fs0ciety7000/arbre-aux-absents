@@ -4,8 +4,9 @@
 -->
 <script lang="ts">
   import { resolve } from '$app/paths';
-  import { Button, DymoLabel, Folder, IndexCard, Ornament, PaperSheet, Stamp } from '@arbre/ui';
+  import { Button, Folder, IndexCard, Ornament, PaperSheet, Stamp } from '@arbre/ui';
   import Seo from '#lib/components/Seo.svelte';
+  import { ITCH_URL } from '#lib/site';
 
   const facts: { term: string; value: string }[] = [
     { term: 'Titre', value: 'L’Arbre aux absents' },
@@ -13,13 +14,13 @@
     { term: 'Développement', value: 'CM Interactive' },
     { term: 'Écriture et illustration', value: 'CM Creative Lab' },
     { term: 'Édition', value: 'CARDOR Media' },
-    { term: 'Plateformes', value: 'Windows, macOS, Linux, Android ; démo navigateur' },
+    { term: 'Plateformes', value: 'Windows, macOS, Linux, Android, navigateur' },
     { term: 'Langue', value: 'Français (textes et interface)' },
     { term: 'Joueurs', value: 'Un joueur' },
     { term: 'Durée', value: 'Six à dix heures pour l’affaire principale' },
-    { term: 'Prix', value: 'À déterminer' },
-    { term: 'Sortie', value: 'À annoncer' },
-    { term: 'Site', value: 'arbre.fs0ciety.org' },
+    { term: 'Prix', value: 'Gratuit' },
+    { term: 'Sortie', value: 'Octobre 2026' },
+    { term: 'Site', value: 'arbre.cardormedia.com' },
   ];
 </script>
 
@@ -62,8 +63,8 @@
             </div>
           {/each}
           <div class="row">
-            <dt>Démo</dt>
-            <dd><DymoLabel text="Bientôt sur itch.io" tone="red" tilt={-1} /></dd>
+            <dt>Téléchargement</dt>
+            <dd><a href={ITCH_URL} rel="external">cardorinteractive.itch.io</a></dd>
           </div>
         </dl>
       </IndexCard>

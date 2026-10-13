@@ -1,5 +1,7 @@
 /** Constantes du site vitrine. */
-export const SITE_URL = 'https://arbre.fs0ciety.org';
+export const SITE_URL = 'https://arbre.cardormedia.com';
+/** Page itch.io du jeu (gratuit, toutes plateformes). */
+export const ITCH_URL = 'https://cardorinteractive.itch.io/arbre-aux-absents';
 export const SITE_NAME = 'L’Arbre aux absents';
 export const SITE_TAGLINE = 'Une enquête généalogique dans un monde imaginaire';
 export const SITE_DESCRIPTION =
