@@ -138,3 +138,15 @@ test('Entrée sur le logo ne relance pas la dernière partie (Continuer)', async
   await expect(page.getByRole('button', { name: /^Continuer/ })).toBeFocused();
   await expect(desk(page)).toHaveCount(0);
 });
+
+test('le titre répond tout de suite après le logo (aucune touche avalée pendant la sortie)', async ({
+  page,
+}) => {
+  await page.goto('./');
+  await expect(page.getByRole('button', { name: 'Passer' }).last()).toBeEnabled();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('button', { name: 'Nouvelle partie' })).toBeFocused();
+  // Sans attendre la fin du fondu : le logo qui s'escamote ne doit plus intercepter Entrée.
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('heading', { name: 'Nouvelle partie' })).toBeVisible();
+});

@@ -26,7 +26,8 @@
     // L'art clé de l'écran titre se télécharge pendant le logo (un seul cadrage).
     loadKeyArt().catch(() => undefined);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Tab' || !app.ready) return;
+      // `done` : l'écran reste monté le temps de s'escamoter ; la touche suivante est au titre.
+      if (e.key === 'Tab' || !app.ready || done) return;
       // La touche ne fait que passer le logo : sans cela, Entrée / Espace activeraient aussi le
       // premier bouton du titre (focalisé au montage), « Continuer » ou « Nouvelle partie ».
       e.preventDefault();
