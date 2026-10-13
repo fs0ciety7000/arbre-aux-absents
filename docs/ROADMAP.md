@@ -11,10 +11,19 @@ Fait :
 - [x] Game design : `docs/game/`
 - [x] Bible du monde et de l'affaire : `docs/monde/`, `docs/scenario/`
 - [x] Lot 0 : monorepo, contrat zod, `check` vert
-- [ ] Vague A : moteur, outils de contenu, caméra, design system, infra
-- [ ] Vague B : interface du jeu, plateforme, site vitrine
-- [ ] Vague C : carte du monde, textes, progression, portraits
-- [ ] Vague D : intégration, e2e, QA
+- [x] Vague A : moteur pur (192 tests), outils de contenu (parseur, compilation, 11 règles, solveur),
+      caméra de carte, design system « Le bureau sous la lampe », infra (Docker, CI, Tauri)
+- [x] Vague B : interface du jeu (écrans E01–E09, Bureau, 11 panneaux, carte interactive, manette,
+      audio), plateforme web/Tauri, site vitrine (accueil, monde, artbook, charte, presse, crédits, /design)
+- [x] Vague C : la Velmarche (carte 5 couches, 19 lieux), 118 documents, progression (7 groupes,
+      165 mots-clés, 87 aides, 30 succès, rapport final Q1–Q6 + choix), 30 portraits, 60 illustrations
+- [x] Vague D : intégration, passe de cohérence (bible v0.2), QA (7 bugs corrigés), 44 tests e2e,
+      perf (LCP site mobile 1,3 s ; jeu 0,7 s sur Slow 4G avec chargement à la demande)
+
+**État vérifié** : `npm run check` vert (444 tests unitaires, `content:check` OK, solveur : 118 documents,
+30 cases, 6 fins atteignables, démo à 9 cases) ; `npm run build` et zips itch (complet 2 Mo, démo 1,25 Mo) ;
+`npm run test:e2e` 44/44 ; image Docker du site testée (`docker-smoke.sh`) à partir du build local
+(le build Docker complet ne peut pas télécharger npm dans le bac à sable : à valider en CI).
 
 ## Backlog
 
@@ -23,6 +32,15 @@ Fait :
 - Page itch.io et `itch.yml` (butler).
 - Mise en ligne du site (feu vert de l'utilisateur), puis ajout aux catalogues mons-corp et occ-studios.
 - Affaires supplémentaires (contenu seul).
+- Builds natifs Tauri (Windows, macOS, Linux, Android) : à lancer en CI (`tauri.yml`), jamais testés ici.
+- Musique et ambiances (le moteur audio est prêt, `playMusic` ne joue rien).
+- Tutoriel en bulles (le choix « J'ai déjà joué » est seulement mémorisé) ; tiroir à deux crans sur tablette portrait.
+- `Dialog` : prop `initialFocus` (design-lead) pour retirer l'action `initial-focus.ts` du jeu.
+- Contrat : remappage des touches dans `Settings`, emplacement dédié au mode chronométré, fractionnés sauvegardés.
+- Points de scénario à valider par l'humain : `docs/scenario/07-coherence.md` §7 (visa de PB-04, mandats
+  de 1953–1959, auteur de la note de PR-11, lettre lue à Firmin en 1883, « vers Brénica »).
+- Illustrations : qualité inégale (pb-01, photos de groupe aux tenues répétées) ; vrais profils pour ph-16/17.
+- Playtests : difficulté réelle des homonymes (Augustin, Firmin) et des cases à risque (C17, C21, C19, C25).
 
 ## Décisions
 
@@ -46,3 +64,9 @@ Fait :
 | 13/10 | Carte : encre ferro-gallique bleu-noir et pigments propres au jeu, même procédé que carte.fs0ciety.org | Référence demandée, identité distincte. |
 | 13/10 | Curseurs-verbes point & click via `data-verb`, toujours doublés d'un libellé | Références point & click sans dépendre du survol. |
 | 13/10 | Logos de la maison : crédits, pied du site et écran de lancement uniquement | Demande : aucune autre référence. |
+| 13/10 | Rapport final (Q1–Q6 + choix inscrire/taire) et fins à sections conditionnelles dans le contrat | Fins multiples sans multiplier les fichiers ; solveur par combinaisons de réponses. |
+| 13/10 | Ids de portraits neutres (`portrait-xxxxxx`, table `art/tools/portraits/ids.json`) | Règle 11 : aucun nom de personne dans le compilé. |
+| 13/10 | Couche `places` : ids `place-<placeId>` admis par la règle 8 | Contrat du renderer de carte et des styles d'art. |
+| 13/10 | Art généré par scripts déterministes (`art/tools/**`, graine fixe) | Cohérence visages/photos, régénération après correction de la bible. |
+| 13/10 | Site : CSS inline hachée en CSP, carte et portraits en SVG autonomes | LCP mobile 2,5 s → 1,3 s sans `'unsafe-inline'` pour `<style>`. |
+| 13/10 | Jeu : splash HTML et chargement à la demande (affaire, illustrations, carte) | LCP Slow 4G 11,5 s → 0,7 s ; format de content-tools inchangé. |
