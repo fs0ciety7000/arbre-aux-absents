@@ -1,0 +1,10 @@
+{
+  "id": "succession-varenque",
+  "title": "Succession Varenque",
+  "subtitle": "Office de Réinscription civile — dossier n° 74-0318",
+  "version": "0.1.0",
+  "intro": "of-01",
+  "epilogue": "ep-01",
+  "timedTargetsMs": [14400000, 21600000, 36000000],
+  "credits": ["CM Creative Lab (écriture)", "CM Interactive"]
+}

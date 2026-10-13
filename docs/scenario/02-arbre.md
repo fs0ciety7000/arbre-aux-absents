@@ -2,7 +2,7 @@
 
 > 30 cases sur 4 générations. Chaque case = **un nom** (prénom + nom), **un visage** (portrait),
 > **un métier ou rôle** (dans une liste fermée). Les identifiants (`person`, `occupation`)
-> sont ceux de `content/cases/arbre-aux-absents/family.json` (format : `docs/ARCHITECTURE.md` §3.2).
+> sont ceux de `content/cases/succession-varenque/family.json` (format : `docs/ARCHITECTURE.md` §3.2).
 > Dates détaillées : `03-chronologie.md`. Preuves : `07-coherence.md`.
 
 ## 1. Schéma

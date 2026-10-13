@@ -1,6 +1,6 @@
 # Bible du scénario — *L'Arbre aux absents*
 
-> Affaire n° 1 : **« Succession Varenque »** (`content/cases/arbre-aux-absents/`).
+> Affaire n° 1 : **« Succession Varenque »** (`content/cases/succession-varenque/`).
 > Tenue par `scenariste` (CM Creative Lab). État : **v0.1, bible à relire par l'humain** avant
 > la rédaction des 116 documents.
 
@@ -27,6 +27,7 @@ Ton : mélancolique, chaleureux, ironique dans les marges ; la violence passe pa
 | [05-secrets-et-fins.md](05-secrets-et-fins.md) | Six secrets annexes, rapport final (six questions + un choix), cinq fins, épilogue, rejouabilité. |
 | [06-corpus.md](06-corpus.md) | Les **116 documents** prévus : type, date, lieu, résumé, mots-clés indexés, ce qu'ils prouvent. |
 | [07-coherence.md](07-coherence.md) | Tableau de preuves par case (≥ 2 pièces par champ, ≥ 2 chemins), fausses pistes, âges sur les photos, preuves des secrets, points faibles. |
+| [illustrations.md](illustrations.md) | Fiches de brief des illustrations des documents OF, PH et EP (composition, personnes, âges, traits, objets), pour le `cartographe`. |
 | [exemples/](exemples/) | Cinq documents rédigés intégralement pour fixer le ton (voir ci-dessous). |
 
 Le monde (pays, carte, langues, institutions) est dans [`docs/monde/`](../monde/README.md).
