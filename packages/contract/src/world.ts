@@ -24,6 +24,10 @@ export interface Place {
   kind: PlaceKind;
   position: NormPoint;
   description?: string;
+  /** Zoom de la caméra quand on centre ce lieu (défaut : moyenne géométrique min/max). */
+  focusZoom?: number;
+  /** Rayon de la zone cliquable, en unités de viewBox (défaut : 24). */
+  hitRadius?: number;
 }
 
 /** `content/world/map.json` (cartographe). */
@@ -42,6 +46,8 @@ export const PlaceSchema = z.strictObject({
   kind: z.enum(PLACE_KINDS),
   position: NormPointSchema,
   description: TextSchema.optional(),
+  focusZoom: z.number().positive().optional(),
+  hitRadius: z.number().positive().max(200).optional(),
 });
 
 export const WorldMapSchema = z

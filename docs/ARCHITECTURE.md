@@ -164,7 +164,7 @@ export type AchievementCondition = OutcomeCondition
 export interface Achievement { id: AchievementId; title: string; description: string; hidden: boolean; when: AchievementCondition }
 
 // content/world (cartographe)
-export interface Place { id: PlaceId; name: string; kind: 'region' | 'city' | 'village' | 'building' | 'landmark' | 'sea' | 'mountain' | 'river'; position: NormPoint; description?: string }
+export interface Place { id: PlaceId; name: string; kind: 'region' | 'city' | 'village' | 'building' | 'landmark' | 'sea' | 'mountain' | 'river'; position: NormPoint; description?: string; focusZoom?: number; hitRadius?: number }
 export interface WorldMap { aspect: number; layers: ('base' | 'relief' | 'water' | 'places' | 'labels')[]; minZoom: number; maxZoom: number; title: string; attribution?: string }
 ```
 
