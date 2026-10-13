@@ -154,12 +154,21 @@ keytool -genkeypair -v -keystore arbre-release.jks -alias arbre -keyalg RSA -key
 base64 -w0 arbre-release.jks   # → secret ANDROID_KEYSTORE_B64
 ```
 
-### Démo itch.io (plus tard)
+### itch.io (préparé, rien de publié)
+
+Page prête à coller, canaux, visuels, thème et questions ouvertes : **`docs/ITCH.md`**.
 
 Le build web (`apps/game/dist`, `base: './'`) est jouable tel quel dans l'iframe itch.io. La CI
 produit les artefacts `game-web` (complet), `game-web-demo` (`content:build -- --edition demo`)
-et `itch-zips` (`npm run package:itch`). Publication : workflow `itch.yml` à venir, `butler push` par canal
-(`html5-demo`, puis `windows`, `mac`, `linux`, `android`), clé `BUTLER_API_KEY`.
+et `itch-zips` (`npm run package:itch` : `index.html` à la racine, moins de 1000 fichiers, vérifié
+par `zipWebBuild`).
+
+Envoi : `scripts/itch-push.sh [--dry-run] [--channels "…"] <artefacts> <compte/jeu>` pousse avec
+`butler` un canal par cible (`html5-demo`, `html5`, `windows`, `macos`, `linux`, `android`) à partir
+des artefacts de `ci.yml` (`itch-zips`) et de `tauri.yml` (`desktop-windows`,
+`desktop-macos-universal`, `desktop-linux`, `android`), avec `--userversion` = version de
+`apps/game/package.json`. Clé `BUTLER_API_KEY` lue dans l'environnement seulement ; `--dry-run`
+affiche les commandes sans rien envoyer. Un workflow `itch.yml` pourra le reprendre plus tard.
 
 ## 3. CI (GitHub Actions)
 
@@ -209,7 +218,7 @@ Aucun secret dans le repo ; `.env.example` en est le miroir.
 | `APPLE_CERTIFICATE_PASSWORD` | mot de passe du `.p12` |
 | `APPLE_SIGNING_IDENTITY` | ex. `Developer ID Application: … (TEAMID)` |
 | `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID` | notarisation (mot de passe d'application) |
-| `BUTLER_API_KEY` | plus tard, publication itch.io |
+| `BUTLER_API_KEY` | plus tard, publication itch.io (`itch.yml`) ; en local, exportée dans le shell pour `scripts/itch-push.sh` |
 
 `GITHUB_TOKEN` (automatique) suffit pour les releases. Coolify et Cloudflare se configurent dans
 leurs interfaces ; leurs jetons d'API restent sur le poste de l'opérateur.
