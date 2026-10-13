@@ -28,7 +28,8 @@ const CSP =
   `default-src 'self'; script-src 'self' ${nginxVar('csp_script_hashes')}; ` +
   `style-src 'self' ${nginxVar('csp_style_hashes')}; ` +
   "style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; " +
-  "connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; " +
+  "connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-src https://itch.io; " +
+  "object-src 'none'; " +
   "base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
 
 const TYPES = {

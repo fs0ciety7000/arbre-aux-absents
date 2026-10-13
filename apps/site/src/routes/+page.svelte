@@ -13,7 +13,7 @@
   import PortraitPlate from '#lib/components/PortraitPlate.svelte';
   import Seo from '#lib/components/Seo.svelte';
   import VineDivider from '#lib/components/VineDivider.svelte';
-  import { ITCH_URL, SITE_DESCRIPTION, SITE_NAME } from '#lib/site';
+  import { ITCH_EMBED, ITCH_URL, SITE_DESCRIPTION, SITE_NAME } from '#lib/site';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
@@ -306,6 +306,15 @@
             <a class="status" href="/jouer/" rel="external">Jouer ici</a>
           </li>
         </ul>
+        <iframe
+          class="itch-embed"
+          src={ITCH_EMBED}
+          title="L’Arbre aux absents sur itch.io"
+          width="552"
+          height="167"
+          loading="lazy"
+          ><a href={ITCH_URL} rel="external">L’Arbre aux absents sur itch.io</a></iframe
+        >
         <p class="folder-note">Jeu en français, en solo, de six à dix heures. Gratuit.</p>
       </div>
     </Folder>
@@ -550,6 +559,15 @@
   }
   .folder-note {
     font-size: var(--step--1);
+  }
+  /* Widget itch.io : 552 × 167 au plus, à la largeur du dossier sur téléphone. */
+  .itch-embed {
+    display: block;
+    width: 100%;
+    max-width: 552px;
+    height: 167px;
+    border: 0;
+    border-radius: var(--radius-s);
   }
 
   /* ── Captures ── */
