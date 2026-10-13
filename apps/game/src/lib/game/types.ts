@@ -91,6 +91,28 @@ export interface GameStore {
   /** Abonnement aux événements du moteur (retourne la désinscription). */
   onEvents(listener: (events: GameEvent[]) => void): () => void;
   updateSettings(patch: Partial<Settings>): void;
+  /** Ouvre un panneau (principal sur téléphone, latéral si pertinent sur grand écran). */
+  showPanel(id: PanelId): void;
+  /** Dernier mot-clé ciblé par `navigate` (le Carnet le met en avant). */
+  readonly focusKeyword: KeywordId | null;
+  /** Passage à surligner dans le Lecteur (chemin de bloc) après `navigate`. */
+  readonly focusPassage: number[] | null;
+  /** Cartes de révélation de la session, pour le Journal. */
+  readonly reveals: RevealRecord[];
+  /** Fractionnés du mode chronométré (cases verrouillées à chaque étape). */
+  readonly splits: Split[];
+}
+
+/** Carte de révélation archivée (session), lue par le Journal. */
+export interface RevealRecord {
+  at: number;
+  title: string;
+  lines: string[];
+}
+
+export interface Split {
+  elapsedMs: number;
+  count: number;
 }
 
 export type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;

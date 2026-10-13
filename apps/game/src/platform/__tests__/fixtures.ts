@@ -11,6 +11,7 @@ export function makeSave(slot: SaveSlotId = 'slot-1', patch: Partial<SaveState> 
     createdAt: 1000,
     updatedAt: 2000,
     elapsedMs: 5000,
+    report: {},
     unlocked: {},
     read: {},
     searched: [],

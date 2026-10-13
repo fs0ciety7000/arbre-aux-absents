@@ -24,3 +24,4 @@ apps/game/src-tauri/gen/
 # Zips itch.io
 dist/itch/
 apps/game/dist-demo/
+__pycache__/
