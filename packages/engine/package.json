@@ -2,7 +2,7 @@
   "name": "@arbre/engine",
   "version": "0.0.0",
   "private": true,
-  "description": "Moteur pur : applyAction, search, validate, settle… (squelette, lot 0).",
+  "description": "Moteur pur : applyAction, search, validate, settle, parseSave et sélecteurs (lot A1).",
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
