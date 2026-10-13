@@ -3,7 +3,6 @@
   import '#lib/styles/site.css';
   import { ArtDefs, SkipLink } from '@arbre/ui';
   import type { Snippet } from 'svelte';
-  import literata from '@arbre/ui/fonts/literata-latin-opsz-normal.woff2?url';
   import instrument from '@arbre/ui/fonts/instrument-sans-latin-wght-normal.woff2?url';
   import SiteFooter from '#lib/components/SiteFooter.svelte';
   import SiteHeader from '#lib/components/SiteHeader.svelte';
@@ -12,12 +11,12 @@
 </script>
 
 <svelte:head>
-  <!-- Les deux seuls préchargements autorisés (DESIGN §4). -->
+  <!-- DESIGN §4 autorise deux préchargements (interface, titrage). Le site n'en garde qu'un :
+       Fraunces (121 Ko) disputait la bande passante à l'art clé, LCP mobile ; il arrive en swap. -->
   <link rel="preload" as="font" type="font/woff2" href={instrument} crossorigin="anonymous" />
-  <link rel="preload" as="font" type="font/woff2" href={literata} crossorigin="anonymous" />
 </svelte:head>
 
-<!-- Motifs de gravure (#art-hatch…) partagés par la carte et les portraits : une fois par page. -->
+<!-- Motifs de gravure (#art-hatch…) partagés par l'art inline : une fois par page. -->
 <ArtDefs />
 <SkipLink href="#contenu" label="Aller au contenu" />
 <SiteHeader />

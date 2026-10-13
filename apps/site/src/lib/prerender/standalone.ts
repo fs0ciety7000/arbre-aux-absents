@@ -45,7 +45,8 @@ const escAttr = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
 const escText = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-function serialize(n: SvgChild): string {
+/** Sérialise un nœud SVG analysé (attributs et texte échappés). */
+export function serialize(n: SvgChild): string {
   if (typeof n === 'string') return escText(n);
   const attrs = Object.entries(n.a)
     .map(([k, v]) => ` ${k}="${escAttr(v)}"`)

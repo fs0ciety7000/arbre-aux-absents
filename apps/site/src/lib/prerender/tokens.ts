@@ -74,21 +74,33 @@ function swatch(token: string, name: string, usage: string): Swatch {
   return { token, name, usage, value, hex: oklchToHex(value) };
 }
 
-/** Palette de la charte, par familles (DESIGN §3 et §10.3). */
+/** Palette de la charte v2, par familles (DESIGN §3 et §10.3). */
 export function paletteGroups(): SwatchGroup[] {
   return [
     {
-      title: 'Le bureau sous la lampe',
+      title: 'L’encre de nuit',
       intro:
-        'Les fonds de nuit et le texte vélin de l’interface. Le laiton est la seule couleur d’action.',
+        'Le bureau plongé dans le bleu de la nuit : un bleu d’encre profond qui se fond dans le mur de l’art clé, et le texte vélin.',
       swatches: [
-        swatch('--canvas', 'Nuit profonde', 'Fond du bureau'),
-        swatch('--surface-1', 'Nuit', 'Panneaux, fiches'),
+        swatch('--canvas', 'Encre de nuit', 'Fond du bureau'),
+        swatch('--surface-1', 'Nuit', 'Panneaux'),
         swatch('--surface-2', 'Nuit claire', 'Champs, survols'),
         swatch('--line-strong', 'Ardoise', 'Bordures de contrôles'),
         swatch('--text', 'Vélin', 'Texte'),
         swatch('--text-muted', 'Vélin passé', 'Texte secondaire'),
-        swatch('--accent', 'Laiton', 'Action, lien, focus'),
+      ],
+    },
+    {
+      title: 'Safran, vermillon, céladon',
+      intro:
+        'Trois couleurs, trois rôles : le safran pour l’action (une seule par écran), le vermillon pour la marque, le céladon pour la fougère. Le violet de tampon marque ce qui est établi.',
+      swatches: [
+        swatch('--accent', 'Safran', 'Action, lien, focus'),
+        swatch('--accent-edge', 'Safran bruni', 'Tranche du bouton'),
+        swatch('--brand', 'Vermillon', 'Titres, surtitres, filets'),
+        swatch('--brand-fill', 'Vermillon foncé', 'Étiquette rouge'),
+        swatch('--fern', 'Céladon', 'Fougère, ornements'),
+        swatch('--fern-deep', 'Céladon profond', 'Fougère sur papier'),
         swatch('--established', 'Encre de tampon', 'Case « Établi »'),
       ],
     },
@@ -104,6 +116,35 @@ export function paletteGroups(): SwatchGroup[] {
         swatch('--ink-muted', 'Encre diluée', 'Texte secondaire'),
         swatch('--ink-hand', 'Encre de plume', 'Manuscrit'),
         swatch('--paper-accent', 'Laiton bruni', 'Action sur papier'),
+      ],
+    },
+    {
+      title: 'Les matières du bureau',
+      intro:
+        'Chemises de kraft, fiches bristol à réglure bleue et ligne de tête rouge, bandes d’étiqueteuse.',
+      swatches: [
+        swatch('--kraft', 'Kraft', 'Chemise'),
+        swatch('--kraft-shade', 'Kraft ombré', 'Dos de chemise'),
+        swatch('--manila', 'Manille', 'Étiquettes, intérieur'),
+        swatch('--card', 'Bristol', 'Fiche'),
+        swatch('--card-rule', 'Réglure', 'Lignes de la fiche'),
+        swatch('--card-margin', 'Ligne de tête', 'Filet rouge de la fiche'),
+        swatch('--label-tape', 'Bande bleue', 'Étiqueteuse'),
+        swatch('--label-tape-red', 'Bande rouge', 'Étiqueteuse, annonce'),
+      ],
+    },
+    {
+      title: 'Le décor de l’art clé',
+      intro:
+        'Le bois de la lampe, le velours du rideau, le crépuscule à la fenêtre. Décor seulement : jamais un texte.',
+      swatches: [
+        swatch('--wood', 'Bois ombré', 'Bureau, lampe'),
+        swatch('--wood-lit', 'Bois éclairé', 'Dans la flaque de lumière'),
+        swatch('--velvet', 'Velours', 'Rideau'),
+        swatch('--dusk-rose', 'Crépuscule rose', 'Ciel'),
+        swatch('--dusk-lilac', 'Crépuscule lilas', 'Ciel'),
+        swatch('--dusk-peach', 'Crépuscule pêche', 'Ciel'),
+        swatch('--scrim-art', 'Voile de zone calme', 'Sous un titre posé sur l’art'),
       ],
     },
     {

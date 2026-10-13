@@ -60,4 +60,9 @@ test('page inconnue : 404 avec la page du site', async ({ page }) => {
   expect(res?.status()).toBe(404);
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
   await expect(page.getByRole('link', { name: /accueil/i }).first()).toBeVisible();
+  await expect(page.locator('h1')).toHaveCount(1);
+  const r = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+    .analyze();
+  expect(r.violations.map((v) => `${v.id} (${v.nodes.length})`)).toEqual([]);
 });

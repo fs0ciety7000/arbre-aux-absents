@@ -1,6 +1,7 @@
 /*
- * Mise en page commune du site vitrine (DESIGN §5.4). Uniquement des tokens de @arbre/ui.
- * Les media queries sont en rem (DESIGN §5.2).
+ * Mise en page commune du site vitrine v2 « le bureau en vitrine » (DESIGN §5.4, §14).
+ * Uniquement des tokens et des classes de @arbre/ui (matières, motion) ; media queries en rem
+ * (DESIGN §5.2). Le surtitre `.kicker`, `.display`, `.mat-*` et `.mv-*` viennent du système.
  */
 
 .container {
@@ -14,13 +15,19 @@
   padding-inline: var(--gutter);
 }
 
-/* Bandes : nuit (défaut) ou papier (data-surface="paper"). */
-.band {
-  padding-block: var(--space-16);
+/* Les décors inclinés (halo du titre, rubans, fiches) ne font jamais défiler la page. */
+main {
+  overflow-x: clip;
 }
-.band[data-surface='paper'] {
-  background: var(--canvas);
-  color: var(--text);
+
+/* Bandes de section sur le bureau d'encre. Hors de l'écran, leur mise en page est différée
+   (content-visibility) : chaque police qui arrive ne relance plus la mise en page de toute la
+   page (LCP mobile). */
+.band {
+  position: relative;
+  padding-block: var(--space-20);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 48rem;
 }
 @media (max-width: 37.4375rem) {
   .band {
@@ -28,33 +35,58 @@
   }
 }
 
-/* En-tête de page intérieure. */
-.page-head {
+/* En-tête de section : surtitre Oswald à tiret vermillon + titre d'affiche Fraunces. */
+.section-head {
   display: grid;
-  gap: var(--space-4);
-  padding-block: var(--space-16) var(--space-10);
+  justify-items: start;
+  gap: var(--space-3);
+  margin-block-end: var(--space-12);
 }
-.page-head h1 {
+.section-head.center {
+  justify-items: center;
+  text-align: center;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-variation-settings: var(--display-settings);
+  font-weight: var(--weight-display-black);
   font-size: var(--step-5);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+}
+.section-title em {
+  font-style: italic;
+  font-weight: var(--weight-display);
+  color: var(--brand);
 }
 
-/* Surtitre en capitales espacées. */
-.kicker {
-  font-family: var(--font-ui);
-  font-size: var(--step--1);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  color: var(--accent);
+/* En-tête de page intérieure : titre d'affiche, accroche en italique. */
+.page-head {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: var(--space-4);
+  padding-block: var(--space-16) var(--space-12);
 }
-[data-surface='paper'] .kicker {
-  color: var(--text-muted);
+.page-head h1 {
+  font-weight: var(--weight-display-black);
+  font-size: var(--step-5);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+}
+.page-head h1 em {
+  font-style: italic;
+  font-weight: var(--weight-display);
+  color: var(--brand);
 }
 
 .lede {
   max-inline-size: var(--measure);
-  font-family: var(--font-read);
-  font-size: var(--step-1);
+  font-family: var(--font-display);
+  font-variation-settings: var(--display-settings);
+  font-style: italic;
+  font-size: var(--step-2);
   line-height: var(--leading-snug);
   color: var(--text-muted);
 }
@@ -69,13 +101,58 @@
 .prose > * + * {
   margin-block-start: var(--space-4);
 }
-.prose h2,
-.prose h3 {
-  margin-block-start: var(--space-10);
+
+/* Lien d'action en Oswald (« Voir toutes les planches → »). */
+.more-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--hit);
+  font-family: var(--font-label);
+  font-size: var(--step--1);
+  letter-spacing: var(--tracking-stamp);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.more-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
 }
 
-.section-head {
-  display: grid;
-  gap: var(--space-3);
-  margin-block-end: var(--space-8);
+/* ── Mouvement au défilement (lib/enhance/scroll-motion.js) ─────────────────
+   `.sr` n'est posé sur <html> que si le script tourne hors mouvement réduit : sans JS, tout
+   est visible. [data-sr] attend son entrée dans la vue, puis motion.css le distribue
+   ([data-reveal='in']). [data-play] retient les animations CSS de son contenu (balayage
+   d'encre) jusqu'à son entrée dans la vue. */
+.sr [data-sr]:not([data-reveal='in']) {
+  opacity: 0;
+  transform: translateY(calc(var(--rise) * 4)) rotate(var(--reveal-tilt, 0deg));
+}
+.sr
+  [data-play]:not([data-play='in'])
+  :is(.mv-wipe, .mv-wipe-inner, .mv-ink, .mv-rise, .mv-stamp, .mv-spread, .mv-thud, .mv-deal) {
+  animation-play-state: paused;
+}
+
+/* Inclinaison au pointeur (data-tilt) : perspective légère, revient en douceur. */
+[data-tilt] {
+  transform: perspective(56rem) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform var(--dur-base) var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-tilt] {
+    transform: none;
+  }
+}
+
+/* Figure posée dans une feuille (PaperSheet as="div") : la légende reste enfant direct. */
+.sheet-fig {
+  margin: 0;
+}
+
+/* Art autonome en <img> : bloc, proportions intrinsèques. */
+.art-img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
 }

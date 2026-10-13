@@ -1,7 +1,9 @@
 <!--
   /design : démonstration du design system (DESIGN §12), non indexée. Même ordre que DESIGN.md :
-  réglages, couleurs, typographie, boutons, onglets, fiches, tampons et pastilles, champs, retours,
-  maquette du Bureau, illustration (papier et nuit), icônes, curseurs, logos.
+  réglages, couleurs, typographie et titre du jeu, matières, boutons, onglets, fiches, tampons et
+  pastilles, champs, retours, mouvement (catalogue rejouable, transitions, actions), art clé,
+  maquette du Bureau, illustration (papier et nuit), icônes et ornements, curseurs, logos.
+  v2 « Le dossier vivant » (DESIGN §12).
   Les réglages posent les attributs `data-*` sur <html>, comme le jeu (§4.2).
 -->
 <script lang="ts">
@@ -9,26 +11,49 @@
     Badge,
     Button,
     Card,
+    Celebrate,
     Combobox,
     Dialog,
+    DymoLabel,
+    FlipCard,
+    Folder,
     Icon,
     IconButton,
     ICON_NAMES,
+    IndexCard,
+    InkReveal,
     KeyHint,
     Loader,
+    Ornament,
+    ORNAMENT_NAMES,
     Panel,
+    PaperSheet,
     Select,
     Slider,
     Stamp,
     Tabs,
+    Tape,
     TextField,
     Toggle,
     Tooltip,
     ToastRegion,
+    Wordmark,
     pushToast,
     type Candidate,
     type TabItem,
   } from '@arbre/ui';
+  import {
+    deal,
+    inkIn,
+    paperIn,
+    reveal,
+    rustle,
+    screenIn,
+    sheetPull,
+    stampIn,
+    tilt,
+  } from '@arbre/ui/motion';
+  import HeroArt from '#lib/components/HeroArt.svelte';
   import { onDestroy } from 'svelte';
   import { HOUSE_LOGOS } from '#lib/art/brand';
   import BrandLogo from '#lib/components/BrandLogo.svelte';
@@ -48,6 +73,7 @@
   let highContrast = $state(false);
   let replaceHand = $state(false);
   let textureOff = $state(false);
+  let inkCursors = $state(false);
 
   const settings = $derived<Record<string, string | null>>({
     'data-text-scale': textScale === '1' ? null : textScale,
@@ -59,6 +85,7 @@
     'data-texture': textureOff ? 'off' : null,
     'data-color-vision': colorVision || null,
     'data-motion': motion || null,
+    'data-cursors': inkCursors ? 'ink' : null,
   });
 
   $effect(() => {
@@ -86,11 +113,38 @@
     '--text-faint',
     '--accent',
     '--accent-strong',
+    '--accent-edge',
+    '--brand',
+    '--brand-strong',
+    '--fern',
     '--established',
     '--danger',
     '--warning',
     '--success',
     '--info',
+  ];
+  /** v2 : matières et décor de l'art clé (globaux, jamais remappés en texte). */
+  const materials = [
+    '--desk',
+    '--kraft',
+    '--kraft-shade',
+    '--manila',
+    '--card',
+    '--card-rule',
+    '--card-margin',
+    '--tape',
+    '--label-tape',
+    '--label-tape-red',
+    '--string',
+    '--metal',
+    '--wood',
+    '--wood-lit',
+    '--velvet',
+    '--dusk-rose',
+    '--dusk-lilac',
+    '--dusk-peach',
+    '--lamp-glow',
+    '--scrim-art',
   ];
   const pigments = [
     'wash-safran',
@@ -145,8 +199,46 @@
   let barValue = $state('journal');
   let railValue = $state('tree');
 
+  let folderValue = $state('archives');
+  const folderTabs: TabItem[] = [
+    { id: 'archives', label: 'Archives', icon: 'archives' },
+    { id: 'catalog', label: 'Catalogue', icon: 'catalog' },
+    { id: 'notebook', label: 'Carnet', icon: 'notebook' },
+  ];
+
   // ── Tampons ───────────────────────────────────────────────────────
   let replay = $state(0);
+
+  // ── Titre, mouvement, scène (v2) ──────────────────────────────────
+  let titleKey = $state(0);
+  let iconWash = $state(true);
+  let iconClean = $state(false);
+  /** Catalogue CSS (§8.3) : chaque démo rejoue sa classe quand sa clé change. */
+  const catalogue = [
+    { cls: 'mv-deal', label: 'Distribuer', note: 'fiche, chemise' },
+    { cls: 'mv-settle', label: 'Poser', note: 'feuille, note' },
+    { cls: 'mv-sheet', label: 'Tirer', note: 'document ouvert' },
+    { cls: 'mv-rise', label: 'Monter', note: 'texte, liste' },
+    { cls: 'mv-ink', label: 'Encrer', note: 'titre, mot' },
+    { cls: 'mv-stamp', label: 'Tamponner', note: 'case établie' },
+    { cls: 'mv-thud', label: 'Encaisser', note: 'cible du tampon' },
+    { cls: 'mv-lock', label: 'Verrouiller', note: 'cadenas' },
+    { cls: 'mv-ripple', label: 'Onde', note: 'dépôt réussi' },
+    { cls: 'mv-pop', label: 'Compter', note: 'compteur' },
+  ];
+  let catalogueKeys = $state(catalogue.map(() => 0));
+  const transitions = { deal, paperIn, sheetPull, stampIn, inkIn, screenIn };
+  type TransitionId = keyof typeof transitions;
+  const transitionIds = Object.keys(transitions) as TransitionId[];
+  /** Joue la transition de motion.ts nommée (une directive Svelte veut un identifiant). */
+  function play(node: Element, p: { id: TransitionId; index: number }) {
+    return transitions[p.id](node, { index: p.index });
+  }
+  let shown = $state(true);
+  let inkKey = $state(0);
+  let rustleKey = $state(0);
+  let flipped = $state(false);
+  let celebrateKey = $state(0);
 
   // ── Champs ────────────────────────────────────────────────────────
   let name = $state('');
@@ -204,8 +296,8 @@
 <ToastRegion />
 
 <div class="container page-head">
-  <p class="kicker">Design system · v1.1</p>
-  <h1>Le bureau sous la lampe</h1>
+  <p class="kicker">Design system · v2</p>
+  <h1>Le dossier <em>vivant</em></h1>
   <p class="lede">
     Tokens, primitives et réglages du jeu, dans l’ordre de <code>docs/DESIGN.md</code>. Page de
     travail, non indexée.
@@ -272,6 +364,7 @@
       <Toggle label="Contraste élevé" bind:checked={highContrast} />
       <Toggle label="Remplacer l’écriture manuscrite" bind:checked={replaceHand} />
       <Toggle label="Réduire la texture du papier" bind:checked={textureOff} />
+      <Toggle label="Curseurs encrés (data-cursors)" bind:checked={inkCursors} />
     </div>
   </section>
 
@@ -279,8 +372,11 @@
   <section aria-labelledby="d-colors" class="demo">
     <h2 id="d-colors">Couleurs</h2>
     <div class="two">
-      {#each ['Lampe', 'Papier'] as ctx (ctx)}
-        <div class="ctx" data-surface={ctx === 'Papier' ? 'paper' : undefined}>
+      {#each ['Lampe', 'Papier', 'Kraft'] as ctx (ctx)}
+        <div
+          class="ctx"
+          data-surface={ctx === 'Papier' ? 'paper' : ctx === 'Kraft' ? 'kraft' : undefined}
+        >
           <h3>{ctx}</h3>
           <ul class="tokens">
             {#each semantic as t (t)}
@@ -293,6 +389,15 @@
         </div>
       {/each}
     </div>
+    <h3>Matières et décor (§3.3, globaux)</h3>
+    <ul class="tokens">
+      {#each materials as t (t)}
+        <li>
+          <span class="chip" style:background="var({t})" aria-hidden="true"></span>
+          <code>{t}</code>
+        </li>
+      {/each}
+    </ul>
     <h3>États sur bureau et sur papier (palettes de vision, §3.7)</h3>
     <div class="two">
       {#each ['Lampe', 'Papier'] as ctx (ctx)}
@@ -315,6 +420,41 @@
   <!-- 3. Typographie -->
   <section aria-labelledby="d-type" class="demo">
     <h2 id="d-type">Typographie</h2>
+    <h3>Le titre du jeu (Wordmark, §4.3) : affiche, écran titre, en-tête</h3>
+    <div class="title-stage desk-surface" role="img" aria-label="Titre du jeu, taille affiche">
+      {#key titleKey}
+        <span class="wm" aria-hidden="true"
+          ><Wordmark
+            size="hero"
+            as="span"
+            animate
+            glow
+            kicker="Un jeu d’enquête généalogique"
+            tagline="Une famille effacée des registres."
+          /></span
+        >
+      {/key}
+    </div>
+    <div class="row">
+      <Button variant="ghost" iconName="sparkle" onclick={() => titleKey++}>Rejouer le titre</Button
+      >
+    </div>
+    <div class="two">
+      <div
+        class="ctx mat-paper"
+        data-surface="paper"
+        role="img"
+        aria-label="Titre du jeu, taille écran titre"
+      >
+        <span class="wm" aria-hidden="true"><Wordmark size="title" as="span" /></span>
+      </div>
+      <div class="ctx header-ctx" role="img" aria-label="Titre du jeu, taille en-tête">
+        <span class="wm" aria-hidden="true"><Wordmark size="header" as="span" /></span>
+      </div>
+    </div>
+    <h3>Fraunces (titrage), Oswald (étiquettes)</h3>
+    <p class="display-sample">Sept siècles <em>en quelques dates</em></p>
+    <p class="kicker">Surtitre Oswald à tiret vermillon</p>
     <ul class="steps">
       {#each steps as s (s)}
         <li><code>{s}</code><span style:font-size="var({s})">L’Arbre aux absents</span></li>
@@ -421,6 +561,66 @@
     </div>
   </section>
 
+  <!-- 5 bis. Onglets de chemise -->
+  <section aria-labelledby="d-folder-tabs" class="demo">
+    <h2 id="d-folder-tabs">Onglets de chemise (<code>variant="folder"</code>)</h2>
+    <div class="frame-440">
+      <Tabs
+        items={folderTabs}
+        bind:value={folderValue}
+        variant="folder"
+        label="Chemise"
+        idPrefix="t-folder"
+      >
+        {#snippet children(id)}<p class="tab-panel">Intérieur de la chemise : « {id} »</p>{/snippet}
+      </Tabs>
+    </div>
+  </section>
+
+  <!-- 5 ter. Matières -->
+  <section aria-labelledby="d-materials" class="demo">
+    <h2 id="d-materials">Matières (§6)</h2>
+    <div class="desk-demo desk-surface">
+      <div class="blotter mat-blotter">
+        <div class="materials">
+          <PaperSheet tone="new" tilt={-1.5} fastener="tape">
+            <p class="reading">Papier neuf, ruban adhésif.</p>
+          </PaperSheet>
+          <PaperSheet tone="paper" tilt={1} fastener="clip" edge="torn">
+            <p class="reading">Papier, trombone, bord déchiré.</p>
+          </PaperSheet>
+          <PaperSheet tone="aged" tilt={-0.6} fastener="pin" edge="perforated" sway>
+            <p class="reading">Papier vieilli, punaise, perforé, balancement.</p>
+          </PaperSheet>
+        </div>
+      </div>
+    </div>
+    <div class="materials">
+      <Folder title="Chemise kraft" cote="ORC 74-118" headingLevel={3}>
+        <p>Intérieur kraft : texte à l’encre, accent safran bruni.</p>
+        <DymoLabel text="Pièce n° 3" />
+      </Folder>
+      <Folder
+        title="Chemise manille"
+        cote="ORC 74-119"
+        tone="manila"
+        tabAlign="end"
+        headingLevel={3}
+      >
+        <p>Onglet à droite.</p>
+      </Folder>
+      <IndexCard title="Fiche bristol" cote="RG-09" tilt={-1}>
+        Réglure bleue, ligne de tête vermillon, texte tapé.
+      </IndexCard>
+    </div>
+    <div class="row">
+      <DymoLabel text="Étiqueteuse" tilt={-2} />
+      <DymoLabel text="Annonce" tone="red" tilt={1.5} />
+      <Tape length="7rem" />
+      <Tape length="5rem" rotate={8} />
+    </div>
+  </section>
+
   <!-- 6. Fiches -->
   <section aria-labelledby="d-cards" class="demo">
     <h2 id="d-cards">Fiches, documents, photos</h2>
@@ -453,6 +653,9 @@
       </Card>
       <Card title="Sélectionnable" kicker="Fiche" onactivate={() => {}} selected
         >Survol, sélection.</Card
+      >
+      <Card variant="index" title="Fiche index" meta="RG-12" deal={0} onactivate={() => {}}
+        >Distribuée à l’apparition, cliquable.</Card
       >
     </div>
   </section>
@@ -563,6 +766,137 @@
         <Button variant="primary" onclick={() => (dialogOpen = false)}>Fermer</Button>
       {/snippet}
     </Dialog>
+  </section>
+
+  <!-- 9 bis. Mouvement (§7–§8) -->
+  <section aria-labelledby="d-motion" class="demo">
+    <h2 id="d-motion">Mouvement : catalogue rejouable (§8.3)</h2>
+    <p class="hint">
+      Chaque tuile rejoue sa classe <code>mv-*</code>. Réglage « Mouvement : réduit » : fondus
+      seuls.
+    </p>
+    <ul class="catalogue">
+      {#each catalogue as c, i (c.cls)}
+        <li>
+          <button
+            type="button"
+            class="cat-tile"
+            onclick={() => (catalogueKeys[i] = (catalogueKeys[i] ?? 0) + 1)}
+          >
+            <span class="cat-stage" aria-hidden="true">
+              {#key catalogueKeys[i]}
+                <span class="cat-sample {c.cls}" style:--tilt="-2deg">
+                  {#if c.cls === 'mv-lock'}<Icon
+                      name="lock"
+                      size="1.75rem"
+                    />{:else if c.cls === 'mv-pop'}12{:else}<span class="cat-card"></span>{/if}
+                </span>
+              {/key}
+            </span>
+            <span class="cat-name"><code>.{c.cls}</code> {c.label}</span>
+            <span class="cat-note">{c.note}</span>
+          </button>
+        </li>
+      {/each}
+    </ul>
+    <h3>
+      Ambiance (boucles) : <code>mv-flicker</code>, <code>mv-breathe</code>, <code>mv-sway</code>
+    </h3>
+    <div class="row ambient">
+      <span class="amb mv-flicker"><Icon name="lamp" size="2.5rem" wash="var(--accent)" /></span>
+      <span class="amb mv-breathe glow-dot" aria-hidden="true"></span>
+      <span class="amb mv-sway"><Ornament name="pin" size="2rem" /></span>
+    </div>
+    <h3>Transitions Svelte (<code>@arbre/ui/motion</code>, §8.6)</h3>
+    <div class="row">
+      <Button variant="secondary" iconName="flip" onclick={() => (shown = !shown)}
+        >{shown ? 'Ranger' : 'Distribuer'}</Button
+      >
+    </div>
+    <ul class="transitions">
+      {#each transitionIds as id, i (id)}
+        <li>
+          <span class="tr-stage">
+            {#if shown}
+              <span class="tr-card" in:play={{ id, index: i }} out:play={{ id, index: 0 }}>
+                <code>{id}</code>
+              </span>
+            {/if}
+          </span>
+        </li>
+      {/each}
+    </ul>
+    <h3>
+      Primitives : InkReveal, FlipCard, Celebrate ; actions <code>reveal</code>, <code>tilt</code>,
+      <code>rustle</code>
+    </h3>
+    <div class="prims">
+      <div class="prim">
+        <div class="prim-stage">
+          <InkReveal from="left" blur key={inkKey}>
+            <span class="ink-word">Velmarche</span>
+          </InkReveal>
+        </div>
+        <Button variant="ghost" iconName="quill" onclick={() => inkKey++}>Encrer</Button>
+      </div>
+      <div class="prim">
+        <div class="prim-stage flip-stage">
+          <FlipCard bind:flipped>
+            {#snippet front()}
+              <IndexCard title="Recto" cote="Pl. I">Le portrait.</IndexCard>
+            {/snippet}
+            {#snippet back()}
+              <IndexCard title="Verso" cote="Pl. I">« Studio Haask, 1931 »</IndexCard>
+            {/snippet}
+          </FlipCard>
+        </div>
+        <Button variant="ghost" iconName="flip" onclick={() => (flipped = !flipped)}
+          >Retourner</Button
+        >
+      </div>
+      <div class="prim">
+        <div class="prim-stage celebrate-stage">
+          <Stamp text="Établi" size="m" label="Tampon Établi" />
+          <Celebrate key={celebrateKey} count={32} />
+        </div>
+        <Button variant="ghost" iconName="sparkle" onclick={() => celebrateKey++}>Célébrer</Button>
+      </div>
+      <div class="prim">
+        <div class="prim-stage" use:rustle={rustleKey}>
+          <div class="tilt-demo" use:tilt={6} use:reveal>
+            <PaperSheet tone="new" fastener="pin">
+              <p class="reading">Survolez : <code>use:tilt</code>.</p>
+            </PaperSheet>
+          </div>
+        </div>
+        <Button variant="ghost" iconName="note" onclick={() => rustleKey++}>Froisser</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 ter. Art clé (§8.5) -->
+  <section aria-labelledby="d-keyart" class="demo">
+    <h2 id="d-keyart">Art clé vivant (<code>KeyArt</code>, 16:9 et 4:5)</h2>
+    <p class="hint">
+      Fond en image autonome, scène vivante (rideau, lampe, poussières, vapeur) inline par-dessus.
+      Figée en mouvement réduit.
+    </p>
+    <div class="keyarts">
+      <HeroArt
+        images={data.hero.images}
+        live={data.hero.live}
+        alt={data.hero.alt}
+        priority={false}
+        only="wide"
+      />
+      <HeroArt
+        images={data.hero.images}
+        live={data.hero.live}
+        alt={data.hero.alt}
+        priority={false}
+        only="tall"
+      />
+    </div>
   </section>
 
   <!-- 10. Maquette du Bureau -->
@@ -715,10 +1049,27 @@
 
   <!-- 12. Icônes -->
   <section aria-labelledby="d-icons" class="demo">
-    <h2 id="d-icons">Icônes ({ICON_NAMES.length})</h2>
+    <h2 id="d-icons">Icônes encrées ({ICON_NAMES.length})</h2>
+    <div class="row">
+      <Toggle label="Lavis (wash)" bind:checked={iconWash} />
+      <Toggle label="Géométrie nette (clean)" bind:checked={iconClean} />
+    </div>
     <ul class="icons">
       {#each ICON_NAMES as n (n)}
-        <li><Icon name={n} size="1.5rem" /><code>{n}</code></li>
+        <li>
+          <Icon
+            name={n}
+            size="1.75rem"
+            wash={iconWash ? 'var(--fern)' : false}
+            clean={iconClean}
+          /><code>{n}</code>
+        </li>
+      {/each}
+    </ul>
+    <h3>Ornements (§10.11)</h3>
+    <ul class="ornaments">
+      {#each ORNAMENT_NAMES as n (n)}
+        <li><Ornament name={n} size={n === 'divider' ? '8rem' : '3rem'} /><code>{n}</code></li>
       {/each}
     </ul>
   </section>
@@ -726,6 +1077,9 @@
   <!-- 13. Curseurs -->
   <section aria-labelledby="d-cursors" class="demo">
     <h2 id="d-cursors">Curseurs (à survoler)</h2>
+    <p class="hint">
+      Avec le réglage « Curseurs encrés », <code>data-cursors="ink"</code> les active sur toute la page.
+    </p>
     <ul class="verbs">
       {#each verbs as v (v.verb)}
         <li data-verb={v.verb}><code>{v.verb}</code> {v.label}</li>
@@ -746,6 +1100,192 @@
 </div>
 
 <style>
+  .page-head h1 em,
+  .display-sample em {
+    font-style: italic;
+    color: var(--brand);
+  }
+  .title-stage {
+    display: grid;
+    place-items: center;
+    min-block-size: 20rem;
+    padding: var(--space-10) var(--space-6);
+    border-radius: var(--radius-l);
+    overflow: hidden;
+  }
+  .header-ctx {
+    display: grid;
+    place-items: center;
+  }
+  .display-sample {
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-weight: var(--weight-display-black);
+    font-size: var(--step-4);
+    line-height: var(--leading-display);
+  }
+  .desk-demo {
+    padding: var(--space-6);
+    border-radius: var(--radius-l);
+  }
+  .mat-blotter {
+    padding: var(--space-8) var(--space-6);
+    border-radius: var(--radius-m);
+  }
+  .materials {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: var(--space-8);
+    align-items: start;
+  }
+  .catalogue {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cat-tile {
+    display: grid;
+    gap: var(--space-1);
+    inline-size: 100%;
+    padding: var(--space-3);
+    border: var(--border) solid var(--line);
+    border-radius: var(--radius-m);
+    background: var(--surface-1);
+    color: var(--text);
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+  .cat-tile:hover {
+    border-color: var(--accent);
+  }
+  .cat-stage {
+    display: grid;
+    place-items: center;
+    block-size: 5.5rem;
+  }
+  .cat-sample {
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    color: var(--brand);
+  }
+  .cat-card {
+    display: block;
+    inline-size: 4rem;
+    block-size: 3rem;
+    border-radius: var(--radius-xs);
+    background: var(--card);
+    border-block-start: 3px solid var(--card-margin);
+    box-shadow: var(--shadow-paper);
+  }
+  .cat-name {
+    font-size: var(--step--1);
+  }
+  .cat-note {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .ambient {
+    gap: var(--space-10);
+  }
+  .amb {
+    display: inline-grid;
+    place-items: center;
+    color: var(--metal);
+  }
+  .glow-dot {
+    inline-size: 3rem;
+    block-size: 3rem;
+    border-radius: var(--radius-pill);
+    background: radial-gradient(var(--lamp-pool), transparent 70%);
+  }
+  .transitions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tr-stage {
+    display: grid;
+    place-items: center;
+    block-size: 6rem;
+    border: var(--border) dashed var(--line-strong);
+    border-radius: var(--radius-m);
+    overflow: hidden;
+  }
+  .tr-card {
+    display: grid;
+    place-items: center;
+    inline-size: 6rem;
+    block-size: 4rem;
+    border-radius: var(--radius-xs);
+    background: var(--card);
+    color: var(--ink);
+    box-shadow: var(--shadow-paper);
+  }
+  .prims {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: var(--space-6);
+  }
+  .prim {
+    display: grid;
+    justify-items: start;
+    gap: var(--space-3);
+  }
+  .prim-stage {
+    position: relative;
+    display: grid;
+    place-items: center;
+    inline-size: 100%;
+    block-size: 11rem;
+    padding: var(--space-4);
+    border-radius: var(--radius-m);
+    background: var(--surface-1);
+  }
+  .flip-stage :global(.index-card) {
+    inline-size: 11rem;
+  }
+  .ink-word {
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-style: italic;
+    font-size: var(--step-4);
+    color: var(--brand);
+  }
+  .tilt-demo {
+    inline-size: 11rem;
+  }
+  .keyarts {
+    display: grid;
+    grid-template-columns: minmax(0, 16fr) minmax(0, 7fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+  .ornaments {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--fern);
+  }
+  .ornaments li {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+  }
+  .ornaments code {
+    color: var(--text-muted);
+  }
   .sections {
     display: grid;
     gap: var(--space-16);
@@ -781,6 +1321,7 @@
   }
   .ctx {
     padding: var(--space-5);
+    color: var(--text);
     border-radius: var(--radius-m);
     background: var(--canvas);
     border: var(--border) solid var(--line);
@@ -997,6 +1538,9 @@
     }
   }
   @media (max-width: 37.4375rem) {
+    .keyarts {
+      grid-template-columns: minmax(0, 1fr);
+    }
     .two {
       grid-template-columns: minmax(0, 1fr);
     }

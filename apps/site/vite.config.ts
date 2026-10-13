@@ -10,9 +10,9 @@ export default defineConfig({
       // Chemins absolus : la page 404 est servie à n'importe quelle profondeur d'URL.
       paths: { relative: false },
       // CSS en ligne dans chaque page (aucune feuille bloquante : LCP mobile). Toutes les feuilles
-      // du site passent sous ce seuil ; les <style> sont autorisés par empreinte dans la CSP
-      // (scripts/csp-hashes.sh).
-      inlineStyleThreshold: 64 * 1024,
+      // du site passent sous ce seuil (design system v2 : ~68 Ko pour la feuille commune) ; les
+      // <style> sont autorisés par empreinte dans la CSP (scripts/csp-hashes.sh).
+      inlineStyleThreshold: 128 * 1024,
       adapter: adapter({ pages: 'build', assets: 'build', strict: true }),
       prerender: { handleHttpError: 'fail', handleMissingId: 'fail' },
     }),

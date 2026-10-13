@@ -7,6 +7,7 @@
 import { resolve } from '$app/paths';
 import { parseSvg, type SvgNode } from '#lib/svg/parse';
 import { MAP_LAYERS } from '#lib/content/world';
+import { keyArtFiles } from '#lib/prerender/keyart';
 import { PORTRAIT_PLATES } from '#lib/content/portraits';
 import {
   onlyText,
@@ -102,6 +103,20 @@ export function worldMap({ inlineFond = false }: { inlineFond?: boolean } = {}):
   return { t: 'svg', a: { viewBox: parts.viewBox }, c: [...images, ...parts.text] };
 }
 
+/**
+ * La carte en trois couches séparées, pour l'encrer couche par couche (InkReveal, DESIGN §13.6) :
+ * fond et détail en images autonomes, toponymes en SVG inline (polices du site).
+ */
+export function worldMapLayers(): { viewBox: string; images: ArtImage[]; text: SvgNode } | null {
+  const parts = worldMapParts();
+  if (!parts) return null;
+  return {
+    viewBox: parts.viewBox,
+    images: parts.files.map((f) => ({ src: artUrl(f), width: f.width, height: f.height })),
+    text: { t: 'svg', a: { viewBox: parts.viewBox }, c: parts.text },
+  };
+}
+
 /** URL `data:` d'un SVG autonome (encodage minimal : `%`, `#` et fins de ligne). */
 function dataUrl(f: StandaloneSvg): string {
   const body = f.body.trim().replace(/%/g, '%25').replace(/#/g, '%23').replace(/\n/g, '%0A');
@@ -151,7 +166,7 @@ export function portraitImage(person: string): ArtImage | null {
 
 /** Tous les SVG autonomes publiés sous `/art/` (entrées de la route prérendue). */
 export function artFiles(): StandaloneSvg[] {
-  const out: StandaloneSvg[] = [];
+  const out: StandaloneSvg[] = [...keyArtFiles()];
   out.push(...(worldMapParts()?.files ?? []));
   for (const { person } of PORTRAIT_PLATES) {
     const f = portraitFile(person);
