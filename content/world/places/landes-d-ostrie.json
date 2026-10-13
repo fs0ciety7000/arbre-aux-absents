@@ -1,0 +1,12 @@
+{
+  "id": "landes-d-ostrie",
+  "name": "Landes d'Ostrie",
+  "kind": "region",
+  "position": {
+    "x": 0.64,
+    "y": 0.215
+  },
+  "description": "Plateau de bruyères du nord : menhirs, bergeries, chemins de pierre. Au-delà, c'est l'Ostrie, sa langue et ses fjords.",
+  "focusZoom": 1.8,
+  "hitRadius": 50
+}

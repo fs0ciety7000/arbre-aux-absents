@@ -1,0 +1,12 @@
+{
+  "id": "aubrelieu",
+  "name": "Aubrelieu",
+  "kind": "city",
+  "position": {
+    "x": 0.5,
+    "y": 0.548
+  },
+  "description": "Capitale de la République, ville-pont sur l'Orvelle fondée en 1214 : palais des Chartes (Archives nationales), Office de Réinscription civile, opéra, citadelle, université, quartier des Tanneurs.",
+  "focusZoom": 3.0,
+  "hitRadius": 44
+}

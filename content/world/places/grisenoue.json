@@ -1,0 +1,12 @@
+{
+  "id": "grisenoue",
+  "name": "Grisenoue",
+  "kind": "village",
+  "position": {
+    "x": 0.48,
+    "y": 0.34
+  },
+  "description": "Bourg des marais, au nord d'Aubrelieu : roselières et ruines calcinées de l'institution des Pupilles.",
+  "focusZoom": 3.2,
+  "hitRadius": 26
+}

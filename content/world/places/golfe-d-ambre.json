@@ -1,0 +1,12 @@
+{
+  "id": "golfe-d-ambre",
+  "name": "Golfe d'Ambre",
+  "kind": "sea",
+  "position": {
+    "x": 0.066,
+    "y": 0.6
+  },
+  "description": "Golfe de l'ouest, aux eaux plus douces ; on ramasse de l'ambre sur ses plages.",
+  "focusZoom": 1.5,
+  "hitRadius": 60
+}

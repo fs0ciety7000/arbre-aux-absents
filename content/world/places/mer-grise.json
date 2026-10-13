@@ -1,0 +1,12 @@
+{
+  "id": "mer-grise",
+  "name": "Mer Grise",
+  "kind": "sea",
+  "position": {
+    "x": 0.64,
+    "y": 0.036
+  },
+  "description": "Mer froide du nord, brumes et phoques.",
+  "focusZoom": 1.5,
+  "hitRadius": 60
+}

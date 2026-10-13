@@ -1,0 +1,12 @@
+{
+  "id": "vellaak",
+  "name": "Vellaak",
+  "kind": "village",
+  "position": {
+    "x": 0.744,
+    "y": 0.112
+  },
+  "description": "Village de pêcheurs au fond d'un fjord : port, séchoirs à poisson, rédaction de Vel Taalik, atelier de photographie Ilvess.",
+  "focusZoom": 3.4,
+  "hitRadius": 26
+}

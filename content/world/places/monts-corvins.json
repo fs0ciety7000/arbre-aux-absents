@@ -1,0 +1,12 @@
+{
+  "id": "monts-corvins",
+  "name": "Monts Corvins",
+  "kind": "mountain",
+  "position": {
+    "x": 0.85,
+    "y": 0.905
+  },
+  "description": "Chaîne du sud-est où naît l'Orvelle : sommets enneigés, forêts de pins.",
+  "focusZoom": 1.8,
+  "hitRadius": 60
+}

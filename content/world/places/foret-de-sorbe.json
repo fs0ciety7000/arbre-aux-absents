@@ -1,0 +1,12 @@
+{
+  "id": "foret-de-sorbe",
+  "name": "Forêt et moulin de la Sorbe",
+  "kind": "landmark",
+  "position": {
+    "x": 0.556,
+    "y": 0.638
+  },
+  "description": "Hêtraie entre Aubrelieu et Moulinvert ; une vieille papeterie y tombe en ruine au bord de l'eau.",
+  "focusZoom": 3.6,
+  "hitRadius": 22
+}

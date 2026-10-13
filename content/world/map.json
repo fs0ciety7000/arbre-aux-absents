@@ -1,0 +1,8 @@
+{
+  "aspect": 1.35,
+  "layers": ["base", "relief", "water", "places", "labels"],
+  "minZoom": 1,
+  "maxZoom": 6,
+  "title": "La Velmarche",
+  "attribution": "Carte dressée et gravée par CM Creative Lab"
+}

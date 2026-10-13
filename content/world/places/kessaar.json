@@ -1,0 +1,12 @@
+{
+  "id": "kessaar",
+  "name": "Île de Kessaar",
+  "kind": "landmark",
+  "position": {
+    "x": 0.458,
+    "y": 0.04
+  },
+  "description": "Rocher de la mer Grise, au large de l'Ostrie : ancien bagne (1938-1952), infirmerie, petit phare.",
+  "focusZoom": 3.4,
+  "hitRadius": 28
+}

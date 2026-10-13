@@ -1,0 +1,12 @@
+{
+  "id": "lac-d-aulne",
+  "name": "Lac d'Aulne",
+  "kind": "landmark",
+  "position": {
+    "x": 0.668,
+    "y": 0.822
+  },
+  "description": "Lac des contreforts, au sud de Moulinvert : chalets d'été, barques et aulnes.",
+  "focusZoom": 3.2,
+  "hitRadius": 26
+}

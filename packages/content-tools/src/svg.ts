@@ -152,6 +152,8 @@ const LOCAL_URL = /^url\(\s*#([\w.-]+)\s*\)$/;
 export interface SvgCheckOptions {
   /** Préfixe obligatoire des ids (nom du fichier sans extension). */
   idPrefix: string;
+  /** Autres préfixes admis (couche `places` : `place-<placeId>`, lu par le renderer de carte). */
+  extraPrefixes?: string[];
   /** viewBox exigée (couches de carte). */
   viewBox?: string;
 }
@@ -184,7 +186,8 @@ export function checkSvg(src: string, opts: SvgCheckOptions): SvgProblem[] {
     if (id !== undefined) {
       if (ids.has(id)) problems.push({ line: el.line, message: `id « ${id} » en double` });
       ids.add(id);
-      if (!id.startsWith(`${opts.idPrefix}-`)) {
+      const prefixes = [opts.idPrefix, ...(opts.extraPrefixes ?? [])];
+      if (!prefixes.some((pre) => id.startsWith(`${pre}-`))) {
         problems.push({
           line: el.line,
           message: `id « ${id} » non préfixé par « ${opts.idPrefix}- »`,

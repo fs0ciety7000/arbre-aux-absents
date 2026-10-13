@@ -1,0 +1,12 @@
+{
+  "id": "moulinvert",
+  "name": "Moulinvert",
+  "kind": "city",
+  "position": {
+    "x": 0.622,
+    "y": 0.7
+  },
+  "description": "Bourg industriel sur la Clairette, au pied des collines : roues, cheminées et bassins de pâte des Papeteries Varenque, école des filles, cimetière.",
+  "focusZoom": 3.4,
+  "hitRadius": 26
+}

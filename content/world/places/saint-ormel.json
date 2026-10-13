@@ -1,0 +1,12 @@
+{
+  "id": "saint-ormel",
+  "name": "Saint-Ormel",
+  "kind": "city",
+  "position": {
+    "x": 0.34,
+    "y": 0.497
+  },
+  "description": "Ville épiscopale sur l'Orvelle, en aval d'Aubrelieu : cathédrale, études de notaires, greffe.",
+  "focusZoom": 3.2,
+  "hitRadius": 26
+}

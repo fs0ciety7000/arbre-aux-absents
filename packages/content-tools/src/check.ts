@@ -105,7 +105,11 @@ function checkWorld(w: SourceWorld, issues: IssueList): CompiledWorld {
       issues.error(2, file, `couche « ${layer} » déclarée dans map.json mais absente`);
       continue;
     }
-    for (const p of checkSvg(src, { idPrefix: layer, viewBox }))
+    for (const p of checkSvg(src, {
+      idPrefix: layer,
+      viewBox,
+      ...(layer === 'places' ? { extraPrefixes: ['place'] } : {}),
+    }))
       issues.error(8, file, p.message, p.line);
     const opt = optimizeSvg(src, '');
     for (const p of opt.problems) issues.error(8, file, p.message);

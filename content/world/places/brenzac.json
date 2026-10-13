@@ -1,0 +1,12 @@
+{
+  "id": "brenzac",
+  "name": "Brenzac",
+  "kind": "city",
+  "position": {
+    "x": 0.958,
+    "y": 0.615
+  },
+  "description": "Ville frontière thalbère, bilingue, au-delà du col de Corvenne (Brénica en thalbère).",
+  "focusZoom": 3.0,
+  "hitRadius": 26
+}

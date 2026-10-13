@@ -327,7 +327,7 @@ Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, 
    100 %. Rapport : `npm run content:solve -- --report`.
 7. **Markdown** : syntaxe admise seulement, images existantes, `alt` non vide, aucune URL externe.
 8. **SVG** : interdits `<script>`, `on*`, `<foreignObject>`, `href` externes, couleurs en dur, `style=` ;
-   seules les classes de `ART_CLASSES`, `none`, `currentColor`, `url(#…)` ; ids préfixés par fichier ;
+   seules les classes de `ART_CLASSES`, `none`, `currentColor`, `url(#…)` ; ids préfixés par fichier (couche `places` : aussi `place-<placeId>`, lu par le renderer) ;
    viewBox des couches conformes.
 9. **Budgets gzip** après svgo : portrait ≤ 25 Ko, illustration ≤ 60 Ko, couche `base` ≤ 60 Ko, couches
    de carte ≤ 300 Ko au total, affaire compilée (texte) ≤ 600 Ko, DOM de la carte ≤ 6 000 nœuds.

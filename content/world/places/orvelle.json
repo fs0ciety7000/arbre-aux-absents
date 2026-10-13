@@ -1,0 +1,12 @@
+{
+  "id": "orvelle",
+  "name": "L'Orvelle et la Clairette",
+  "kind": "river",
+  "position": {
+    "x": 0.418,
+    "y": 0.535
+  },
+  "description": "Le fleuve de la Velmarche, des monts Corvins au golfe d'Ambre, et la Clairette, son affluent de rive gauche descendu des collines de Sorbe : bacs, ponts, moulins.",
+  "focusZoom": 2.2,
+  "hitRadius": 30
+}

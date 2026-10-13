@@ -1,0 +1,12 @@
+{
+  "id": "port-senane",
+  "name": "Port-Sénane",
+  "kind": "city",
+  "position": {
+    "x": 0.136,
+    "y": 0.455
+  },
+  "description": "Grand port de l'estuaire de l'Orvelle sur le golfe d'Ambre : bassins, chantiers navals, Compagnie des Paquebots de l'Orvelle, hôpital maritime, théâtre.",
+  "focusZoom": 3.0,
+  "hitRadius": 34
+}

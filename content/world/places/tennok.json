@@ -1,0 +1,12 @@
+{
+  "id": "tennok",
+  "name": "Cap et phare de Tennok",
+  "kind": "landmark",
+  "position": {
+    "x": 0.168,
+    "y": 0.088
+  },
+  "description": "Pointe nord-ouest de l'Ostrie : phare blanc à bande rouge, maison du gardien, abri du canot, recette des postes ; au large, le récif des Dents de Tennok.",
+  "focusZoom": 3.4,
+  "hitRadius": 26
+}

@@ -1,0 +1,12 @@
+{
+  "id": "bains-de-merande",
+  "name": "Bains-de-Mérande",
+  "kind": "city",
+  "position": {
+    "x": 0.222,
+    "y": 0.758
+  },
+  "description": "Ville d'eaux des collines côtières du sud-ouest : thermes, sanatorium, Savonnerie Mérande, lycée de jeunes filles.",
+  "focusZoom": 3.0,
+  "hitRadius": 26
+}
