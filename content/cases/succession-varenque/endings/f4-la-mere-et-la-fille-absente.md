@@ -14,7 +14,7 @@ Le rapport public ne disait rien de Vellaak. Le rapporteur avait choisi de suivr
 écrite en 1962 sur un papier sans date : *Si un jour quelqu'un cherche, qu'on me laisse absente,
 mais qu'on le lui dise.*
 
-## [commun] Le paquet
+## [le-paquet] Le paquet
 
 Le 2 décembre, Lise Daubry trouva sur sa table, à l'atelier de conservation, un paquet enveloppé
 de papier kraft, sans expéditeur, déposé par le service courrier de l'Office. Dedans, un exemplaire
@@ -57,7 +57,7 @@ même. Lise dit oui. Elle ne lui dit pas où elle partait, le lendemain.
 Entre deux planches de l'herbier, une enveloppe sans cote attendait « le rapporteur ». *Si vous
 lisez ceci, vous avez trouvé deux pièces. C'est tout ce que je voulais.*
 
-## [commun] Fin
+## [fin] Fin
 
 La vedette de Port-Sénane accoste à Vellaak à onze heures, quand elle n'a pas de retard. Ce jour-là,
 elle n'en avait pas. Une femme de trente-deux ans aux cheveux châtain clair, une mèche blanche

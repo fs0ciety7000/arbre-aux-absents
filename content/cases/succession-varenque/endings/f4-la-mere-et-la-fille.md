@@ -15,7 +15,7 @@ et d'Orrin Kessvel. Le legs fut partagé entre les héritiers établis : Blanche
 Armand Varenque, Hélène Marsal, Lise Daubry, Tavik Varenque et Odile Varenque, à qui sa tante
 léguait ainsi, par un détour de trente ans, sa part des Tilleuls.
 
-## [commun] La salle de lecture
+## [la-salle-de-lecture] La salle de lecture
 
 Le 9 décembre, à neuf heures, une femme de soixante-six ans en chandail ostrien se présenta à
 l'accueil des Archives nationales. Elle avait une mèche blanche, un appareil photographique en
@@ -66,7 +66,7 @@ ce qu'elle disait. On sait qu'il y eut une réponse.
 Entre deux planches de l'herbier, une enveloppe sans cote attendait « le rapporteur ». *Si vous
 lisez ceci, vous avez trouvé deux pièces. C'est tout ce que je voulais.*
 
-## [commun] Fin
+## [fin] Fin
 
 Odile Varenque est retournée à Vellaak, où son atelier porte toujours l'enseigne *Ilvess —
 photographie*. Elle n'a pas voulu la changer : « Ilvess, c'est ce que je suis devenue. Varenque,

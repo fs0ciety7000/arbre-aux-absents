@@ -24,7 +24,7 @@ voyait pas d'article de loi sous lequel le lui reprocher.
 
 Le legs fut partagé en huit parts : Blanche, Selda, Armand, Hélène, Lise, Tavik, Claude et Odile.
 
-## [commun] Ce qui suivit
+## [ce-qui-suivit] Ce qui suivit
 
 Paul Marsal publia un correctif sous son nom, en première page, et Hélène Marsal déposa des fougères
 au caveau de Moulinvert. Mathilde Varenque ne dit jamais à quiconque ce qu'elle avait dit à son
@@ -42,7 +42,7 @@ de la console.
 Entre deux planches de l'herbier, une enveloppe sans cote attendait le rapporteur. *Si vous lisez
 ceci, vous avez trouvé deux pièces. C'est tout ce que je voulais.*
 
-## [commun] Les Tilleuls, 21 juin 1975
+## [les-tilleuls-21-juin-1975] Les Tilleuls, 21 juin 1975
 
 C'est Selda qui eut l'idée, et Odile qui posa l'appareil sur le trépied. Ils étaient venus de
 partout : de Vellaak par la vedette, de Tennok à pied puis en voiture, de Bains-de-Mérande en car,
@@ -65,7 +65,7 @@ habitude.
 
 Puis elle alla s'asseoir sur la chaise vide.
 
-## [commun] La dernière pièce
+## [la-derniere-piece] La dernière pièce
 
 Le fonds Varenque compte aujourd'hui soixante-quatre articles. Le dernier, coté FV 64, est une
 photographie de groupe, tirage argentique, 24 × 18 cm : dix personnes sur le perron des Tilleuls,

@@ -12,7 +12,7 @@ Marsal, Lise Daubry et Tavik Varenque.
 
 Mais ce que la presse retint de l'audience, ce fut la page quatorze du rapport.
 
-## [commun] Le délateur
+## [le-delateur] Le délateur
 
 Le rapport nommait l'auteur de la dénonciation d'octobre 1941 : Marcel Daubry, commissaire aux
 Registres, beau-frère de la graveuse, qui avait remarqué les brûlures d'acide sur ses mains et
@@ -23,7 +23,7 @@ avril 1952, et celui qui était mort à Brenzac en 1959 sous un autre nom. C'ét
 dans la salle de lecture, sans lunettes. Puis elle demanda à Lise de rester sa fille quand même.
 Lise resta.
 
-## [commun] Le papetier
+## [le-papetier] Le papetier
 
 Le rapport établissait encore que Gaspard Varenque, directeur des Papeteries, fournisseur de la
 Régence pour le papier des carnets gris, avait, de juillet 1944 à avril 1952, fait passer au réseau
@@ -61,7 +61,7 @@ le Goéland avait passé sa vie à rembourser une nuit de novembre. Tavik décou
 Entre deux planches de l'herbier, une enveloppe sans cote attendait « le rapporteur ». *Si vous
 lisez ceci, vous avez trouvé deux pièces. C'est tout ce que je voulais.*
 
-## [commun] Fin
+## [fin] Fin
 
 Le fonds Varenque retourna aux magasins, soixante-trois articles, au complet. Sur la fiche de
 l'article 41, l'atelier ajouta une mention : *original réintégré le 20 novembre 1974*. Lise Daubry

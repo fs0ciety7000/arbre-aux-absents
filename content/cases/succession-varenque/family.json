@@ -5,7 +5,7 @@
       "given": ["Anselme"],
       "family": ["Varenque"],
       "occupation": "papetier",
-      "portrait": "anselme-varenque",
+      "portrait": "portrait-bc3567",
       "born": "1846-02-03",
       "died": "1919-11-21",
       "unions": ["clemence-aubertot"],
@@ -16,7 +16,7 @@
       "given": ["Clémence"],
       "family": ["Aubertot", "Varenque"],
       "occupation": "botaniste",
-      "portrait": "clemence-aubertot",
+      "portrait": "portrait-29659a",
       "born": "1850-06-09",
       "died": "1931-01-02",
       "unions": ["anselme-varenque"],
@@ -27,7 +27,7 @@
       "given": ["Firmin"],
       "family": ["Varenque"],
       "occupation": "capitaine",
-      "portrait": "firmin-varenque-1849",
+      "portrait": "portrait-4a82f7",
       "born": "1849-08-17",
       "died": "1902-03-06",
       "unions": ["maaren-tennok"],
@@ -38,7 +38,7 @@
       "given": ["Maaren"],
       "family": ["Tennok", "Tennokessa", "Varenque"],
       "occupation": "gardien-de-phare",
-      "portrait": "maaren-tennok",
+      "portrait": "portrait-760253",
       "born": "1852-04-02",
       "died": "1921-10-30",
       "unions": ["firmin-varenque-1849"],
@@ -49,7 +49,7 @@
       "given": ["Augustin"],
       "family": ["Varenque"],
       "occupation": "depute",
-      "portrait": "augustin-varenque-1872",
+      "portrait": "portrait-8630c4",
       "born": "1872-01-11",
       "died": "1938-02-04",
       "parents": ["anselme-varenque", "clemence-aubertot"],
@@ -61,7 +61,7 @@
       "given": ["Henriette"],
       "family": ["Sorbelle", "Varenque"],
       "occupation": "philanthrope",
-      "portrait": "henriette-sorbelle",
+      "portrait": "portrait-8d9d49",
       "born": "1876-05-23",
       "died": "1950-12-08",
       "unions": ["augustin-varenque-1872"],
@@ -72,7 +72,7 @@
       "given": ["Lucien"],
       "family": ["Varenque"],
       "occupation": "affichiste",
-      "portrait": "lucien-varenque",
+      "portrait": "portrait-42809c",
       "born": "1875-09-30",
       "died": "1918-03-19",
       "parents": ["anselme-varenque", "clemence-aubertot"],
@@ -84,7 +84,7 @@
       "given": ["Pauline"],
       "family": ["Sauge"],
       "occupation": "blanchisseuse",
-      "portrait": "pauline-sauge",
+      "portrait": "portrait-cc6447",
       "born": "1884-06-06",
       "died": "1940",
       "unions": ["lucien-varenque"],
@@ -96,7 +96,7 @@
       "family": ["Varenque"],
       "nicknames": ["Tante Adé", "Adé"],
       "occupation": "institutrice",
-      "portrait": "adelaide-varenque",
+      "portrait": "portrait-b6b0c8",
       "born": "1879-12-01",
       "died": "1974-03-12",
       "parents": ["anselme-varenque", "clemence-aubertot"],
@@ -107,7 +107,7 @@
       "given": ["Aldrik"],
       "family": ["Varenque"],
       "occupation": "patron-de-canot",
-      "portrait": "aldrik-varenque",
+      "portrait": "portrait-257a14",
       "born": "1874-05-05",
       "died": "1924-11-22",
       "parents": ["firmin-varenque-1849", "maaren-tennok"],
@@ -119,7 +119,7 @@
       "given": ["Tenna"],
       "family": ["Orrvik", "Orrvikessa", "Varenque"],
       "occupation": "receveuse",
-      "portrait": "tenna-orrvik",
+      "portrait": "portrait-50fb40",
       "born": "1878-02-11",
       "died": "1950",
       "unions": ["aldrik-varenque"],
@@ -130,7 +130,7 @@
       "given": ["Gaspard"],
       "family": ["Varenque"],
       "occupation": "directeur-papeteries",
-      "portrait": "gaspard-varenque",
+      "portrait": "portrait-3e6f98",
       "born": "1898-10-08",
       "died": "1971-09-02",
       "parents": ["augustin-varenque-1872", "henriette-sorbelle"],
@@ -142,7 +142,7 @@
       "given": ["Irène"],
       "family": ["Castagne", "Varenque"],
       "occupation": "pianiste",
-      "portrait": "irene-castagne",
+      "portrait": "portrait-c71578",
       "born": "1902-09-21",
       "died": "1945-03",
       "unions": ["gaspard-varenque"],
@@ -153,7 +153,7 @@
       "given": ["Blanche"],
       "family": ["Varenque", "Daubry"],
       "occupation": "cantatrice",
-      "portrait": "blanche-varenque",
+      "portrait": "portrait-1357d6",
       "born": "1901-02-16",
       "parents": ["augustin-varenque-1872", "henriette-sorbelle"],
       "unions": ["marcel-daubry"],
@@ -164,7 +164,7 @@
       "given": ["Marcel"],
       "family": ["Daubry"],
       "occupation": "commissaire",
-      "portrait": "marcel-daubry",
+      "portrait": "portrait-c7c452",
       "born": "1896-11-14",
       "died": "1959-11",
       "unions": ["blanche-varenque"],
@@ -176,7 +176,7 @@
       "family": ["Varenque"],
       "nicknames": ["Fougère"],
       "occupation": "graveuse",
-      "portrait": "odile-varenque",
+      "portrait": "portrait-184f23",
       "born": "1908-06-27",
       "parents": ["augustin-varenque-1872", "henriette-sorbelle"],
       "unions": ["orrin-kessvel"],
@@ -187,7 +187,7 @@
       "given": ["Orrin"],
       "family": ["Kessvel"],
       "occupation": "typographe",
-      "portrait": "orrin-kessvel",
+      "portrait": "portrait-f5fe3a",
       "born": "1905-06-20",
       "died": "1942-08-21",
       "unions": ["odile-varenque"],
@@ -198,7 +198,7 @@
       "given": ["Victor"],
       "family": ["Sauge"],
       "occupation": "aviateur",
-      "portrait": "victor-sauge",
+      "portrait": "portrait-2d1f2a",
       "born": "1906-05-12",
       "died": "1966-01-09",
       "parents": ["lucien-varenque", "pauline-sauge"],
@@ -210,7 +210,7 @@
       "given": ["Ninon"],
       "family": ["Brial", "Sauge"],
       "occupation": "costumiere",
-      "portrait": "ninon-brial",
+      "portrait": "portrait-54a494",
       "born": "1912",
       "died": "1971",
       "unions": ["victor-sauge"],
@@ -222,7 +222,7 @@
       "family": ["Varenque"],
       "nicknames": ["le Goéland", "Goéland", "Maask"],
       "occupation": "patron-pecheur",
-      "portrait": "firmin-varenque-1900",
+      "portrait": "portrait-7164a9",
       "born": "1900-03-03",
       "died": "1967",
       "parents": ["aldrik-varenque", "tenna-orrvik"],
@@ -234,7 +234,7 @@
       "given": ["Hessa"],
       "family": ["Draavik", "Draavikessa", "Varenque"],
       "occupation": "sage-femme",
-      "portrait": "hessa-draavik",
+      "portrait": "portrait-f16ac0",
       "born": "1906-02-02",
       "died": "1939-01",
       "unions": ["firmin-varenque-1900"],
@@ -245,7 +245,7 @@
       "given": ["Selda"],
       "family": ["Varenque"],
       "occupation": "journaliste",
-      "portrait": "selda-varenque",
+      "portrait": "portrait-a28dd4",
       "born": "1903-07-09",
       "parents": ["aldrik-varenque", "tenna-orrvik"],
       "bibleNotes": "C22. Rédactrice de Vel Taalik ; radiée (1938), exil à Brenzac jusqu'en 1953 ; auteure du lexique. Machine à écrire dont le e saute : auteure de la lettre anonyme OF-07."
@@ -255,7 +255,7 @@
       "given": ["Augustin"],
       "family": ["Varenque"],
       "occupation": "etudiant",
-      "portrait": "augustin-varenque-1924",
+      "portrait": "portrait-d3d513",
       "born": "1924-03-15",
       "died": "1944-06-17",
       "parents": ["gaspard-varenque", "irene-castagne"],
@@ -266,7 +266,7 @@
       "given": ["Armand"],
       "family": ["Varenque"],
       "occupation": "avocat",
-      "portrait": "armand-varenque",
+      "portrait": "portrait-46c403",
       "born": "1927-08-14",
       "parents": ["gaspard-varenque", "irene-castagne"],
       "unions": ["mathilde-rouviere"],
@@ -277,7 +277,7 @@
       "given": ["Mathilde"],
       "family": ["Rouvière", "Varenque"],
       "occupation": "speakerine",
-      "portrait": "mathilde-rouviere",
+      "portrait": "portrait-09b8e5",
       "born": "1930",
       "unions": ["armand-varenque"],
       "bibleNotes": "C25. Speakerine de la RTV (1950–1956). Pousse Armand à rendre le registre (F3)."
@@ -287,7 +287,7 @@
       "given": ["Hélène"],
       "family": ["Varenque", "Marsal"],
       "occupation": "medecin",
-      "portrait": "helene-varenque",
+      "portrait": "portrait-353114",
       "born": "1931-01-20",
       "parents": ["gaspard-varenque", "irene-castagne"],
       "unions": ["paul-marsal"],
@@ -298,7 +298,7 @@
       "given": ["Paul"],
       "family": ["Marsal"],
       "occupation": "journaliste",
-      "portrait": "paul-marsal",
+      "portrait": "portrait-f51ba3",
       "born": "1928",
       "unions": ["helene-varenque"],
       "bibleNotes": "C27. Journaliste au Courrier, auteur des « Papiers de la Régence » (1968) qui accusent Gaspard. Nez cassé, pipe."
@@ -308,7 +308,7 @@
       "given": ["Lise", "Élise"],
       "family": ["Daubry"],
       "occupation": "restauratrice",
-      "portrait": "lise-daubry",
+      "portrait": "portrait-83e166",
       "born": "1942-03-03",
       "parents": ["orrin-kessvel", "odile-varenque"],
       "bibleNotes": "C28. Née à Kessaar (Élise, pupille P-4471, matricule refusé), adoptée par Marcel et Blanche Daubry (filiation adoptive en pointillé). Restauratrice à l'atelier de conservation ; a inventorié le fonds ; a microfilmé le registre bleu. Mèche (cachée sous un bandeau en 1973), sourcils d'Odile, boucles d'Orrin."
@@ -319,7 +319,7 @@
       "family": ["Sauge"],
       "nicknames": ["Claudie"],
       "occupation": "ingenieure",
-      "portrait": "claude-sauge",
+      "portrait": "portrait-4d7e12",
       "born": "1938-04-23",
       "parents": ["victor-sauge", "ninon-brial"],
       "bibleNotes": "C29. Case cachée (révélée par C18). Ingénieure à la CVC, conceptrice du Lecteur LX-2. Piège de genre (« Sauge C., ingénieur »). Léger strabisme gauche."
@@ -329,7 +329,7 @@
       "given": ["Tavik"],
       "family": ["Varenque"],
       "occupation": "gardien-de-phare",
-      "portrait": "tavik-varenque",
+      "portrait": "portrait-e547d8",
       "born": "1932-09-18",
       "parents": ["firmin-varenque-1900", "hessa-draavik"],
       "bibleNotes": "C30. Case cachée. Gardien du feu de Tennok 1950–1972, « le dernier gardien ». Barbe rousse, anneau d'or, chandail d'Aldrik reprisé. A grandi avec « tante Nora »."
@@ -467,153 +467,153 @@
   ],
   "portraits": [
     {
-      "id": "anselme-varenque",
-      "file": "portraits/anselme-varenque.svg",
+      "id": "portrait-bc3567",
+      "file": "portraits/portrait-bc3567.svg",
       "alt": "Homme d'une quarantaine d'années au visage carré, front dégarni, cheveux bruns rejetés en arrière, favoris en côtelettes ; une cicatrice pâle barre son sourcil gauche. Redingote sombre, gilet, chaîne de montre."
     },
     {
-      "id": "clemence-aubertot",
-      "file": "portraits/clemence-aubertot.svg",
+      "id": "portrait-29659a",
+      "file": "portraits/portrait-29659a.svg",
       "alt": "Femme d'environ trente-cinq ans au visage ovale et fin, cheveux bruns en bandeaux séparés par une raie médiane, une mèche blanche au-dessus du front, à gauche. Col montant de dentelle fermé par une broche en forme de fronde de fougère."
     },
     {
-      "id": "firmin-varenque-1849",
-      "file": "portraits/firmin-varenque-1849.svg",
+      "id": "portrait-4a82f7",
+      "file": "portraits/portrait-4a82f7.svg",
       "alt": "Jeune homme d'environ vingt-trois ans au large nez et à la barbe noire fournie, un anneau d'or à l'oreille gauche. Casquette d'officier de marine, vareuse à double rangée de boutons."
     },
     {
-      "id": "maaren-tennok",
-      "file": "portraits/maaren-tennok.svg",
+      "id": "portrait-760253",
+      "file": "portraits/portrait-760253.svg",
       "alt": "Femme d'une soixantaine d'années à la mâchoire forte et aux yeux très clairs, tresses grises en couronne tenues par un ruban brodé. Col brodé de zigzags, châle de laine."
     },
     {
-      "id": "augustin-varenque-1872",
-      "file": "portraits/augustin-varenque-1872.svg",
+      "id": "portrait-8630c4",
+      "file": "portraits/portrait-8630c4.svg",
       "alt": "Homme corpulent d'une trentaine d'années, moustache en guidon cirée, pince-nez à ruban noir, cheveux pommadés en arrière où brille un reflet clair. Col cassé."
     },
     {
-      "id": "henriette-sorbelle",
-      "file": "portraits/henriette-sorbelle.svg",
+      "id": "portrait-8d9d49",
+      "file": "portraits/portrait-8d9d49.svg",
       "alt": "Très grande femme d'environ trente-cinq ans au visage long, fossette au menton, chapeau à plumes d'autruche ; un face-à-main pend à sa ceinture."
     },
     {
-      "id": "lucien-varenque",
-      "file": "portraits/lucien-varenque.svg",
+      "id": "portrait-42809c",
+      "file": "portraits/portrait-42809c.svg",
       "alt": "Homme d'une trentaine d'années à la barbe brune en pointe ; son œil gauche dévie légèrement vers l'extérieur. Chapeau de feutre à large bord, grand nœud lâche en guise de cravate, doigts tachés de peinture."
     },
     {
-      "id": "pauline-sauge",
-      "file": "portraits/pauline-sauge.svg",
+      "id": "portrait-cc6447",
+      "file": "portraits/portrait-cc6447.svg",
       "alt": "Jeune femme au visage rond, cheveux noirs bouclés en chignon lâche, un sourire qui découvre des dents de devant écartées, petite cicatrice au menton. Tablier de toile, manches retroussées."
     },
     {
-      "id": "adelaide-varenque",
-      "file": "portraits/adelaide-varenque.svg",
+      "id": "portrait-b6b0c8",
+      "file": "portraits/portrait-b6b0c8.svg",
       "alt": "Femme très âgée aux cheveux blancs tressés en couronne, grain de beauté sur la joue droite, regard droit ; une montre de col en argent est épinglée sur sa poitrine."
     },
     {
-      "id": "aldrik-varenque",
-      "file": "portraits/aldrik-varenque.svg",
+      "id": "portrait-257a14",
+      "file": "portraits/portrait-257a14.svg",
       "alt": "Homme d'une quarantaine d'années, rasé, visage buriné, yeux enfoncés, chandail à motif de zigzags ; il manque l'annulaire et l'auriculaire à sa main gauche. Un ciré jeté sur l'épaule."
     },
     {
-      "id": "tenna-orrvik",
-      "file": "portraits/tenna-orrvik.svg",
+      "id": "portrait-50fb40",
+      "file": "portraits/portrait-50fb40.svg",
       "alt": "Femme d'une cinquantaine d'années au large sourire, lunettes rondes, taches de rousseur, fichu noué sur la nuque, manchettes de lustrine."
     },
     {
-      "id": "gaspard-varenque",
-      "file": "portraits/gaspard-varenque.svg",
+      "id": "portrait-3e6f98",
+      "file": "portraits/portrait-3e6f98.svg",
       "alt": "Homme d'une quarantaine d'années aux lunettes rondes d'écaille, menton fendu, cheveux plaqués avec une raie au milieu, dos légèrement voûté. Costume trois-pièces."
     },
     {
-      "id": "irene-castagne",
-      "file": "portraits/irene-castagne.svg",
+      "id": "portrait-c71578",
+      "file": "portraits/portrait-c71578.svg",
       "alt": "Jeune femme aux cheveux noirs coupés au carré court, long cou, mains fines ; un sautoir de jade descend sur sa robe."
     },
     {
-      "id": "blanche-varenque",
-      "file": "portraits/blanche-varenque.svg",
+      "id": "portrait-1357d6",
+      "file": "portraits/portrait-1357d6.svg",
       "alt": "Femme d'une trentaine d'années aux cheveux ondulés au fer, grain de beauté au-dessus de la lèvre, à gauche ; rang de perles, robe de scène."
     },
     {
-      "id": "marcel-daubry",
-      "file": "portraits/marcel-daubry.svg",
+      "id": "portrait-c7c452",
+      "file": "portraits/portrait-c7c452.svg",
       "alt": "Homme très mince d'une quarantaine d'années, fine moustache, raie nette sur le côté, paupières lourdes ; chevalière en or gravée d'une initiale à l'auriculaire droit, une entaille au bord de l'oreille droite."
     },
     {
-      "id": "odile-varenque",
-      "file": "portraits/odile-varenque.svg",
+      "id": "portrait-184f23",
+      "file": "portraits/portrait-184f23.svg",
       "alt": "Femme d'une trentaine d'années aux cheveux bruns raides coupés au menton, une mèche blanche au-dessus du front à gauche, sourcils épais. Blouse d'atelier ; le dos de sa main droite porte une cicatrice de brûlure."
     },
     {
-      "id": "orrin-kessvel",
-      "file": "portraits/orrin-kessvel.svg",
+      "id": "portrait-f5fe3a",
+      "file": "portraits/portrait-f5fe3a.svg",
       "alt": "Grand homme d'une trentaine d'années aux cheveux blonds bouclés, une incisive cassée dans un sourire ; casquette plate, doigts noircis d'encre."
     },
     {
-      "id": "victor-sauge",
-      "file": "portraits/victor-sauge.svg",
+      "id": "portrait-2d1f2a",
+      "file": "portraits/portrait-2d1f2a.svg",
       "alt": "Jeune homme d'environ vingt-cinq ans aux fossettes, l'œil gauche légèrement dévié ; casque de cuir, lunettes de vol relevées, blouson de cuir."
     },
     {
-      "id": "ninon-brial",
-      "file": "portraits/ninon-brial.svg",
+      "id": "portrait-54a494",
+      "file": "portraits/portrait-54a494.svg",
       "alt": "Femme d'une trentaine d'années coiffée d'un turban noué, grands anneaux aux deux oreilles, sourcils noirs épais ; une pelote à épingles attachée au poignet."
     },
     {
-      "id": "firmin-varenque-1900",
-      "file": "portraits/firmin-varenque-1900.svg",
+      "id": "portrait-7164a9",
+      "file": "portraits/portrait-7164a9.svg",
       "alt": "Homme d'une trentaine d'années, rasé, un anneau d'or à l'oreille gauche, un goéland tatoué sur l'avant-bras droit ; casquette de marin, chandail à zigzags."
     },
     {
-      "id": "hessa-draavik",
-      "file": "portraits/hessa-draavik.svg",
+      "id": "portrait-f16ac0",
+      "file": "portraits/portrait-f16ac0.svg",
       "alt": "Femme d'une trentaine d'années au visage large, nattes épinglées en couronne serrée, tache de naissance sombre sur le côté droit du cou ; une sacoche de cuir en bandoulière."
     },
     {
-      "id": "selda-varenque",
-      "file": "portraits/selda-varenque.svg",
+      "id": "portrait-a28dd4",
+      "file": "portraits/portrait-a28dd4.svg",
       "alt": "Femme d'une trentaine d'années aux cheveux courts au carré, taches de rousseur, fines lunettes retenues par une chaînette ; veste d'homme."
     },
     {
-      "id": "augustin-varenque-1924",
-      "file": "portraits/augustin-varenque-1924.svg",
+      "id": "portrait-d3d513",
+      "file": "portraits/portrait-d3d513.svg",
       "alt": "Jeune homme d'une vingtaine d'années au menton fendu, une mèche de cheveux tombant sur l'œil droit ; écharpe à rayures, col de chemise ouvert."
     },
     {
-      "id": "armand-varenque",
-      "file": "portraits/armand-varenque.svg",
+      "id": "portrait-46c403",
+      "file": "portraits/portrait-46c403.svg",
       "alt": "Homme d'une quarantaine d'années aux grandes oreilles et au menton fendu, tempes grises, nœud papillon."
     },
     {
-      "id": "mathilde-rouviere",
-      "file": "portraits/mathilde-rouviere.svg",
+      "id": "portrait-09b8e5",
+      "file": "portraits/portrait-09b8e5.svg",
       "alt": "Jeune femme blonde coiffée en coque, trait d'eye-liner étiré en œil de chat, boucles d'oreilles en perle, col Claudine."
     },
     {
-      "id": "helene-varenque",
-      "file": "portraits/helene-varenque.svg",
+      "id": "portrait-353114",
+      "file": "portraits/portrait-353114.svg",
       "alt": "Femme d'une quarantaine d'années aux cheveux courts bouclés, lunettes à monture d'écaille, menton fendu ; tailleur sombre."
     },
     {
-      "id": "paul-marsal",
-      "file": "portraits/paul-marsal.svg",
+      "id": "portrait-f51ba3",
+      "file": "portraits/portrait-f51ba3.svg",
       "alt": "Homme d'une quarantaine d'années au nez cassé, cheveux bouclés dégarnis aux tempes, pipe au coin des lèvres, col roulé."
     },
     {
-      "id": "lise-daubry",
-      "file": "portraits/lise-daubry.svg",
+      "id": "portrait-83e166",
+      "file": "portraits/portrait-83e166.svg",
       "alt": "Femme d'une trentaine d'années aux cheveux châtain clair bouclés, sourcils épais, un bandeau de tissu sur le front ; gants de coton blanc, blouse grise d'atelier."
     },
     {
-      "id": "claude-sauge",
-      "file": "portraits/claude-sauge.svg",
+      "id": "portrait-4d7e12",
+      "file": "portraits/portrait-4d7e12.svg",
       "alt": "Femme d'une trentaine d'années aux cheveux très courts, l'œil gauche légèrement dévié ; col roulé, une règle à calcul dans la poche de poitrine."
     },
     {
-      "id": "tavik-varenque",
-      "file": "portraits/tavik-varenque.svg",
+      "id": "portrait-e547d8",
+      "file": "portraits/portrait-e547d8.svg",
       "alt": "Très grand homme d'une quarantaine d'années à la barbe rousse, un anneau d'or à l'oreille gauche ; chandail à zigzags reprisé."
     }
   ]

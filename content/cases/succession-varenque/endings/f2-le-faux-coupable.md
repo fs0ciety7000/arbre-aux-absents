@@ -15,7 +15,7 @@ Le rapport, lui, alla plus loin que l'arbre. À la question « Qui a dénoncé l
 répondait : Gaspard Varenque, directeur des Papeteries, fournisseur des carnets gris, frère de la
 graveuse. Les pièces citées étaient publiques ; elles disaient ce que tout le monde croyait déjà.
 
-## [commun] Ce que chacun en fit
+## [ce-que-chacun-en-fit] Ce que chacun en fit
 
 Paul Marsal publia, le 2 décembre, « Les Papiers de la Régence (7) : ce que dit le rapport ». Il
 n'avait plus besoin d'écrire à demi-mot : une administration l'écrivait pour lui. Hélène Marsal
@@ -56,7 +56,7 @@ Entre deux planches de l'herbier, une enveloppe sans cote attendait « le rappor
 lisez ceci, vous avez trouvé deux pièces. C'est tout ce que je voulais.* Elle arriva au bureau 12
 après la clôture. On la versa au dossier, qui était clos, et qui avait tort sur un point.
 
-## [commun] Fin
+## [fin] Fin
 
 L'arbre était juste. Trente noms, trente visages, trente métiers, chacun sur deux pièces. Le reste
 du rapport ne l'était pas, et l'arbre n'en dit rien : il n'a pas de case pour les coupables.

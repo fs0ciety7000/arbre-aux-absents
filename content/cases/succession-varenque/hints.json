@@ -1,0 +1,1029 @@
+[
+  {
+    "id": "c01-1",
+    "target": {
+      "slot": "c01"
+    },
+    "level": 1,
+    "text": "Son nom et sa qualité figurent dans la lettre de mission. Ce qui manque le plus souvent, c'est un visage : cherchez une photographie de couple prise en studio.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c01-2",
+    "target": {
+      "slot": "c01"
+    },
+    "level": 2,
+    "text": "Pièce utile : une carte de mariage du Studio Lumen, datée de 1870. Le Lecteur la rend sur le prénom du fondateur ou sur le nom du studio.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c01-3",
+    "target": {
+      "slot": "c01"
+    },
+    "level": 3,
+    "text": "Verso de la carte de mariage : « Anselme & Clémence — 14 mai 1870 ». L'homme a une petite cicatrice au sourcil, la même que sur la photographie des Tilleuls de 1885.",
+    "availableWhen": {
+      "unlocked": "ph-01"
+    }
+  },
+  {
+    "id": "c02-1",
+    "target": {
+      "slot": "c02"
+    },
+    "level": 1,
+    "text": "Le testament la nomme par son prénom seulement. Son nom de naissance est dans un registre de Moulinvert, sa qualité dans la presse de la Grande Exposition.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c02-2",
+    "target": {
+      "slot": "c02"
+    },
+    "level": 2,
+    "text": "Pièce utile : les naissances de Moulinvert (1872–1879), consultables au lieu « Moulinvert » de la carte ou en cherchant le nom complet du fondateur.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c02-3",
+    "target": {
+      "slot": "c02"
+    },
+    "level": 3,
+    "text": "Registre des naissances : « fils de Anselme Varenque, papetier, et de Clémence Aubertot, son épouse ». Sa qualité : le palmarès de 1889 parle de « Mme Varenque, botaniste distinguée ».",
+    "availableWhen": {
+      "unlocked": "rg-01"
+    }
+  },
+  {
+    "id": "c03-1",
+    "target": {
+      "slot": "c03"
+    },
+    "level": 1,
+    "text": "Deux hommes portent ce nom. Celui-ci est mort au début du siècle et commandait des navires.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c03-2",
+    "target": {
+      "slot": "c03"
+    },
+    "level": 2,
+    "text": "Pièce utile : la nécrologie parue dans L'Écho de Port-Sénane (1902). Cherchez son nom complet.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c03-3",
+    "target": {
+      "slot": "c03"
+    },
+    "level": 3,
+    "text": "1902 : « le capitaine Firmin Varenque », gravure d'après photographie : barbe, anneau d'or. L'acte de mariage de 1873 le dit « second capitaine au long cours ».",
+    "availableWhen": {
+      "unlocked": "pr-02"
+    }
+  },
+  {
+    "id": "c04-1",
+    "target": {
+      "slot": "c04"
+    },
+    "level": 1,
+    "text": "« La famille du gardien » : le gardien n'est peut-être pas celui qu'on croit. Cherchez les états de service du phare.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c04-2",
+    "target": {
+      "slot": "c04"
+    },
+    "level": 2,
+    "text": "Pièce utile : les états de service du feu de Tennok (Phares et Balises). Visitez « Tennok » sur la carte ou cherchez « Phares et Balises ».",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c04-3",
+    "target": {
+      "slot": "c04"
+    },
+    "level": 3,
+    "text": "États de service : « Mme Maaren Varenque, née Tennok, 1883–1912 ». En 1910, la gardienne en titre est donc la femme de 58 ans au premier plan de la carte postale.",
+    "availableWhen": {
+      "unlocked": "an-04"
+    }
+  },
+  {
+    "id": "c05-1",
+    "target": {
+      "slot": "c05"
+    },
+    "level": 1,
+    "text": "Deux hommes portent exactement ce nom dans le fonds. Comparez les âges, les parents et les visages avant de remplir.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c05-2",
+    "target": {
+      "slot": "c05"
+    },
+    "level": 2,
+    "text": "Pièce utile : une affiche électorale de 1905. Cherchez au Lecteur le nom complet du fils aîné d'Anselme.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c05-3",
+    "target": {
+      "slot": "c05"
+    },
+    "level": 3,
+    "text": "Affiche « Votez Augustin Varenque » (1905) : moustache cirée et pince-nez ; l'acte de décès de 1938 le dit « ancien député », âgé de 66 ans. L'autre Augustin meurt à vingt ans.",
+    "availableWhen": {
+      "unlocked": "pb-02"
+    }
+  },
+  {
+    "id": "c06-1",
+    "target": {
+      "slot": "c06"
+    },
+    "level": 1,
+    "text": "On la désigne souvent par le nom de son mari. Cherchez l'œuvre de bienfaisance qu'elle présidait.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c06-2",
+    "target": {
+      "slot": "c06"
+    },
+    "level": 2,
+    "text": "Pièce utile : le rapport annuel illustré de l'Œuvre des Lavandières (1912).",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c06-3",
+    "target": {
+      "slot": "c06"
+    },
+    "level": 3,
+    "text": "Photo du rapport de 1912 : « Mme Augustin Varenque, présidente, et nos protégées ». Son nom de naissance est dans l'acte de mariage de 1897 : Henriette Sorbelle, fille du banquier.",
+    "availableWhen": {
+      "unlocked": "ph-09"
+    }
+  },
+  {
+    "id": "c07-1",
+    "target": {
+      "slot": "c07"
+    },
+    "level": 1,
+    "text": "Le testament le dit « mon frère ». Sa qualité tient à une affiche célèbre ; l'annuaire du commerce de 1906 le confirme.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c07-2",
+    "target": {
+      "slot": "c07"
+    },
+    "level": 2,
+    "text": "Pièce utile : le catalogue de la rétrospective de 1920 (galerie de la Charte). Cherchez son nom complet ou le titre de l'affiche.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c07-3",
+    "target": {
+      "slot": "c07"
+    },
+    "level": 3,
+    "text": "Couverture du catalogue : autoportrait de 1910, barbe en pointe, l'œil gauche qui dévie. La presse de 1918 l'appelle « l'affichiste de La Lavandière » ; l'annuaire : « peintre-affichiste, 12 rue des Tanneurs ».",
+    "availableWhen": {
+      "unlocked": "ct-01"
+    }
+  },
+  {
+    "id": "c08-1",
+    "target": {
+      "slot": "c08"
+    },
+    "level": 1,
+    "text": "Un acte de naissance de 1906 donne la mère sans le père. Son visage est idéalisé sur une affiche ; il faut le retrouver sur une vraie photographie.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c08-2",
+    "target": {
+      "slot": "c08"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'acte de naissance de Victor Sauge (1906). Cherchez le prénom de l'enfant dont parle la lettre de Lucien.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c08-3",
+    "target": {
+      "slot": "c08"
+    },
+    "level": 3,
+    "text": "Acte de 1906 : « fils de Pauline Sauge, blanchisseuse, 14 rue des Tanneurs ; père non dénommé ». Le sourire à dents écartées de l'affiche se retrouve sur la photo de l'Œuvre (1912). « Modèle » n'est pas sa qualité.",
+    "availableWhen": {
+      "unlocked": "rg-06"
+    }
+  },
+  {
+    "id": "c10-1",
+    "target": {
+      "slot": "c10"
+    },
+    "level": 1,
+    "text": "La carte postale du phare montre un homme qui n'est pas le gardien. Cherchez du côté du sauvetage en mer.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c10-2",
+    "target": {
+      "slot": "c10"
+    },
+    "level": 2,
+    "text": "Pièce utile : la carte « Le canot de sauvetage de Tennok et son équipage » (1912). Cherchez « canot de sauvetage ».",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c10-3",
+    "target": {
+      "slot": "c10"
+    },
+    "level": 3,
+    "text": "Carte de 1912 : « patron A. Varenque » ; il lui manque deux doigts à la main gauche. Le registre de Tennok le nomme Aldrik Varenque, « patron du canot de sauvetage ».",
+    "availableWhen": {
+      "unlocked": "ph-10"
+    }
+  },
+  {
+    "id": "c11-1",
+    "target": {
+      "slot": "c11"
+    },
+    "level": 1,
+    "text": "Elle garde son nom de naissance, comme les femmes ostriennes. Le cachet d'une carte postale de Tennok porte son nom.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c11-2",
+    "target": {
+      "slot": "c11"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie de la recette des postes de Tennok (1925). Cherchez son nom complet ou celui qui figure sur le cachet.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c11-3",
+    "target": {
+      "slot": "c11"
+    },
+    "level": 3,
+    "text": "Photographie de 1925 : « la receveuse Tenna Orrvik », lunettes rondes, derrière son guichet. Le registre de Tennok la dit « receveuse des postes ». « Orrvikessa » est la même personne.",
+    "availableWhen": {
+      "unlocked": "ph-12"
+    }
+  },
+  {
+    "id": "c12-1",
+    "target": {
+      "slot": "c12"
+    },
+    "level": 1,
+    "text": "Un seul homme de la famille est appelé « directeur » dans la presse. Les journaux de 1938 et de 1953 publient sa photo.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c12-2",
+    "target": {
+      "slot": "c12"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'article du Héraut sur « le nouveau carnet gris » (1938). Cherchez « carnets gris » ou son nom complet.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c12-3",
+    "target": {
+      "slot": "c12"
+    },
+    "level": 3,
+    "text": "Le Héraut, mai 1938 : « M. Gaspard Varenque, directeur des Papeteries », lunettes rondes d'écaille, menton fendu. La nécrologie de 1971 précise : directeur de 1925 à 1960.",
+    "availableWhen": {
+      "unlocked": "pr-08"
+    }
+  },
+  {
+    "id": "c13-1",
+    "target": {
+      "slot": "c13"
+    },
+    "level": 1,
+    "text": "C'est la mariée de 1922. Son nom de jeune fille est sur l'acte de mariage et sur le plan de table du banquet.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c13-2",
+    "target": {
+      "slot": "c13"
+    },
+    "level": 2,
+    "text": "Pièce utile : le programme d'un récital au théâtre de Port-Sénane (1928).",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c13-3",
+    "target": {
+      "slot": "c13"
+    },
+    "level": 3,
+    "text": "Programme de 1928 : « Récital d'Irène Castagne, pianiste », portrait en couverture. C'est la mariée de la photographie de 1922 (n° 2).",
+    "availableWhen": {
+      "unlocked": "ph-11"
+    }
+  },
+  {
+    "id": "c14-1",
+    "target": {
+      "slot": "c14"
+    },
+    "level": 1,
+    "text": "Elle a trois noms dans le fonds : de naissance, d'épouse et de scène. Le nom de scène n'est pas une identité.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c14-2",
+    "target": {
+      "slot": "c14"
+    },
+    "level": 2,
+    "text": "Pièce utile : L'Œil velmarchois de 1929, « … triomphe dans La Lanterne d'Ostrie ». Cherchez le nom de scène vu sur l'affiche de l'Opéra.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c14-3",
+    "target": {
+      "slot": "c14"
+    },
+    "level": 3,
+    "text": "L'article de 1929 dit la soprano « née Varenque, fille de l'ancien député » ; grain de beauté au-dessus de la lèvre. Son nom est Blanche Varenque (Daubry accepté), jamais « Aubertine ».",
+    "availableWhen": {
+      "unlocked": "pr-06"
+    }
+  },
+  {
+    "id": "c15-1",
+    "target": {
+      "slot": "c15"
+    },
+    "level": 1,
+    "text": "Il a exercé deux qualités ; une seule est celle pour laquelle on le connaît dans les pièces après 1938.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c15-2",
+    "target": {
+      "slot": "c15"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'article du Héraut sur « le nouveau carnet gris » (1938), qui le photographie avec son beau-frère.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c15-3",
+    "target": {
+      "slot": "c15"
+    },
+    "level": 3,
+    "text": "Le Héraut, 1938 : « le commissaire aux Registres Marcel Daubry ». Son acte de mariage de 1923 le dit comptable : c'est un leurre. Oreille droite entaillée, chevalière « D ».",
+    "availableWhen": {
+      "unlocked": "pr-08"
+    }
+  },
+  {
+    "id": "c16-1",
+    "target": {
+      "slot": "c16"
+    },
+    "level": 1,
+    "text": "La presse l'a photographiée à son établi en 1937. Les registres de la Régence la donnent pour morte : cela n'empêche pas de l'inscrire.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c16-2",
+    "target": {
+      "slot": "c16"
+    },
+    "level": 2,
+    "text": "Pièce utile : la page « Les métiers du papier » de L'Œil velmarchois (1937). Cherchez « graveuse » ou son nom complet.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c16-3",
+    "target": {
+      "slot": "c16"
+    },
+    "level": 3,
+    "text": "1937 : « Mlle O. Varenque, graveuse de filigranes, aux Papeteries de Moulinvert » ; mèche blanche, brûlure au dos de la main droite. La liste n° 41 du Bulletin d'Ordre confirme : « Varenque Odile, graveuse ».",
+    "availableWhen": {
+      "unlocked": "ph-06"
+    }
+  },
+  {
+    "id": "c17-1",
+    "target": {
+      "slot": "c17"
+    },
+    "level": 1,
+    "text": "Son prénom est dans une lettre, son nom dans une liste de radiation. Une photographie de rédaction le montre en dehors des fonds restreints.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c17-2",
+    "target": {
+      "slot": "c17"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photo de la rédaction de Vel Taalik (1936). Cherchez « Vel Taalik ».",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c17-3",
+    "target": {
+      "slot": "c17"
+    },
+    "level": 3,
+    "text": "1936 : « le typographe O. Kessvel », à côté de Selda Varenque. La liste n° 41 écrit « Kessvel Orrin, typographe » : au Lecteur, le fonds restreint ne s'ouvre que sur « Orrin Kessvel ».",
+    "availableWhen": {
+      "unlocked": "ph-13"
+    }
+  },
+  {
+    "id": "c18-1",
+    "target": {
+      "slot": "c18"
+    },
+    "level": 1,
+    "text": "Un aviateur célèbre des années trente. Son acte de naissance ne nomme pas son père ; la case ne demande que son nom.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c18-2",
+    "target": {
+      "slot": "c18"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie de presse de L'Hirondelle (1931). Cherchez « Aéro-Velmarche » ou son nom complet.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c18-3",
+    "target": {
+      "slot": "c18"
+    },
+    "level": 3,
+    "text": "1931 : « Victor Sauge et L'Hirondelle », lunettes de vol relevées, léger strabisme. Il se dit fils d'un capitaine disparu en mer : le capitaine est mort en 1902, Victor naît en 1906.",
+    "availableWhen": {
+      "unlocked": "ph-07"
+    }
+  },
+  {
+    "id": "c19-1",
+    "target": {
+      "slot": "c19"
+    },
+    "level": 1,
+    "text": "Révélée par la famille de l'aviateur. Son nom de naissance n'apparaît qu'une fois, sur l'acte de mariage.",
+    "availableWhen": {
+      "locked": "c18"
+    }
+  },
+  {
+    "id": "c19-2",
+    "target": {
+      "slot": "c19"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'acte de mariage de Victor Sauge (1934), sur son nom complet.",
+    "availableWhen": {
+      "locked": "c18"
+    }
+  },
+  {
+    "id": "c19-3",
+    "target": {
+      "slot": "c19"
+    },
+    "level": 3,
+    "text": "Acte de 1934 : « Ninon Brial, costumière ». À l'Opéra, en 1948, elle est « Mme Ninon Sauge, première costumière » ; turban et grands anneaux sur la photo du lac d'Aulne.",
+    "availableWhen": {
+      "all": [
+        {
+          "locked": "c18"
+        },
+        {
+          "unlocked": "rg-11"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c20-1",
+    "target": {
+      "slot": "c20"
+    },
+    "level": 1,
+    "text": "Trois hommes de la famille portent un anneau d'or à l'oreille. Celui-ci a un surnom, en velmarchois et en ostrien.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c20-2",
+    "target": {
+      "slot": "c20"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie d'un mariage ostrien à Vellaak (1930). Cherchez son nom complet ou le prénom de la mariée.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c20-3",
+    "target": {
+      "slot": "c20"
+    },
+    "level": 3,
+    "text": "1930 : « Hessa Draavikessa ta Firmin Varenque — Vellaak » ; visage rasé à trente ans. L'acte de naissance de son fils le dit « patron pêcheur ». Le Goéland et Maask sont ses surnoms.",
+    "availableWhen": {
+      "unlocked": "ph-14"
+    }
+  },
+  {
+    "id": "c21-1",
+    "target": {
+      "slot": "c21"
+    },
+    "level": 1,
+    "text": "Elle apparaît avec son mari sur une photo de mariage, et seule dans un journal ostrien, sacoche à la main.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-10"
+        },
+        {
+          "read": "ph-20"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c21-2",
+    "target": {
+      "slot": "c21"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'article de Vel Taalik sur « les femmes qui accueillent » (1936). Cherchez son prénom.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-10"
+        },
+        {
+          "read": "ph-20"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c21-3",
+    "target": {
+      "slot": "c21"
+    },
+    "level": 3,
+    "text": "1936 : Hessa, sacoche de cuir, parmi « les sages-femmes de la côte ». L'acte de naissance de Tavik la nomme « Hessa Draavik, sage-femme » ; « Draavikessa » est la même personne.",
+    "availableWhen": {
+      "all": [
+        {
+          "any": [
+            {
+              "read": "rg-10"
+            },
+            {
+              "read": "ph-20"
+            }
+          ]
+        },
+        {
+          "unlocked": "ph-15"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c22-1",
+    "target": {
+      "slot": "c22"
+    },
+    "level": 1,
+    "text": "Elle a été radiée par la Régence pour ce qu'elle écrivait. Le Bulletin d'Ordre et la presse ostrienne la nomment.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c22-2",
+    "target": {
+      "slot": "c22"
+    },
+    "level": 2,
+    "text": "Pièce utile : la liste de radiation n° 3 du Bulletin d'Ordre (1938). Cherchez « absents ».",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c22-3",
+    "target": {
+      "slot": "c22"
+    },
+    "level": 3,
+    "text": "Liste n° 3 : « Varenque Selda, rédactrice de la feuille interdite Vel Taalik ». Visages : la photo de rédaction de 1936 et le quai de Vellaak en 1953, taches de rousseur.",
+    "availableWhen": {
+      "unlocked": "rg-12"
+    }
+  },
+  {
+    "id": "c23-1",
+    "target": {
+      "slot": "c23"
+    },
+    "level": 1,
+    "text": "Homonyme d'un député. Il meurt à vingt ans ; deux pièces de 1944, l'une officielle, l'autre clandestine, le montrent.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c23-2",
+    "target": {
+      "slot": "c23"
+    },
+    "level": 2,
+    "text": "Pièce utile : un avis de la Régence affiché en juin 1944. Cherchez « Nuit des affiches » ou le nom complet.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c23-3",
+    "target": {
+      "slot": "c23"
+    },
+    "level": 3,
+    "text": "Avis du 17 juin 1944 : « VARENQUE Augustin, 20 ans, étudiant » ; photo d'identité, menton fendu. Les naissances de 1924 le donnent fils de Gaspard et d'Irène.",
+    "availableWhen": {
+      "unlocked": "pb-04"
+    }
+  },
+  {
+    "id": "c24-1",
+    "target": {
+      "slot": "c24"
+    },
+    "level": 1,
+    "text": "Il se présente lui-même dans sa lettre d'opposition. Il lui manque un visage : cherchez un mariage annoncé dans la presse.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c24-2",
+    "target": {
+      "slot": "c24"
+    },
+    "level": 2,
+    "text": "Pièce utile : « Les noces de l'année », L'Œil velmarchois (1951). Cherchez son nom complet.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c24-3",
+    "target": {
+      "slot": "c24"
+    },
+    "level": 3,
+    "text": "1951 : « Me Armand Varenque, avocat », grandes oreilles, nœud papillon. On le retrouve sur la photo des obsèques de son père (1971).",
+    "availableWhen": {
+      "unlocked": "ph-22"
+    }
+  },
+  {
+    "id": "c25-1",
+    "target": {
+      "slot": "c25"
+    },
+    "level": 1,
+    "text": "Une voix connue de la télévision. Son prénom est dans la lettre d'opposition ; son nom de naissance dans un faire-part de presse.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c25-2",
+    "target": {
+      "slot": "c25"
+    },
+    "level": 2,
+    "text": "Pièce utile : « Les noces de l'année », L'Œil velmarchois (1951). Cherchez « RTV » ou « speakerine ».",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c25-3",
+    "target": {
+      "slot": "c25"
+    },
+    "level": 3,
+    "text": "1951 : « Mlle Mathilde Rouvière, la speakerine bien connue de la RTV ». Le même visage fait la couverture d'Antenne velmarchoise en 1954.",
+    "availableWhen": {
+      "unlocked": "ph-22"
+    }
+  },
+  {
+    "id": "c26-1",
+    "target": {
+      "slot": "c26"
+    },
+    "level": 1,
+    "text": "On l'appelle « le Dr » dans la lettre d'opposition, sous son nom d'épouse. Un annuaire précise sa spécialité.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c26-2",
+    "target": {
+      "slot": "c26"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'annonce d'un mariage dans la Gazette de l'Orvelle (1956). Cherchez le nom complet du marié.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c26-3",
+    "target": {
+      "slot": "c26"
+    },
+    "level": 3,
+    "text": "1956 : mariage « du Dr Hélène Varenque, fille du directeur des Papeteries, et de M. Paul Marsal ». L'annuaire de 1972 : « Marsal Hélène, docteur en médecine, pédiatre ».",
+    "availableWhen": {
+      "unlocked": "ph-25"
+    }
+  },
+  {
+    "id": "c27-1",
+    "target": {
+      "slot": "c27"
+    },
+    "level": 1,
+    "text": "Il a signé une série d'articles sur les papiers de la Régence. Même qualité qu'une autre case de l'arbre.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c27-2",
+    "target": {
+      "slot": "c27"
+    },
+    "level": 2,
+    "text": "Pièce utile : « Les Papiers de la Régence (3) », Courrier d'Aubrelieu (1968).",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c27-3",
+    "target": {
+      "slot": "c27"
+    },
+    "level": 3,
+    "text": "1968 : article signé Paul Marsal, avec sa photo (nez cassé). Le faire-part de mariage de 1956 le dit « journaliste au Courrier ».",
+    "availableWhen": {
+      "unlocked": "pr-16"
+    }
+  },
+  {
+    "id": "c28-1",
+    "target": {
+      "slot": "c28"
+    },
+    "level": 1,
+    "text": "Elle travaille aux Archives. Sa naissance officielle est un mensonge ; sa case est placée selon le sang, pas selon l'adoption.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c28-2",
+    "target": {
+      "slot": "c28"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photo de classe du lycée de Bains-de-Mérande (1955). Cherchez son nom complet ou le lieu.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c28-3",
+    "target": {
+      "slot": "c28"
+    },
+    "level": 3,
+    "text": "1955, deuxième rang : « Lise Daubry », la mèche blanche bien visible. L'inventaire du fonds est signé « L. Daubry, restauratrice ». Même date de naissance que P-4471 : le 3 mars 1942.",
+    "availableWhen": {
+      "unlocked": "ph-24"
+    }
+  },
+  {
+    "id": "c29-1",
+    "target": {
+      "slot": "c29"
+    },
+    "level": 1,
+    "text": "Révélée par la famille de l'aviateur. Un annuaire l'écrit au masculin : ne vous y fiez pas.",
+    "availableWhen": {
+      "locked": "c18"
+    }
+  },
+  {
+    "id": "c29-2",
+    "target": {
+      "slot": "c29"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'article sur l'accident de l'aviateur dans les Corvins (1966), qui montre les obsèques.",
+    "availableWhen": {
+      "locked": "c18"
+    }
+  },
+  {
+    "id": "c29-3",
+    "target": {
+      "slot": "c29"
+    },
+    "level": 3,
+    "text": "1966 : « sa fille Claude, ingénieure ». C'est la « Mlle C. Sauge, ingénieure de la CVC » de l'inauguration du Lecteur LX-2 (1973), et l'autrice du mode d'emploi du Lecteur.",
+    "availableWhen": {
+      "all": [
+        {
+          "locked": "c18"
+        },
+        {
+          "unlocked": "pr-15"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c30-1",
+    "target": {
+      "slot": "c30"
+    },
+    "level": 1,
+    "text": "Le dernier à tenir le feu de Tennok. Même qualité que son arrière-grand-mère.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-10"
+        },
+        {
+          "read": "ph-20"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c30-2",
+    "target": {
+      "slot": "c30"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'article de Vel Taalik sur « le dernier gardien de Tennok » (1972). Cherchez son nom complet.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-10"
+        },
+        {
+          "read": "ph-20"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c30-3",
+    "target": {
+      "slot": "c30"
+    },
+    "level": 3,
+    "text": "1972 : « Tavik Varenque, le dernier gardien de Tennok », barbe rousse et anneau d'or. Les états de service du feu : « Tavik Varenque 1950–1972 ».",
+    "availableWhen": {
+      "all": [
+        {
+          "any": [
+            {
+              "read": "rg-10"
+            },
+            {
+              "read": "ph-20"
+            }
+          ]
+        },
+        {
+          "unlocked": "ph-29"
+        }
+      ]
+    }
+  }
+]

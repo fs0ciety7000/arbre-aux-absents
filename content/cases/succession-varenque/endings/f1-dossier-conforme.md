@@ -58,7 +58,7 @@ l'herbier de Clémence, une enveloppe sans cote, adressée « Au rapporteur ». 
 l'encre violette. *Si vous lisez ceci, vous avez trouvé deux pièces. C'est tout ce que je voulais.*
 Elle la fit porter au bureau 12, sans l'ouvrir. Enfin, presque sans.
 
-## [commun] Retour aux magasins
+## [retour-aux-magasins] Retour aux magasins
 
 Le fonds Varenque retourna aux magasins du palais des Chartes, série FV, soixante-trois articles,
 moins un. Le dossier 74-0318 fut classé conforme.

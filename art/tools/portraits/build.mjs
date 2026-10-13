@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Génère les portraits de l'affaire dans content/cases/<case>/portraits/<personId>.svg.
+ * Génère les portraits de l'affaire dans content/cases/<case>/portraits/<portraitId>.svg
+ * (id neutre lu dans ids.json : personne → portrait).
  *
  *   node art/tools/portraits/build.mjs                 → écrit les 30 portraits + budgets
  *   node art/tools/portraits/build.mjs --sheet <dir>   → + planches HTML (portraits, âges, photo)
@@ -36,9 +37,12 @@ function svgoSize(svg) {
 mkdirSync(outDir, { recursive: true });
 const rows = [];
 const files = {};
+// Ids de portrait neutres (règle 11 : aucun nom de personne dans le compilé), table dans ids.json.
+const NEUTRAL_IDS = JSON.parse(readFileSync(new URL('./ids.json', import.meta.url), 'utf8'));
 for (const p of PEOPLE) {
-  const svg = renderPortrait(p, { prefix: p.id });
-  writeFileSync(join(outDir, `${p.id}.svg`), svg);
+  const fileId = NEUTRAL_IDS[p.id] ?? p.id;
+  const svg = renderPortrait(p, { prefix: fileId });
+  writeFileSync(join(outDir, `${fileId}.svg`), svg);
   files[p.id] = svg;
   rows.push({ id: p.id, ...svgoSize(svg) });
 }

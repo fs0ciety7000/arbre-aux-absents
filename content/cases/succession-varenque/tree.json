@@ -1,0 +1,255 @@
+{
+  "slots": [
+    {
+      "id": "c01",
+      "person": "anselme-varenque",
+      "generation": 1,
+      "column": 2
+    },
+    {
+      "id": "c02",
+      "person": "clemence-aubertot",
+      "generation": 1,
+      "column": 3
+    },
+    {
+      "id": "c03",
+      "person": "firmin-varenque-1849",
+      "generation": 1,
+      "column": 12
+    },
+    {
+      "id": "c04",
+      "person": "maaren-tennok",
+      "generation": 1,
+      "column": 13
+    },
+    {
+      "id": "c05",
+      "person": "augustin-varenque-1872",
+      "generation": 2,
+      "column": 1
+    },
+    {
+      "id": "c06",
+      "person": "henriette-sorbelle",
+      "generation": 2,
+      "column": 2
+    },
+    {
+      "id": "c07",
+      "person": "lucien-varenque",
+      "generation": 2,
+      "column": 6
+    },
+    {
+      "id": "c08",
+      "person": "pauline-sauge",
+      "generation": 2,
+      "column": 7
+    },
+    {
+      "id": "c09",
+      "person": "adelaide-varenque",
+      "generation": 2,
+      "column": 9,
+      "prefilled": true
+    },
+    {
+      "id": "c10",
+      "person": "aldrik-varenque",
+      "generation": 2,
+      "column": 12
+    },
+    {
+      "id": "c11",
+      "person": "tenna-orrvik",
+      "generation": 2,
+      "column": 13
+    },
+    {
+      "id": "c12",
+      "person": "gaspard-varenque",
+      "generation": 3,
+      "column": 0
+    },
+    {
+      "id": "c13",
+      "person": "irene-castagne",
+      "generation": 3,
+      "column": 1
+    },
+    {
+      "id": "c14",
+      "person": "blanche-varenque",
+      "generation": 3,
+      "column": 2
+    },
+    {
+      "id": "c15",
+      "person": "marcel-daubry",
+      "generation": 3,
+      "column": 3
+    },
+    {
+      "id": "c16",
+      "person": "odile-varenque",
+      "generation": 3,
+      "column": 4
+    },
+    {
+      "id": "c17",
+      "person": "orrin-kessvel",
+      "generation": 3,
+      "column": 5
+    },
+    {
+      "id": "c18",
+      "person": "victor-sauge",
+      "generation": 3,
+      "column": 7
+    },
+    {
+      "id": "c19",
+      "person": "ninon-brial",
+      "generation": 3,
+      "column": 8,
+      "revealedBy": {
+        "locked": "c18"
+      }
+    },
+    {
+      "id": "c20",
+      "person": "firmin-varenque-1900",
+      "generation": 3,
+      "column": 11
+    },
+    {
+      "id": "c21",
+      "person": "hessa-draavik",
+      "generation": 3,
+      "column": 12,
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-10"
+          },
+          {
+            "read": "ph-20"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c22",
+      "person": "selda-varenque",
+      "generation": 3,
+      "column": 14
+    },
+    {
+      "id": "c23",
+      "person": "augustin-varenque-1924",
+      "generation": 4,
+      "column": 0
+    },
+    {
+      "id": "c24",
+      "person": "armand-varenque",
+      "generation": 4,
+      "column": 1
+    },
+    {
+      "id": "c25",
+      "person": "mathilde-rouviere",
+      "generation": 4,
+      "column": 2
+    },
+    {
+      "id": "c26",
+      "person": "helene-varenque",
+      "generation": 4,
+      "column": 3
+    },
+    {
+      "id": "c27",
+      "person": "paul-marsal",
+      "generation": 4,
+      "column": 4
+    },
+    {
+      "id": "c28",
+      "person": "lise-daubry",
+      "generation": 4,
+      "column": 5
+    },
+    {
+      "id": "c29",
+      "person": "claude-sauge",
+      "generation": 4,
+      "column": 8,
+      "revealedBy": {
+        "locked": "c18"
+      }
+    },
+    {
+      "id": "c30",
+      "person": "tavik-varenque",
+      "generation": 4,
+      "column": 11,
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-10"
+          },
+          {
+            "read": "ph-20"
+          }
+        ]
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "g-fondateurs",
+      "label": "Prologue — Les fondateurs des Tilleuls",
+      "slots": ["c01", "c02", "c05"],
+      "threshold": 3
+    },
+    {
+      "id": "g-atelier",
+      "label": "L'Atelier — la lavandière et l'affiche",
+      "slots": ["c07", "c08", "c18", "c19", "c29"],
+      "threshold": 3
+    },
+    {
+      "id": "g-cap",
+      "label": "Le Phare — les gens du cap",
+      "slots": ["c03", "c04", "c10", "c11"],
+      "threshold": 3
+    },
+    {
+      "id": "g-heritiers",
+      "label": "Les Tilleuls — les héritiers",
+      "slots": ["c24", "c25", "c26", "c27"],
+      "threshold": 3
+    },
+    {
+      "id": "g-tilleuls",
+      "label": "Les Tilleuls — la maison du député",
+      "slots": ["c06", "c12", "c13", "c23"],
+      "threshold": 3
+    },
+    {
+      "id": "g-vellaak",
+      "label": "Le Phare — ceux de Vellaak",
+      "slots": ["c20", "c21", "c22", "c30"],
+      "threshold": 3
+    },
+    {
+      "id": "g-absents",
+      "label": "Les Absents",
+      "slots": ["c14", "c15", "c16", "c17", "c28"],
+      "threshold": 3
+    }
+  ]
+}

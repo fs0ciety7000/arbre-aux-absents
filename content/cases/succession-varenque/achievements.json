@@ -1,0 +1,1384 @@
+[
+  {
+    "id": "premiere-piece",
+    "title": "Première pièce",
+    "description": "Lire une première pièce du dossier 74-0318.",
+    "hidden": false,
+    "when": {
+      "any": [
+        {
+          "read": "of-01"
+        },
+        {
+          "read": "of-02"
+        },
+        {
+          "read": "of-03"
+        },
+        {
+          "read": "of-04"
+        },
+        {
+          "read": "of-05"
+        },
+        {
+          "read": "of-06"
+        },
+        {
+          "read": "of-07"
+        }
+      ]
+    }
+  },
+  {
+    "id": "fiche-demandee",
+    "title": "Fiche demandée",
+    "description": "Obtenir une première fiche du Lecteur LX-2.",
+    "hidden": false,
+    "when": {
+      "any": [
+        {
+          "searched": "anselme-varenque"
+        },
+        {
+          "searched": "clemence-aubertot"
+        },
+        {
+          "searched": "firmin-varenque"
+        },
+        {
+          "searched": "maaren-tennok"
+        },
+        {
+          "searched": "maaren-tennokessa"
+        },
+        {
+          "searched": "joren-tennok"
+        },
+        {
+          "searched": "augustin-varenque"
+        },
+        {
+          "searched": "augustin-v"
+        },
+        {
+          "searched": "henriette-sorbelle"
+        },
+        {
+          "searched": "sorbelle"
+        },
+        {
+          "searched": "lucien-varenque"
+        },
+        {
+          "searched": "pauline-sauge"
+        },
+        {
+          "searched": "adelaide-varenque"
+        },
+        {
+          "searched": "tante-ade"
+        },
+        {
+          "searched": "aldrik-varenque"
+        },
+        {
+          "searched": "a-varenque"
+        },
+        {
+          "searched": "tenna-orrvik"
+        },
+        {
+          "searched": "orrvik"
+        },
+        {
+          "searched": "gaspard-varenque"
+        },
+        {
+          "searched": "irene-castagne"
+        },
+        {
+          "searched": "castagne"
+        },
+        {
+          "searched": "blanche-varenque"
+        },
+        {
+          "searched": "blanche-daubry"
+        },
+        {
+          "searched": "blanche-aubertine"
+        },
+        {
+          "searched": "marcel-daubry"
+        },
+        {
+          "searched": "daubry"
+        },
+        {
+          "searched": "odile-varenque"
+        },
+        {
+          "searched": "orrin-kessvel"
+        },
+        {
+          "searched": "kessvel"
+        },
+        {
+          "searched": "victor-sauge"
+        },
+        {
+          "searched": "ninon-brial"
+        },
+        {
+          "searched": "selda-varenque"
+        },
+        {
+          "searched": "hessa-draavik"
+        },
+        {
+          "searched": "hessa-draavikessa"
+        },
+        {
+          "searched": "tavik-varenque"
+        },
+        {
+          "searched": "armand-varenque"
+        },
+        {
+          "searched": "mathilde-rouviere"
+        },
+        {
+          "searched": "helene-varenque"
+        },
+        {
+          "searched": "helene-marsal"
+        },
+        {
+          "searched": "paul-marsal"
+        },
+        {
+          "searched": "lise-daubry"
+        },
+        {
+          "searched": "l-daubry"
+        },
+        {
+          "searched": "claude-sauge"
+        },
+        {
+          "searched": "c-sauge"
+        },
+        {
+          "searched": "nora-ilvess"
+        },
+        {
+          "searched": "marc-dobrin"
+        },
+        {
+          "searched": "teodor-haask"
+        },
+        {
+          "searched": "jorre-haask"
+        },
+        {
+          "searched": "haask"
+        },
+        {
+          "searched": "brunesseau"
+        },
+        {
+          "searched": "desaulnes"
+        },
+        {
+          "searched": "hautfeuille"
+        },
+        {
+          "searched": "anselme"
+        },
+        {
+          "searched": "clemence"
+        },
+        {
+          "searched": "augustin"
+        },
+        {
+          "searched": "lucien"
+        },
+        {
+          "searched": "adelaide"
+        },
+        {
+          "searched": "gaspard"
+        },
+        {
+          "searched": "irene"
+        },
+        {
+          "searched": "odile"
+        },
+        {
+          "searched": "firmin"
+        },
+        {
+          "searched": "maaren"
+        },
+        {
+          "searched": "aldrik"
+        },
+        {
+          "searched": "tenna"
+        },
+        {
+          "searched": "henriette"
+        },
+        {
+          "searched": "victor"
+        },
+        {
+          "searched": "pauline"
+        },
+        {
+          "searched": "hessa"
+        },
+        {
+          "searched": "selda"
+        },
+        {
+          "searched": "tavik"
+        },
+        {
+          "searched": "lise"
+        },
+        {
+          "searched": "elise"
+        },
+        {
+          "searched": "ninon"
+        },
+        {
+          "searched": "claude"
+        },
+        {
+          "searched": "orrin"
+        },
+        {
+          "searched": "mathilde"
+        },
+        {
+          "searched": "armand"
+        },
+        {
+          "searched": "helene"
+        },
+        {
+          "searched": "paul"
+        },
+        {
+          "searched": "marcel"
+        },
+        {
+          "searched": "maask"
+        },
+        {
+          "searched": "le-goeland"
+        },
+        {
+          "searched": "varenque"
+        },
+        {
+          "searched": "moulinvert"
+        },
+        {
+          "searched": "tilleuls"
+        },
+        {
+          "searched": "tennok"
+        },
+        {
+          "searched": "vellaak"
+        },
+        {
+          "searched": "aubrelieu"
+        },
+        {
+          "searched": "port-senane"
+        },
+        {
+          "searched": "saint-ormel"
+        },
+        {
+          "searched": "grisenoue"
+        },
+        {
+          "searched": "kessaar"
+        },
+        {
+          "searched": "bains-de-merande"
+        },
+        {
+          "searched": "thermes-de-merande"
+        },
+        {
+          "searched": "brenzac"
+        },
+        {
+          "searched": "col-de-corvenne"
+        },
+        {
+          "searched": "monts-corvins"
+        },
+        {
+          "searched": "lac-d-aulne"
+        },
+        {
+          "searched": "moulin-de-la-sorbe"
+        },
+        {
+          "searched": "rue-des-tanneurs"
+        },
+        {
+          "searched": "papeteries-varenque"
+        },
+        {
+          "searched": "studio-lumen"
+        },
+        {
+          "searched": "lecteur"
+        },
+        {
+          "searched": "cvc"
+        },
+        {
+          "searched": "vel-taalik"
+        },
+        {
+          "searched": "bulletin-d-ordre"
+        },
+        {
+          "searched": "oeuvre-des-lavandieres"
+        },
+        {
+          "searched": "pupilles"
+        },
+        {
+          "searched": "aero-velmarche"
+        },
+        {
+          "searched": "rtv"
+        },
+        {
+          "searched": "savonnerie-merande"
+        },
+        {
+          "searched": "paquebots"
+        },
+        {
+          "searched": "phares-et-balises"
+        },
+        {
+          "searched": "opera"
+        },
+        {
+          "searched": "grande-exposition"
+        },
+        {
+          "searched": "proces-des-papetiers"
+        },
+        {
+          "searched": "papiers-de-la-regence"
+        },
+        {
+          "searched": "nuit-des-affiches"
+        },
+        {
+          "searched": "absents"
+        },
+        {
+          "searched": "adoption"
+        },
+        {
+          "searched": "albatros"
+        },
+        {
+          "searched": "exil"
+        },
+        {
+          "searched": "fougere"
+        },
+        {
+          "searched": "fougere-sans-date"
+        },
+        {
+          "searched": "filigrane"
+        },
+        {
+          "searched": "herbier"
+        },
+        {
+          "searched": "meche"
+        },
+        {
+          "searched": "registre-bleu"
+        },
+        {
+          "searched": "mf-74-112"
+        },
+        {
+          "searched": "carnets-gris"
+        },
+        {
+          "searched": "caveau"
+        },
+        {
+          "searched": "p-4471"
+        },
+        {
+          "searched": "visages-de-la-cote"
+        },
+        {
+          "searched": "la-lavandiere"
+        },
+        {
+          "searched": "lavandiere"
+        },
+        {
+          "searched": "lanterne-d-ostrie"
+        },
+        {
+          "searched": "hirondelle"
+        },
+        {
+          "searched": "acte-de-reconnaissance"
+        },
+        {
+          "searched": "automatisation"
+        },
+        {
+          "searched": "papetier"
+        },
+        {
+          "searched": "botaniste"
+        },
+        {
+          "searched": "capitaine"
+        },
+        {
+          "searched": "gardien"
+        },
+        {
+          "searched": "phare"
+        },
+        {
+          "searched": "canot-de-sauvetage"
+        },
+        {
+          "searched": "depute"
+        },
+        {
+          "searched": "blanchisseuse"
+        },
+        {
+          "searched": "affichiste"
+        },
+        {
+          "searched": "institutrice"
+        },
+        {
+          "searched": "receveuse"
+        },
+        {
+          "searched": "pianiste"
+        },
+        {
+          "searched": "soprano"
+        },
+        {
+          "searched": "commissaire-aux-registres"
+        },
+        {
+          "searched": "graveuse"
+        },
+        {
+          "searched": "typographe"
+        },
+        {
+          "searched": "aviateur"
+        },
+        {
+          "searched": "costumiere"
+        },
+        {
+          "searched": "patron-pecheur"
+        },
+        {
+          "searched": "sage-femme"
+        },
+        {
+          "searched": "etudiant"
+        },
+        {
+          "searched": "speakerine"
+        },
+        {
+          "searched": "photographe"
+        },
+        {
+          "searched": "restauratrice"
+        },
+        {
+          "searched": "ingenieure"
+        },
+        {
+          "searched": "journaliste"
+        }
+      ]
+    }
+  },
+  {
+    "id": "deux-pieces",
+    "title": "Deux pièces",
+    "description": "Faire établir une première série de cases par la Commission.",
+    "hidden": false,
+    "when": {
+      "lockedCount": {
+        "gte": 4
+      }
+    }
+  },
+  {
+    "id": "le-fil-est-tire",
+    "title": "Le fil est tiré",
+    "description": "Établir les fondateurs des Tilleuls (fin du prologue).",
+    "hidden": false,
+    "when": {
+      "groupLocked": "g-fondateurs"
+    }
+  },
+  {
+    "id": "une-branche-entiere",
+    "title": "Une branche entière",
+    "description": "Établir toutes les cases d'un groupe après le prologue.",
+    "hidden": false,
+    "when": {
+      "any": [
+        {
+          "groupLocked": "g-atelier"
+        },
+        {
+          "groupLocked": "g-cap"
+        },
+        {
+          "groupLocked": "g-heritiers"
+        },
+        {
+          "groupLocked": "g-tilleuls"
+        },
+        {
+          "groupLocked": "g-vellaak"
+        },
+        {
+          "groupLocked": "g-absents"
+        }
+      ]
+    }
+  },
+  {
+    "id": "une-generation",
+    "title": "Une génération",
+    "description": "Établir toutes les cases d'une même génération.",
+    "hidden": false,
+    "when": {
+      "any": [
+        {
+          "all": [
+            {
+              "locked": "c01"
+            },
+            {
+              "locked": "c02"
+            },
+            {
+              "locked": "c03"
+            },
+            {
+              "locked": "c04"
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "locked": "c05"
+            },
+            {
+              "locked": "c06"
+            },
+            {
+              "locked": "c07"
+            },
+            {
+              "locked": "c08"
+            },
+            {
+              "locked": "c09"
+            },
+            {
+              "locked": "c10"
+            },
+            {
+              "locked": "c11"
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "locked": "c12"
+            },
+            {
+              "locked": "c13"
+            },
+            {
+              "locked": "c14"
+            },
+            {
+              "locked": "c15"
+            },
+            {
+              "locked": "c16"
+            },
+            {
+              "locked": "c17"
+            },
+            {
+              "locked": "c18"
+            },
+            {
+              "locked": "c19"
+            },
+            {
+              "locked": "c20"
+            },
+            {
+              "locked": "c21"
+            },
+            {
+              "locked": "c22"
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "locked": "c23"
+            },
+            {
+              "locked": "c24"
+            },
+            {
+              "locked": "c25"
+            },
+            {
+              "locked": "c26"
+            },
+            {
+              "locked": "c27"
+            },
+            {
+              "locked": "c28"
+            },
+            {
+              "locked": "c29"
+            },
+            {
+              "locked": "c30"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "a-mi-chemin",
+    "title": "À mi-chemin",
+    "description": "Établir quinze cases de l'arbre.",
+    "hidden": false,
+    "when": {
+      "lockedCount": {
+        "gte": 15
+      }
+    }
+  },
+  {
+    "id": "l-arbre-aux-absents",
+    "title": "L'Arbre aux absents",
+    "description": "Établir les trente cases.",
+    "hidden": false,
+    "when": {
+      "lockedCount": {
+        "gte": 30
+      }
+    }
+  },
+  {
+    "id": "la-lavandiere-et-l-affiche",
+    "title": "La lavandière et l'affiche",
+    "description": "Établir toute la branche de l'Atelier.",
+    "hidden": true,
+    "when": {
+      "groupLocked": "g-atelier"
+    }
+  },
+  {
+    "id": "les-gens-du-cap",
+    "title": "Les gens du cap",
+    "description": "Établir toute la branche du Phare, du cap à Vellaak.",
+    "hidden": true,
+    "when": {
+      "all": [
+        {
+          "groupLocked": "g-cap"
+        },
+        {
+          "groupLocked": "g-vellaak"
+        }
+      ]
+    }
+  },
+  {
+    "id": "ceux-que-nous-avons-rendus-absents",
+    "title": "Ceux que nous avons rendus absents",
+    "description": "Établir la branche des Absents.",
+    "hidden": true,
+    "when": {
+      "groupLocked": "g-absents"
+    }
+  },
+  {
+    "id": "le-gardien-etait-une-femme",
+    "title": "Le gardien était une femme",
+    "description": "Établir la gardienne du phare avant le patron du canot.",
+    "hidden": true,
+    "when": {
+      "all": [
+        {
+          "locked": "c04"
+        },
+        {
+          "not": {
+            "locked": "c10"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "maask",
+    "title": "Maask",
+    "description": "Chercher au Lecteur le surnom ostrien du Goéland.",
+    "hidden": true,
+    "when": {
+      "searched": "maask"
+    }
+  },
+  {
+    "id": "ce-que-l-arbre-ne-dit-pas",
+    "title": "Ce que l'arbre ne dit pas",
+    "description": "Découvrir un premier secret.",
+    "hidden": false,
+    "when": {
+      "any": [
+        {
+          "secret": "s1-photographe-de-vellaak"
+        },
+        {
+          "secret": "s2-registre-bleu"
+        },
+        {
+          "secret": "s3-reconnaissance-de-1917"
+        },
+        {
+          "secret": "s4-goeland-et-albatros"
+        },
+        {
+          "secret": "s5-delateur"
+        },
+        {
+          "secret": "s6-secret-d-adelaide"
+        }
+      ]
+    }
+  },
+  {
+    "id": "la-nouvelle-fougere",
+    "title": "La nouvelle fougère",
+    "description": "Découvrir qui est la photographe de Vellaak.",
+    "hidden": true,
+    "when": {
+      "secret": "s1-photographe-de-vellaak"
+    }
+  },
+  {
+    "id": "celui-que-la-mer-voulait-garder",
+    "title": "Celui que la mer voulait garder",
+    "description": "Découvrir qui transportait l'Albatros.",
+    "hidden": true,
+    "when": {
+      "secret": "s4-goeland-et-albatros"
+    }
+  },
+  {
+    "id": "la-vigilance-du-commissaire",
+    "title": "La vigilance du commissaire",
+    "description": "Découvrir qui a dénoncé le réseau Fougère.",
+    "hidden": true,
+    "when": {
+      "secret": "s5-delateur"
+    }
+  },
+  {
+    "id": "plus-aucun-absent",
+    "title": "Plus aucun absent",
+    "description": "Découvrir les six secrets.",
+    "hidden": false,
+    "when": {
+      "allSecrets": true
+    }
+  },
+  {
+    "id": "le-faux-coupable",
+    "title": "Le faux coupable",
+    "description": "Remettre un rapport qui accable Gaspard Varenque.",
+    "hidden": true,
+    "when": {
+      "endingReached": "f2-le-faux-coupable"
+    }
+  },
+  {
+    "id": "les-deux-visages",
+    "title": "Les deux visages",
+    "description": "Rétablir la mémoire de Gaspard Varenque.",
+    "hidden": true,
+    "when": {
+      "endingReached": "f3-les-deux-visages"
+    }
+  },
+  {
+    "id": "la-mere-et-la-fille",
+    "title": "La mère et la fille",
+    "description": "Réunir Lise et sa mère.",
+    "hidden": true,
+    "when": {
+      "endingReached": "f4-la-mere-et-la-fille"
+    }
+  },
+  {
+    "id": "l-arbre-entier",
+    "title": "L'arbre entier",
+    "description": "Voir la fin où personne ne reste absent.",
+    "hidden": true,
+    "when": {
+      "endingReached": "f5-l-arbre-entier"
+    }
+  },
+  {
+    "id": "absente",
+    "title": "Absente",
+    "description": "Laisser Nora Ilvess absente et ne le dire qu'à Lise.",
+    "hidden": true,
+    "when": {
+      "endingReached": "f4-la-mere-et-la-fille-absente"
+    }
+  },
+  {
+    "id": "tout-le-papier",
+    "title": "Tout le papier",
+    "description": "Atteindre l'épilogue du dossier 74-0318.",
+    "hidden": false,
+    "when": {
+      "read": "ep-01"
+    }
+  },
+  {
+    "id": "sans-le-fonds-restreint",
+    "title": "Sans le fonds restreint",
+    "description": "Établir les trente cases sans ouvrir aucune pièce des fonds restreints.",
+    "hidden": true,
+    "when": {
+      "all": [
+        {
+          "lockedCount": {
+            "gte": 30
+          }
+        },
+        {
+          "not": {
+            "read": "ph-16"
+          }
+        },
+        {
+          "not": {
+            "read": "ph-17"
+          }
+        },
+        {
+          "not": {
+            "read": "rg-14"
+          }
+        },
+        {
+          "not": {
+            "read": "rp-02"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "rien-qu-une-meche",
+    "title": "Rien qu'une mèche",
+    "description": "Établir Lise sans avoir lu le registre d'écrou de Kessaar.",
+    "hidden": true,
+    "when": {
+      "all": [
+        {
+          "locked": "c28"
+        },
+        {
+          "not": {
+            "read": "rg-14"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "tout-lu",
+    "title": "Tout lu",
+    "description": "Lire toutes les pièces du fonds.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "read": "of-01"
+        },
+        {
+          "read": "of-02"
+        },
+        {
+          "read": "of-03"
+        },
+        {
+          "read": "of-04"
+        },
+        {
+          "read": "of-05"
+        },
+        {
+          "read": "of-06"
+        },
+        {
+          "read": "of-07"
+        },
+        {
+          "read": "ph-01"
+        },
+        {
+          "read": "ph-02"
+        },
+        {
+          "read": "ph-03"
+        },
+        {
+          "read": "ph-04"
+        },
+        {
+          "read": "ph-05"
+        },
+        {
+          "read": "ph-06"
+        },
+        {
+          "read": "ph-07"
+        },
+        {
+          "read": "ph-08"
+        },
+        {
+          "read": "ph-09"
+        },
+        {
+          "read": "ph-10"
+        },
+        {
+          "read": "ph-11"
+        },
+        {
+          "read": "ph-12"
+        },
+        {
+          "read": "ph-13"
+        },
+        {
+          "read": "ph-14"
+        },
+        {
+          "read": "ph-15"
+        },
+        {
+          "read": "ph-16"
+        },
+        {
+          "read": "ph-17"
+        },
+        {
+          "read": "ph-18"
+        },
+        {
+          "read": "ph-19"
+        },
+        {
+          "read": "ph-20"
+        },
+        {
+          "read": "ph-21"
+        },
+        {
+          "read": "ph-22"
+        },
+        {
+          "read": "ph-23"
+        },
+        {
+          "read": "ph-24"
+        },
+        {
+          "read": "ph-25"
+        },
+        {
+          "read": "ph-26"
+        },
+        {
+          "read": "ph-27"
+        },
+        {
+          "read": "ph-28"
+        },
+        {
+          "read": "ph-29"
+        },
+        {
+          "read": "rg-01"
+        },
+        {
+          "read": "rg-02"
+        },
+        {
+          "read": "rg-03"
+        },
+        {
+          "read": "rg-04"
+        },
+        {
+          "read": "rg-05"
+        },
+        {
+          "read": "rg-06"
+        },
+        {
+          "read": "rg-07"
+        },
+        {
+          "read": "rg-08"
+        },
+        {
+          "read": "rg-09"
+        },
+        {
+          "read": "rg-10"
+        },
+        {
+          "read": "rg-11"
+        },
+        {
+          "read": "rg-12"
+        },
+        {
+          "read": "rg-13"
+        },
+        {
+          "read": "rg-14"
+        },
+        {
+          "read": "rg-15"
+        },
+        {
+          "read": "rg-16"
+        },
+        {
+          "read": "rg-17"
+        },
+        {
+          "read": "rg-18"
+        },
+        {
+          "read": "rg-19"
+        },
+        {
+          "read": "rg-20"
+        },
+        {
+          "read": "lt-01"
+        },
+        {
+          "read": "lt-02"
+        },
+        {
+          "read": "lt-03"
+        },
+        {
+          "read": "lt-04"
+        },
+        {
+          "read": "lt-05"
+        },
+        {
+          "read": "lt-06"
+        },
+        {
+          "read": "lt-07"
+        },
+        {
+          "read": "lt-08"
+        },
+        {
+          "read": "lt-09"
+        },
+        {
+          "read": "lt-10"
+        },
+        {
+          "read": "lt-11"
+        },
+        {
+          "read": "lt-12"
+        },
+        {
+          "read": "lt-13"
+        },
+        {
+          "read": "lt-14"
+        },
+        {
+          "read": "lt-15"
+        },
+        {
+          "read": "lt-16"
+        },
+        {
+          "read": "lt-17"
+        },
+        {
+          "read": "lt-18"
+        },
+        {
+          "read": "pr-01"
+        },
+        {
+          "read": "pr-02"
+        },
+        {
+          "read": "pr-03"
+        },
+        {
+          "read": "pr-04"
+        },
+        {
+          "read": "pr-05"
+        },
+        {
+          "read": "pr-06"
+        },
+        {
+          "read": "pr-07"
+        },
+        {
+          "read": "pr-08"
+        },
+        {
+          "read": "pr-09"
+        },
+        {
+          "read": "pr-10"
+        },
+        {
+          "read": "pr-11"
+        },
+        {
+          "read": "pr-12"
+        },
+        {
+          "read": "pr-13"
+        },
+        {
+          "read": "pr-14"
+        },
+        {
+          "read": "pr-15"
+        },
+        {
+          "read": "pr-16"
+        },
+        {
+          "read": "pr-17"
+        },
+        {
+          "read": "pr-18"
+        },
+        {
+          "read": "cp-01"
+        },
+        {
+          "read": "cp-02"
+        },
+        {
+          "read": "cp-03"
+        },
+        {
+          "read": "an-01"
+        },
+        {
+          "read": "an-02"
+        },
+        {
+          "read": "an-03"
+        },
+        {
+          "read": "an-04"
+        },
+        {
+          "read": "ct-01"
+        },
+        {
+          "read": "ct-02"
+        },
+        {
+          "read": "pb-01"
+        },
+        {
+          "read": "pb-02"
+        },
+        {
+          "read": "pb-03"
+        },
+        {
+          "read": "pb-04"
+        },
+        {
+          "read": "rp-01"
+        },
+        {
+          "read": "rp-02"
+        },
+        {
+          "read": "rp-03"
+        },
+        {
+          "read": "rp-04"
+        },
+        {
+          "read": "rp-05"
+        },
+        {
+          "read": "rp-06"
+        },
+        {
+          "read": "dv-01"
+        },
+        {
+          "read": "dv-02"
+        },
+        {
+          "read": "dv-03"
+        },
+        {
+          "read": "dv-04"
+        },
+        {
+          "read": "dv-05"
+        }
+      ]
+    }
+  },
+  {
+    "id": "cartographe",
+    "title": "La grande carte murale",
+    "description": "Ouvrir tous les lieux de la carte de l'affaire.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "visited": "aubrelieu"
+        },
+        {
+          "visited": "moulinvert"
+        },
+        {
+          "visited": "tennok"
+        },
+        {
+          "visited": "vellaak"
+        },
+        {
+          "visited": "port-senane"
+        },
+        {
+          "visited": "saint-ormel"
+        },
+        {
+          "visited": "bains-de-merande"
+        },
+        {
+          "visited": "grisenoue"
+        },
+        {
+          "visited": "kessaar"
+        },
+        {
+          "visited": "brenzac"
+        },
+        {
+          "visited": "col-de-corvenne"
+        },
+        {
+          "visited": "monts-corvins"
+        },
+        {
+          "visited": "foret-de-sorbe"
+        },
+        {
+          "visited": "lac-d-aulne"
+        }
+      ]
+    }
+  },
+  {
+    "id": "contre-la-montre",
+    "title": "Contre la montre",
+    "description": "Mode chronométré : remettre le rapport en moins de 3 heures.",
+    "hidden": false,
+    "when": {
+      "timedUnderMs": 10800000
+    }
+  },
+  {
+    "id": "archiviste-eclair",
+    "title": "Archiviste éclair",
+    "description": "Mode chronométré : remettre le rapport en moins de 90 minutes.",
+    "hidden": false,
+    "when": {
+      "timedUnderMs": 5400000
+    }
+  }
+]
