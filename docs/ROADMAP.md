@@ -84,6 +84,7 @@ Fait :
 
 | Date | Décision | Raison |
 |---|---|---|
+| 13/10 | itch.io : **jeu payant + page démo gratuite séparée**, compte `cardorinteractive` | Choix du propriétaire ; la démo (prologue + Atelier) ne dévoile aucun secret. |
 | 13/10 | Nom : **L'Arbre aux absents**, repo `arbre-aux-absents` | Dit le genre (arbre généalogique) et le mystère (les absents). |
 | 13/10 | **Monde entièrement imaginaire**, sans Mons (choix de l'utilisateur), avec carte illustrée façon carte.fs0ciety.org | Demande de l'utilisateur : « créer un monde ». |
 | 13/10 | « Sans rail » lu comme « sans thème ferroviaire » ; le jeu est non linéaire par conception | Les deux lectures sont couvertes. |
