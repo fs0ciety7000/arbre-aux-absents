@@ -1,0 +1,89 @@
+# Crée un nouveau repo à partir de ce template. Déclenché par Claude (workflow_dispatch)
+# ou à la main depuis l'onglet Actions. Nécessite le secret REPO_CREATOR_TOKEN :
+# token fine-grained, propriétaire fs0ciety7000, accès « All repositories »,
+# permissions Administration: write + Contents: read.
+name: Nouveau projet
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Nom du repo (lettres, chiffres, . _ -)"
+        required: true
+        type: string
+      description:
+        description: "Description courte"
+        required: false
+        type: string
+        default: ""
+      visibility:
+        description: "Visibilité"
+        required: false
+        type: choice
+        options: [private, public]
+        default: private
+
+permissions:
+  contents: read
+
+concurrency:
+  group: new-project-${{ inputs.name }}
+  cancel-in-progress: false
+
+jobs:
+  create:
+    # Ne tourne que dans le template, jamais dans les repos qui en sont issus.
+    if: github.repository == 'fs0ciety7000/claude-start'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.REPO_CREATOR_TOKEN }}
+      OWNER: ${{ github.repository_owner }}
+      TEMPLATE: ${{ github.repository }}
+      NAME: ${{ inputs.name }}
+      DESCRIPTION: ${{ inputs.description }}
+      VISIBILITY: ${{ inputs.visibility }}
+    steps:
+      - name: Vérifier les entrées et le token
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Secret REPO_CREATOR_TOKEN absent (Settings › Secrets and variables › Actions)."
+            exit 1
+          fi
+          if ! printf '%s' "$NAME" | grep -Eq '^[A-Za-z0-9._-]{1,100}$'; then
+            echo "::error::Nom de repo invalide : '$NAME'"
+            exit 1
+          fi
+          if gh repo view "$OWNER/$NAME" >/dev/null 2>&1; then
+            echo "::error::Le repo $OWNER/$NAME existe déjà."
+            exit 1
+          fi
+
+      - name: S'assurer que claude-start est un template
+        run: gh repo edit "$TEMPLATE" --template
+
+      - name: Créer le repo depuis le template
+        run: |
+          gh repo create "$OWNER/$NAME" --template "$TEMPLATE" "--$VISIBILITY" \
+            --description "$DESCRIPTION"
+
+      - name: Attendre la copie du contenu
+        run: |
+          for i in $(seq 1 30); do
+            if gh api "repos/$OWNER/$NAME/contents/CLAUDE.md" >/dev/null 2>&1; then
+              echo "Contenu prêt."
+              break
+            fi
+            sleep 2
+          done
+          gh api "repos/$OWNER/$NAME/contents/CLAUDE.md" >/dev/null
+
+      - name: Résumé
+        run: |
+          {
+            echo "### Repo créé"
+            echo ""
+            echo "https://github.com/$OWNER/$NAME ($VISIBILITY)"
+            echo ""
+            echo "Prochaine étape : session Claude sur ce repo, puis \`/kickoff\`."
+          } >> "$GITHUB_STEP_SUMMARY"

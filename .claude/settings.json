@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-start.sh" }
+        ]
+      }
+    ]
+  },
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Lancer dockerd, docker build et docker run dans le conteneur de la session",
+      "Exécuter npm, node, git (hors push --force) dans les repos du projet"
+    ]
+  },
+  "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": [
+      "Read",
+      "Edit",
+      "Write",
+      "Glob",
+      "Grep",
+      "WebFetch",
+      "WebSearch",
+      "Agent",
+      "Skill",
+      "TaskCreate",
+      "TaskUpdate",
+      "TaskList",
+      "TaskGet",
+      "TaskStop",
+      "ToolSearch",
+      "NotebookEdit",
+      "Bash",
+      "mcp__github",
+      "mcp__claude-code-remote"
+    ],
+    "ask": [
+      "Bash(git push origin main:*)",
+      "Bash(git reset --hard:*)",
+      "mcp__github__merge_pull_request"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Read(./.env)",
+      "Read(./.env.*.local)",
+      "Read(./.env.local)",
+      "Read(./secrets/**)"
+    ]
+  }
+}
