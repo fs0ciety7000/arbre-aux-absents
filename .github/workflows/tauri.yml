@@ -218,13 +218,19 @@ jobs:
           npm run tauri -- android build --apk --aab \
             --config '{"bundle":{"android":{"versionCode":${{ github.run_number }}}}}'
           bash ../../scripts/android-sign.sh src-tauri/gen/android ../../android-out "${{ steps.version.outputs.value }}"
-      - name: Build debug (APK non publiable)
+      # Sans secrets : APK release NON SIGNÉ, à signer hors CI avec scripts/android-sign.sh
+      # (même keystore), plus un APK debug pour tester tout de suite.
+      - name: Build release non signé + debug (sans secrets)
         if: steps.signing.outputs.signed != 'true'
         working-directory: apps/game
         run: |
+          npm run tauri -- android build --apk \
+            --config '{"bundle":{"android":{"versionCode":${{ github.run_number }}}}}'
           npm run tauri -- android build --apk --debug \
             --config '{"bundle":{"android":{"versionCode":${{ github.run_number }}}}}'
           mkdir -p ../../android-out
+          find src-tauri/gen/android/app/build/outputs/apk -name '*-release-unsigned.apk' \
+            -exec cp {} "../../android-out/arbre-aux-absents-${{ steps.version.outputs.value }}-unsigned.apk" \;
           find src-tauri/gen/android/app/build/outputs/apk -name '*-debug.apk' \
             -exec cp {} "../../android-out/arbre-aux-absents-${{ steps.version.outputs.value }}-debug.apk" \;
       - uses: actions/upload-artifact@v4
