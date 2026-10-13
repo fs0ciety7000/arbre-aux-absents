@@ -32,12 +32,12 @@ la **Thalberie** voisine.
 | 1929 | **Krach Sorbelle** : faillite de la plus vieille banque du pays, crise. |
 | 12 mars 1937 | **Coup d'État** du général **Ambroise Destrade** ; le Grand-Duc abdique ; début de la **Régence**. |
 | 2 févr. 1938 | **Loi sur la pureté des registres** : création du BRR ; les « radiés » sont **déclarés absents** (sans état civil, sans droits). Bagne de Kessaar. Interdiction de la presse ostrienne. |
-| 1939 | Autodafé des registres paroissiaux de Vellaak. |
+| août 1939 | **Autodafé de Vellaak** : la Régence brûle les registres paroissiaux **et** les registres d'état civil de la commune (naissances, mariages, décès). Les natifs de Vellaak s'y font ensuite inscrire « sur déclaration », devant deux témoins (loi du 2 février 1938, art. 14 ; RG-19). Les registres de Tennok, tenus à part, ont survécu. |
 | 1940–1952 | Résistance de papier : réseaux de faux papiers, dont le réseau **Fougère**. |
 | 7–11 avr. 1952 | **Journées d'avril** : soulèvement d'Aubrelieu, fuite du Régent, fin de la Régence. |
 | 1953 | **Constitution de la République** ; procès des collaborateurs (dont le « Procès des Papetiers »). |
 | 1950 / 1971 | Télévision noir et blanc, puis couleur. |
-| 1968 | Ouverture des archives de la Régence aux historiens. |
+| 1er janv. 1968 | Ouverture des archives de la Régence aux historiens (sauf fonds réservés aux familles). |
 | 14 mai 1973 | **Loi de réinscription civile** ; création de l'**ORC**. |
 | nov. 1973 | Le **Lecteur LX-2** aux Archives nationales. |
 | oct. 1974 | **Temps du jeu.** |
@@ -71,6 +71,31 @@ L'**Ostrie** occupe tout le tiers nord : plateau de landes, côte découpée de 
 | `mer-grise` | **Mer Grise** | mer | tout le bord nord | Brumes, phoques. | — |
 | `golfe-d-ambre` | **Golfe d'Ambre** | mer | tout le bord ouest | Eaux plus douces, ambre sur les plages. | — |
 | `orvelle` | **L'Orvelle** et la **Clairette** | fleuve / rivière | voir ci-dessus | Bacs, ponts, moulins. | Axe de la carte. |
+
+### Toponymes secondaires de la carte (validés, passe de cohérence v0.2)
+
+Ajouts du `cartographe` (`art/tools/world.py`, `labels.py`), **gravés sur la carte mais sans
+`PlaceId`** : ce ne sont pas des lieux cliquables, ils n'apportent aucune pièce. Tous suivent le §4.
+
+| Toponyme | Où (x · y) | Nature | Validation et sens |
+|---|---|---|---|
+| **Orrvik** | 0,26 · 0,17 | hameau ostrien, fond de la baie d'Orrvik | Validé. *orr* + *vik*, « la baie du vent ». Berceau du nom de **Tenna Orrvik** (née, elle, à Vellaak). |
+| **Kessvel** | 0,39 · 0,16 | hameau ostrien de la côte nord, face à Kessaar | Validé. *kess* + *vel*, « la pierre de mer ». Berceau du nom d'**Orrin Kessvel** (né à Vellaak) : voir ci-dessous. |
+| **Draavik** | 0,87 · 0,12 | hameau ostrien à l'est de Vellaak | Validé. *draa* + *vik*, « la baie du chemin ». Berceau du nom d'**Hessa Draavik** et de son frère Ossak (RG-10), tous deux de Vellaak. |
+| **Haask** | 0,36 · 0,26 | hameau de la lande, à l'intérieur | Validé. *haask*, « le faucon » (oiseau des landes). Berceau du nom des gardiens **Jorre** et **Teodor Haask**. |
+| **les Dents de Tennok** | au large du cap | récif | Déjà dans la bible. Nom ostrien : *Kessdaan*, « les dents de pierre » (DV-05, CP-02, PR-05). À 1,2 mille dans le nord-ouest du feu (AN-04). |
+| **marais de Grisenoue** | 0,55 · 0,30 | roselières au nord d'Aubrelieu | Validé (déjà implicite : *-noue*). La « noue de Grisenoue » descend vers l'Orvelle. |
+| **collines de Sorbe** | 0,58 · 0,91 | collines du sud, au-dessus du lac d'Aulne | Validé : la Clairette en descend (§3). Coteaux à vin (« Rouge des coteaux de Sorbe », DV-02). Même racine que la forêt et le moulin de la Sorbe, et que le nom *Sorbelle* (banque, famille d'Henriette). |
+| **vers Brénica** | 0,93–0,99 · 0,67, sur la route du col à Brenzac | note du graveur | Validé, avec sens précis : c'est le **panneau thalbère** de la route qui descend du col de Corvenne. *Brénica* est le nom thalbère de **Brenzac** (§4), pas une autre ville ; les pièces thalbères disent Brénica (RP-05, PH-27). Si le libellé se lit comme une seconde ville, le `cartographe` peut le remplacer par « route de Brénica ». |
+| **ligne des Paquebots de l'Orvelle** | pointillés au large de la côte ouest et nord | ligne maritime | Validé : service côtier de la Compagnie (1871) **Port-Sénane → Tennok → Vellaak** (PR-02, PH-20 : « la vedette de Port-Sénane »). L'embranchement vers Kessaar est la **vedette de Kessaar** (ravitaillement du petit phare, puis du bagne 1938–1952 ; RG-15). Les « îles du golfe » (PR-02) sont desservies par la même compagnie. |
+
+**Noms de lieu ostriens qui ne sont que dans les pièces** (pas sur la carte, à ne pas y ajouter sans
+raison) : *Laakvik* (ferme et lieu-dit près de Vellaak : PH-15, RG-13 ; aussi nom de famille, Davik et
+Ammik Laakvik, AN-04, RP-01), *Tormaas*, *Vikmaar* (RG-12), *Kessdaan* (les Dents). Lieux-dits
+velmarchois des pièces : quartier et rue des Tanneurs, rue des Foulons, quai et place de la Charte,
+quai des Chartes, Plaine-aux-Saules (Aubrelieu) ; quai des Séchoirs et jetée Est (Vellaak) ; quai du
+Môle, cours de l'Amirauté, quai des Messageries (Port-Sénane) ; fortin des Corneilles et redoute du
+Bec (col de Corvenne, PR-04) ; rue des Scieurs et hôpital de la Croix-de-Brénica (Brenzac).
 
 Suggestions de cartouche : « **Carte de la Velmarche et de l'Ostrie**, dressée pour l'Office de
 Réinscription civile d'après la carte de la Grande Exposition (1889), revue en 1974 ». Échelle en
@@ -112,35 +137,97 @@ Prénoms ostriens : Maaren, Aldrik, Tenna, Selda, Hessa, Orrin, Tavik, Joren, Jo
 | *draa* | chemin | | *ilv* | fougère |
 | *nor* | nouveau, neuf | | *maask* | goéland |
 | *haask* | faucon | | *taalik* | messager |
+| *daan* | dent, dents | | *-ess* | féminin réduit (noms anciens, poésie : *Ilvess*) |
+
+**Lieux et noms de famille.** La règle de 1811 explique que le même mot soit à la fois un hameau de
+la carte et un nom de famille : **Kessvel** est un hameau de la côte (« la pierre de mer ») **et** le nom
+d'Orrin Kessvel, dont les aïeux en venaient ; de même Orrvik, Draavik, Haask, Laakvik, Tennok. Les
+porteurs du nom n'habitent pas forcément le hameau (Orrin, Tenna, Hessa sont nés à Vellaak). Ce n'est
+pas un piège de l'arbre : aucune pièce ne fait du hameau Kessvel le lieu de naissance d'Orrin.
 
 D'où : *Tennok* « cap du feu », *Vellaak* « abri de mer », *Kessaar* « île de pierre », *Orrvik* « baie
 du vent », *Kessvel* « pierre de mer », *Vel Taalik* « le Messager de la mer », *Nora Ilvess* « la
 nouvelle femme-fougère ».
 
+**Prénoms et leur sens** (DV-05, § V) : *Maaren* « celle de la mer calme », *Aldrik* « vieux chemin »,
+*Tenna* « petite lumière », *Selda* « celle qui garde », *Hessa* « la douce », *Orrin* « fils du vent »,
+*Tavik* « petite baie », *Joren* « le veilleur », *Nora* « la nouvelle » (prénom rare, donné aux filles nées
+après un deuil ou à celles qui recommencent). Le sens des prénoms n'est pas compositionnel : on ne le
+déduit pas du lexique, on le lit chez Selda.
+
+**Surnoms de la côte** (DV-05, § IV) : on donne aux patrons de bateau un nom d'oiseau ou de bête
+(*Maask*, le Goéland ; *Haask*, le Faucon), que les registres ignorent. Ne pas confondre avec le **nom de
+famille** Haask (Jorre, Teodor), qui vient du hameau.
+
+**Mots attestés hors du lexique de Selda** (pièces de 1873 et 1883, graphie d'avant 1898 ; à ne pas
+étendre sans besoin) : *mo* « je, moi, mon » ; *kaari* « cher » (plus fort qu'en velmarchois) ; *isa*
+« père » ; *ookta* « est mort » ; *ei* « ne… pas » ; *kaamen* « tenir » ; *tule* « reviens » ; *vaard*
+« gardien » ; *tenn-vaard* « gardien du feu » ; *tenn-vaardessa* « gardienne du feu », mot forgé par
+Maaren en 1883 (LT-02) ; *vel-vaard* « homme de mer, officier de marine » ; *-tiira* « fille de » ;
+*-sonn* « natif de » (*Moulinvert-sonn*, RG-02) ; *Velmarke* « la Velmarche ». La formule finale de
+l'acte RG-02 (*Draa ta orr, ommen aar*) reste volontairement non traduite. Titre du lexique de Selda :
+*Taalikmaal*, « les mots du Messager ».
+
 ### Thalbère (pays voisin, à l'est)
-Langue étrangère, peu présente : noms en *-in*, *-ko*, *-ela* (*Dobrin*, *Vasko*, *Mirela*). Brenzac se dit
-*Brénica* en thalbère.
+Langue étrangère, peu présente : noms en *-in*, *-ko*, *-ela* (*Dobrin*, *Vasko*, *Mirela*, *Ivela Darin*,
+*Ilko Varasin*). Brenzac se dit *Brénica* en thalbère : les pièces thalbères (RP-05, en-tête de PH-27) et
+le panneau de la carte disent Brénica ; les pièces velmarchoises disent Brenzac.
 
 ## 5. Monnaie
 
-- **Florin velmarchois (fl.)** = 100 **sous**, jusqu'en 1937. Un journal coûte 5 sous en 1889, 15 sous en 1929.
-- **Florin d'ordre** (Régence, 1938–1952), billets gris à l'effigie du Régent, dévalué.
-- **Florin nouveau (Fn)** depuis 1953 (1 Fn = 100 florins d'ordre). En 1974 : le *Courrier* 0,40 Fn ;
-  un mois de loyer à Aubrelieu 350 Fn ; le traitement d'un rapporteur stagiaire 1 600 Fn.
+- **Florin velmarchois (fl.)** = 100 **sous**, jusqu'en 1937.
+- **Florin d'ordre** (Régence, 1938–1952) = 100 **sous d'ordre**, billets gris à l'effigie du Régent.
+  Émis au pair en février 1938, il se déprécie lentement jusqu'en 1942, puis s'effondre de 1944 à 1952.
+  Dans les pièces de la Régence, « sous » s'entend « sous d'ordre ».
+- **Florin nouveau (Fn)** depuis 1953 (1 Fn = 100 florins d'ordre ; les prix s'écrivent « 0,25 Fn »).
+  En 1974 : un mois de loyer à Aubrelieu 350 Fn ; le traitement d'un rapporteur stagiaire 1 600 Fn.
+
+**Prix attestés dans les pièces** (à respecter dans tout nouveau texte) :
+
+| Année | Objet | Prix | Pièce |
+|---|---|---|---|
+| 1889, 1902, 1905 | un quotidien ou la *Gazette* (*Courrier*, *Écho*, *Gazette*) | 5 sous | PR-01, PR-02, PR-03 |
+| 1905 | savon Mérande : le gros pain ; la boîte de trois savons de toilette | 30 sous ; 1 florin | PB-01 |
+| 1906 ; 1935 | *Annuaire du commerce* ; *Annuaire d'Aubrelieu* | 8 à 10 fl. ; 14 fl. | AN-01, AN-02 |
+| 1910 | carte postale illustrée ; timbre | 10 sous | PH-04 |
+| 1918 | *L'Œil velmarchois* (hebdomadaire illustré) | 10 sous | PR-04 |
+| 1920 | entrée d'une exposition | 1 florin | CT-01 |
+| 1924 | le *Courrier* ; boîte de pastilles | 12 sous ; 40 sous | PR-05 |
+| 1929 | *L'Œil velmarchois* ; places à l'Opéra | 25 sous ; 2 à 25 fl. | PR-06, PB-03 |
+| 1931 | le *Courrier* | 15 sous | PR-07 |
+| 1936 | *Vel Taalik* | 15 sous | PH-13 |
+| nov. 1937 | *L'Œil velmarchois* (ancien florin encore en cours) | 30 sous | PH-06 |
+| févr. 1938 | *Bulletin d'Ordre* | 20 sous d'ordre | RG-12 |
+| mai 1938 ; oct. 1941 ; oct. 1942 | *Le Héraut* | 20, 40, 50 sous (d'ordre) | PR-08, PR-09, PR-10 |
+| 1942 | allocation mensuelle d'une « famille d'ordre » | 120 fl. d'ordre | PR-10 |
+| avr. 1951 | *L'Œil velmarchois* | 20 fl. d'ordre | PH-22 |
+| 1953 | le *Courrier* ; *Vel Taalik* | 0,25 Fn ; 0,15 Fn | PR-12, PH-20 |
+| 1954 | *Antenne velmarchoise* ; lexique de Selda (64 p.) | 0,30 Fn ; 4 Fn | PH-23, DV-05 |
+| 1958 | *L'Œil velmarchois* ; *Visages de la côte* (36 planches) | 0,30 Fn ; 18 Fn | PR-13 |
+| 1961 | la *Gazette* | 0,25 Fn | PR-14 |
+| 1966, 1968, 1971 | le *Courrier*, la *Gazette* | 0,35 Fn | PR-15, PR-16, PR-17 |
+| 1971 | timbre de carte postale | 0,30 Fn | CP-03 |
+| 1972 | *Annuaire officiel des professions* ; *Vel Taalik* | 45 Fn ; 0,30 Fn | AN-03, PH-29 |
+| 1973 ; 1974 | le *Courrier* ; la *Gazette* | 0,35 Fn ; 0,40 Fn | PH-28, PR-18 |
+
+Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadaire à 20 fl. d'ordre en
+1951 et un quotidien à 0,25 Fn (25 fl. d'ordre) en 1953. Le *Courrier* coûte 0,35 Fn de 1966 à 1973,
+0,40 Fn en 1974 ; la *Gazette*, régionale, suit avec un temps de retard.
 
 ## 6. Presse
 
 | Titre | Ville | Années | Ton |
 |---|---|---|---|
 | *Le Courrier d'Aubrelieu* | Aubrelieu | 1848– (aligné 1938–1952) | quotidien libéral de référence |
-| *La Gazette de l'Orvelle* | Moulinvert | 1861– | régional, mondain, nécrologies |
+| *La Gazette de l'Orvelle* | Moulinvert | 1861– | régional, mondain, nécrologies ; paraît le mercredi et le samedi |
 | *L'Écho de Port-Sénane* | Port-Sénane | 1870– | maritime, faits divers |
-| *L'Œil velmarchois* | Aubrelieu | 1902– | hebdomadaire illustré (photos) |
-| *Vel Taalik* | Vellaak | 1898–1938, 1953– | bilingue ostrien-velmarchois |
+| *L'Œil velmarchois* | Aubrelieu | 1902– | hebdomadaire illustré (photos), le samedi ; n° 832 en 1918, n° 2908 en 1958 |
+| *Vel Taalik* | Vellaak | 1898–1938, 1953– | bilingue ostrien-velmarchois, hebdomadaire du samedi ; première série jusqu'au n° ≈ 2000 (n° 1912 en mars 1936), seconde série depuis mai 1953 (n° 1012 en oct. 1972) ; édite aussi des livres |
 | *Le Héraut* | Aubrelieu | 1937–1952 | organe de la Régence, emphatique |
 | *Fougère* | clandestin | 1940–1952 | feuille ronéotypée du réseau |
 | *Antenne velmarchoise* | Aubrelieu | 1952– | magazine de radio-télévision |
-| *Le Messager de Brenzac* | Brenzac (Thalberie) | — | quotidien local étranger |
+| *Le Messager de Brenzac* | Brenzac (Thalberie) | — | quotidien local étranger, édition velmarchoise ; daté « Brénica » |
+| *Bulletin des Postes velmarchoises* | Aubrelieu | — | bulletin interne illustré (PH-12, 1925) |
 
 ## 7. Institutions
 
@@ -156,7 +243,7 @@ Langue étrangère, peu présente : noms en *-in*, *-ko*, *-ela* (*Dobrin*, *Vas
 
 ## 8. Entreprises
 
-| Entreprise | Fondée | Activité |
+| Entreprise | Fondée, siège | Activité |
 |---|---|---|
 | **Papeteries Varenque** | 1868, Moulinvert | papier de luxe filigrané « à la fougère », papiers officiels |
 | Banque Sorbelle | 1821–1929 | banque privée ruinée au krach de 1929 |
@@ -167,6 +254,15 @@ Langue étrangère, peu présente : noms en *-in*, *-ko*, *-ela* (*Dobrin*, *Vas
 | Verreries de Hautcorvin | 1790 | verre, lentilles de phares |
 | Aéro-Velmarche | 1928 | poste aérienne, puis passagers |
 | Compagnie Velmarchoise de Calcul (CVC) | 1958 | calculateurs, Lecteur LX-2 |
+| Papeteries de l'Estuaire | Port-Sénane | papier journal ; dirigeant condamné en 1953 (PR-12) |
+| Moulins de Grisenoue | Grisenoue (Mazure et Cie) | emballage, cartons ; dirigeant condamné en 1953 |
+| Imprimerie nationale d'Ordre | 1938–1952 | imprimés de la Régence |
+| Imprimerie lithographique Dumesnil-Corre | Aubrelieu | affiches (PB-01, PB-03) |
+| Phototypie de l'Orvelle | Port-Sénane | cartes postales « Nos côtes » (PH-04, PH-10) |
+| Imprimerie Rosvel | Port-Sénane | héliogravure (*Visages de la côte*, 1958) |
+| Armement Castagne | Port-Sénane | armateurs (famille d'Irène) |
+| Cabinet Varenque & Desaulnes | Aubrelieu, 21 quai des Chartes | avocats (Fernand Desaulnes défend Gaspard en 1953 ; Armand associé) |
+| Coopérative forestière de Brénica | Brenzac (Thalberie) | emploie « Marc Dobrin » (1953–1959) |
 
 ## 9. Culture
 

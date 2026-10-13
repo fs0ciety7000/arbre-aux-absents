@@ -94,7 +94,8 @@ Lise, Tavik) ; + Claude si S3 ; + Odile si S1 et choix « inscrire ».
 
 ## 4. Épilogue (100 %)
 
-Débloqué quand l'arbre est complet, les six secrets justes **et** toutes les pièces lues (116/116).
+Débloqué quand l'arbre est complet et les six secrets justes (game design §13.3) ; la lecture de
+toutes les pièces relève du succès « Tout lu », pas de l'épilogue (aligné sur le jeu, passe v0.2).
 Pièce bonus **EP-01 — « Note de clôture, dossier 74-0318 »** : le rapporteur classe le dossier ; au
 Lecteur, une dernière recherche, « absents », ne rend plus aucun résultat. Puis **EP-02**, une carte
 postale de Vellaak, de deux écritures : « Le feu de Tennok ne s'allume plus tout seul : il faut quelqu'un

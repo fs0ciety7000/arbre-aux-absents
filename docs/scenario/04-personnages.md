@@ -48,7 +48,8 @@ grisonnante, même anneau.
 **Caractère.** Silencieuse, exacte, superstitieuse sur le temps, tendre avec les enfants.
 **Background.** Fille de Joren Tennok, gardien du feu ; nommée gardienne à la mort de son père (1883),
 première femme à ce poste ; tient le feu 29 ans pendant que son mari navigue.
-**Secrets.** Elle écrit en ostrien ; c'est Adélaïde, enfant, qui a traduit ses lettres pour Firmin.
+**Secrets.** Elle écrit en ostrien, que Firmin parle sans savoir le lire ; c'est Adélaïde, à treize
+ans (été 1893, à Tennok), qui a mis ses lettres par écrit en velmarchois (LT-02, dédicace de DV-05).
 **Portrait de case : 58 ans** (PH-04). Mâchoire forte, yeux très clairs, **couronne de tresses** grises
 tenue par un ruban brodé, **col ostrien brodé de zigzags**, châle de laine. À 21 ans (PH-03) : tresses
 blondes, même col brodé, coiffe à rubans.
@@ -106,7 +107,8 @@ mèche nette. À 42 ans (PH-05) : cheveux sombres à la mèche, même montre.
 
 ### C10 — Aldrik Varenque (1874–1924) · patron du canot de sauvetage
 **Caractère.** Bourru, fiable, croyant à sa manière ; ne parle que l'ostrien chez lui.
-**Background.** Pêcheur et patron du canot de Tennok dès 1906 ; perd deux doigts dans un treuil en 1908 ;
+**Background.** Pêcheur, canotier au sauvetage de Tennok dès 1902, patron du nouveau canot *TENNOK* à
+sa mise en service (1906) ; perd deux doigts dans un treuil en 1908 ;
 se noie en sauvant l'équipage de l'*Albatros*.
 **Secrets.** Il savait que le cotre était celui de son fils (S4).
 **Portrait de case : 38 ans** (PH-10). Rasé, buriné, yeux enfoncés, **chandail ostrien à zigzags**,
@@ -127,7 +129,10 @@ nuque**, large sourire, manchettes de lustrine. À 32 ans (PH-04) : mêmes lunet
 **Caractère.** Réservé, scrupuleux, orgueilleux ; ne s'explique jamais.
 **Background.** Ingénieur papetier, directeur dès 1925 ; fournit la Régence (carnets gris) ; acquitté en
 1953 ; brouillé avec sa fille après 1968.
-**Secrets.** Après la mort de son fils (1944), il approvisionne en secret le réseau Fougère (S2).
+**Secrets.** Après la mort de son fils (1944), il approvisionne en secret le réseau Fougère (S2), sur
+les deux formes sans millésime gravées par Odile en 1937. Il n'a **pas** livré sa sœur : le rapport de
+Daubry dit qu'il n'a pas été informé (RP-02). Défendu en 1953 par Me Fernand Desaulnes, futur associé
+d'Armand.
 **Portrait de case : 39 ans** (PR-08). **Lunettes rondes d'écaille**, **menton fendu**, cheveux plaqués
 raie au milieu, costume trois-pièces, léger dos voûté. À 23 ans (PH-05) : mêmes lunettes, plus mince.
 À 54 ans (PR-12) : crâne dégarni.
@@ -145,7 +150,8 @@ Mariée (PH-05) : voile court, même sautoir.
 **Caractère.** Vive, vaniteuse, généreuse, aveugle par choix sur son mari.
 **Background.** Soprano sous le nom de **Blanche Aubertine** ; épouse Marcel Daubry (1923) ; élève Lise ;
 vit à Bains-de-Mérande depuis 1952.
-**Secrets.** Elle a toujours craint de savoir d'où venait Lise.
+**Secrets.** Elle a toujours craint de savoir d'où venait Lise. De 1953 à 1959, elle reçoit chaque mois
+un mandat sans nom d'expéditeur (de Marcel, RP-05) ; la bible ne dit pas si elle a deviné.
 **Portrait de case : 28 ans** (PR-06). **Grain de beauté au-dessus de la lèvre, à gauche**, cheveux
 ondulés « au fer », **rang de perles**, robe de scène. À 21 ans (PH-05) : mêmes perles. À 41 et 47 ans
 (PH-19, PH-21) : cheveux plus courts, grain de beauté, perles.
@@ -155,7 +161,10 @@ ondulés « au fer », **rang de perles**, robe de scène. À 21 ans (PH-05) : m
 **Caractère.** Méticuleux, envieux, poli ; se croit le seul adulte de la famille.
 **Background.** Fils de greffier, comptable des Papeteries, puis commissaire aux Registres de la Régence ;
 fait incendier Grisenoue ; fuit en Thalberie, meurt sous le nom de **Marc Dobrin**.
-**Secrets.** Il a dénoncé Odile et pris son enfant (S5).
+**Secrets.** Il a dénoncé Odile et pris son enfant (S5). Son rapport (RP-02) protège Gaspard et Blanche
+et demande qu'on le dessaisisse ; on le maintient. Son visa de commissaire figure sur l'avis
+d'exécution d'Augustin, le fils de Gaspard (PB-04, 1944). En exil, il envoie chaque mois un mandat
+anonyme à Blanche et garde sur lui une coupure de presse de *La Lanterne d'Ostrie* (RP-05).
 **Portrait de case : 41 ans** (PR-08). **Très mince**, **fine moustache**, raie nette sur le côté, yeux
 aux paupières lourdes, **chevalière en or gravée « D »** à l'auriculaire droit, **oreille droite
 entaillée** (visible de profil). En Dobrin (PH-27) : barbe, verres fumés, même chevalière, même oreille.
@@ -165,7 +174,9 @@ entaillée** (visible de profil). En Dobrin (PH-27) : barbe, verres fumés, mêm
 **Caractère.** Obstinée, ironique, minutieuse ; sait attendre, ne pardonne pas.
 **Background.** Grave les formes des filigranes ; fonde avec Orrin le réseau Fougère ; radiée, Kessaar ;
 mère d'Élise ; officiellement morte en 1943 ; photographe à Vellaak sous le nom de **Nora Ilvess**.
-**Secrets.** Vivante (S1).
+**Secrets.** Vivante (S1). En 1937, elle a gravé deux formes jumelles « sans millésime » jamais servies,
+que Gaspard utilisera pour le réseau de 1944 à 1952 (DV-03, RP-06) ; elle écrit encore en 1962 sur les
+dernières feuilles de ce papier (LT-15).
 **Portrait de case : 29 ans** (PH-06). Cheveux bruns raides **coupés au menton**, **mèche blanche à
 gauche**, **sourcils épais**, blouse d'atelier, **cicatrice de brûlure d'acide au dos de la main droite**.
 À 13 ans (PH-05) : nattes, mèche. À 33 ans (PH-16) : face et profil, cheveux tirés, joues creuses.
@@ -191,7 +202,9 @@ relevées sur le casque de cuir**, blouson de cuir. Plus tard (PH-18, PR-15) : *
 
 ### C19 — Ninon Brial (1912–1971) · costumière
 **Caractère.** Énergique, moqueuse, maternelle avec les chanteuses.
-**Background.** Première costumière de l'Opéra d'Aubrelieu ; épouse Victor (1934) ; mère de Claude.
+**Background.** Fille de Jules Brial, tailleur ; entrée aux ateliers de l'Opéra d'Aubrelieu en 1932,
+première costumière en 1946 ; épouse Victor (1934) ; mère de Claude. Coud encore, en 1961, la robe
+d'adieu de Blanche (PR-14).
 **Secrets.** Elle a habillé Blanche vingt ans sans savoir qu'elles étaient presque parentes.
 **Portrait de case : 36 ans** (PH-21). **Turban noué**, **grands anneaux d'oreilles** (les deux
 oreilles), sourcils noirs épais, **pelote à épingles au poignet**.
@@ -244,7 +257,8 @@ tempes grises. À 23 ans (PH-22) : cheveux noirs, même nœud.
 
 ### C25 — Mathilde Rouvière (1930– ) · speakerine
 **Caractère.** Élégante, lucide, plus ouverte que son mari.
-**Background.** Speakerine vedette de la RTV (1950–1956), puis présidente de la Fondation Varenque.
+**Background.** Speakerine vedette de la RTV (1950–1956), puis présidente de la Fondation Varenque. À
+l'antenne, elle ne dit que son prénom : « j'en ai deux depuis mon mariage » (PH-23).
 **Secrets.** Elle pousse Armand à rendre le registre (fin S2).
 **Portrait de case : 24 ans** (PH-23). **Blonde en coque**, **trait d'eye-liner « œil de chat »**,
 **boucles d'oreilles perle**, col Claudine.
@@ -270,7 +284,10 @@ aux tempes. À 28 ans (PH-25) : costume, pas de pipe, même nez.
 **Caractère.** Attentive, réservée, têtue ; drôle quand elle est en confiance.
 **Background.** Née à Kessaar (Élise, P-4471), adoptée par les Daubry ; sait depuis ses 18 ans qu'elle est
 adoptée ; restauratrice à l'atelier de conservation des Archives nationales ; a inventorié le fonds Varenque.
-**Secrets.** Fille d'Odile et d'Orrin, sans le savoir.
+**Secrets.** Fille d'Odile et d'Orrin, sans le savoir. Refuse le bandeau à 13 ans (PH-24), cache la
+mèche sous un ruban à partir de 1958 environ, puis sous un bandeau d'atelier ; au concert d'adieu de
+1961, le ruban glisse au salut (PR-14). Dans son expertise de 1974, elle signale elle-même son nom et
+son adoption, et déclare ne se connaître « aucun lien de sang » avec la famille (RP-06).
 **Portrait de case : 31 ans** (PH-28). **Cheveux châtain clair bouclés** (Orrin), **sourcils épais**
 (Odile), **bandeau** de tissu qui cache la mèche, **gants de coton blanc**, blouse grise d'atelier.
 À 13 ans (PH-24) : **mèche blanche nette**, mêmes boucles, uniforme du lycée.
@@ -303,7 +320,7 @@ adoptée ; restauratrice à l'atelier de conservation des Archives nationales ; 
 | **Jorre Haask** | Gardien du feu de Tennok 1912–1950. | AN-04 |
 | **Joren Tennok** | Père de Maaren, gardien du feu 1850–1883. | RG-02, AN-04 |
 | **Jacques Varenque** | Meunier, père d'Anselme et de Firmin. | (cité OF-01) |
-| **Hippolyte Aubertot** | Pharmacien-botaniste, père de Clémence. | (cité PR-01) |
+| **Hippolyte Aubertot** (vers 1820– après 1897) | Pharmacien-botaniste rue des Halles, père de Clémence ; **vivant** en 1889 (témoin du mariage d'Augustin en 1897, à 77 ans). | RG-01, LT-01, PR-01, RG-04 |
 | **Édouard Sorbelle** | Banquier, père d'Henriette ; banque ruinée en 1929. | RG-04 |
 | **Albert Castagne** | Armateur, père d'Irène (n° 11 sur PH-05). | PH-05, DV-02 |
 | **Me Achille Brunesseau** | Notaire à Saint-Ormel, garde l'acte de Lucien. | RG-20, LT-06 |
@@ -311,3 +328,13 @@ adoptée ; restauratrice à l'atelier de conservation des Archives nationales ; 
 | **Ambroise Destrade** | Général, Régent de Velmarche (1937–1952). | contexte |
 | **Aurèle Vasquin** | Compositeur de *La Lanterne d'Ostrie*. | PR-06, PB-03 |
 | **Le rapporteur** | Le joueur. Rapporteur stagiaire de l'ORC, sans nom ni genre imposés. | OF-01 |
+| **Rosine Ferrandot** | Chef du service des Filiations de l'ORC, supérieure du rapporteur. | OF-01, EP-01 |
+| **Me Fernand Desaulnes** | Avocat de Gaspard au Procès des Papetiers (1953), puis associé d'Armand (cabinet Varenque & Desaulnes, 21 quai des Chartes). | RP-03, PR-12, OF-04, AN-03 |
+| **Léon Vauquelin** | Ingénieur en chef des Papeteries en 1922 (témoin du mariage, table des Papeteries). | RG-07, DV-02 |
+| **Pierre Lhoste**, **Ernest Couvreur** | Contremaître ; chef comptable des Papeteries (témoins d'actes). | RG-01, RG-05, RG-08 |
+| **Jules Brial** | Tailleur, père de Ninon. | RG-11 |
+| **Davik Laakvik** | Sous-patron du canot (1924), gardien adjoint du feu de Tennok (1912–1950). | RP-01, AN-04 |
+| **R. Morvillet** | Inspecteur des Phares et Balises, auteur du rapport de 1924. | RP-01 |
+| **Jeanne Cassaigne** | « Rapporteur 3 » de la Commission d'enquête sur Grisenoue (1953). | RP-04, RG-15 |
+| **Ilko Varasin**, **Mirela Vasko** | Inspecteur de la police de Brénica ; logeuse de « Marc Dobrin ». | RP-05, PH-27 |
+| **Émile Fontagne** | Ami de Lucien, organisateur de la rétrospective de 1920. | CT-01 |

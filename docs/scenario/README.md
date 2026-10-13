@@ -1,8 +1,10 @@
 # Bible du scénario — *L'Arbre aux absents*
 
 > Affaire n° 1 : **« Succession Varenque »** (`content/cases/succession-varenque/`).
-> Tenue par `scenariste` (CM Creative Lab). État : **v0.1, bible à relire par l'humain** avant
-> la rédaction des 116 documents.
+> Tenue par `scenariste` (CM Creative Lab). État : **v0.2, passe de cohérence faite sur le corpus
+> rédigé** (116 documents + 2 pièces d'épilogue, 118 fichiers). Les pièces de
+> `content/cases/succession-varenque/documents/` font foi ; les exemples ci-dessous datent de la v0.1
+> et peuvent en différer. Écarts intégrés : `07-coherence.md` §7.
 
 ## Pitch
 

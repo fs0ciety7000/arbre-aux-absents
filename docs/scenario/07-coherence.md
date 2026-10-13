@@ -45,13 +45,13 @@
 | C16 Odile | RG-05, RG-13, PH-06, RG-18, PH-16 (R) | PH-05, PH-06, PH-16 (R) | PH-06, RG-13, LT-08, PR-09 |
 | C17 Orrin | RG-13, PH-13 (initiale), PH-17 (R), RG-14 (R), LT-08 (prénom) | PH-13, PH-17 (R) | RG-13, PH-13, LT-08 |
 | C18 Victor | RG-06, PH-07, PR-07, RG-11, PR-15, AN-02 | PH-07, PH-18, PR-15 | PH-07, PR-07, RG-11, AN-02, PR-15 |
-| C19 Ninon | RG-11, PH-21 (usage), PR-15 | PH-18, PH-21, PR-15 | RG-11, PH-21, PR-15 |
+| C19 Ninon | RG-11, PH-21 (usage), PR-15, PR-14 (« née Brial ») | PH-18, PH-21, PR-15 | RG-11, PH-21, PR-15 |
 | C20 Firmin (1900) | RG-03, RG-10, PH-14, PH-20 | PH-05, PH-14, PH-20, PR-13 | RG-10, PH-20, RG-19 |
 | C21 Hessa | PH-14, RG-10 | PH-14, PH-15 | RG-10, PH-15 |
 | C22 Selda | RG-03, RG-12, PH-13, PH-20, LT-17 | PH-13, PH-20 | RG-12, PH-13, PH-20 |
 | C23 Augustin (1924) | RG-09, PB-04, PR-17, RG-18 | PB-04, PR-11 | PB-04, PR-11 |
 | C24 Armand | départ (OF-04) ; RG-09, PH-22 | PH-22, PR-17 | départ (OF-04) ; PH-22, AN-03 |
-| C25 Mathilde | PH-22, OF-04 (prénom), PH-23 (prénom) | PH-22, PH-23 | PH-22, PH-23 |
+| C25 Mathilde | PH-22, OF-04 (prénom), PH-23 (« Mathilde Rouvière ») | PH-22, PH-23 | PH-22, PH-23 |
 | C26 Hélène | RG-09, PH-25, OF-04 (usage), LT-16, PR-17 | PH-25, PR-17 | OF-04, AN-03, LT-16 |
 | C27 Paul | PH-25, PR-16, AN-03 | PH-25, PR-16 | PH-25, PR-16, AN-03 |
 | C28 Lise | RG-16, LT-09, PH-24, PH-28, CP-03, DV-04, PR-10 | PH-24, PH-28 (PH-19 bébé) | OF-06, PH-28, CP-03, RP-06 |
@@ -120,7 +120,8 @@ Pièges : grandes oreilles et nœud papillon ; ne pas confondre avec Paul Marsal
 **C25 Mathilde Rouvière — speakerine.**
 Chemin 1 : OF-04 « mon épouse Mathilde » → « Armand Varenque » → PH-22 (nom de naissance, speakerine).
 Chemin 2 : « speakerine » ou « RTV » → PH-23 (couverture d'*Antenne velmarchoise*).
-Pièges : PH-23 ne donne que le prénom ; le visage relie les deux pièces.
+Pièges : PH-23 donne le nom (courrier des lecteurs, p. 30) mais pas le lien à la famille ; le visage
+relie les deux pièces, et PH-22 seule place Mathilde comme épouse d'Armand.
 
 **C26 Hélène Varenque — médecin.**
 Chemin 1 : OF-04 « le Dr Hélène Marsal » → « Hélène Marsal » → AN-03 (pédiatre), LT-16, PR-17 (photo).
@@ -204,7 +205,8 @@ Pièges : PR-07 le dit « fils d'un capitaine de Port-Sénane disparu en mer » 
 
 **C19 Ninon Brial — costumière.** (case révélée par C18)
 Chemin 1 : « Victor Sauge » → RG-11 (Ninon Brial, costumière) → « Ninon » → PH-21 (« Mme Ninon Sauge »).
-Chemin 2 : PR-15 (« sa veuve Ninon, costumière à l'Opéra », photo des obsèques) ; PH-18 (« N. »).
+Chemin 2 : PR-15 (« sa veuve Ninon, costumière à l'Opéra », photo des obsèques) ; PH-18 (« N. ») ;
+PR-14 (1961 : « Mme Ninon Sauge, née Brial, la première costumière de l'Opéra »).
 Pièges : nom d'usage Sauge ; turban et grands anneaux sur PH-18 et PH-21.
 
 **C29 Claude Sauge — ingénieure.** (case révélée par C18)
@@ -230,11 +232,14 @@ Pièges : graphies Tennok / Tennokessa (DV-05) ; **genre supposé** sur PH-04 (�
 leurre : Aldrik « gardien ».
 
 **C10 Aldrik Varenque — patron du canot de sauvetage.**
-Chemin 1 : RG-03 (fils de Firmin et Maaren ; « patron du canot » en 1903) → « Aldrik Varenque » → PR-05,
+Chemin 1 : RG-03 (fils de Firmin et Maaren ; « canotier au canot de sauvetage » en 1903, « patron du
+canot » dans la mention marginale de 1924) → « Aldrik Varenque » → PR-05,
 RP-01.
 Chemin 2 : « canot de sauvetage » → PH-10 (« patron A. Varenque », visage : deux doigts manquants à la
 main gauche) → PH-04 (même homme).
-Pièges : on le croit gardien du phare (PH-04). Il n'a jamais tenu le feu (AN-04).
+Pièges : on le croit gardien du phare (PH-04). Il n'a jamais tenu le feu (AN-04). Canotier dès 1902,
+patron depuis l'arrivée du canot neuf *Tennok* en 1906 (PR-02 le dit « canotier » en 1902 : pas de
+contradiction).
 
 **C11 Tenna Orrvik — receveuse des postes.**
 Chemin 1 : RG-03 (« Tenna Orrvik, receveuse des postes ») → « Tenna Orrvik » → PH-12 (visage, guichet).
@@ -348,8 +353,43 @@ conclusion juste se choisit au rapport final (`05-secrets-et-fins.md`).
 
 - **C17 Orrin** et **C21 Hessa** n'ont que deux pièces de visage chacun : ne pas rendre PH-13 ou PH-15 optionnelles.
 - **C25 Mathilde** : deux pièces seulement pour le métier (PH-22, PH-23) ; ajouter si besoin une
-  publicité des Papeteries (1955) où elle pose, prévue en réserve (hors compte).
+  publicité des Papeteries (1955) où elle pose, prévue en réserve (hors compte). Le nom « Rouvière »
+  est désormais dans deux pièces (PH-22, PH-23, v0.2) ; PH-23 donne nom, visage et métier d'un coup,
+  mais pas le placement (seule PH-22 en fait l'épouse d'Armand).
+- **C19 Ninon** : « Brial » est dans RG-11 et PR-14 (v0.2), « Ninon » dans RG-11, PR-15, PH-21,
+  PR-14. PR-14 n'est pas dans la démo ; il est lisible avant la porte C, ce qui laisse deviner le nom
+  de jeune fille tôt (sans le placement, qui reste à RG-11).
 - **C23 Augustin (1924)** : visage par PB-04 et une gravure (PR-11) ; la gravure doit rester fidèle
   (menton fendu, mèche de cheveux sur l'œil droit, écharpe).
 - Les termes ostriens (*Maask*, *ilv*, *Ilvess*) ne sont cherchables qu'une fois lus : DV-05 doit être
   atteignable par deux chemins (« Selda Varenque », « Vel Taalik »).
+
+## 7. Registre des écarts intégrés (passe de cohérence v0.2)
+
+Le corpus rédigé (`content/cases/succession-varenque/documents/`) fait foi ; la bible le suit.
+Corrections portées **dans le texte** des pièces (aucune modification de frontmatter) :
+
+| Pièce | Écart | Correction |
+| --- | --- | --- |
+| LT-02 | Traduction « de la main d'Adélaïde » datée 1883 (elle a 3 ans) | Traduction faite par Adé à 13 ans, été 1893 ; intro : « écriture d'écolière, ajoutée des années plus tard » |
+| PR-01 | « fille du regretté M. Hippolyte Aubertot » (vivant en 1888 et 1897) | « fille de M. Hippolyte Aubertot » |
+| LT-01 / DV-01 | Planche 31 contre 27 ; osmonde datée 1888 au lieu de 1871 | Planche 27, cueillie le 14 juin 1871 |
+| CT-01 | Prêt « M. Anselme Varenque » en 1920 (mort en 1919) | « Mme Anselme Varenque » |
+| DV-02 | Ingénieur « Lamarque » ; RG-07 nomme Léon Vauquelin | Vauquelin |
+| RG-18 | Gaspard inhumé le 6 sept. 1971 ; PR-17 : obsèques le samedi 4 | 4 septembre 1971 |
+| OF-06 | Herbier « restauré en 1970 » | « en 1970-1971 » (212 planches) |
+| PR-13 | 40 planches ; PH-26 : XXXVI, 36 photographies | 36 planches |
+| AN-03 | 4, quai des Chartes ; OF-04 : 21 | 21, quai des Chartes |
+| LT-13 | *Vel Taalik* « reparaîtra en juin » ; PH-20 : n° 1 en mai 1953 | « a reparu samedi, deux jours après mon retour » |
+| PH-29 | Logement loué « un florin nouveau par an » ; AN-04 : à titre gracieux | « à titre gracieux, pour la surveillance » |
+| PR-14 | Mèche blanche « découverte » en 1961 alors que LT-14 parle du ruban | Le ruban glisse au salut ; ajout de Ninon Sauge, née Brial (costume) |
+| PH-23 | Prénom seul | Courrier des lecteurs : « Mathilde Rouvière » |
+| PH-17, RG-14 | Terme caché « Orrin Kessvel » écrit en clair (avertissement de `content:check`) | Ligne « Identité » retirée (PH-17) ; titre d'extrait neutre (RG-14) |
+
+Inventions des rédacteurs conservées (compatibles avec la bible, consignées dans 03, 04, 06) :
+CT-01 dédicace « Pour V. » (Victor, 1920) ; RP-02 rapport qui disculpe Gaspard et où Marcel demande à
+être relevé ; PB-04 visa du commissaire (Marcel contresigne l'ordre de 1944) ; RP-05 mandats anonymes
+1953–1959 ; DV-03 écritures du registre bleu (T. H., N., 59 feuillets écrits sur 96) ; PR-11 note
+marginale d'une main non identifiée ; DV-02 place vide pour Lucien au banquet de 1922 ; DV-05 sens des
+prénoms ostriens et *daan* ; PR-14 cadenas visible ; RP-06 déclaration de Lise (14 oct. 1974).
+Monde : hameaux et toponymes de la carte validés dans `docs/monde/00-monde.md` §3, prix de presse au §5.
