@@ -66,7 +66,7 @@ find_one() {
 }
 
 # Affiche la commande, prête à copier (arguments entre apostrophes, celles des noms de fichiers
-# Tauri « L'Arbre aux absents_… » échappées), puis l'exécute hors --dry-run.
+# éventuelles des chemins échappées), puis l'exécute hors --dry-run.
 run() {
   printf '+'
   for a in "$@"; do printf " '%s'" "$(printf '%s' "$a" | sed "s/'/'\\\\''/g")"; done

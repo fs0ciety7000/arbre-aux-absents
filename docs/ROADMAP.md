@@ -52,7 +52,17 @@ Fait :
 - [x] `Toast` : bandeau compact en bas sous 600 px, titre allégé, encarts de sécurité
 - [x] Vérifié : `npm run check`, 44 e2e, aucun défilement horizontal à 390 et 768 px
 
+## Session 0 quinquies — 13 oct. 2026 (builds jouables)
+
+- [x] Bug : la touche pressée juste après le logo était avalée (CI rouge depuis le design v2) ; test ajouté
+- [x] Builds natifs verts en CI sans secrets : Linux (AppImage, deb, rpm), Windows (exe, msi),
+      macOS universel (dmg), Android (APK debug) — commit « [tauri] » sur la branche de travail
+- [x] Page itch.io prête (`docs/ITCH.md`) et script butler (`scripts/itch-push.sh`) ; rien publié
+
 ## Backlog
+
+- Avant publication itch.io : prix exact, version ≠ 0.0.0 + tag `v*`, keystore Android (4 secrets),
+  signature macOS/Windows ou avertissement, couverture 630 × 500, captures de la vraie affaire.
 
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
   en mode scindé et fond transparent, lecture « à la visibilité » des entrées sans hydratation,
