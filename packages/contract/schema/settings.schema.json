@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "textScale": {
+      "type": "number",
+      "enum": [
+        1,
+        1.25,
+        1.5,
+        2
+      ]
+    },
+    "readingFont": {
+      "type": "string",
+      "enum": [
+        "default",
+        "hyperlegible"
+      ]
+    },
+    "replaceHandwriting": {
+      "type": "boolean"
+    },
+    "highContrast": {
+      "type": "boolean"
+    },
+    "motion": {
+      "type": "string",
+      "enum": [
+        "system",
+        "reduced",
+        "full"
+      ]
+    },
+    "hints": {
+      "type": "string",
+      "enum": [
+        "off",
+        "highlight",
+        "progressive"
+      ]
+    },
+    "validation": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "manual"
+      ]
+    },
+    "showTimer": {
+      "type": "boolean"
+    },
+    "volume": {
+      "type": "object",
+      "properties": {
+        "master": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "music": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "sfx": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "master",
+        "music",
+        "sfx"
+      ],
+      "additionalProperties": false
+    },
+    "inputGlyphs": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "keyboard",
+        "gamepad"
+      ]
+    }
+  },
+  "required": [
+    "textScale",
+    "readingFont",
+    "replaceHandwriting",
+    "highContrast",
+    "motion",
+    "hints",
+    "validation",
+    "showTimer",
+    "volume",
+    "inputGlyphs"
+  ],
+  "additionalProperties": false
+}

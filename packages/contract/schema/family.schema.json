@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "persons": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "given": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          },
+          "family": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          },
+          "nicknames": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          },
+          "occupation": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "portrait": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "born": {
+            "type": "string",
+            "pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12]\\d|3[01]))?)?$"
+          },
+          "died": {
+            "type": "string",
+            "pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12]\\d|3[01]))?)?$"
+          },
+          "parents": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "unions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          },
+          "bibleNotes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "given",
+          "family",
+          "occupation",
+          "portrait"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "occupations": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "label": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "id",
+          "label"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "portraits": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "file": {
+            "type": "string",
+            "pattern": "^portraits\\/[a-z0-9]+(?:-[a-z0-9]+)*\\.svg$"
+          },
+          "alt": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "caption": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "id",
+          "file",
+          "alt"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "persons",
+    "occupations",
+    "portraits"
+  ],
+  "additionalProperties": false
+}

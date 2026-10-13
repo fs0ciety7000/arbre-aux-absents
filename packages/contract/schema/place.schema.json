@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "name": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "region",
+        "city",
+        "village",
+        "building",
+        "landmark",
+        "sea",
+        "mountain",
+        "river"
+      ]
+    },
+    "position": {
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "additionalProperties": false
+    },
+    "description": {
+      "type": "string",
+      "pattern": "\\S"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "kind",
+    "position"
+  ],
+  "additionalProperties": false
+}

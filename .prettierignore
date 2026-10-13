@@ -1,0 +1,23 @@
+# Dépendances et sorties
+node_modules/
+package-lock.json
+dist/
+build/
+coverage/
+.svelte-kit/
+apps/game/src/generated/
+apps/site/src/generated/
+packages/contract/schema/
+apps/game/src-tauri/target/
+apps/game/src-tauri/gen/
+
+# Docs et contenu rédigé à la main (Markdown restreint, mis en forme par leurs auteurs)
+docs/
+.claude/
+content/**/*.md
+*.md
+
+# Assets
+static/
+art/
+**/*.svg

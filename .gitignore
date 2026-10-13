@@ -4,9 +4,22 @@ out/
 dist/
 build/
 coverage/
+.svelte-kit/
+*.tsbuildinfo
 .env
 .env.local
 .env.*.local
 *.log
 .DS_Store
 .claude/settings.local.json
+
+# Contenu compilé (npm run content:build)
+apps/game/src/generated/
+apps/site/src/generated/
+
+# Tauri
+apps/game/src-tauri/target/
+apps/game/src-tauri/gen/
+
+# Zips itch.io
+release/

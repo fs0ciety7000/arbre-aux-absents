@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "aspect": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "layers": {
+      "minItems": 1,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "base",
+          "relief",
+          "water",
+          "places",
+          "labels"
+        ]
+      }
+    },
+    "minZoom": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "maxZoom": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "title": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "attribution": {
+      "type": "string",
+      "pattern": "\\S"
+    }
+  },
+  "required": [
+    "aspect",
+    "layers",
+    "minZoom",
+    "maxZoom",
+    "title"
+  ],
+  "additionalProperties": false
+}

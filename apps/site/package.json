@@ -1,0 +1,26 @@
+{
+  "name": "@arbre/site",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Site vitrine : SvelteKit + adapter-static, entièrement prérendu.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync || echo ''",
+    "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings"
+  },
+  "dependencies": {
+    "@arbre/contract": "*",
+    "@arbre/map": "*",
+    "@arbre/ui": "*"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-static": "^4.0.0",
+    "@sveltejs/kit": "^3.0.1",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "svelte": "^5.57.2",
+    "vite": "^8.3.4"
+  }
+}

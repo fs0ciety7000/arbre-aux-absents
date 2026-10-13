@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "number",
+      "const": 1
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "textScale": {
+          "type": "number",
+          "enum": [
+            1,
+            1.25,
+            1.5,
+            2
+          ]
+        },
+        "readingFont": {
+          "type": "string",
+          "enum": [
+            "default",
+            "hyperlegible"
+          ]
+        },
+        "replaceHandwriting": {
+          "type": "boolean"
+        },
+        "highContrast": {
+          "type": "boolean"
+        },
+        "motion": {
+          "type": "string",
+          "enum": [
+            "system",
+            "reduced",
+            "full"
+          ]
+        },
+        "hints": {
+          "type": "string",
+          "enum": [
+            "off",
+            "highlight",
+            "progressive"
+          ]
+        },
+        "validation": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "manual"
+          ]
+        },
+        "showTimer": {
+          "type": "boolean"
+        },
+        "volume": {
+          "type": "object",
+          "properties": {
+            "master": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "music": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "sfx": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            }
+          },
+          "required": [
+            "master",
+            "music",
+            "sfx"
+          ],
+          "additionalProperties": false
+        },
+        "inputGlyphs": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "keyboard",
+            "gamepad"
+          ]
+        }
+      },
+      "required": [
+        "textScale",
+        "readingFont",
+        "replaceHandwriting",
+        "highContrast",
+        "motion",
+        "hints",
+        "validation",
+        "showTimer",
+        "volume",
+        "inputGlyphs"
+      ],
+      "additionalProperties": false
+    },
+    "achievements": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 9007199254740991
+      }
+    },
+    "completed": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "bestTimedMs": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "endings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          }
+        },
+        "required": [
+          "endings"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "settings",
+    "achievements",
+    "completed"
+  ],
+  "additionalProperties": false
+}

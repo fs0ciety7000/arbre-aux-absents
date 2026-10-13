@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": [
+        "letter",
+        "newspaper",
+        "photo",
+        "register",
+        "certificate",
+        "postcard",
+        "directory",
+        "telegram",
+        "catalog",
+        "note",
+        "object",
+        "report",
+        "advert"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^\\d{4}(?:-(?:0[1-9]|1[0-2])(?:-(?:0[1-9]|[12]\\d|3[01]))?)?$"
+    },
+    "author": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "place": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "archive": {
+      "type": "string",
+      "pattern": "\\S"
+    },
+    "reveals": {
+      "type": "object",
+      "properties": {
+        "portraits": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        },
+        "occupations": {
+          "minItems": 1,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "illustration": {
+      "type": "object",
+      "properties": {
+        "file": {
+          "type": "string",
+          "pattern": "^illustrations\\/[a-z0-9]+(?:-[a-z0-9]+)*\\.svg$"
+        },
+        "alt": {
+          "type": "string",
+          "pattern": "\\S"
+        }
+      },
+      "required": [
+        "file",
+        "alt"
+      ],
+      "additionalProperties": false
+    },
+    "optional": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "kind",
+    "title"
+  ],
+  "additionalProperties": false
+}

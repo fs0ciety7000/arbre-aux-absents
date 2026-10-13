@@ -1,0 +1,16 @@
+{
+  "name": "@arbre/engine",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Moteur pur : applyAction, search, validate, settle… (squelette, lot 0).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@arbre/contract": "*"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@arbre/contract",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Contrat partagé : types et schémas zod (contenu source, sauvegarde, profil, réglages).",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "schemas:json": "tsx scripts/emit-json-schemas.ts"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  }
+}
