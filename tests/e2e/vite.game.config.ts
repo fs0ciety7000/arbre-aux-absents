@@ -8,6 +8,8 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vite';
+import { lazyContent } from '../../apps/game/vite/lazy-content';
+import { splash } from '../../apps/game/vite/splash';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const repo = resolve(here, '../..');
@@ -17,7 +19,11 @@ const generated = process.env.E2E_GENERATED ?? resolve(E2E_CACHE, 'mini/game');
 export default defineConfig({
   root: resolve(repo, 'apps/game'),
   base: './',
-  plugins: [svelte()],
+  plugins: [
+    svelte(),
+    lazyContent(),
+    splash({ splashCss: resolve(repo, 'apps/game/src/shell/splash.css') }),
+  ],
   resolve: {
     alias: [{ find: /^(?:\.\.\/)+generated\/(.*)$/, replacement: `${generated}/$1` }],
   },

@@ -9,7 +9,9 @@
   import { availableNames, availableOccupations, availablePortraits } from '@arbre/engine';
   import { Button, Combobox, Dialog, Icon, type Candidate } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
+  import { portraitSvg } from './lib/assets.svelte';
   import { getGame } from '../lib/game/context';
+  import { initialFocus } from '../lib/game/initial-focus';
   import { guessOf, occupationOrigins, portraitOrigins, seenIn, usageCount } from './lib/view';
   import { FIELD_ARTICLES, FIELD_LABELS, pm } from './messages';
 
@@ -109,13 +111,18 @@
     onclose={close}
   >
     {#if isEmpty}
-      <div class="empty">
+      <div class="empty" use:initialFocus={'button'}>
         <p>{pm.picker.empty(FIELD_ARTICLES[field])}</p>
         <Button iconName="help" onclick={whereToLook}>{pm.common.whereToLook}</Button>
       </div>
     {:else if field === 'portrait'}
       <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-      <ul class="gallery" aria-label={pm.picker.gallery} onkeydown={onGalleryKey}>
+      <ul
+        class="gallery"
+        aria-label={pm.picker.gallery}
+        onkeydown={onGalleryKey}
+        use:initialFocus={'[tabindex="0"]'}
+      >
         {#each portraits as p, i (p)}
           {@const pr = game.content.portraits[p]}
           {@const used = usageCount(game.state, game.content, 'portrait', p, slot)}
@@ -129,7 +136,7 @@
               aria-pressed={currentValue === p}
               onclick={() => choose(p)}
             >
-              <span class="art-face" use:svgContent={pr?.svg ?? ''}></span>
+              <span class="art-face" use:svgContent={portraitSvg(game.content, p)}></span>
               <span class="alt">{pr?.alt ?? p}</span>
               <span class="detail"
                 >{seenIn(game.content, portraitOrigins(game.state, game.content, p), 1)}</span
@@ -143,16 +150,18 @@
         {/each}
       </ul>
     {:else}
-      <Combobox
-        label={pm.picker.filter}
-        {options}
-        value={currentValue}
-        bind:query
-        mode="inline"
-        listLabel={pm.picker.listLabel}
-        emptyText={pm.picker.noMatch}
-        onselect={choose}
-      />
+      <div class="filter" use:initialFocus={'input'}>
+        <Combobox
+          label={pm.picker.filter}
+          {options}
+          value={currentValue}
+          bind:query
+          mode="inline"
+          listLabel={pm.picker.listLabel}
+          emptyText={pm.picker.noMatch}
+          onselect={choose}
+        />
+      </div>
     {/if}
     {#snippet actions()}
       {#if currentValue}

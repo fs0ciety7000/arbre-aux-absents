@@ -1,0 +1,129 @@
+/**
+ * Store de partie : validation des groupes en attente à la fermeture et au chargement (R1),
+ * rapport final remis après « Revenir au bureau ».
+ */
+import type { GameEvent, SaveState, Settings } from '@arbre/contract';
+import { defaultProfile, defaultSettings } from '@arbre/contract';
+import { newGame } from '@arbre/engine';
+import { describe, expect, it, vi } from 'vitest';
+import { SOLUTION, fixtureCase } from '../../../../../../packages/engine/test/fixtures/case';
+import { createMemorySaveStore } from '../../../platform/memory';
+import { GameStoreImpl, type StoreHost } from '../store.svelte';
+
+const c = fixtureCase;
+const ELDERS = ['g0-elna', 'g1-tam', 'g1-lisbe'] as const;
+
+function host(validation: Settings['validation'] = 'auto') {
+  return {
+    settings: { ...defaultSettings(), validation },
+    profile: defaultProfile(),
+    saveStore: createMemorySaveStore(),
+    overlayOpen: false,
+    updateSettings: vi.fn(),
+    unlockAchievements: vi.fn(),
+    showEnding: vi.fn(),
+    showReport: vi.fn(),
+    saveStatus: vi.fn(),
+  } satisfies StoreHost;
+}
+
+/** Partie où tout est lu (noms, portraits et métiers disponibles). */
+function base(): SaveState {
+  const s = newGame(c, { slot: 'slot-1', mode: 'standard', at: 1_000 });
+  const all = Object.fromEntries(Object.keys(c.documents).map((id) => [id, 1_000]));
+  return { ...s, unlocked: all, read: all, revealedSlots: Object.keys(c.slots) };
+}
+
+function withElders(s: SaveState, missingGiven = false): SaveState {
+  const tree = { ...s.tree };
+  for (const id of ELDERS) tree[id] = { ...SOLUTION[id]! };
+  if (missingGiven) tree['g1-lisbe'] = { ...tree['g1-lisbe']!, given: '' };
+  return { ...s, tree };
+}
+
+const isLocked = (g: GameStoreImpl, id: string) => g.state.locked[id] !== undefined;
+
+describe('groupes en attente (R1, 800 ms)', () => {
+  it('« Sauvegarder et quitter » : prepareClose évalue tout de suite le groupe complété', () => {
+    const h = host();
+    const g = new GameStoreImpl(c, withElders(base(), true), h);
+    g.start();
+    g.dispatch({ type: 'setSlot', slot: 'g1-lisbe', patch: { given: 'Lisbé' } });
+    expect(g.pendingGroups).toEqual(['grp-aines']);
+    expect(isLocked(g, 'g1-lisbe')).toBe(false);
+    g.prepareClose();
+    expect(g.pendingGroups).toEqual([]);
+    for (const id of ELDERS) expect(isLocked(g, id)).toBe(true);
+    g.destroy();
+  });
+
+  it('destroy avec une évaluation en attente : verrouille et sauvegarde', async () => {
+    const h = host();
+    const g = new GameStoreImpl(c, withElders(base(), true), h);
+    g.dispatch({ type: 'setSlot', slot: 'g1-lisbe', patch: { given: 'Lisbé' } });
+    g.destroy();
+    await vi.waitFor(async () => {
+      const saved = (await h.saveStore.load('slot-1')) as SaveState | null;
+      expect(saved?.locked['g1-lisbe']).toBeTypeOf('number');
+    });
+  });
+
+  it('au chargement : un groupe complet et juste non validé se verrouille', () => {
+    const g = new GameStoreImpl(c, withElders(base()), host());
+    const events: GameEvent[] = [];
+    g.onEvents((e) => events.push(...e));
+    g.start();
+    for (const id of ELDERS) expect(isLocked(g, id)).toBe(true);
+    expect(events.some((e) => e.type === 'slotsLocked')).toBe(true);
+    g.destroy();
+  });
+
+  it('au chargement : échec silencieux, et rien en validation manuelle', () => {
+    const wrong = withElders(base());
+    wrong.tree['g1-tam'] = { ...wrong.tree['g1-tam']!, occupation: 'meunier' };
+    const g = new GameStoreImpl(c, wrong, host());
+    const events: GameEvent[] = [];
+    g.onEvents((e) => events.push(...e));
+    g.start();
+    expect(isLocked(g, 'g0-elna')).toBe(false);
+    expect(events).toEqual([]);
+    g.destroy();
+
+    const m = new GameStoreImpl(c, withElders(base()), host('manual'));
+    m.start();
+    expect(isLocked(m, 'g0-elna')).toBe(false);
+    m.destroy();
+  });
+});
+
+describe('rapport final', () => {
+  function complete(): SaveState {
+    const s = base();
+    const tree = Object.fromEntries(Object.keys(c.slots).map((id) => [id, { ...SOLUTION[id]! }]));
+    const locked = Object.fromEntries(Object.keys(c.slots).map((id) => [id, 2_000]));
+    return { ...s, tree, locked };
+  }
+
+  it('arbre complet sans dénouement : « Remettre le rapport » rouvre le rapport', () => {
+    const h = host();
+    const g = new GameStoreImpl(c, complete(), h);
+    expect(g.reportAvailable).toBe(true);
+    g.reportDismissed(); // « Revenir au bureau »
+    g.reopenReport();
+    expect(h.showReport).toHaveBeenCalledTimes(1);
+    g.destroy();
+  });
+
+  it('indisponible tant que l’arbre est incomplet ou après le dénouement', () => {
+    const h = host();
+    const partial = new GameStoreImpl(c, base(), h);
+    expect(partial.reportAvailable).toBe(false);
+    partial.reopenReport();
+    expect(h.showReport).not.toHaveBeenCalled();
+    partial.destroy();
+
+    const ended = new GameStoreImpl(c, { ...complete(), ending: Object.keys(c.endings)[0]! }, h);
+    expect(ended.reportAvailable).toBe(false);
+    ended.destroy();
+  });
+});

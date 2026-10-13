@@ -5,12 +5,13 @@
   import { installGamepad, installKeyboard } from './input/controller';
   import { input } from './input/device.svelte';
   import { announcer } from './lib/game/announcer.svelte';
-  import { AppController } from './lib/game/app.svelte';
+  import { AppController, CONTENT_SCREENS } from './lib/game/app.svelte';
   import { setApp } from './lib/game/context';
   import { viewport } from './lib/game/viewport.svelte';
   import { messages } from './messages.fr';
   import Achievements from './screens/Achievements.svelte';
   import Bonus from './screens/Bonus.svelte';
+  import ContentLoading from './screens/ContentLoading.svelte';
   import Ending from './screens/Ending.svelte';
   import ErrorScreen from './screens/ErrorScreen.svelte';
   import Launch from './screens/Launch.svelte';
@@ -19,10 +20,15 @@
   import Slots from './screens/Slots.svelte';
   import Stats from './screens/Stats.svelte';
   import Title from './screens/Title.svelte';
-  import Desk from './shell/Desk.svelte';
 
   const app = new AppController();
   setApp(app);
+
+  // Écrans qui lisent l'affaire : elle est chargée à leur ouverture (module à part).
+  const needsContent = $derived(CONTENT_SCREENS.includes(app.screen));
+  $effect(() => {
+    if (needsContent && app.contentStatus === 'idle') void app.ensureContent();
+  });
 
   // Crédits (logos inlinés, ~65 Ko) chargés à la demande.
   let Credits = $state<Component | null>(null);
@@ -55,7 +61,8 @@
   // Le focus suit le changement d'écran (lecteurs d'écran, clavier).
   let lastScreen = '';
   $effect(() => {
-    const key = `${app.screen}|${app.overlay ?? ''}`;
+    const gate = needsContent && app.contentStatus !== 'ready';
+    const key = `${app.screen}|${app.overlay ?? ''}|${gate}`;
     if (key === lastScreen) return;
     lastScreen = key;
     if (app.screen === 'launch' || app.screen === 'title') return;
@@ -92,6 +99,8 @@
         app.goto('title');
       }}
     />
+  {:else if needsContent && app.contentStatus !== 'ready'}
+    <ContentLoading />
   {:else if app.screen === 'launch'}
     <Launch />
   {:else if app.screen === 'title'}
@@ -112,9 +121,9 @@
     {#if Credits}<Credits />{/if}
   {:else if app.screen === 'ending'}
     <Ending />
-  {:else if app.screen === 'desk' && app.game}
+  {:else if app.screen === 'desk' && app.game && app.desk}
     {#key app.game}
-      <Desk game={app.game} />
+      <app.desk game={app.game} />
     {/key}
     {#if app.overlay}
       <div class="overlay">

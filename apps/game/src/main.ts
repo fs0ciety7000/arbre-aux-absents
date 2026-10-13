@@ -1,8 +1,10 @@
-import { mount } from 'svelte';
-import '@arbre/ui/styles/index.css';
-import App from './App.svelte';
-
-const target = document.getElementById('app');
-if (!target) throw new Error('#app introuvable');
-
-export default mount(App, { target });
+/**
+ * Point d'entrée minimal : l'écran d'attente (index.html) est déjà peint ; le module de
+ * démarrage (app, styles) est chargé ensuite, préchargé en parallèle (vite/splash.ts).
+ */
+void import('./boot')
+  .then((m) => m.start())
+  .catch((err: unknown) => {
+    console.error('[démarrage]', err);
+    document.querySelector<HTMLElement>('#splash .splash-error')?.removeAttribute('hidden');
+  });

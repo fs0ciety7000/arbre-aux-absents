@@ -192,7 +192,10 @@ export interface CompiledCase {
     sections: { label: string | null; title: string | null; when?: OutcomeCondition; body: Block[] }[] }>;
   report: ReportQuestion[];
   hints: Hint[]; achievements: Achievement[];
-  // illustrations SVG : écrites à part (generated/assets.<édition>.json), clé = chemin `illustrations/<file>`
+  // illustrations SVG : écrites à part (generated/assets.<édition>.json), clé = chemin `illustrations/<file>`.
+  // Dans le jeu, le plugin Vite `apps/game/vite/lazy-content.ts` découpe sans changer ce format :
+  // l'affaire est un chunk chargé à « Nouvelle partie »/« Continuer », chaque illustration et chaque
+  // portrait un chunk à la demande (`svg: ''` dans le cas compilé), la carte un chunk du panneau Carte.
   candidates: { given: string[]; family: string[] }; // noms proposables (lus dans les documents), pour la saisie par liste
 }
 ```
@@ -364,7 +367,10 @@ interface Platform { kind: 'web' | 'desktop' | 'android'; saves: SaveStore;
 ## 5. Sécurité
 
 - Aucun `{@html}` sur du texte de contenu ; SVG nettoyés et contrôlés au build.
-- CSP Tauri `default-src 'self'`, aucun domaine distant, capabilities minimales.
+- CSP Tauri `default-src 'self'`, aucun domaine distant, capabilities minimales (`fs` limité à
+  `$APPDATA/saves/**`, `fs:allow-stat` pour vérifier la taille d'un import avant lecture).
+- Build web/itch : CSP en `<meta>` (aucun script inline, `<style>` du splash autorisé par empreinte,
+  `style-src-attr 'unsafe-inline'` pour les attributs posés par Svelte).
 - CSP stricte du site (nginx). Aucun secret dans le repo (keystore Android, clés butler, signature :
   secrets GitHub Actions uniquement).
 - Les réponses sont hachées dans le contenu compilé (anti-spoiler léger, pas une protection).

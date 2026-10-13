@@ -5,10 +5,10 @@
 -->
 <script lang="ts">
   import type { Block } from '@arbre/contract';
-  import { Stamp } from '@arbre/ui';
+  import { Loader, Stamp } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
   import { layoutInlines, pathKey, type HighlightRange } from '../lib/doc-layout';
-  import { BODY_LABELS, type BodyOptions } from './context';
+  import { BODY_LABELS, type BodyOptions, type KeywordState } from './context';
   import Inlines from './Inlines.svelte';
   import Self from './DocumentBody.svelte';
 
@@ -17,8 +17,8 @@
     opts: BodyOptions;
     /** Surlignages par conteneur (`pathKey`). */
     highlights?: Map<string, HighlightRange[]>;
-    /** SVG d'une figure (`illustrations/<nom>.svg`), ou `null`. */
-    figure?: (asset: string) => string | null;
+    /** SVG d'une figure (`illustrations/<nom>.svg`) ; `undefined` pendant le chargement, `null` si indisponible. */
+    figure?: (asset: string) => string | null | undefined;
     /** Blocs à rendre (indices), tous par défaut (recto / verso). */
     only?: number[] | null;
     /** Chemin du bloc parent (citations). */
@@ -27,7 +27,7 @@
 
   let {
     blocks,
-    opts,
+    opts: given,
     highlights = new Map(),
     figure = () => null,
     only = null,
@@ -37,6 +37,14 @@
   const inl = (path: number[], c: Parameters<typeof layoutInlines>[0]) =>
     layoutInlines(c, highlights.get(pathKey(path)) ?? []);
   const visible = (i: number) => only === null || only.includes(i);
+
+  // État des mots-clés pour les lecteurs d'écran : descriptions cachées, une fois par document
+  // (racine), référencées par `aria-describedby` (le nom accessible reste le mot lui-même).
+  const uid = $props.id();
+  const root = $derived(prefix.length === 0 && !given.decorative && !given.kwDescription);
+  const opts: BodyOptions = $derived(
+    root ? { ...given, kwDescription: (st: KeywordState) => `${uid}-kw-${st}` } : given,
+  );
 </script>
 
 {#each blocks as b, i (i)}
@@ -110,6 +118,10 @@
       <figure class="doc-figure">
         {#if opts.mode === 'original' && svg}
           <div class="art-box" role="img" aria-label={b.alt} use:svgContent={svg}></div>
+        {:else if opts.mode === 'original' && svg === undefined}
+          <div class="art-box loading">
+            <Loader label={BODY_LABELS.imageLoading} />
+          </div>
         {:else}
           <p class="figure-alt">
             <span class="caps">{BODY_LABELS.figure}</span>
@@ -135,6 +147,12 @@
     {/if}
   {/if}
 {/each}
+
+{#if root}
+  {#each ['new', 'known', 'searched'] as const as st (st)}
+    <span id="{uid}-kw-{st}" hidden>{BODY_LABELS.kwState[st]}</span>
+  {/each}
+{/if}
 
 <style>
   .signature {
@@ -194,6 +212,11 @@
     inline-size: 100%;
     background: var(--surface-1);
     border-radius: var(--radius-paper);
+  }
+  .art-box.loading {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
   }
   .art-box :global(svg) {
     display: block;

@@ -7,7 +7,7 @@
   import { endingSections } from '@arbre/engine';
   import { Button, Dialog, Icon, Panel, Stamp, type IconName } from '@arbre/ui';
   import { getGame } from '../lib/game/context';
-  import { illustration } from './lib/assets';
+  import { illustration } from './lib/assets.svelte';
   import { slotName } from './lib/view';
   import DocumentBody from './doc/DocumentBody.svelte';
   import type { BodyOptions } from './doc/context';

@@ -19,6 +19,7 @@
     "fs:allow-rename",
     "fs:allow-copy-file",
     "fs:allow-remove",
+    "fs:allow-stat",
     {
       "identifier": "fs:scope",
       "allow": [{ "path": "$APPDATA/saves" }, { "path": "$APPDATA/saves/**" }]

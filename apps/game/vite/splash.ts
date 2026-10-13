@@ -1,0 +1,134 @@
+/**
+ * Plugin Vite : premier affichage sans JavaScript (index.html).
+ *
+ * - Met en ligne la feuille de l'écran d'attente (`src/shell/splash.css`) précédée des tokens
+ *   (`@arbre/ui` tokens.css) et des polices de repli métriques (`@font-face` « … fallback » de
+ *   fonts.css) : l'écran se peint dès l'arrivée du HTML, sans feuille bloquante.
+ * - Au build : précharge le module de démarrage (`src/boot.ts`, importé dynamiquement par
+ *   `src/main.ts`), ses dépendances et sa feuille de style (`preload`, non bloquant).
+ * - Au build web (hors `--mode tauri`, qui a sa CSP dans tauri.conf.json) : CSP en `<meta>`.
+ *   Aucun script en ligne ; le seul `<style>` en ligne est autorisé par son empreinte ;
+ *   `style-src-attr 'unsafe-inline'` couvre les attributs `style` posés par Svelte
+ *   (`style:` et variables CSS des composants).
+ */
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
+import { dirname, resolve } from 'node:path';
+import type { HtmlTagDescriptor, Plugin } from 'vite';
+
+const require = createRequire(import.meta.url);
+
+/** Retire commentaires et blancs superflus (CSS écrit à la main, sans chaînes piégées). */
+export function compactCss(css: string): string {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*([{};:,>])\s*/g, '$1')
+    .replace(/;}/g, '}')
+    .trim();
+}
+
+/** `@font-face` des polices de repli métriques (`font-family: '… fallback'`). */
+export function fallbackFaces(fontsCss: string): string {
+  return (fontsCss.match(/@font-face\s*{[^}]*}/g) ?? [])
+    .filter((block) => /font-family:\s*'[^']* fallback'/.test(block))
+    .join('\n');
+}
+
+export function cspFor(styleHashes: string[]): string {
+  return [
+    "default-src 'self'",
+    "script-src 'self'",
+    `style-src 'self' ${styleHashes.join(' ')}`.trim(),
+    "style-src-attr 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self'",
+    "media-src 'self' blob:",
+    "connect-src 'self'",
+    "worker-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'none'",
+  ].join('; ');
+}
+
+interface Options {
+  /** Feuille de l'écran d'attente. */
+  splashCss: string;
+}
+
+export function splash(opts: Options): Plugin {
+  let isBuild = false;
+  let mode = 'production';
+  const uiStyles = dirname(require.resolve('@arbre/ui/styles/index.css'));
+
+  const inlineCss = () =>
+    compactCss(
+      [
+        fallbackFaces(readFileSync(resolve(uiStyles, 'fonts.css'), 'utf8')),
+        readFileSync(resolve(uiStyles, 'tokens.css'), 'utf8'),
+        readFileSync(opts.splashCss, 'utf8'),
+      ].join('\n'),
+    );
+
+  return {
+    name: 'arbre-splash',
+    configResolved(config) {
+      isBuild = config.command === 'build';
+      mode = config.mode;
+    },
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        const css = inlineCss();
+        const tags: HtmlTagDescriptor[] = [
+          { tag: 'style', attrs: { id: 'splash-css' }, children: css, injectTo: 'head' },
+        ];
+        if (isBuild && mode !== 'tauri') {
+          const hash = createHash('sha256').update(css, 'utf8').digest('base64');
+          tags.unshift({
+            tag: 'meta',
+            attrs: {
+              'http-equiv': 'Content-Security-Policy',
+              content: cspFor([`'sha256-${hash}'`]),
+            },
+            injectTo: 'head-prepend',
+          });
+        }
+        const bundle = ctx.bundle;
+        if (isBuild && bundle) {
+          const boot = Object.values(bundle).find(
+            (c) => c.type === 'chunk' && /[\\/]src[\\/]boot\.ts$/.test(c.facadeModuleId ?? ''),
+          );
+          if (boot && boot.type === 'chunk') {
+            const js = new Set<string>([boot.fileName, ...boot.imports]);
+            const css = new Set<string>(boot.viteMetadata?.importedCss ?? []);
+            for (const f of boot.imports) {
+              const dep = bundle[f];
+              if (dep?.type === 'chunk')
+                for (const c of dep.viteMetadata?.importedCss ?? []) css.add(c);
+            }
+            for (const f of js) {
+              if (f === ctx.chunk?.fileName) continue;
+              tags.push({
+                tag: 'link',
+                attrs: { rel: 'modulepreload', crossorigin: true, href: `./${f}` },
+                injectTo: 'head',
+              });
+            }
+            for (const f of css) {
+              tags.push({
+                tag: 'link',
+                // `crossorigin` : même mode que la feuille insérée par le préchargeur de Vite.
+                attrs: { rel: 'preload', as: 'style', crossorigin: true, href: `./${f}` },
+                injectTo: 'head',
+              });
+            }
+          }
+        }
+        return { html, tags };
+      },
+    },
+  };
+}

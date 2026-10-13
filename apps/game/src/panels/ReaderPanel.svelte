@@ -10,9 +10,9 @@
   import { keywordMentions } from '@arbre/engine';
   import { Badge, Button, Dialog, Icon, IconButton, Panel, TextField } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
+  import { illustration, portraitSvg } from './lib/assets.svelte';
   import { onMount, tick } from 'svelte';
   import { getGame } from '../lib/game/context';
-  import { illustration } from './lib/assets';
   import { listenCommands, ownsCommands } from './lib/commands';
   import { carry, DRAG_MIME, encodeCarry, type CarryItem } from './lib/carry.svelte';
   import {
@@ -409,7 +409,7 @@
             >{pm.reader.flip} · {face === 'front' ? pm.reader.front : pm.reader.back}</Button
           >
         {/if}
-        <div class="seg" role="group" aria-label={pm.reader.zoomIn}>
+        <div class="seg" role="group" aria-label={pm.reader.zoom}>
           <IconButton
             icon="zoom-out"
             label={pm.reader.zoomOut}
@@ -522,7 +522,7 @@
                           take(carryFromPortrait(game.content, p));
                       }}
                     >
-                      <span class="face-art" use:svgContent={pr.svg}></span>
+                      <span class="face-art" use:svgContent={portraitSvg(game.content, p)}></span>
                       <span>{pr.alt}</span>
                       <span class="verb"><Icon name="use" size="1rem" /> {pm.common.useInTree}</span
                       >

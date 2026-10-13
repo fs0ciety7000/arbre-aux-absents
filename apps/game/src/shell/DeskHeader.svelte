@@ -1,6 +1,6 @@
 <script lang="ts">
   import { progress } from '@arbre/engine';
-  import { IconButton } from '@arbre/ui';
+  import { Button, IconButton } from '@arbre/ui';
   import { formatClock } from '../lib/game/format';
   import type { GameStoreImpl } from '../lib/game/store.svelte';
   import { viewport } from '../lib/game/viewport.svelte';
@@ -43,6 +43,20 @@
     {/if}
   </div>
   <div class="actions">
+    {#if game.reportAvailable}
+      {#if phone}
+        <IconButton
+          icon="stamp"
+          variant="primary"
+          label={m.reopenReport}
+          onclick={() => game.reopenReport()}
+        />
+      {:else}
+        <Button variant="primary" iconName="stamp" onclick={() => game.reopenReport()}
+          >{m.reopenReport}</Button
+        >
+      {/if}
+    {/if}
     {#if game.settings.validation === 'manual'}
       <IconButton
         icon="check"
@@ -102,6 +116,7 @@
   }
   .actions {
     display: flex;
+    align-items: center;
     gap: var(--space-1);
   }
 </style>

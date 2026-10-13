@@ -27,10 +27,12 @@ import {
   readTextFile,
   remove,
   rename,
+  stat,
   writeTextFile,
 } from '@tauri-apps/plugin-fs';
 import {
   BackRegistry,
+  MAX_IMPORT_BYTES,
   PlatformError,
   assertSlot,
   decodeImported,
@@ -43,6 +45,7 @@ import {
   readSummary,
   serialize,
   summaryFromRaw,
+  tooLarge,
   type GamePlatform,
   type Summarizer,
 } from './common';
@@ -203,6 +206,15 @@ export function createTauriSaveStore(opts: TauriStoreOptions = {}): SaveStore {
         filters: JSON_FILTERS,
       });
       if (picked === null) return null;
+      // Taille contrôlée AVANT la lecture : un fichier énorme n'est jamais chargé en mémoire.
+      // `stat` indisponible (droit absent, plateforme) : la taille est contrôlée après lecture.
+      let size: number | null = null;
+      try {
+        size = (await stat(picked)).size;
+      } catch (err) {
+        console.warn('[platform] taille du fichier importé inconnue', err);
+      }
+      if (size !== null && size > MAX_IMPORT_BYTES) throw tooLarge();
       let text: string;
       try {
         text = await readTextFile(picked);

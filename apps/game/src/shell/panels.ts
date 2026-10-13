@@ -10,11 +10,12 @@ import CataloguePanel from '../panels/CataloguePanel.svelte';
 import FacesPanel from '../panels/FacesPanel.svelte';
 import HelpPanel from '../panels/HelpPanel.svelte';
 import JournalPanel from '../panels/JournalPanel.svelte';
-import MapPanel from '../panels/MapPanel.svelte';
 import NotebookPanel from '../panels/NotebookPanel.svelte';
 import PinboardPanel from '../panels/PinboardPanel.svelte';
 import ReaderPanel from '../panels/ReaderPanel.svelte';
 import TreePanel from '../panels/TreePanel.svelte';
+// Carte (et couches SVG du monde) : fichier JS à part, chargé à l'ouverture du panneau.
+import MapPanel from './MapPanelLoader.svelte';
 
 export const PANELS: Record<PanelId, Component> = {
   tree: TreePanel,

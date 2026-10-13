@@ -29,9 +29,26 @@ test.describe('parcours principal', () => {
     await expect(reader(page)).toContainText('Le notaire m');
     await expect(reader(page)).toContainText('Étude Hallberg');
     // Mot-clé souligné : bouton nommé par son seul texte (le point « nouveau » est décoratif).
+    const kw = reader(page).getByRole('button', { name: 'Ancel Morvan', exact: true });
+    await expect(kw).toBeVisible();
+    // Son état est annoncé (description), sans changer son nom.
+    await expect(kw).toHaveAccessibleDescription('nouveau mot-clé');
+  });
+
+  test('illustrations, portraits et carte chargés à la demande', async ({ page }) => {
+    await startNewGame(page);
+    // Se termine sur « Photographie au bac » : visages du document (portraits à part).
+    await readForElders(page);
+    await expect(reader(page).locator('.face-art svg').first()).toBeAttached();
+    // Illustration de la carte postale (un fichier par illustration).
+    await showPanel(page, /^Archives/);
+    await openDocument(page, 'Carte postale du bac');
     await expect(
-      reader(page).getByRole('button', { name: 'Ancel Morvan', exact: true }),
-    ).toBeVisible();
+      reader(page).getByRole('img', { name: 'Le bac sur la Lisse' }).locator('svg'),
+    ).toHaveCount(1);
+    // Carte du monde (panneau chargé à l'ouverture).
+    await showPanel(page, 'Carte');
+    await expect(desk(page).locator('.map-panel svg').first()).toBeVisible();
   });
 
   test('chercher un mot-clé dans le Catalogue débloque une fiche', async ({ page }) => {

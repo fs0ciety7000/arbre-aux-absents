@@ -16,7 +16,7 @@
   import { Badge, Button, Card, Icon, IconButton, Panel } from '@arbre/ui';
   import { getGame } from '../lib/game/context';
   import { listenCommands, ownsCommands } from './lib/commands';
-  import { worldLayers, worldMap, worldPlaces } from './lib/assets';
+  import { worldLayers, worldMap, worldPlaces } from './lib/world';
   import { formatPartialDate } from './lib/view';
   import { KIND_LABELS, pm } from './messages';
 

@@ -90,8 +90,7 @@ test('parcours principal au clavier seul', async ({ page }) => {
   await page.keyboard.press('Enter');
   const picker = page.getByRole('dialog', { name: 'Choisir : Prénom' });
   await expect(picker).toBeVisible();
-  // Le focus arrive sur « Fermer » (premier focalisable du <dialog>) : Tab jusqu'au filtre.
-  await tabTo(page, /^Filtrer$/);
+  // Le focus arrive directement sur le champ de filtre (pas sur « Fermer »).
   await expect(picker.getByRole('combobox')).toBeFocused();
   await page.keyboard.type('Id');
   await page.keyboard.press('ArrowDown');
@@ -108,7 +107,8 @@ test('parcours principal au clavier seul', async ({ page }) => {
   await page.keyboard.press('Escape');
   const pause = page.getByRole('dialog', { name: 'Pause' });
   await expect(pause).toBeVisible();
-  // Le focus est piégé dans la modale (Dialog natif).
+  // Le focus arrive sur « Reprendre » et reste piégé dans la modale (Dialog natif).
+  await expect(pause.getByRole('button', { name: 'Reprendre' })).toBeFocused();
   expect(await pause.evaluate((d) => d.contains(document.activeElement))).toBe(true);
   await page.keyboard.press('Escape');
   await expect(pause).toBeHidden();

@@ -14,11 +14,12 @@ import type {
 import { defaultProfile, defaultSettings, hintPreset, ProfileSchema } from '@arbre/contract';
 import { newGame, parseSave, summarize } from '@arbre/engine';
 import { pushToast } from '@arbre/ui';
+import type { Component } from 'svelte';
 import { audio } from '../../audio/engine';
 import { PlatformError } from '../../platform/index';
 import { messages } from '../../messages.fr';
 import { announcer } from './announcer.svelte';
-import { loadCases, type CaseEntry } from './cases';
+import { loadContent, type CaseEntry } from './cases';
 import { loadPlatform } from './platform-loader';
 import { applySettings } from './settings-dom';
 import { GameStoreImpl, type StoreHost } from './store.svelte';
@@ -44,6 +45,19 @@ export interface NewGameRequest {
 
 export type LoadResult = { ok: true } | { ok: false; error: string; corrupt: boolean };
 
+/** Chargement de l'affaire compilée et du Bureau (modules à part, à la demande). */
+export type ContentStatus = 'idle' | 'loading' | 'ready' | 'error';
+
+/** Écrans hors partie qui lisent l'affaire compilée. */
+export const CONTENT_SCREENS: readonly ScreenId[] = [
+  'new-game',
+  'achievements',
+  'bonus',
+  'credits',
+];
+
+type DeskComponent = Component<{ game: GameStoreImpl }>;
+
 const SLOTS: readonly SaveSlotId[] = ['slot-1', 'slot-2', 'slot-3', 'auto'];
 
 /**
@@ -58,6 +72,9 @@ export class AppController implements StoreHost {
   returnTo = $state<ScreenId>('title');
   profile = $state<Profile>(defaultProfile());
   cases = $state.raw<CaseEntry[]>([]);
+  contentStatus = $state<ContentStatus>('idle');
+  /** Bureau (panneaux), chargé avec l'affaire. */
+  desk = $state.raw<DeskComponent | null>(null);
   game = $state.raw<GameStoreImpl | null>(null);
   saves = $state.raw<SaveSlotSummary[]>([]);
   ready = $state(false);
@@ -70,6 +87,7 @@ export class AppController implements StoreHost {
   #platform: Platform | null = null;
   #profileTimer: ReturnType<typeof setTimeout> | undefined;
   #backUnsub: (() => void) | null = null;
+  #contentLoad: Promise<boolean> | null = null;
 
   get platform(): Platform | null {
     return this.#platform;
@@ -94,8 +112,8 @@ export class AppController implements StoreHost {
     audio.install();
     applySettings(this.settings);
     try {
-      const cases = await loadCases();
-      this.cases = cases;
+      // L'affaire (lourde) n'est pas attendue ici : chargée en commençant ou en reprenant une
+      // partie (`ensureContent`). Résumés de repli d'ici là (écrits à chaque sauvegarde).
       const loaded = await loadPlatform((s) => {
         const entry = this.findCase(s.caseId);
         return entry ? summarize(s, entry.content) : fallbackSummary(s);
@@ -113,6 +131,33 @@ export class AppController implements StoreHost {
       this.fail('INIT', messages.errors.caseLoad, err);
     }
     this.ready = true;
+  }
+
+  /**
+   * Charge l'affaire compilée et le Bureau (une fois). Renvoie false en cas d'échec réseau
+   * (état `error`, nouvel essai possible).
+   */
+  ensureContent(): Promise<boolean> {
+    if (this.contentStatus === 'ready') return Promise.resolve(true);
+    if (this.#contentLoad) return this.#contentLoad;
+    this.contentStatus = 'loading';
+    const run = Promise.all([loadContent(), import('../../shell/Desk.svelte')]).then(
+      ([content, desk]) => {
+        this.cases = content.cases;
+        this.desk = desk.default as DeskComponent;
+        this.contentStatus = 'ready';
+        return true;
+      },
+      (err: unknown) => {
+        console.error('[affaire]', err);
+        this.contentStatus = 'error';
+        return false;
+      },
+    );
+    this.#contentLoad = run.finally(() => {
+      this.#contentLoad = null;
+    });
+    return this.#contentLoad;
   }
 
   dispose(): void {
@@ -269,6 +314,7 @@ export class AppController implements StoreHost {
       };
     }
     if (raw === null || raw === undefined) return { ok: false };
+    if (!(await this.ensureContent())) return { ok: false, error: messages.errors.contentLoad };
     const id = guessCaseId(raw);
     const entry =
       (id && this.findCase(id)) || (this.cases.length === 1 ? this.cases[0] : undefined);
@@ -283,6 +329,7 @@ export class AppController implements StoreHost {
   // ── Parties ────────────────────────────────────────────────────────
 
   async startNewGame(req: NewGameRequest): Promise<void> {
+    if (!(await this.ensureContent())) return;
     const entry = this.findCase(req.caseId);
     if (!entry) return;
     if (req.mode !== 'timed') this.updateSettings({ hints: hintPreset(req.hintPreset) });
@@ -291,6 +338,9 @@ export class AppController implements StoreHost {
   }
 
   async loadSlot(slot: SaveSlotId): Promise<LoadResult> {
+    if (!(await this.ensureContent())) {
+      return { ok: false, error: messages.errors.contentLoad, corrupt: false };
+    }
     let raw: unknown;
     try {
       raw = await this.saveStore.load(slot);
@@ -352,6 +402,8 @@ export class AppController implements StoreHost {
   async saveAndQuit(): Promise<void> {
     const g = this.game;
     if (g) {
+      // Une évaluation de groupe en attente (800 ms) est faite avant la dernière sauvegarde.
+      g.prepareClose();
       await g.flush(true);
       this.closeGame();
     }

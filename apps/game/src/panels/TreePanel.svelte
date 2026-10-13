@@ -10,6 +10,7 @@
   import { progress, visibleSlots } from '@arbre/engine';
   import { Badge, Button, Icon, IconButton, Panel, Stamp, Tabs } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
+  import { portraitSvg } from './lib/assets.svelte';
   import { onMount, tick } from 'svelte';
   import { getGame } from '../lib/game/context';
   import { listenCommands, ownsCommands } from './lib/commands';
@@ -243,7 +244,8 @@
 {#snippet card(id: SlotId)}
   {@const g = guessOf(game.state, game.content, id)}
   {@const locked = isLocked(id)}
-  {@const portrait = g?.portrait ? game.content.portraits[g.portrait] : undefined}
+  {@const portraitId = g?.portrait ?? null}
+  {@const portrait = portraitId ? game.content.portraits[portraitId] : undefined}
   {@const occ = fieldValueLabel(game.content, 'occupation', g)}
   {@const droppable = carry.item !== null && !locked}
   <button
@@ -265,7 +267,8 @@
   >
     <span class="portrait" aria-hidden="true">
       {#if portrait}
-        <span class="svg" use:svgContent={portrait.svg}></span>
+        <span class="svg" use:svgContent={portraitId ? portraitSvg(game.content, portraitId) : null}
+        ></span>
       {:else}
         <Icon name="unknown-person" size="2.5rem" />
       {/if}

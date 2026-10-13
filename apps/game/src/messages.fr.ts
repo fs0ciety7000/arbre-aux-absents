@@ -279,6 +279,7 @@ export const messages = {
     drawerHandle: 'Agrandir ou réduire le tiroir',
     drawerTitle: 'Tiroir',
     validateBranch: 'Soumettre la branche',
+    reopenReport: 'Remettre le rapport',
     saved: 'Partie sauvegardée.',
     gamepadLost: 'Manette déconnectée.',
     noDocument: 'Aucun document ouvert.',
@@ -400,6 +401,9 @@ export const messages = {
   errors: {
     title: 'Une erreur est survenue',
     caseLoad: 'L’affaire n’a pas pu être chargée.',
+    contentLoad: 'Les archives de l’affaire n’ont pas pu être chargées. Vérifiez votre connexion.',
+    contentLoading: 'Ouverture des archives…',
+    panelLoad: 'Ce panneau n’a pas pu être chargé. Vérifiez votre connexion.',
     code: (c: string) => `Code : ${c}`,
     copyLog: 'Copier le journal technique',
     copied: 'Journal copié.',

@@ -7,6 +7,7 @@
   import type { SlotGuess, SlotId } from '@arbre/contract';
   import { Button, Dialog, Icon, IconButton, Stamp } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
+  import { portraitSvg } from '../lib/assets.svelte';
   import { getGame } from '../../lib/game/context';
   import type { SlotField } from '../../lib/game/types';
   import { carry } from '../lib/carry.svelte';
@@ -91,7 +92,7 @@
             <span class="label caps">{FIELD_LABELS[field]}</span>
             <span class="value">
               {#if field === 'portrait' && guess?.portrait && game.content.portraits[guess.portrait]}
-                <span class="thumb" use:svgContent={game.content.portraits[guess.portrait]!.svg}
+                <span class="thumb" use:svgContent={portraitSvg(game.content, guess.portrait)}
                 ></span>
               {/if}
               {#if value}<span>{value}</span>{:else}<span class="empty">{pm.tree.fieldEmpty}</span

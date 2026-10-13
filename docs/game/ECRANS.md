@@ -10,7 +10,7 @@
 
 | ID | Écran | Contenu | Accès |
 |---|---|---|---|
-| E01 | Lancement | Logo studio (≤ 2 s, passable), détection périphérique | Démarrage |
+| E01 | Lancement | Logo studio et titre du jeu (≤ 2 s depuis le chargement de la page, passable), détection périphérique ; précédé d'un splash HTML/CSS identique dans `index.html` | Démarrage |
 | E02 | Titre | Continuer (dernier emplacement), Nouvelle partie, Charger, Options, Succès, Statistiques, Bonus, Crédits, Quitter (desktop) | E01 |
 | E03 | Emplacements | 3 emplacements + secours : affaire, % arbre, secrets, temps, date ; Charger / Effacer (confirmation) / Exporter / Importer | E02 |
 | E04 | Nouvelle partie | Choix de l'affaire (MVP : 1), mode (Normal / Chronométré / Archives annotées si débloqués), préréglage d'aide, « J'ai déjà joué » (passer le tutoriel) | E02 |

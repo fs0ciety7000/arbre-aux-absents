@@ -34,6 +34,8 @@
   let menuOpen = $state(false);
 
   const single = $derived(viewport.single);
+  // Un seul #contenu (lien d'évitement) : l'écran ouvert par-dessus le Bureau le porte alors.
+  const contentId = $derived(app.overlay === null ? 'contenu' : undefined);
   const unread = $derived(
     game.settings.hints.unreadBadges ? unreadDocuments(game.state, game.content).length : 0,
   );
@@ -110,7 +112,7 @@
   <DeskHeader {game} onmenu={() => (menuOpen = true)} />
 
   {#if single}
-    <main id="contenu" class="single-main" tabindex="-1" aria-label={m.region}>
+    <main id={contentId} class="single-main" tabindex="-1" aria-label={m.region}>
       <div
         class="panel-host"
         role="tabpanel"
@@ -136,7 +138,7 @@
       />
     </nav>
   {:else}
-    <main id="contenu" class="zones" tabindex="-1" aria-label={m.region}>
+    <main id={contentId} class="zones" tabindex="-1" aria-label={m.region}>
       <nav class="rail" aria-label={m.railLabel}>
         <Tabs
           items={railItems}

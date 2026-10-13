@@ -175,6 +175,7 @@ export const pm = {
     flip: 'Retourner',
     front: 'Recto',
     back: 'Verso',
+    zoom: 'Zoom du document',
     zoomIn: 'Zoom avant',
     zoomOut: 'Zoom arrière',
     fit: 'Ajuster',

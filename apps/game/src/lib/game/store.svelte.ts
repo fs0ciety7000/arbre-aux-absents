@@ -149,6 +149,8 @@ export class GameStoreImpl implements GameStore {
   #historyIndex = -1;
   #cleanup: (() => void)[] = [];
   #destroyed = false;
+  /** Fermeture en cours (sauvegarder et quitter) : plus de changement d'écran. */
+  #closing = false;
 
   constructor(content: CompiledCase, state: SaveState, host: StoreHost) {
     this.content = content;
@@ -205,8 +207,13 @@ export class GameStoreImpl implements GameStore {
 
   // ── Cycle de vie ───────────────────────────────────────────────────
 
-  /** Démarre le chrono et l'écoute de la mise en arrière-plan. */
+  /**
+   * Démarre la partie : réévalue les groupes (une évaluation automatique a pu être perdue si
+   * la partie a été fermée moins de 800 ms après la dernière modification), puis le chrono et
+   * l'écoute de la mise en arrière-plan.
+   */
   start(): void {
+    this.#revalidate();
     if (typeof window === 'undefined') return;
     this.#lastTick = performance.now();
     this.#tickTimer = setInterval(() => this.#tick(), 1000);
@@ -225,8 +232,15 @@ export class GameStoreImpl implements GameStore {
     );
   }
 
-  /** Arrête minuteries et écouteurs (la sauvegarde doit avoir été faite par `flush`). */
+  /**
+   * Arrête minuteries et écouteurs (la sauvegarde doit avoir été faite par `flush`, après
+   * `prepareClose`). Une évaluation de groupe encore en attente est faite et sauvegardée.
+   */
   destroy(): void {
+    if (!this.#destroyed && this.#groupTimers.size > 0) {
+      this.prepareClose();
+      if (this.#dirty) void this.flush();
+    }
     this.#destroyed = true;
     clearInterval(this.#tickTimer);
     clearTimeout(this.#saveTimer);
@@ -290,6 +304,33 @@ export class GameStoreImpl implements GameStore {
     );
   }
 
+  /** Groupes dont l'évaluation automatique est programmée (R1). */
+  get pendingGroups(): GroupId[] {
+    return [...this.#groupTimers.keys()];
+  }
+
+  /**
+   * Évalue tout de suite les groupes en attente (sans attendre les 800 ms) : à appeler avant
+   * la dernière sauvegarde (« Sauvegarder et quitter »). Plus de changement d'écran ensuite.
+   */
+  prepareClose(): void {
+    this.#closing = true;
+    if (this.#destroyed) return;
+    const groups = this.pendingGroups;
+    for (const t of this.#groupTimers.values()) clearTimeout(t);
+    this.#groupTimers.clear();
+    for (const g of groups) this.#validateGroup(g);
+  }
+
+  /** Réévaluation au chargement (validation auto) : verrouille, ou rien (échec silencieux). */
+  #revalidate(): void {
+    if (this.#host.settings.validation !== 'auto') return;
+    const s = this.#state;
+    const at = Math.max(now(), s.updatedAt);
+    const result = validate(s, this.content, { at });
+    if (result.lock.length > 0) this.#applyLocks(result.lock, result.groups, at);
+  }
+
   /** Évaluation d'un seul groupe (R7), avec le garde-fou anti-balayage. */
   #validateGroup(group: GroupId): void {
     if (this.#destroyed) return;
@@ -300,15 +341,17 @@ export class GameStoreImpl implements GameStore {
       this.#handle([{ type: 'validationFailed' }], 'validate', group);
       return;
     }
+    this.#applyLocks(result.lock, result.groups, at);
+  }
+
+  #applyLocks(lock: SlotId[], groups: GroupId[], at: number): void {
+    const s = this.#state;
     const locked = { ...s.locked };
-    for (const id of result.lock) locked[id] = at;
+    for (const id of lock) locked[id] = at;
     const settled = settle({ ...s, locked, updatedAt: at }, this.content);
     this.#state = settled.state;
     this.#markDirty();
-    this.#handle(
-      [{ type: 'slotsLocked', ids: result.lock, groups: result.groups }, ...settled.events],
-      'validate',
-    );
+    this.#handle([{ type: 'slotsLocked', ids: lock, groups }, ...settled.events], 'validate');
   }
 
   // ── Événements ─────────────────────────────────────────────────────
@@ -500,6 +543,7 @@ export class GameStoreImpl implements GameStore {
   }
 
   #maybeShowEnding(): void {
+    if (this.#closing) return;
     if (this.#pendingReport && this.modals.length === 0) {
       this.#pendingReport = false;
       void this.flush();
@@ -521,6 +565,26 @@ export class GameStoreImpl implements GameStore {
   /** Le joueur a quitté le rapport sans confirmer : il sera reproposé au prochain verrouillage. */
   reportDismissed(): void {
     this.#reportRequested = false;
+  }
+
+  /**
+   * Arbre complet, dénouement pas encore choisi : le rapport final peut être remis (action
+   * « Remettre le rapport », après « Revenir au bureau » ou au rechargement de la partie).
+   */
+  get reportAvailable(): boolean {
+    if (this.#state.ending !== null) return false;
+    const p = progress(this.#state, this.content);
+    return p.total > 0 && p.locked === p.total;
+  }
+
+  /** Rouvre le rapport final (questions, puis `finish` à la confirmation). */
+  reopenReport(): void {
+    if (!this.reportAvailable) return;
+    this.#reportRequested = true;
+    this.#pendingReport = false;
+    this.ui.picking = null;
+    void this.flush();
+    this.#host.showReport();
   }
 
   // ── Navigation ─────────────────────────────────────────────────────

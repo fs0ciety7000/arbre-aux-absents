@@ -3,10 +3,24 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light dark" />
     <title>L'Arbre aux absents</title>
+    <!-- Au build (vite/splash.ts) : CSP (web, itch.io), styles en ligne de l'écran d'attente,
+         préchargement du module de démarrage et de sa feuille de style. -->
   </head>
   <body>
+    <!-- Écran d'attente HTML/CSS (src/shell/splash.css) : retiré au montage de l'app (src/boot.ts). -->
+    <div id="splash" class="splash">
+      <div class="splash-stage">
+        <span class="splash-logo" aria-hidden="true"></span>
+        <span class="splash-studio splash-fade">CM Interactive</span>
+        <span class="splash-presents splash-fade">présente</span>
+        <h1 class="splash-title">L'Arbre aux absents</h1>
+        <p class="splash-tagline">Une enquête généalogique dans un monde imaginaire.</p>
+        <p class="splash-error" role="alert" hidden>
+          Le jeu n’a pas pu se charger. Vérifiez votre connexion, puis rechargez la page.
+        </p>
+      </div>
+    </div>
     <div id="app"></div>
     <script type="module" src="./src/main.ts"></script>
   </body>

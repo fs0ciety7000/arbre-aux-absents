@@ -8,6 +8,7 @@ const fsState = vi.hoisted(() => ({
   ops: [] as string[],
   failRename: false,
   failMkdir: false,
+  failStat: false,
 }));
 const dialogState = vi.hoisted(() => ({
   savePath: null as string | null,
@@ -68,6 +69,12 @@ vi.mock('@tauri-apps/plugin-fs', () => {
     remove: vi.fn(async (p: string) => {
       fsState.files.delete(p);
     }),
+    stat: vi.fn(async (p: string) => {
+      if (fsState.failStat) throw new Error('fs.stat not allowed');
+      const v = fsState.files.get(p);
+      if (v === undefined) throw missing(p);
+      return { size: new TextEncoder().encode(v).length, isFile: true, isDirectory: false };
+    }),
   };
 });
 vi.mock('@tauri-apps/plugin-dialog', () => ({
@@ -91,6 +98,7 @@ beforeEach(() => {
   fsState.ops.length = 0;
   fsState.failRename = false;
   fsState.failMkdir = false;
+  fsState.failStat = false;
   dialogState.savePath = null;
   dialogState.openPath = null;
   appState.handler = null;
@@ -239,6 +247,28 @@ describe('tauri : export / import', () => {
     await expect(store.importFile()).rejects.toMatchObject({ code: 'too-large' });
     fsState.files.delete('/tmp/a.json');
     await expect(store.importFile()).rejects.toMatchObject({ code: 'unreadable' });
+  });
+
+  it('import : taille contrôlée avant la lecture (fichier trop gros jamais lu)', async () => {
+    const { readTextFile, stat } = await import('@tauri-apps/plugin-fs');
+    const store = createTauriSaveStore();
+    dialogState.openPath = '/tmp/gros.json';
+    // 2 Mo + 1 octet en UTF-8 (caractères sur 2 octets) : la taille en octets compte.
+    fsState.files.set('/tmp/gros.json', `"${'é'.repeat(1_000_000)}"`);
+    vi.mocked(readTextFile).mockClear();
+    await expect(store.importFile()).rejects.toMatchObject({ code: 'too-large' });
+    expect(stat).toHaveBeenCalledWith('/tmp/gros.json');
+    expect(readTextFile).not.toHaveBeenCalled();
+  });
+
+  it('import : sans `stat`, repli sur le contrôle après lecture', async () => {
+    const store = createTauriSaveStore();
+    dialogState.openPath = '/tmp/a.json';
+    fsState.failStat = true;
+    fsState.files.set('/tmp/a.json', '{"x":2}');
+    expect(await store.importFile()).toEqual({ x: 2 });
+    fsState.files.set('/tmp/a.json', 'x'.repeat(2_000_001));
+    await expect(store.importFile()).rejects.toMatchObject({ code: 'too-large' });
   });
 });
 

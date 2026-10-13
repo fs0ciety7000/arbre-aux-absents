@@ -56,6 +56,17 @@ test('arbre complet → rapport final → dénouement', async ({ page }) => {
     report.getByRole('heading', { name: 'Remettre le rapport', level: 1 }),
   ).toBeVisible();
   await expect(report).toContainText('Question 1 sur 1');
+
+  // « Revenir au bureau » puis « Remettre le rapport » (en-tête) : le rapport revient.
+  await report.getByRole('button', { name: 'Revenir au bureau' }).click();
+  await expect(page.getByRole('main', { name: 'Bureau' })).toBeVisible();
+  await page
+    .getByRole('banner', { name: 'En-tête du bureau' })
+    .getByRole('button', { name: 'Remettre le rapport' })
+    .click();
+  await expect(
+    report.getByRole('heading', { name: 'Remettre le rapport', level: 1 }),
+  ).toBeVisible();
   const submit = report.getByRole('button', { name: 'Remettre le rapport' });
   await expect(submit).toBeDisabled();
   await report.getByRole('radio', { name: 'Maren Morvan' }).check();

@@ -62,6 +62,7 @@
         role="button"
         tabindex="0"
         aria-haspopup="menu"
+        aria-describedby={opts.kwDescription?.(opts.kwState(n.keyword))}
         draggable={opts.onkeyworddrag ? 'true' : undefined}
         ondragstart={(e) => opts.onkeyworddrag?.(n.keyword, n.label, e)}
         onclick={(e) => opts.onkeyword?.(n.keyword, n.label, e.currentTarget)}

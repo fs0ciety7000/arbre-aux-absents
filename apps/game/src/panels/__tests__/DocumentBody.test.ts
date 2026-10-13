@@ -74,6 +74,37 @@ describe('DocumentBody', () => {
     expect(out).toMatch(/data-state="new" data-keyword="kw-b"/);
   });
 
+  it('état des mots-clés exposé aux lecteurs d’écran (description, nom inchangé)', () => {
+    const blocks: Block[] = [
+      {
+        t: 'p',
+        c: [
+          { t: 'ref', keyword: 'kw-a', c: [t('Marrel')] },
+          { t: 'ref', keyword: 'kw-b', c: [t('Sorvo')] },
+        ],
+      },
+    ];
+    const out = html(blocks);
+    const ids = (state: string) =>
+      new RegExp(`data-keyword="${state}"[^>]*aria-describedby="([^"]+)"`).exec(out)?.[1];
+    const searched = ids('kw-a');
+    const fresh = ids('kw-b');
+    expect(searched).toMatch(/-kw-searched$/);
+    expect(fresh).toMatch(/-kw-new$/);
+    expect(out).toContain(`<span id="${searched}" hidden="">déjà consulté au Catalogue</span>`);
+    expect(out).toContain(`<span id="${fresh}" hidden="">nouveau mot-clé</span>`);
+    // Copie décorative (loupe) : rien d'annoncé.
+    expect(html(blocks, { decorative: true })).not.toContain('aria-describedby');
+  });
+
+  it('figure : chargement en cours, puis SVG, sinon erreur', () => {
+    const fig: Block[] = [{ t: 'figure', asset: 'illustrations/a.svg', alt: 'Un quai' }];
+    expect(html(fig, {}, { figure: () => undefined })).toMatch(
+      /class="art-box loading".*role="status"/s,
+    );
+    expect(html(fig, {}, { figure: () => null })).toContain('L’image n’a pas pu être chargée.');
+  });
+
   it('transcription : manuscrit, caviardage, tampon et figure en texte', () => {
     const out = html(
       [

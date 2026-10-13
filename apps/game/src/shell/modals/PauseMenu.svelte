@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button, Dialog } from '@arbre/ui';
   import { getApp } from '../../lib/game/context';
+  import { initialFocus } from '../../lib/game/initial-focus';
   import type { GameStoreImpl } from '../../lib/game/store.svelte';
   import { messages } from '../../messages.fr';
 
@@ -31,12 +32,12 @@
   {onclose}
 >
   {#if confirming}
-    <div class="list">
+    <div class="list" use:initialFocus={'button'}>
       <Button variant="primary" block loading={quitting} onclick={quit}>{m.saveQuit}</Button>
       <Button block onclick={() => (confirming = false)}>{messages.cancel}</Button>
     </div>
   {:else}
-    <div class="list">
+    <div class="list" use:initialFocus={'button'}>
       <Button variant="primary" block iconName="forward" onclick={() => game.closeModal()}
         >{m.resume}</Button
       >

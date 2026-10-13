@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings && tsc -p tsconfig.node.json",
     "tauri": "tauri",
     "tauri:before-dev": "npm --prefix ../.. run content:build && vite --mode tauri",
     "tauri:before-build": "npm --prefix ../.. run content:build && vite build --mode tauri",

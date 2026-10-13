@@ -6,6 +6,7 @@
 <script lang="ts">
   import { availablePortraits } from '@arbre/engine';
   import { svgContent } from '@arbre/map/svelte';
+  import { portraitSvg } from './lib/assets.svelte';
   import { Badge, Button, Panel } from '@arbre/ui';
   import { getGame } from '../lib/game/context';
   import { carry, DRAG_MIME, encodeCarry } from './lib/carry.svelte';
@@ -43,7 +44,7 @@
         {@const used = usageCount(game.state, game.content, 'portrait', p)}
         <li class="face" draggable="true" ondragstart={(e) => ondragstart(e, p, i + 1)}>
           <figure>
-            <span class="art" use:svgContent={pr.svg}></span>
+            <span class="art" use:svgContent={portraitSvg(game.content, p)}></span>
             <figcaption>
               <span class="num n">{pm.faces.face(i + 1)}</span>
               <span class="alt">{pr.alt}</span>

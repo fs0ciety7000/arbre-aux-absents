@@ -8,9 +8,8 @@ import { expect, startNewGame, test } from './helpers';
 test('Options ouvertes depuis la pause : un seul #contenu, lien d’évitement utile', async ({
   page,
 }) => {
-  // App.svelte : le Bureau (inerte) et l'écran par-dessus portent tous deux id="contenu" ;
-  // « Aller au contenu » vise le premier, celui du Bureau inerte.
-  test.fail();
+  // Corrigé : seul l'écran actif porte id="contenu" (le Bureau inerte le cède à l'écran
+  // ouvert par-dessus), « Aller au contenu » vise donc l'écran visible.
   await startNewGame(page);
   await page.getByRole('button', { name: 'Pause' }).click();
   await page

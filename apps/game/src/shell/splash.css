@@ -1,0 +1,84 @@
+/*
+ * Écran d'attente en HTML/CSS pur (#splash, index.html) : peint dès l'arrivée du HTML, avant
+ * tout JavaScript. Mise en ligne dans index.html au build par vite/splash.ts, avec les tokens
+ * (packages/ui tokens.css) et les polices de repli métriques (fonts.css). Même composition
+ * que l'écran de lancement E01 (screens/Launch.svelte), qui le remplace au montage de l'app.
+ * Ne lit que des tokens.
+ */
+html,
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background-color: var(--canvas);
+}
+.splash {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-8) var(--gutter);
+  background:
+    radial-gradient(120% 70% at 22% -12%, var(--lamp-glow), transparent 62%) fixed,
+    var(--canvas);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--step-0);
+  line-height: var(--leading-ui);
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+}
+.splash-stage {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  margin: 0;
+}
+.splash-logo {
+  display: block;
+  width: 8rem;
+  height: 6.5rem;
+}
+.splash-studio {
+  font-family: var(--font-display);
+  font-weight: var(--weight-semibold);
+  font-size: var(--step-2);
+  color: var(--text);
+}
+.splash-presents {
+  font-size: var(--step--1);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+.splash-title {
+  margin: var(--space-4) 0 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-semibold);
+  font-size: var(--step-5);
+  line-height: var(--leading-tight);
+  color: var(--text);
+  text-wrap: balance;
+}
+.splash-tagline {
+  margin: 0;
+  max-width: 34rem;
+}
+.splash-error {
+  margin: var(--space-4) 0 0;
+  color: var(--danger);
+}
+.splash-error[hidden] {
+  display: none;
+}
+.splash-fade {
+  animation: splash-fade var(--dur-slow) var(--ease-out) both;
+}
+@keyframes splash-fade {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .splash-fade {
+    animation: none;
+  }
+}
