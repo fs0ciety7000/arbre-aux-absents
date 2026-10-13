@@ -90,7 +90,9 @@ export type AchievementCondition =
   | { endingReached: EndingId }
   | { timedUnderMs: number }
   | { allSecrets: true }
-  | { all: AchievementCondition[] };
+  | { all: AchievementCondition[] }
+  | { any: AchievementCondition[] }
+  | { not: AchievementCondition };
 
 /** `achievements.json` : tableau d'`Achievement` (level-designer). */
 export interface Achievement {
@@ -171,6 +173,8 @@ export const AchievementConditionSchema: z.ZodType<AchievementCondition> = z.laz
     z.strictObject({ timedUnderMs: z.number().int().positive() }),
     z.strictObject({ allSecrets: z.literal(true) }),
     z.strictObject({ all: z.array(AchievementConditionSchema).min(1) }),
+    z.strictObject({ any: z.array(AchievementConditionSchema).min(1) }),
+    z.strictObject({ not: AchievementConditionSchema }),
   ]),
 );
 

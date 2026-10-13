@@ -276,7 +276,10 @@ describe('réglages et profil', () => {
   });
   it('refuse taille de texte hors crans, volume hors [0,1], réglage manquant', () => {
     rejects(SettingsSchema, { ...defaultSettings(), textScale: 1.1 });
-    rejects(SettingsSchema, { ...defaultSettings(), volume: { master: 1.5, music: 1, sfx: 1 } });
+    rejects(SettingsSchema, {
+      ...defaultSettings(),
+      volume: { master: 1.5, music: 1, ambience: 1, sfx: 1, ui: 1 },
+    });
     const { motion: _motion, ...partial } = defaultSettings();
     rejects(SettingsSchema, partial);
     rejects(ProfileSchema, { ...fx.profile, completed: { x: { endings: [], bestTimedMs: 0 } } });

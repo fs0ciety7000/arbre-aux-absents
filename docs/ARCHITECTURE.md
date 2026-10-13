@@ -156,11 +156,11 @@ export interface Progression {
   endings: { id: EndingId; file: string /* endings/<id>.md */; when: OutcomeCondition; priority: number }[];
   demo?: { documents: DocumentId[]; slots: SlotId[]; end: DocumentId };
 }
-// hints.json, achievements.json (level-designer)
+// hints.json, achievements.json (level-designer) : tableaux racine Hint[] et Achievement[]
 export interface Hint { id: HintId; target: { slot: SlotId } | { group: GroupId }; level: 1 | 2 | 3; text: string; availableWhen: Condition }
 export type AchievementCondition = OutcomeCondition
   | { endingReached: EndingId } | { timedUnderMs: number } | { allSecrets: true }
-  | { all: AchievementCondition[] };
+  | { all: AchievementCondition[] } | { any: AchievementCondition[] } | { not: AchievementCondition };
 export interface Achievement { id: AchievementId; title: string; description: string; hidden: boolean; when: AchievementCondition }
 
 // content/world (cartographe)
@@ -212,11 +212,17 @@ export interface SaveState {
   ending: EndingId | null;
 }
 export interface SaveSlotSummary { slot: SaveSlotId; caseTitle: string; updatedAt: number; elapsedMs: number; mode: SaveState['mode']; progress: number }
+export interface HintSettings { preset: 0 | 1 | 2 | 3 | 'custom'; unreadBadges: boolean; exhaustedTerms: boolean;
+  placeCounters: boolean; whereToLook: boolean; groupCounter: boolean; progressiveHints: boolean } // GAME_DESIGN §10
 export interface Settings {
-  textScale: 1 | 1.25 | 1.5 | 2; readingFont: 'default' | 'hyperlegible'; replaceHandwriting: boolean;
-  highContrast: boolean; motion: 'system' | 'reduced' | 'full';
-  hints: 'off' | 'highlight' | 'progressive'; validation: 'auto' | 'manual'; showTimer: boolean;
-  volume: { master: number; music: number; sfx: number }; inputGlyphs: 'auto' | 'keyboard' | 'gamepad';
+  textScale: 0.875 | 1 | 1.25 | 1.5 | 2; readingFont: 'default' | 'hyperlegible' | 'dyslexic';
+  lineSpacing: 'default' | 'wide' | 'wider'; letterSpacing: boolean; transcriptByDefault: boolean;
+  replaceHandwriting: boolean; highContrast: boolean; reducePaperTexture: boolean;
+  colorVision: 'default' | 'protanopia' | 'deuteranopia' | 'tritanopia'; motion: 'system' | 'reduced' | 'full';
+  hints: HintSettings; validation: 'auto' | 'manual'; showTimer: boolean;
+  volume: { master: number; music: number; ambience: number; sfx: number; ui: number };
+  mono: boolean; muteInBackground: boolean; haptics: boolean; longPressMs: 300 | 400 | 600;
+  confirmClear: boolean; inputGlyphs: 'auto' | 'keyboard' | 'gamepad';
 }
 export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>; completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] }> }
 ```
