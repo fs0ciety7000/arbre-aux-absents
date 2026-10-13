@@ -45,13 +45,22 @@ Fait :
 - [x] Vérifié : `npm run check`, build, 44 e2e (axe AA, 390 px, CSP, mouvement réduit)
 - [x] Scénario complet remis à l'utilisateur sous forme de document
 
+## Session 0 quater — 13 oct. 2026 (finitions téléphone)
+
+- [x] Chemise : cote sur la ligne des onglets en vue à un panneau (≈ 45 px gagnés)
+- [x] Lecteur : barre sur deux lignes, mode compact en icônes sous 40 rem
+- [x] `Toast` : bandeau compact en bas sous 600 px, titre allégé, encarts de sécurité
+- [x] Vérifié : `npm run check`, 44 e2e, aucun défilement horizontal à 390 et 768 px
+
 ## Backlog
 
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
   en mode scindé et fond transparent, lecture « à la visibilité » des entrées sans hydratation,
   `BrandLogo` mono en masque CSS, `Stamp` (classe transmise), titre Dymo pour `Panel`, matière liège,
   tirage photo interactif, `Toast` trop lourd en étroit, hauteur propre de `KeyArt fit="cover"`.
-- Jeu sur téléphone : en-tête de la chemise trop haut, barre du lecteur sur trois lignes.
+- Toasts sur bureau (1440 px) : titre en capitales Courier sur trois lignes, posé sur le panneau latéral ;
+  plafonner à deux toasts sur téléphone.
+- Zones de clic : couvertures des Archives (`button.cover`, ≈ 28 px) ; barre du lecteur à 360 px.
 - Rapport : tampons « Établi / Contredit » (le contenu ne porte pas la justesse par réponse).
 - e2e : tuer les serveurs restés ouverts avant de relancer (`reuseExistingServer` reprend un build périmé).
 
