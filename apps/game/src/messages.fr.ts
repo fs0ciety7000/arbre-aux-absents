@@ -252,7 +252,7 @@ export const messages = {
     writing: 'Écriture et illustration',
     publisher: 'Une production',
     fonts:
-      'Polices : Literata, Instrument Sans, Courier Prime, Caveat, Atkinson Hyperlegible Next (SIL OFL 1.1).',
+      'Polices : Fraunces, Literata, Instrument Sans, Oswald, Courier Prime, Caveat, Atkinson Hyperlegible Next (SIL OFL 1.1).',
     caseCredits: 'Affaire',
   },
 
