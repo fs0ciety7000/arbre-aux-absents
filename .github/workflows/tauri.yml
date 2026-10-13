@@ -226,11 +226,14 @@ jobs:
         run: |
           npm run tauri -- android build --apk \
             --config '{"bundle":{"android":{"versionCode":${{ github.run_number }}}}}'
-          npm run tauri -- android build --apk --debug \
-            --config '{"bundle":{"android":{"versionCode":${{ github.run_number }}}}}'
           mkdir -p ../../android-out
           find src-tauri/gen/android/app/build/outputs/apk -name '*-release-unsigned.apk' \
             -exec cp {} "../../android-out/arbre-aux-absents-${{ steps.version.outputs.value }}-unsigned.apk" \;
+          # Le runner manque de place pour deux builds Rust complets : on libère la cible
+          # release, puis l'APK debug ne vise que arm64 (tous les téléphones récents).
+          rm -rf src-tauri/target/*-linux-android*/release
+          npm run tauri -- android build --apk --debug --target aarch64 \
+            --config '{"bundle":{"android":{"versionCode":${{ github.run_number }}}}}'
           find src-tauri/gen/android/app/build/outputs/apk -name '*-debug.apk' \
             -exec cp {} "../../android-out/arbre-aux-absents-${{ steps.version.outputs.value }}-debug.apk" \;
       - uses: actions/upload-artifact@v4
