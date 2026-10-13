@@ -65,8 +65,8 @@ find_one() {
   find "$artifacts" -type f -name "$1" ! -name "${2:-/}" | LC_ALL=C sort | head -n 1
 }
 
-# Affiche la commande, prête à copier (arguments entre apostrophes, celles des noms de fichiers
-# éventuelles des chemins échappées), puis l'exécute hors --dry-run.
+# Affiche la commande, prête à copier (arguments entre apostrophes, celles des chemins
+# échappées), puis l'exécute hors --dry-run.
 run() {
   printf '+'
   for a in "$@"; do printf " '%s'" "$(printf '%s' "$a" | sed "s/'/'\\\\''/g")"; done
