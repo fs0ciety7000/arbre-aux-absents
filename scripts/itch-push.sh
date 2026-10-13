@@ -75,6 +75,7 @@ run() {
 }
 
 pushed=0
+failed=''
 skipped=0
 for channel in $channels; do
   exclude=''
@@ -105,7 +106,11 @@ for channel in $channels; do
   fi
   # Les artefacts GitHub perdent le bit d'exécution : l'AppImage doit être exécutable.
   [ "$channel" != linux ] || run chmod +x "$file"
-  run butler push "$file" "$target:$channel" --userversion "$version"
+  # Un canal refusé (ex. build précédent encore en traitement chez itch) n'arrête pas les autres.
+  if ! run butler push "$file" "$target:$channel" --userversion "$version"; then
+    failed="$failed $channel"
+    continue
+  fi
   pushed=$((pushed + 1))
 done
 
@@ -113,5 +118,9 @@ if [ "$dry_run" -eq 1 ]; then
   echo "itch-push: --dry-run, rien n'a été envoyé ($pushed canal(aux) prêt(s), $skipped sauté(s))." >&2
 else
   echo "itch-push: $pushed canal(aux) envoyé(s), $skipped sauté(s). Suivi : butler status $target" >&2
+fi
+if [ -n "$failed" ]; then
+  echo "itch-push: échec sur :$failed (relancer avec --channels \"${failed# }\")" >&2
+  exit 1
 fi
 [ "$pushed" -gt 0 ] || exit 1
