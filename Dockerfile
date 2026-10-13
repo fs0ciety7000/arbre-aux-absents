@@ -1,5 +1,5 @@
-# Site vitrine de L'Arbre aux absents : SvelteKit prérendu → nginx non-root.
-# Le jeu n'est PAS dans cette image (builds natifs : .github/workflows/tauri.yml).
+# Site vitrine de L'Arbre aux absents : SvelteKit prérendu → nginx non-root, avec la version web
+# du jeu sous /jouer/ (build Vite de apps/game). Builds natifs : .github/workflows/tauri.yml.
 #
 #   docker build -t arbre-site .
 #   docker run --rm -p 8080:8080 arbre-site     → http://localhost:8080 , /healthz
@@ -16,17 +16,20 @@ ENV CI=true \
     NPM_CONFIG_UPDATE_NOTIFIER=false
 WORKDIR /app
 
-# Contexte réduit par .dockerignore (liste blanche) : racine, packages/, apps/site, scripts, content, art.
+# Contexte réduit par .dockerignore (liste blanche) : racine, packages/, apps/site, apps/game (sans
+# Tauri), scripts, content, art.
 COPY . .
 
-# Lockfile figé ; racine + site + outils de contenu seulement (ni Tauri ni le jeu) ; aucun script
+# Lockfile figé ; racine + site + jeu web + outils de contenu (pas la CLI Tauri) ; aucun script
 # d'installation.
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --ignore-scripts --include-workspace-root \
-      --workspace @arbre/site --workspace @arbre/content-tools
+      --workspace @arbre/site --workspace @arbre/game --workspace @arbre/content-tools
 
 RUN npm run content:build \
  && npm run build -w @arbre/site \
+ && npm run build -w @arbre/game \
+ && cp -R apps/game/dist apps/site/build/jouer \
  && sh scripts/csp-hashes.sh apps/site/build /app/csp-hashes.conf \
  && sh scripts/precompress.sh apps/site/build
 

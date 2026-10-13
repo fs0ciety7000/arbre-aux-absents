@@ -14,7 +14,14 @@ export default defineConfig({
       // <style> sont autorisés par empreinte dans la CSP (scripts/csp-hashes.sh).
       inlineStyleThreshold: 128 * 1024,
       adapter: adapter({ pages: 'build', assets: 'build', strict: true }),
-      prerender: { handleHttpError: 'fail', handleMissingId: 'fail' },
+      prerender: {
+        // /jouer/ : version web du jeu, copiée à côté du site au build Docker (hors SvelteKit).
+        handleHttpError: ({ path, message }) => {
+          if (path === '/jouer/' || path.startsWith('/jouer/')) return;
+          throw new Error(message);
+        },
+        handleMissingId: 'fail',
+      },
     }),
   ],
   server: { port: 5174, strictPort: true },

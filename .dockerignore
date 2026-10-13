@@ -1,5 +1,5 @@
-# Liste blanche : seul ce qui sert au build du SITE entre dans le contexte Docker.
-# (Le jeu, Tauri, les docs, la CI, les secrets locaux restent dehors.)
+# Liste blanche : seul ce qui sert au build du SITE et du jeu web entre dans le contexte Docker.
+# (Tauri, les docs, la CI, les secrets locaux restent dehors.)
 *
 
 !package.json
@@ -14,8 +14,9 @@
 !content/
 !art/
 !static/
-# Les workspaces doivent tous être déclarés pour que `npm ci` respecte le lockfile.
-!apps/game/package.json
+# Le jeu web (servi sous /jouer/), sans la partie native Tauri.
+!apps/game/
+apps/game/src-tauri
 
 # Jamais dans le contexte, même sous un dossier autorisé.
 **/node_modules

@@ -8,6 +8,7 @@ Deux livrables, deux chaînes :
 | Livrable | Où | Chaîne |
 |---|---|---|
 | Site vitrine (`apps/site`) | `arbre.fs0ciety.org`, Coolify | `Dockerfile` → nginx statique |
+| Jeu web (`apps/game`, build Vite) | `arbre.fs0ciety.org/jouer/`, même image | copié dans le site au build Docker, CSP propre (`nginx.conf`) |
 | Jeu (`apps/game`) | Windows, macOS, Linux, Android ; démo HTML5 itch.io | `.github/workflows/tauri.yml` ; build web dans `ci.yml` |
 
 ## 1. Site vitrine (Coolify)

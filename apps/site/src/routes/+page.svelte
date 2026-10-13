@@ -123,7 +123,10 @@
       />
     </div>
     <div class="cta mv-rise" style:--i="7">
-      <Button variant="primary" size="l" href={resolve('le-monde/')} iconName="map"
+      <Button variant="primary" size="l" href="/jouer/" rel="external" iconName="forward"
+        >Jouer dans le navigateur</Button
+      >
+      <Button variant="secondary" size="l" href={resolve('le-monde/')} iconName="map"
         >Explorer la Velmarche</Button
       >
       <Button variant="secondary" size="l" href={resolve('artbook/')} iconName="photo"
@@ -132,9 +135,7 @@
     </div>
     <div class="platforms-line mv-rise" style:--i="8">
       <DymoLabel text="Windows · macOS · Linux · Android" tilt={-1} />
-      <span class="demo-note"
-        ><Icon name="clock" size="1rem" /> Démo navigateur bientôt sur itch.io</span
-      >
+      <span class="demo-note"><Icon name="clock" size="1rem" /> Gratuit, aussi sur itch.io</span>
     </div>
   </div>
 </section>
