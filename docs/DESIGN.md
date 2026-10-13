@@ -310,6 +310,8 @@ romain latin (121 Ko)** sur l'écran titre et le héros du site ; Oswald (28 Ko)
 préchargement (labels en `swap`, métriques proches d'Arial Narrow). Literata arrive avec le
 premier document ; l'italique de Fraunces (150 Ko) n'est demandée que par l'accroche et « aux »
 (rendus d'abord dans le repli, aucun blocage du LCP). Courier Prime et Caveat à la demande.
+**Site vitrine** : un seul préchargement (Instrument Sans) ; Fraunces n'y est plus préchargée,
+car ses 121 Ko concurrençaient l'illustration du héros sur mobile (LCP −350 ms environ).
 
 ### 4.1 Échelle fluide (360 → 1280 px), multipliée par `--text-scale`
 

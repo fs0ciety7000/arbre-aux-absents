@@ -25,3 +25,4 @@ apps/game/src-tauri/gen/
 dist/itch/
 apps/game/dist-demo/
 __pycache__/
+test-results/

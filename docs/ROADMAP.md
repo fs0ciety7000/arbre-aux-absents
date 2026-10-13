@@ -34,7 +34,26 @@ Fait :
 - [x] Vérifié en prod : 7 pages 200, `/healthz` ok, CSP présente, `/art/*.svg` et `/_app/immutable/`
       en cache `immutable`, 404 propre, aucune erreur console/CSP (Playwright Chromium)
 
+## Session 0 ter — 13 oct. 2026 (design system v2 « Le dossier vivant »)
+
+- [x] DESIGN v2 (design-lead) : matières (chemise kraft, feuilles, fiches bristol, scotch, Dymo, tampons),
+      motion maison `@arbre/ui/motion`, illustrations clés et vignettes générées
+- [x] Jeu sur v2 : tous les écrans et panneaux, chorégraphies (distribution, encrage de la carte, verrou),
+      LCP mobile 0,8 s
+- [x] Site sur v2 : 7 pages + /design, animations au défilement sans hydratation (script haché CSP),
+      LCP mobile ≈ 1,85 s
+- [x] Vérifié : `npm run check`, build, 44 e2e (axe AA, 390 px, CSP, mouvement réduit)
+- [x] Scénario complet remis à l'utilisateur sous forme de document
+
 ## Backlog
+
+- Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
+  en mode scindé et fond transparent, lecture « à la visibilité » des entrées sans hydratation,
+  `BrandLogo` mono en masque CSS, `Stamp` (classe transmise), titre Dymo pour `Panel`, matière liège,
+  tirage photo interactif, `Toast` trop lourd en étroit, hauteur propre de `KeyArt fit="cover"`.
+- Jeu sur téléphone : en-tête de la chemise trop haut, barre du lecteur sur trois lignes.
+- Rapport : tampons « Établi / Contredit » (le contenu ne porte pas la justesse par réponse).
+- e2e : tuer les serveurs restés ouverts avant de relancer (`reuseExistingServer` reprend un build périmé).
 
 - Tests sur appareils réels (Windows, macOS, Linux/Steam Deck, Android téléphone et tablette).
 - Signature macOS (Developer ID) et Windows avant la vente ; keystore Android hors repo.
