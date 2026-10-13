@@ -36,7 +36,7 @@ export interface DocumentFrontmatter {
 
 export type Inline =
   | { t: 'text'; v: string }
-  | { t: 'em' | 'strong' | 'hand'; c: Inline[] }
+  | { t: 'em' | 'strong' | 'hand' | 'strike'; c: Inline[] }
   | { t: 'ref'; keyword: KeywordId; c: Inline[] }
   | { t: 'redacted'; length: number };
 
@@ -82,7 +82,7 @@ export const DocumentFrontmatterSchema = z.strictObject({
 export const InlineSchema: z.ZodType<Inline> = z.lazy(() =>
   z.union([
     z.strictObject({ t: z.literal('text'), v: z.string() }),
-    z.strictObject({ t: z.enum(['em', 'strong', 'hand']), c: z.array(InlineSchema) }),
+    z.strictObject({ t: z.enum(['em', 'strong', 'hand', 'strike']), c: z.array(InlineSchema) }),
     z.strictObject({ t: z.literal('ref'), keyword: IdSchema, c: z.array(InlineSchema) }),
     z.strictObject({ t: z.literal('redacted'), length: z.number().int().positive() }),
   ]),

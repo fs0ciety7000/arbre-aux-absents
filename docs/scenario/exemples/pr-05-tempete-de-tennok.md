@@ -1,0 +1,58 @@
+---
+kind: newspaper
+title: "Le Courrier d'Aubrelieu — « Tempête sur la mer Grise »"
+date: "1924-11-24"
+author: "De notre correspondant à Tennok"
+place: tennok
+archive: "Archives nationales, presse, Courrier d'Aubrelieu, microfilm 1924-11, page 3"
+reveals:
+  occupations: [patron-de-canot, gardien-de-phare, receveuse]
+---
+
+<!-- Note de production : page de quotidien 1924, trois colonnes, titre en capitales grasses,
+intertitres centrés. À droite, une gravure au trait du phare de Tennok sous la pluie. En pied de
+colonne, une publicité sans rapport (« Pastilles Belaube contre la toux des marins »). Le ton est
+celui d'un correspondant local ému, qui ne sait pas tout. -->
+
+## TEMPÊTE SUR LA MER GRISE
+
+### Le patron du canot de Tennok périt en sauvant trois naufragés inconnus
+
+TENNOK, 23 novembre (par télégramme). — La tempête qui a balayé samedi toute la côte nord, et dont
+nos lecteurs ont pu mesurer les effets jusque dans les rues d'Aubrelieu, a fait à Tennok une
+victime que toute l'Ostrie pleure ce soir.
+
+Vers une heure et demie du matin, dans la nuit du 21 au 22, le feu de Tennok signalait un bâtiment
+en perdition sur les **Dents de Tennok**, ce chapelet de récifs que les anciens appellent, en
+ostrien, *les dents de la pierre*. Malgré une mer que les hommes du cap décrivent comme « la pire
+depuis quarante ans », le **canot de sauvetage de Tennok** sortait à deux heures sous le
+commandement de son patron, **M. Aldrik Varenque**, cinquante ans, qui en tenait la barre depuis
+dix-huit ans.
+
+### Trois hommes ramenés
+
+Le canot parvint à s'approcher du bâtiment, un petit cotre à moteur nommé, croit-on, l'***Albatros***,
+qui ne portait ni immatriculation ni pavillon. Trois hommes furent arrachés à l'épave et hissés à
+bord. C'est en se portant à l'avant pour lancer une dernière amarre que M. Varenque fut emporté par
+une lame. Ses canotiers le cherchèrent jusqu'à l'aube. La mer ne l'a pas rendu.
+
+Les trois rescapés, qui ont été soignés à la maison du gardien, ont refusé de donner leurs noms aux
+gendarmes de Vellaak. On dit sur le port que le cotre venait de Thalberie et que sa cargaison
+n'avait jamais vu un douanier. L'enquête des Phares et Balises dira ce qu'il en est. Pour l'heure, on
+ne parle ici que du disparu.
+
+### Une famille de la mer
+
+M. Aldrik Varenque était le fils de feu le **capitaine Firmin Varenque**, de la Compagnie des
+Paquebots de l'Orvelle, et de **Mme Maaren Varenque**, qui fut elle-même, chose rare, **gardienne du
+feu de Tennok** pendant près de trente ans. Il laisse une veuve, **Mme Tenna Orrvik**, **receveuse
+des postes** de Tennok, bien connue de tous ceux qui ont un jour envoyé une carte du cap, et deux
+enfants déjà grands.
+
+Il était, nous écrit le gardien actuel, M. Jorre Haask, « un homme qui parlait peu et qui ne se
+trompait jamais sur le temps ». Il s'est pourtant trompé samedi, ou il a fait semblant.
+
+Les obsèques, sans corps, auront lieu jeudi à Tennok selon le rite ostrien : on posera une lanterne
+sur l'eau.
+
+[stamp: Une souscription est ouverte à nos bureaux pour la famille du patron Varenque.]

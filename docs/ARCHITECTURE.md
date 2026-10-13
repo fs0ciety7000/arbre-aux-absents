@@ -127,7 +127,7 @@ export interface DocumentFrontmatter {
   optional?: boolean; // non requis par le solveur
 }
 export type Inline =
-  | { t: 'text'; v: string } | { t: 'em' | 'strong' | 'hand'; c: Inline[] }
+  | { t: 'text'; v: string } | { t: 'em' | 'strong' | 'hand' | 'strike'; c: Inline[] }   // strike : ~~texte barré~~
   | { t: 'ref'; keyword: KeywordId; c: Inline[] }
   | { t: 'redacted'; length: number };
 export type Block =
@@ -288,7 +288,7 @@ content/cases/<caseId>/
 content/*.schema.json                          générés par z.toJSONSchema()
 ```
 
-Markdown admis : paragraphes, `*em*`, `**strong**`, `> citation`, listes, tableaux pipe, `## titres`,
+Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, listes, tableaux pipe, `## titres`,
 `![alt](illustrations/x.svg "légende")`, `[[texte|keyword-id]]`, `::hand[…]`, `::stamp[…]`,
 `::signature[…]`, `::redacted[6]`, `---`. Tout HTML brut est une erreur.
 
