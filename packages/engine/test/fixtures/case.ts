@@ -1,7 +1,8 @@
 /**
  * Petite affaire **compilée à la main**, conforme à `CompiledCase` : 8 cases sur
  * 3 générations (dont une pré-remplie et une cachée), 2 groupes, 15 documents,
- * 8 mots-clés (dont un terme caché), 2 lieux, 1 secret, 2 fins, indices et succès.
+ * 8 mots-clés (dont un terme caché), 2 lieux, 1 secret, 2 fins à sections, un rapport
+ * final (2 questions, l'une posée selon la réponse à l'autre), indices et succès.
  * Les réponses sont hachées par `hashAnswer` (valeurs figées : tout changement de la
  * fonction de hachage casse `test/normalize.test.ts`, et donc la compatibilité avec
  * `content-tools`). Monde imaginaire, aucun nom réel.
@@ -503,15 +504,69 @@ export const fixtureCase: CompiledCase = {
       when: { lockedCount: { gte: 8 } },
       priority: 1,
       title: "L'arbre établi",
-      body: [p('Les Marrel sont tous à leur place.')],
+      sections: [
+        { label: null, title: null, body: [p('Les Marrel sont tous à leur place.')] },
+        {
+          label: 'remis',
+          title: 'Le dossier remis',
+          when: { answered: { question: 'q-remise', option: 'o-remettre' } },
+          body: [p('Le dossier part aux archives de Port-Lanne.')],
+        },
+      ],
     },
     'fin-verite': {
-      when: { all: [{ lockedCount: { gte: 8 } }, { secret: 'sec-double-vie' }] },
+      when: {
+        all: [
+          { lockedCount: { gte: 8 } },
+          { secret: 'sec-double-vie' },
+          { answered: { question: 'q-auteur', option: 'o-tam' } },
+        ],
+      },
       priority: 2,
       title: 'La vérité',
-      body: [p('Et Juno retrouve son père.')],
+      sections: [
+        { label: 'commun', title: null, body: [p('Et Juno retrouve son père.')] },
+        {
+          label: 'remis',
+          title: 'Le dossier remis',
+          when: { answered: { question: 'q-remise', option: 'o-remettre' } },
+          body: [p('Juno reçoit le dossier.')],
+        },
+        {
+          label: 'garde',
+          title: 'Le dossier gardé',
+          when: { answered: { question: 'q-remise', option: 'o-garder' } },
+          body: [p('Le dossier reste dans le tiroir.')],
+        },
+      ],
     },
   },
+  report: [
+    {
+      id: 'q-auteur',
+      prompt: 'Qui a envoyé le télégramme ?',
+      kind: 'question',
+      options: [
+        { id: 'o-tam', label: 'Tam Marrel' },
+        { id: 'o-elna', label: 'Elna Sorvo' },
+        { id: 'o-juno', label: 'Juno Marrel', availableWhen: { read: 'telegramme-juno' } },
+      ],
+    },
+    {
+      id: 'q-remise',
+      prompt: 'À qui remettre le dossier ?',
+      kind: 'choice',
+      askedWhen: { answered: { question: 'q-auteur', option: 'o-tam' } },
+      options: [
+        { id: 'o-garder', label: 'Le garder' },
+        {
+          id: 'o-remettre',
+          label: 'Le remettre à Juno',
+          availableWhen: { secret: 'sec-double-vie' },
+        },
+      ],
+    },
+  ],
   hints: [
     {
       id: 'h-tam-2',

@@ -1,4 +1,5 @@
 import type {
+  Block,
   CompiledCase,
   DocumentId,
   EndingId,
@@ -9,6 +10,7 @@ import type {
   OccupationId,
   PlaceId,
   PortraitId,
+  ReportQuestion,
   SaveState,
   SlotId,
 } from '@arbre/contract';
@@ -355,4 +357,87 @@ export function hintsFor(target: HintTarget, s: SaveState, c: CompiledCase): Hin
         ...(used ? { text: h.text } : {}),
       };
     });
+}
+
+export interface EndingSection {
+  label: string | null;
+  title: string | null;
+  body: Block[];
+}
+
+/** Sections d'une fin à afficher : `when` absente ou vraie, dans l'ordre du fichier. */
+export function endingSections(endingId: EndingId, s: SaveState, c: CompiledCase): EndingSection[] {
+  const ending = own(c.endings, endingId);
+  if (!ending) return [];
+  return ending.sections
+    .filter((x) => holds(x.when, s, c))
+    .map((x) => ({ label: x.label, title: x.title, body: x.body }));
+}
+
+export interface ReportQuestionView {
+  id: string;
+  prompt: string;
+  kind: ReportQuestion['kind'];
+  /** Options disponibles maintenant (`availableWhen` absente ou vraie). */
+  options: { id: string; label: string }[];
+  /** Réponse actuelle, ou `null`. */
+  answer: string | null;
+}
+
+/** Une question est posée si elle existe et que `askedWhen` est absente ou vraie. */
+export function isQuestionAsked(q: ReportQuestion, s: SaveState, c: CompiledCase): boolean {
+  return holds(q.askedWhen, s, c);
+}
+
+export function isOptionAvailable(
+  q: ReportQuestion,
+  optionId: string,
+  s: SaveState,
+  c: CompiledCase,
+): boolean {
+  const o = q.options.find((x) => x.id === optionId);
+  return o !== undefined && holds(o.availableWhen, s, c);
+}
+
+/** Rapport final : questions posées, options disponibles, réponse actuelle (ordre du contenu). */
+export function reportQuestions(s: SaveState, c: CompiledCase): ReportQuestionView[] {
+  return (c.report ?? [])
+    .filter((q) => isQuestionAsked(q, s, c))
+    .map((q) => ({
+      id: q.id,
+      prompt: q.prompt,
+      kind: q.kind,
+      options: q.options
+        .filter((o) => holds(o.availableWhen, s, c))
+        .map((o) => ({ id: o.id, label: o.label })),
+      answer: (s.report && own(s.report, q.id)) ?? null,
+    }));
+}
+
+/**
+ * Rend le rapport cohérent : retire (jusqu'au point fixe) les réponses à des questions
+ * inconnues ou plus posées, ou dont l'option est inconnue ou indisponible. Renvoie le
+ * rapport nettoyé et les questions retirées ; `report` d'entrée n'est jamais modifié.
+ */
+export function pruneReport(
+  report: Readonly<Record<string, string>>,
+  s: SaveState,
+  c: CompiledCase,
+): { report: Record<string, string>; removed: string[] } {
+  const out: Record<string, string> = { ...report };
+  const removed: string[] = [];
+  const questions = c.report ?? [];
+  for (let changed = true; changed;) {
+    changed = false;
+    const view: SaveState = { ...s, report: out };
+    for (const [qid, option] of Object.entries(out)) {
+      const q = questions.find((x) => x.id === qid);
+      if (q && isQuestionAsked(q, view, c) && isOptionAvailable(q, option, view, c)) continue;
+      delete out[qid];
+      removed.push(qid);
+      changed = true;
+      break;
+    }
+  }
+  return { report: out, removed };
 }

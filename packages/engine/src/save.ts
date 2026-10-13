@@ -7,7 +7,7 @@ import type {
 } from '@arbre/contract';
 import { SAVE_LIMITS, SaveStateSchema } from '@arbre/contract';
 import { own } from './conditions';
-import { progress } from './selectors';
+import { progress, pruneReport } from './selectors';
 import { settle } from './settle';
 
 export const CURRENT_SAVE_VERSION = 1;
@@ -61,6 +61,8 @@ export function migrateSave(
 /** Coupe les listes trop longues avant validation (sauvegardes d'avant les limites). */
 function clampLists(raw: Record<string, unknown>): Record<string, unknown> {
   const out = { ...raw };
+  // Champ ajouté au schéma 1 avec le rapport final : absent des sauvegardes antérieures.
+  if (out['report'] === undefined) out['report'] = {};
   if (Array.isArray(out['searchLog']))
     out['searchLog'] = out['searchLog'].slice(-SAVE_LIMITS.searchLog);
   const nb = out['notebook'];
@@ -167,6 +169,16 @@ function dropUnknown(s: SaveState, c: CompiledCase, dropped: string[]): SaveStat
     return { id: n.id, text: n.text, at: n.at };
   });
 
+  const questions = c.report ?? [];
+  const report: Record<string, string> = {};
+  for (const [qid, option] of Object.entries(s.report)) {
+    const q = questions.find((x) => x.id === qid);
+    if (!q) dropped.push(`report-question:${qid}`);
+    else if (!q.options.some((o) => o.id === option))
+      dropped.push(`report-option:${qid}:${option}`);
+    else report[qid] = option;
+  }
+
   let ending = s.ending;
   if (ending !== null && own(c.endings, ending) === undefined) {
     dropped.push(`ending:${ending}`);
@@ -193,6 +205,7 @@ function dropUnknown(s: SaveState, c: CompiledCase, dropped: string[]): SaveStat
     ),
     hintsUsed: filterRecord(s.hintsUsed, (id) => c.hints.some((h) => h.id === id), 'hint', dropped),
     notebook: { pins, highlights, notes },
+    report,
     ending,
   };
 }
@@ -229,8 +242,12 @@ export function parseSave(raw: unknown, c: CompiledCase): ParseSaveResult {
   }
 
   const dropped: string[] = [];
-  const cleaned = dropUnknown(state, c, dropped);
-  return { ok: true, state: settle(cleaned, c).state, dropped };
+  const cleaned = settle(dropUnknown(state, c, dropped), c).state;
+  // Réponses à des questions plus posées (ou options indisponibles) : retirées, rapport cohérent.
+  const pruned = pruneReport(cleaned.report, cleaned, c);
+  for (const qid of pruned.removed) dropped.push(`report-unasked:${qid}`);
+  const final = pruned.removed.length > 0 ? { ...cleaned, report: pruned.report } : cleaned;
+  return { ok: true, state: final, dropped };
 }
 
 /** Résumé d'un emplacement pour l'écran de chargement. */

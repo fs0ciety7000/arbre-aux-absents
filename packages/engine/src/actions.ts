@@ -19,10 +19,13 @@ import {
   availablePortraits,
   endingFor,
   hintBlocker,
+  isOptionAvailable,
   isPlaceVisible,
+  isQuestionAsked,
   knownKeywords,
   matchName,
   placeDocuments,
+  pruneReport,
 } from './selectors';
 import { settle } from './settle';
 import {
@@ -106,6 +109,7 @@ export function newGame(c: CompiledCase, options: NewGameOptions): SaveState {
     secrets: {},
     hintsUsed: {},
     notebook: { pins: [], highlights: [], notes: [] },
+    report: {},
     ending: null,
   };
   return settle(state, c).state;
@@ -450,6 +454,21 @@ export function applyAction(
         events: [],
         guard,
       };
+    }
+
+    case 'answer': {
+      if (s.ending !== null) return reject(s, 'notAvailable', guard);
+      const q = (c.report ?? []).find((x) => x.id === a.question);
+      if (!q) return reject(s, 'unknownId', guard);
+      if (!q.options.some((o) => o.id === a.option)) return reject(s, 'unknownId', guard);
+      if (!isQuestionAsked(q, s, c) || !isOptionAvailable(q, a.option, s, c)) {
+        return reject(s, 'notAvailable', guard);
+      }
+      const current = s.report ?? {};
+      if (own(current, q.id) === a.option) return { state: s, events: [], guard };
+      // Une réponse modifiée peut retirer des questions dépendantes : on garde un rapport cohérent.
+      const { report } = pruneReport({ ...current, [q.id]: a.option }, s, c);
+      return { state: { ...touch(s, at), report }, events: [], guard };
     }
 
     case 'finish': {

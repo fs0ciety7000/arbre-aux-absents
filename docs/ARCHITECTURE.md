@@ -276,7 +276,8 @@ evaluateAchievements(s, profile, c): AchievementId[]
 parseSave(raw, c): { ok: true; state; dropped: string[] } | { ok: false; error }
 summarize(s, c): SaveSlotSummary
 // sélecteurs
-knownKeywords, availablePortraits, availableOccupations, availableNames, visiblePlaces, visibleSlots, progress, endingFor
+knownKeywords, availablePortraits, availableOccupations, availableNames, visiblePlaces, visibleSlots, progress, endingFor,
+reportQuestions /* questions posées + options disponibles + réponse */, endingSections /* sections visibles d'une fin */
 ```
 
 **Validation par groupes** (détail : `docs/game/GAME_DESIGN.md`) : pour chaque groupe, on compte les

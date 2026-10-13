@@ -2,6 +2,7 @@ import { defaultProfile, type Action, type GameEvent } from '@arbre/contract';
 import { describe, expect, it } from 'vitest';
 import {
   endingFor,
+  endingSections,
   evaluateAchievements,
   progress,
   summarize,
@@ -38,6 +39,8 @@ export const FULL_ROUTE: Action[] = [
   open('acte-secret', 29200),
   open('epilogue', 29300),
   { type: 'tick', deltaMs: 4000 },
+  { type: 'answer', question: 'q-auteur', option: 'o-tam', at: 29400 },
+  { type: 'answer', question: 'q-remise', option: 'o-remettre', at: 29500 },
   { type: 'finish', at: 30000 },
 ];
 
@@ -61,6 +64,8 @@ describe('partie complète de la fixture', () => {
     expect(events(all, 'secretFound')).toEqual([{ type: 'secretFound', id: 'sec-double-vie' }]);
     expect(events(all, 'endingReached')).toEqual([{ type: 'endingReached', id: 'fin-verite' }]);
     expect(state.ending).toBe('fin-verite');
+    expect(state.report).toEqual({ 'q-auteur': 'o-tam', 'q-remise': 'o-remettre' });
+    expect(endingSections('fin-verite', state, C).map((x) => x.label)).toEqual(['commun', 'remis']);
     expect(progress(state, C)).toEqual({ locked: 8, total: 8, ratio: 1, secrets: 1 });
     expect(Object.keys(state.unlocked).sort()).toEqual(Object.keys(C.documents).sort());
     // Seule piste restante : la coupure de presse facultative, jamais ouverte.
@@ -97,9 +102,12 @@ describe('partie complète de la fixture', () => {
         !(a.type === 'openDocument' && a.id === 'acte-secret'),
     );
     const r = play(start(), route);
-    expect(events(r.events, 'rejected')).toEqual([]);
+    // Sans le secret, l'option « remettre » n'est pas disponible : seul ce choix est refusé.
+    expect(events(r.events, 'rejected')).toEqual([{ type: 'rejected', reason: 'notAvailable' }]);
+    expect(r.state.report).toEqual({ 'q-auteur': 'o-tam' });
     expect(endingFor(r.state, C)).toBe('fin-arbre');
     expect(r.state.ending).toBe('fin-arbre');
+    expect(endingSections('fin-arbre', r.state, C).map((x) => x.label)).toEqual([null]);
     expect(evaluateAchievements(r.state, defaultProfile(), C)).toEqual([
       'ach-premier-groupe',
       'ach-sans-secret',
@@ -112,15 +120,23 @@ describe('partie complète de la fixture', () => {
       { type: 'finish', at: 40200 },
     ]);
     expect(r2.state.ending).toBe('fin-verite');
+    // Après `finish`, le rapport est figé.
+    expect(
+      events(
+        play(r2.state, [{ type: 'answer', question: 'q-auteur', option: 'o-elna', at: 40300 }])
+          .events,
+        'rejected',
+      ),
+    ).toEqual([{ type: 'rejected', reason: 'notAvailable' }]);
   });
 
   it('fins à égalité de priorité : l’id le plus petit l’emporte', () => {
     const c = {
       ...C,
       endings: {
-        zeta: { when: { lockedCount: { gte: 1 } }, priority: 5, title: 'Z', body: [] },
-        alpha: { when: { lockedCount: { gte: 1 } }, priority: 5, title: 'A', body: [] },
-        basse: { when: { lockedCount: { gte: 1 } }, priority: 1, title: 'B', body: [] },
+        zeta: { when: { lockedCount: { gte: 1 } }, priority: 5, title: 'Z', sections: [] },
+        alpha: { when: { lockedCount: { gte: 1 } }, priority: 5, title: 'A', sections: [] },
+        basse: { when: { lockedCount: { gte: 1 } }, priority: 1, title: 'B', sections: [] },
       },
     };
     expect(endingFor(start(), c)).toBe('alpha');

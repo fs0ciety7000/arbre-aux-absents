@@ -35,6 +35,10 @@ export function evaluate(cond: OutcomeCondition, s: SaveState, c: CompiledCase):
   if ('groupLocked' in cond) return isGroupLocked(cond.groupLocked, s, c);
   if ('secret' in cond) return has.call(s.secrets, cond.secret);
   if ('lockedCount' in cond) return lockedCount(s) >= cond.lockedCount.gte;
+  if ('answered' in cond) {
+    const { question, option } = cond.answered;
+    return s.report !== undefined && own(s.report, question) === option;
+  }
   if ('all' in cond) return cond.all.every((x) => evaluate(x, s, c));
   if ('any' in cond) return cond.any.some((x) => evaluate(x, s, c));
   if ('not' in cond) return !evaluate(cond.not, s, c);
