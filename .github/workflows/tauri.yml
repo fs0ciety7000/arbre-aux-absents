@@ -3,6 +3,9 @@ name: Tauri (builds natifs)
 on:
   push:
     tags: ['v*']
+    # Avant la fusion sur main (workflow_dispatch n'existe qu'une fois le fichier sur la branche
+    # par défaut) : un commit dont le message contient « [tauri] » sur une branche claude/**.
+    branches: ['claude/**']
   workflow_dispatch:
 
 permissions:
@@ -41,7 +44,10 @@ jobs:
   desktop:
     name: desktop (${{ matrix.name }})
     needs: release
-    if: ${{ !cancelled() && needs.release.result != 'failure' }}
+    if: >-
+      ${{ !cancelled() && needs.release.result != 'failure' &&
+      (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' ||
+      contains(github.event.head_commit.message, '[tauri]')) }}
     strategy:
       fail-fast: false
       matrix:
@@ -130,7 +136,10 @@ jobs:
   android:
     name: android (APK/AAB)
     needs: release
-    if: ${{ !cancelled() && needs.release.result != 'failure' }}
+    if: >-
+      ${{ !cancelled() && needs.release.result != 'failure' &&
+      (github.ref_type == 'tag' || github.event_name == 'workflow_dispatch' ||
+      contains(github.event.head_commit.message, '[tauri]')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:

@@ -175,10 +175,12 @@ et `itch-zips` (`npm run package:itch`). Publication : workflow `itch.yml` à ve
 
 Cache : npm (`setup-node`), cargo (`Swatinem/rust-cache`), couches Docker (`type=gha`).
 
-### `tauri.yml` — tag `v*` ou lancement manuel
+### `tauri.yml` — tag `v*`, lancement manuel ou commit « [tauri] »
 
 - Tag `v*` : release **brouillon** créée d'abord, complétée par chaque job, publiée à la main.
-  Lancement manuel : artefacts de workflow seulement.
+  Lancement manuel : artefacts de workflow seulement (possible une fois le fichier sur `main`).
+- Avant la fusion : un commit poussé sur une branche `claude/**` dont le message contient
+  `[tauri]` lance les mêmes builds, en artefacts seulement (les autres poussées sont sautées).
 - Matrice desktop via `tauri-apps/tauri-action` : `ubuntu-22.04` (AppImage, deb, rpm),
   `windows-latest` (NSIS, msi), `macos-latest` (`--target universal-apple-darwin`, dmg).
 - Android : JDK 17, SDK + NDK 27, cibles Rust Android, `tauri android init --ci`, puis APK/AAB
