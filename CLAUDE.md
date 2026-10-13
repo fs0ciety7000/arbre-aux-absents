@@ -1,10 +1,10 @@
-# CLAUDE.md — {{NOM_DU_PROJET}}
+# CLAUDE.md — L'Arbre aux absents
 
-> Template **Claude-start**. Au premier lancement, si ce fichier contient encore des
-> `{{…}}`, lance le skill **`/kickoff`** : il interroge l'utilisateur, remplit ce fichier
-> et les docs, puis supprime cette note.
-
-{{Pitch en 2 lignes : quoi, pour qui, où c'est déployé.}}
+Jeu d'enquête généalogique solo, dans l'esprit de *The Roottrees are Dead*, dans un **monde
+entièrement imaginaire** : le joueur reconstitue l'arbre d'une famille en croisant des archives,
+un moteur de recherche fictif et une carte illustrée. Par **CM Interactive** avec **CM Creative Lab**.
+Jeu : Windows, macOS, Linux, Android (Tauri 2) et démo HTML5 sur itch.io. Site vitrine (présentation,
+artbook, charte) sur `arbre.fs0ciety.org` (Coolify). Fiche d'origine : `docs/FICHE.md`.
 
 ## Ton rôle : chef de projet + orchestrateur
 
@@ -36,8 +36,10 @@ Tu ne codes pas en premier : tu **cadres, découpes, délègues, intègres, vér
 
 ## Agents
 
-`architect` (plans, lecture seule) · `design-lead` · `frontend` · `backend` · `devops` ·
-`qa-reviewer`. Périmètres détaillés dans `docs/WORKFLOW.md`.
+`architect` (plans, lecture seule) · `game-designer` (`docs/game/`) · `level-designer`
+(progression, solvabilité) · `scenariste` (monde, famille, documents) · `cartographe` (carte,
+portraits, illustrations SVG) · `design-lead` · `frontend` (jeu ou site) · `backend` (moteur,
+outils de contenu, plateforme) · `devops` · `qa-reviewer`. Périmètres détaillés dans `docs/WORKFLOW.md`.
 
 Tu es **libre d'appeler tous les agents nécessaires** à chaque session : ceux du projet,
 les agents généraux (`Explore`, `Plan`, `general-purpose`) et les skills disponibles.
@@ -46,15 +48,23 @@ Besoin spécialisé récurrent (sécurité, data, SEO, mobile, contenu…) → c
 
 ## Stack
 
-{{Choisie au kickoff par l'agent `architect` selon le besoin, justifiée dans
-docs/ARCHITECTURE.md. Rien n'est imposé : Next.js, Go, Python, Rust, Astro, mobile…}}
+Monorepo **npm workspaces**, TypeScript strict, Node 22 :
+- `apps/game` : **Vite + Svelte 5** (SPA, `base: './'`), empaqueté par **Tauri 2** (desktop + Android) ;
+  le build web sert tel quel de démo itch.io.
+- `apps/site` : **SvelteKit + adapter-static**, nginx en Docker.
+- `packages/contract` (types + zod 4), `packages/engine` (moteur **pur** : `applyAction`, `search`,
+  `validate`…), `packages/content-tools` (parseur Markdown maison, compilation, solveur),
+  `packages/map` (caméra + carte SVG, portées de carte-mons), `packages/ui` (tokens, primitives).
+Les affaires sont des **données** (`content/cases/<id>/`), validées par `npm run content:check`
+(solveur compris) ; le moteur ne connaît aucun id. Justification : `docs/ARCHITECTURE.md` §2.
 
 ## Projets liés / références
 
-{{Repos ou sessions liés, avec leur mode (détail : ARCHITECTURE §0) :
-lecture (inspiration), assets (logos/polices copiés ici), mise à jour (sites existants à
-modifier pour intégrer ce projet — branche + PR, selon les règles de l'autre repo).
-« aucun » sinon.}}
+- `fs0ciety7000/carte-mons` : **lecture** (style de carte, caméra et renderer SVG copiés et adaptés,
+  source dans `packages/map/SOURCE.md`).
+- `fs0ciety7000/mons-corp` : **assets** (logos CARDOR Media et divisions dans `static/brand/`, crédits
+  et pied de page seulement) ; plus tard **mise à jour** (catalogue apps), comme `occ-studios`.
+- **Aucune autre référence** aux projets de la maison dans le jeu ou le site.
 
 ## Commandes
 
@@ -62,11 +72,12 @@ Quelle que soit la stack, le projet expose ces 4 commandes (via `package.json`, 
 `justfile`…) pour que le workflow et la CI restent identiques :
 
 ```bash
-{{install}}   # dépendances
-{{dev}}       # serveur / exécution locale
-{{check}}     # lint + typecheck + tests — DOIT passer avant tout commit
-{{build}}     # build de prod
+npm ci              # dépendances
+npm run dev         # content:build + jeu sur http://localhost:5173 (dev:site, dev:tauri à part)
+npm run check       # prettier + eslint + svelte-check/tsc + vitest + content:check — DOIT passer avant tout commit
+npm run build       # content:build + jeu web + zips itch (complet, démo) + site
 ```
+Builds natifs (`npm run tauri:build`, `tauri:android`) : en CI (`.github/workflows/tauri.yml`).
 
 ## Règles
 
@@ -86,3 +97,6 @@ Quelle que soit la stack, le projet expose ces 4 commandes (via `package.json`, 
 - **Git** : commits conventionnels (`feat:`, `fix:`, `docs:`, `chore:`…), petits et ciblés ;
   jamais de push sur `main` sans demande explicite ; pas de PR sans demande explicite.
 - Ne pas exposer le nom du modèle d'IA dans les commits/PR.
+- **Monde imaginaire** : pas de Mons, pas de thème ferroviaire, aucun nom réel identifiable.
+- **Pas de police pixel art** ni Beffroi 8. Interface moderne avec des références point & click.
+- **Aucune impasse** : les déblocages sont monotones et le solveur de `content:check` reste vert.

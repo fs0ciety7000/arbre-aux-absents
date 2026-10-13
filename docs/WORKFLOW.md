@@ -33,14 +33,19 @@ délègue aux agents experts, intègre et vérifie. Elle n'écrit elle-même que
 Chemins indicatifs (exemple Next.js) : les vrais dossiers de chaque agent sont ceux de
 `docs/ARCHITECTURE.md` §6, selon la stack choisie.
 
-| Agent | Périmètre (fichiers possédés) |
+| Agent | Périmètre (fichiers possédés) — détail : `docs/ARCHITECTURE.md` §6 |
 |---|---|
 | `architect` | Plans, contrats, revues d'architecture. **Lecture seule.** |
-| `design-lead` | `docs/DESIGN.md`, tokens (CSS/thème), `src/components/ui/**` |
-| `frontend` | Pages, layouts, `src/components/**` (hors `ui/` si design-lead actif) |
-| `backend` | `src/lib/**` (hors UI), `src/app/api/**` ou équivalent, scripts/CLI |
-| `devops` | `Dockerfile`, `.dockerignore`, `.github/**`, `docs/DEPLOYMENT.md`, `scripts/*.sh` |
-| `qa-reviewer` | Revue de diff, tests, a11y, perf, sécu. Ne modifie que les tests. |
+| `game-designer` | `docs/game/**` |
+| `level-designer` | `docs/level/**`, `content/cases/<id>/{tree,progression,hints,achievements}.json` |
+| `scenariste` | `docs/scenario/**`, `docs/monde/**`, `content/cases/<id>/{case,family}.json`, `documents/**`, `endings/**` |
+| `cartographe` | `content/world/**`, `art/**`, `content/cases/<id>/{portraits,illustrations}/**` |
+| `design-lead` | `docs/DESIGN.md`, `packages/ui/**`, `apps/site/src/routes/design/**` |
+| `frontend` (jeu) | `apps/game/src/**` (hors `platform/`), `packages/map/src/svelte/**` |
+| `frontend` (site) | `apps/site/src/**` (hors `routes/design/`) |
+| `backend` | `packages/engine/**`, `packages/content-tools/**`, `packages/map/src/camera/**`, `apps/game/src/platform/**`, `scripts/*.ts` |
+| `devops` | `apps/game/src-tauri/**`, `Dockerfile`, `nginx.conf`, `.dockerignore`, `.github/**`, `docs/DEPLOYMENT.md`, `scripts/*.sh` |
+| `qa-reviewer` | Revue de diff, `tests/e2e/**`, a11y, perf, sécu. Ne modifie que les tests. |
 
 Agents généraux toujours disponibles : `Explore` (recherche large dans le code), `Plan`
 (plan d'implémentation), `general-purpose` (recherche/tâches multi-étapes). L'orchestrateur
