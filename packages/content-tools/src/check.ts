@@ -9,6 +9,7 @@ import { conditionRefs, type AnyCondition, type AtomRef } from './conditions';
 import { IssueList } from './issues';
 import { isComplete, loadContent, type ContentSource, type SourceWorld } from './load';
 import { blockTexts } from './markdown';
+import { COMMON_SECTION, splitSections } from './sections';
 import { prepareCase, type CompleteCase, type PreparedCase } from './prepare';
 import { normalize } from './shared';
 import { solve, type SolverResult } from './solver';
@@ -186,6 +187,22 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
     'lieu',
     prog.places.map((p) => p.place),
   );
+  const report = prog.report ?? [];
+  uniq(
+    'progression.json',
+    'question du rapport',
+    report.map((q) => q.id),
+  );
+  for (const q of report) {
+    uniq(
+      'progression.json',
+      `option de la question ${q.id}`,
+      q.options.map((o) => o.id),
+    );
+    if (q.options.length < 2) {
+      issues.error(1, f('progression.json'), `question « ${q.id} » : au moins 2 options`);
+    }
+  }
   uniq(
     'hints.json',
     'aide',
@@ -226,6 +243,7 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
   const secrets = new Set(prog.secrets.map((s) => s.id));
   const endings = new Set(prog.endings.map((e) => e.id));
   const casePlaces = new Set(prog.places.map((p) => p.place));
+  const questions = new Map((prog.report ?? []).map((q) => [q.id, q]));
   const ref = (file: string, kind: string, id: string, set: { has(id: string): boolean }) => {
     if (!set.has(id)) issues.error(2, f(file), `${kind} inconnu(e) : « ${id} »`);
   };
@@ -241,9 +259,14 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
         groupLocked: ['groupe', groups],
         secret: ['secret', secrets],
         endingReached: ['fin', endings],
+        answered: ['question du rapport', questions],
       };
       const [kind, set] = sets[r.kind];
       ref(file, `${kind} (condition ${r.kind})`, r.id, set);
+      const q = questions.get(r.id);
+      if (r.kind === 'answered' && q && !q.options.some((o) => o.id === r.option)) {
+        issues.error(2, f(file), `option inconnue « ${r.option} » pour la question « ${r.id} »`);
+      }
     }
   };
   ref('case.json', 'document intro', c.meta.intro, docs);
@@ -297,6 +320,43 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
   for (const e of prog.endings) {
     condRefs('progression.json', e.when);
     if (!c.endings.has(e.id)) issues.error(2, f(e.file), `fichier de la fin « ${e.id} » absent`);
+  }
+  for (const q of prog.report ?? []) {
+    condRefs('progression.json', q.askedWhen);
+    for (const o of q.options) condRefs('progression.json', o.availableWhen);
+  }
+  // Sections des fins : étiquettes du fichier ↔ clés de `sections`.
+  for (const e of prog.endings) {
+    const file = c.endings.get(e.id);
+    if (!file) continue;
+    const { sections, errors } = splitSections(file.body);
+    for (const m of errors) issues.error(2, file.file, m);
+    const labels = new Set(sections.map((sec) => sec.label).filter((l): l is string => l !== null));
+    for (const l of labels) {
+      if (l !== COMMON_SECTION && !(e.sections && l in e.sections)) {
+        issues.error(
+          2,
+          file.file,
+          `section [${l}] absente de progression.json (endings.${e.id}.sections)`,
+        );
+      }
+    }
+    for (const [l, cond] of Object.entries(e.sections ?? {})) {
+      condRefs('progression.json', cond);
+      if (l === COMMON_SECTION) {
+        issues.error(
+          2,
+          f('progression.json'),
+          `fin « ${e.id} » : [${COMMON_SECTION}] ne prend pas de condition`,
+        );
+      } else if (!labels.has(l)) {
+        issues.error(
+          2,
+          f('progression.json'),
+          `fin « ${e.id} » : section [${l}] absente de ${e.file}`,
+        );
+      }
+    }
   }
   for (const id of c.endings.keys()) {
     if (!endings.has(id))
@@ -418,6 +478,9 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
   };
   for (const [d, cond] of Object.entries(prog.unlocks))
     selfRef('progression.json', 'déblocage du document', cond, ['read', 'unlocked'], d);
+  for (const q of prog.report ?? []) {
+    selfRef('progression.json', 'question du rapport', q.askedWhen, ['answered'], q.id);
+  }
   for (const s of prog.secrets)
     selfRef('progression.json', 'secret', s.discoveredBy, ['secret'], s.id);
   for (const p of prog.places)

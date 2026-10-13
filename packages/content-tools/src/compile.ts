@@ -20,7 +20,9 @@ import type {
   Occupation,
   Place,
   Person,
+  ReportQuestion,
 } from '@arbre/contract';
+import { COMMON_SECTION } from './sections';
 import { conditionRefs, simplify, type AtomRef } from './conditions';
 import type { SourceWorld } from './load';
 import { mentions, type PreparedCase } from './prepare';
@@ -155,6 +157,7 @@ export function compileCase(
 
   // Secrets : point fixe (un secret peut en citer un autre).
   let secretIds = new Set(prog.secrets.map((s) => s.id));
+  let reportIds = new Set((prog.report ?? []).map((q) => q.id));
   const exists = (r: AtomRef): boolean => {
     switch (r.kind) {
       case 'read':
@@ -172,6 +175,8 @@ export function compileCase(
         return secretIds.has(r.id);
       case 'endingReached':
         return !demo && prog.endings.some((e) => e.id === r.id);
+      case 'answered':
+        return reportIds.has(r.id);
     }
   };
   const simp = <T extends Condition>(c: T | undefined): T | true | false | undefined =>
@@ -354,7 +359,23 @@ export function compileCase(
     for (const e of prog.endings) {
       const body = prep.endings.get(e.id);
       if (!body) continue;
-      endings[e.id] = { when: e.when, priority: e.priority, title: body.title, body: body.body };
+      endings[e.id] = {
+        when: e.when,
+        priority: e.priority,
+        title: body.title,
+        sections: body.sections.map((sec) => {
+          const when =
+            sec.label === null || sec.label === COMMON_SECTION
+              ? undefined
+              : e.sections?.[sec.label];
+          return {
+            label: sec.label,
+            title: sec.title,
+            ...(when ? { when } : {}),
+            body: sec.body,
+          };
+        }),
+      };
     }
   }
 
@@ -367,6 +388,14 @@ export function compileCase(
     if (r === false || r === undefined || r === true) continue;
     hints.push({ ...h, availableWhen: r });
   }
+  // --- Rapport final : en démo, seulement si tout ce qu'il cite est dans la démo ---
+  const reportRefs = (prog.report ?? []).flatMap((q) => [
+    ...(q.askedWhen ? conditionRefs(q.askedWhen) : []),
+    ...q.options.flatMap((o) => (o.availableWhen ? conditionRefs(o.availableWhen) : [])),
+  ]);
+  const report: ReportQuestion[] = !demo || reportRefs.every(exists) ? (prog.report ?? []) : [];
+  reportIds = new Set(report.map((q) => q.id));
+
   const achievements: Achievement[] = demo
     ? src.achievements.filter((a) => conditionRefs(a.when).every(exists))
     : src.achievements;
@@ -407,6 +436,7 @@ export function compileCase(
     endings,
     hints,
     achievements,
+    report,
     candidates: { given: sortFr(given), family: sortFr(family) },
   };
   compiled.contentHash = shortHash(stableStringify({ compiled, illustrations }));
@@ -471,5 +501,6 @@ export function solverModelFor(compiled: CompiledCase, prep: PreparedCase): Solv
     occupationsUnlock: compiled.progression.occupationsUnlock ?? {},
     secrets: new Map(compiled.progression.secrets.map((s) => [s.id, s.discoveredBy])),
     endings: new Map(Object.entries(compiled.endings).map(([id, e]) => [id, e.when])),
+    report: compiled.report,
   };
 }

@@ -31,7 +31,7 @@ import {
 } from '@arbre/contract';
 import { parse as parseYaml, YAMLParseError } from 'yaml';
 import { z } from 'zod';
-import { rawContainsNot } from './conditions';
+import { rawContainsKey } from './conditions';
 import type { IssueList } from './issues';
 import { parseMarkdown, splitFrontmatter } from './markdown';
 
@@ -229,13 +229,18 @@ export async function loadContent(root: string, issues: IssueList): Promise<Cont
         continue;
       }
       digest.push(`${kind}:${JSON.stringify(j.data)}`);
-      if (kind !== 'progression' && kind !== 'achievements' && rawContainsNot(j.data)) {
-        issues.error(4, rel(path), '`not` interdit hors des fins et des succès');
-      }
-      if (kind === 'progression' && j.data && typeof j.data === 'object') {
-        const { endings: _e, ...rest } = j.data as Record<string, unknown>;
-        if (rawContainsNot(rest)) {
-          issues.error(4, rel(path), '`not` interdit hors des fins et des succès');
+      // Règle 4 : `not` et `answered` réservés aux fins, aux succès, à `askedWhen` (rapport) et
+      // aux sections de fin.
+      if (kind !== 'achievements') {
+        const outside = outcomeFree(kind, j.data);
+        for (const key of ['not', 'answered']) {
+          if (rawContainsKey(outside, key)) {
+            issues.error(
+              4,
+              rel(path),
+              `\`${key}\` interdit hors des fins, des succès, de askedWhen et des sections`,
+            );
+          }
         }
       }
       switch (kind) {
@@ -339,6 +344,18 @@ export async function loadContent(root: string, issues: IssueList): Promise<Cont
 
   const empty = filesRead === 0;
   return { root, empty, world, cases, filesRead };
+}
+
+/** Partie d'un fichier JSON où seules les conditions monotones sont admises. */
+function outcomeFree(kind: string, data: unknown): unknown {
+  if (kind !== 'progression' || !data || typeof data !== 'object') return data;
+  const { endings: _e, report, ...rest } = data as Record<string, unknown>;
+  const options = Array.isArray(report)
+    ? report.map((q) =>
+        q && typeof q === 'object' ? (q as { options?: unknown }).options : undefined,
+      )
+    : report;
+  return { ...rest, reportOptions: options };
 }
 
 function parseFrontmatter(yaml: string, file: string, issues: IssueList): unknown {

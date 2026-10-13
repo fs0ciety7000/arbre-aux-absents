@@ -28,8 +28,17 @@ function solveSection(title: string, r: SolverResult): string[] {
     `- Cases établies : ${r.locked.size} · secrets : ${list(r.secrets)}`,
     `- Fins atteignables : ${list([...r.endings].map(([id, step]) => `${id} (étape ${step})`))}`,
     `- Fins vraies à 100 % : ${list(r.endingsAtEnd)}`,
+    `- Rapport final : ${r.reportCombinations} combinaison(s) de réponses explorée(s) à 100 %`,
     '',
   );
+  if (r.endingAnswers.size) {
+    out.push('**Réponses au rapport menant à chaque fin**', '');
+    for (const [id, answers] of r.endingAnswers) {
+      const pairs = Object.entries(answers).map(([q, o]) => `\`${q}\` → \`${o}\``);
+      out.push(`- \`${id}\` : ${pairs.join(', ')}`);
+    }
+    out.push('');
+  }
   if (r.blockedSlots.size) {
     out.push('**Cases jamais établies**', '');
     for (const [id, why] of r.blockedSlots) out.push(`- \`${id}\` : ${why.join(' ; ')}`);

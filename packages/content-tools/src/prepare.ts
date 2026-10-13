@@ -6,6 +6,7 @@ import type { Block, DocumentFrontmatter, KeywordId } from '@arbre/contract';
 import { autolinkBlocks, collectRefs, prepareTerms, type LinkTerm, type Overlap } from './autolink';
 import type { SourceCase } from './load';
 import { blockTexts } from './markdown';
+import { splitSections, type SourceSection } from './sections';
 import { normalize } from './shared';
 
 export type CompleteCase = SourceCase &
@@ -27,7 +28,12 @@ export interface PreparedEnding {
   id: string;
   file: string;
   title: string;
+  /** Corps entier (liens automatiques), pour les contrôles de texte. */
   body: Block[];
+  /** Sections `## [étiquette] Titre`, corps après liens automatiques. */
+  sections: SourceSection[];
+  /** Erreurs de découpage (étiquettes en double). */
+  sectionErrors: string[];
 }
 
 export interface PreparedCase {
@@ -68,7 +74,17 @@ export function prepareCase(c: CompleteCase): PreparedCase {
   for (const e of c.endings.values()) {
     const linked = autolinkBlocks(e.body, terms);
     for (const o of linked.overlaps) overlaps.push({ file: e.file, overlap: o });
-    endings.set(e.id, { ...e, body: linked.blocks });
+    const split = splitSections(e.body);
+    const sections = split.sections.map((sec) => ({
+      ...sec,
+      body: autolinkBlocks(sec.body, terms).blocks,
+    }));
+    endings.set(e.id, {
+      ...e,
+      body: linked.blocks,
+      sections,
+      sectionErrors: split.errors,
+    });
   }
   return { src: c, terms, documents, endings, overlaps };
 }

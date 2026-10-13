@@ -10,6 +10,7 @@
  */
 import type { Condition, OutcomeCondition } from '@arbre/contract';
 import { evaluate, negatedAtoms, type AtomRef, type EvalState } from './conditions';
+import type { ReportQuestion } from '@arbre/contract';
 
 export interface SolverDocument {
   id: string;
@@ -49,6 +50,8 @@ export interface SolverModel {
   occupationsUnlock: Readonly<Record<string, Condition>>;
   secrets: ReadonlyMap<string, Condition>;
   endings: ReadonlyMap<string, OutcomeCondition>;
+  /** Rapport final (questions posées au dénouement). */
+  report: readonly ReportQuestion[];
 }
 
 export type SolverAction =
@@ -84,8 +87,12 @@ export interface SolverResult {
   revealedSlots: Set<string>;
   /** Fin → première étape où sa condition est vraie (exploration libre ou contrainte). */
   endings: Map<string, number>;
-  /** Fins vraies dans l'état final (100 %). */
+  /** Fins vraies dans l'état final (100 %), pour au moins une combinaison de réponses. */
   endingsAtEnd: string[];
+  /** Fin → combinaison de réponses au rapport qui la rend vraie (si des réponses servent). */
+  endingAnswers: Map<string, Record<string, string>>;
+  /** Nombre de combinaisons de réponses explorées à 100 %. */
+  reportCombinations: number;
   evidence: Map<string, SlotEvidence>;
   /** Pourquoi chaque case non établie bloque. */
   blockedSlots: Map<string, string[]>;
@@ -102,6 +109,7 @@ class State implements EvalState {
   visiblePlaces = new Set<string>();
   known = new Set<string>();
   portraits = new Map<string, string[]>();
+  answers: ReadonlyMap<string, string> = new Map();
   constructor(readonly groups: Map<string, readonly string[]>) {}
 
   clone(): State {
@@ -285,6 +293,19 @@ function atomTrue(a: AtomRef, s: State): boolean {
   }
 }
 
+/** Vue d'évaluation d'un état (copie superficielle des ensembles). */
+function stateView(s: State): EvalState {
+  return {
+    read: s.read,
+    unlocked: s.unlocked,
+    searched: s.searched,
+    visited: s.visited,
+    locked: s.locked,
+    secrets: s.secrets,
+    groups: s.groups,
+  };
+}
+
 interface RunResult {
   state: State;
   steps: SolverStep[];
@@ -334,20 +355,80 @@ function renameDelta(d: { unlocked: string[]; secrets: string[]; revealed: strin
   return { unlocked: d.unlocked, secrets: d.secrets, revealedSlots: d.revealed };
 }
 
+/** Plafond des combinaisons de réponses explorées. */
+export const MAX_REPORT_COMBINATIONS = 4096;
+
+/**
+ * Combinaisons de réponses au rapport final dans un état donné : une question n'est posée que si
+ * `askedWhen` est vraie (avec les réponses précédentes), ses options filtrées par `availableWhen`.
+ */
+export function reportCombinations(
+  report: readonly ReportQuestion[],
+  s: EvalState,
+  limit = MAX_REPORT_COMBINATIONS,
+): Map<string, string>[] {
+  let combos: Map<string, string>[] = [new Map()];
+  for (const q of report) {
+    const next: Map<string, string>[] = [];
+    for (const combo of combos) {
+      const st: EvalState = { ...s, answers: combo };
+      const options =
+        q.askedWhen && !evaluate(q.askedWhen, st)
+          ? []
+          : q.options.filter((o) => !o.availableWhen || evaluate(o.availableWhen, st));
+      if (options.length === 0) next.push(combo);
+      for (const o of options) next.push(new Map(combo).set(q.id, o.id));
+    }
+    combos = next.slice(0, limit);
+  }
+  return combos;
+}
+
 /** Résout un modèle : exploration libre puis, pour chaque fin non atteinte, exploration évitant ses négations. */
 export function solve(m: SolverModel): SolverResult {
   const main = run(m);
   const s = main.state;
   const endings = new Map(main.endings);
+  const endingAnswers = new Map<string, Record<string, string>>();
+  const mainCombos = reportCombinations(m.report, s);
+  const viaAnswers = (
+    id: string,
+    cond: OutcomeCondition,
+    st: State,
+    combos: Map<string, string>[],
+    step: number,
+  ) => {
+    for (const combo of combos) {
+      if (evaluate(cond, { ...stateView(st), answers: combo })) {
+        endings.set(id, step);
+        if (combo.size) endingAnswers.set(id, Object.fromEntries(combo));
+        return true;
+      }
+    }
+    return false;
+  };
+  const lastStep = main.steps.length - 1;
   for (const [id, cond] of m.endings) {
     if (endings.has(id)) continue;
-    const neg = negatedAtoms(cond);
+    if (viaAnswers(id, cond, s, mainCombos, lastStep)) continue;
+    const neg = negatedAtoms(cond).filter((a) => a.kind !== 'answered');
     if (neg.length === 0) continue;
     const alt = run(m, neg);
     const at = alt.endings.get(id);
     if (at !== undefined) endings.set(id, at);
+    else {
+      viaAnswers(
+        id,
+        cond,
+        alt.state,
+        reportCombinations(m.report, alt.state),
+        alt.steps.length - 1,
+      );
+    }
   }
-  const endingsAtEnd = [...m.endings].filter(([, c]) => evaluate(c, s)).map(([id]) => id);
+  const endingsAtEnd = [...m.endings]
+    .filter(([, c]) => mainCombos.some((combo) => evaluate(c, { ...stateView(s), answers: combo })))
+    .map(([id]) => id);
   const blockedSlots = new Map<string, string[]>();
   for (const [id, slot] of m.slots) {
     if (s.locked.has(id)) continue;
@@ -365,6 +446,8 @@ export function solve(m: SolverModel): SolverResult {
     revealedSlots: s.revealedSlots,
     endings,
     endingsAtEnd,
+    endingAnswers,
+    reportCombinations: mainCombos.length,
     evidence: main.evidence,
     blockedSlots,
   };

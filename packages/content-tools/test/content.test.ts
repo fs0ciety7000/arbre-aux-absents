@@ -102,6 +102,28 @@ describe('fixture mini', () => {
     expect(c.full!.illustrations['illustrations/carte-val.svg']).toContain('mini-carte-val-cadre');
   });
 
+  it('fins à sections et rapport final compilés', () => {
+    const c = base.cases[0]!;
+    const full = c.full!.compiled;
+    const edda = full.endings['fin-edda']!;
+    expect(edda.sections.map((x) => [x.label, x.title, x.when ?? null])).toEqual([
+      [null, null, null],
+      ['maren', 'La malle chez Maren', { answered: { question: 'heritier', option: 'maren' } }],
+      ['oskar', 'La malle au moulin', { answered: { question: 'heritier', option: 'oskar' } }],
+      ['commun', 'Épilogue', null],
+    ]);
+    // Un `## Titre` sans étiquette reste un titre dans la section courante.
+    expect(edda.sections[2]!.body[1]).toEqual({
+      t: 'h',
+      level: 2,
+      c: [{ t: 'text', v: 'Une note' }],
+    });
+    expect(full.endings['fin-arbre']!.sections).toHaveLength(1);
+    expect(full.report.map((q) => q.id)).toEqual(['heritier', 'lettres']);
+    // Démo : le rapport cite un secret hors démo → retiré.
+    expect(c.demo!.compiled.report).toEqual([]);
+  });
+
   it('compilation déterministe', async () => {
     const again = await checkContentRoot(FIXTURE);
     expect(again.cases[0]!.full!.compiled).toEqual(base.cases[0]!.full!.compiled);
@@ -180,7 +202,11 @@ describe('fixture mini', () => {
     const s = base.cases[0]!.solve!;
     expect(s.locked.size).toBe(6);
     expect([...s.endings.keys()].sort()).toEqual(['fin-arbre', 'fin-edda']);
-    expect(s.endingsAtEnd).toEqual(['fin-edda']);
+    expect(s.endingsAtEnd).toEqual(['fin-arbre', 'fin-edda']);
+    expect(s.reportCombinations).toBe(4);
+    expect(s.endingAnswers.get('fin-edda')).toMatchObject({ lettres: 'garder' });
+    expect(s.endingAnswers.get('fin-arbre')).toMatchObject({ lettres: 'bruler' });
+    expect(solveReport(base)).toContain('`fin-edda` : `heritier` → `maren`, `lettres` → `garder`');
     expect(s.evidence.get('s-maren')!.portraitDocs).toEqual(['photo-fratrie']);
     expect(solveReport(base)).toContain('Établir `s-ancel`, `s-ida`, `s-tomas`');
   });
@@ -355,5 +381,78 @@ describe('règles de content:check (un cas rouge par règle)', () => {
       editJson(root, 'family.json', (j) => (j.portraits[0].alt = 'Ancel Morvan en col cassé')),
     );
     expect(errorsOf(r, 11).join('\n')).toMatch(/révèle le nom de « ancel-morvan »/);
+  });
+});
+
+describe('rapport final et sections (règles)', () => {
+  it('1 · ids de question et d’option uniques', async () => {
+    const r = await checkWith((root) =>
+      editJson(root, 'progression.json', (j) => {
+        j.report.push({ ...j.report[0] });
+        j.report[1].options[1].id = 'bruler';
+      }),
+    );
+    const e = errorsOf(r, 1).join('\n');
+    expect(e).toMatch(/question du rapport « heritier » en double/);
+    expect(e).toMatch(/option de la question lettres « bruler » en double/);
+  });
+
+  it('1 · au moins deux options', async () => {
+    const r = await checkWith((root) =>
+      editJson(root, 'progression.json', (j) => j.report[0].options.pop()),
+    );
+    expect(errorsOf(r, 1).join('\n')).toMatch(/report\.0\.options/);
+  });
+
+  it('2 · answered vers une question ou une option inconnue', async () => {
+    const r = await checkWith((root) =>
+      editJson(root, 'progression.json', (j) => {
+        j.endings[0].when.all[1].any[1].answered.option = 'enterrer';
+        j.endings[1].when.all[2].answered.question = 'inconnue';
+      }),
+    );
+    const e = errorsOf(r, 2).join('\n');
+    expect(e).toMatch(/option inconnue « enterrer » pour la question « lettres »/);
+    expect(e).toMatch(/question du rapport \(condition answered\) inconnu\(e\) : « inconnue »/);
+  });
+
+  it('2 · sections : étiquette absente de progression, clé sans titre', async () => {
+    const r = await checkWith(async (root) => {
+      await editText(root, 'endings/fin-edda.md', (s) => s.replace('[oskar]', '[autre]'));
+    });
+    const e = errorsOf(r, 2).join('\n');
+    expect(e).toMatch(/section \[autre\] absente de progression\.json/);
+    expect(e).toMatch(/section \[oskar\] absente de endings\/fin-edda\.md/);
+  });
+
+  it('4 · answered interdit dans les déblocages, autorisé dans askedWhen et les sections', async () => {
+    const r = await checkWith((root) =>
+      editJson(root, 'progression.json', (j) => {
+        j.unlocks['photo-bac'] = { answered: { question: 'heritier', option: 'maren' } };
+      }),
+    );
+    expect(errorsOf(r, 4).join('\n')).toMatch(/`answered` interdit/);
+    // La fixture elle-même utilise `answered` et `not` dans les fins, sections et askedWhen.
+    expect(base.issues.errors).toEqual([]);
+  });
+
+  it('4 · askedWhen qui dépend de sa propre réponse', async () => {
+    const r = await checkWith((root) =>
+      editJson(root, 'progression.json', (j) => {
+        j.report[0].askedWhen = { not: { answered: { question: 'heritier', option: 'maren' } } };
+      }),
+    );
+    expect(errorsOf(r, 4).join('\n')).toMatch(
+      /question du rapport « heritier » dépend de lui-même/,
+    );
+  });
+
+  it('6 · fin inatteignable quelle que soit la combinaison de réponses', async () => {
+    const r = await checkWith((root) =>
+      editJson(root, 'progression.json', (j) => {
+        j.report[1].options[1].availableWhen = { lockedCount: { gte: 99 } };
+      }),
+    );
+    expect(errorsOf(r, 6).join('\n')).toMatch(/fin « fin-edda » inatteignable/);
   });
 });

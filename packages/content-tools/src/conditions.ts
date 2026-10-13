@@ -11,11 +11,21 @@ export type AtomKind =
   | 'locked'
   | 'groupLocked'
   | 'secret'
-  | 'endingReached';
+  | 'endingReached'
+  | 'answered';
 
 export interface AtomRef {
   kind: AtomKind;
+  /** Pour `answered` : la question. */
   id: string;
+  /** Pour `answered` : l'option. */
+  option?: string;
+}
+
+function answeredRef(o: Record<string, unknown>): AtomRef | null {
+  if (!('answered' in o)) return null;
+  const a = o.answered as { question: string; option: string };
+  return { kind: 'answered', id: a.question, option: a.option };
 }
 
 const ID_ATOMS: readonly AtomKind[] = [
@@ -38,6 +48,8 @@ export function conditionRefs(c: AnyCondition): AtomRef[] {
     else if ('any' in o) (o.any as AnyCondition[]).forEach(walk);
     else if ('not' in o) walk(o.not as AnyCondition);
     else {
+      const a = answeredRef(o);
+      if (a) out.push(a);
       for (const k of ID_ATOMS) if (k in o) out.push({ kind: k, id: o[k] as string });
     }
   };
@@ -45,15 +57,20 @@ export function conditionRefs(c: AnyCondition): AtomRef[] {
   return out;
 }
 
-/** Vrai si une valeur JSON brute contient une clé `not` (règle 4, avant les schémas). */
-export function rawContainsNot(value: unknown): boolean {
-  if (Array.isArray(value)) return value.some(rawContainsNot);
+/** Vrai si une valeur JSON brute contient la clé `key` (règle 4, avant les schémas). */
+export function rawContainsKey(value: unknown, key: string): boolean {
+  if (Array.isArray(value)) return value.some((v) => rawContainsKey(v, key));
   if (value !== null && typeof value === 'object') {
     for (const [k, v] of Object.entries(value)) {
-      if (k === 'not' || rawContainsNot(v)) return true;
+      if (k === key || rawContainsKey(v, key)) return true;
     }
   }
   return false;
+}
+
+/** Vrai si une valeur JSON brute contient une clé `not` (règle 4, avant les schémas). */
+export function rawContainsNot(value: unknown): boolean {
+  return rawContainsKey(value, 'not');
 }
 
 export interface EvalState {
@@ -65,6 +82,8 @@ export interface EvalState {
   secrets: ReadonlySet<string>;
   groups: ReadonlyMap<string, readonly string[]>;
   endingsReached?: ReadonlySet<string>;
+  /** Réponses au rapport final : question → option. */
+  answers?: ReadonlyMap<string, string>;
   allSecrets?: boolean;
 }
 
@@ -74,6 +93,10 @@ export function evaluate(c: AnyCondition, s: EvalState): boolean {
   if ('all' in o) return (o.all as AnyCondition[]).every((x) => evaluate(x, s));
   if ('any' in o) return (o.any as AnyCondition[]).some((x) => evaluate(x, s));
   if ('not' in o) return !evaluate(o.not as AnyCondition, s);
+  if ('answered' in o) {
+    const a = o.answered as { question: string; option: string };
+    return s.answers?.get(a.question) === a.option;
+  }
   if ('read' in o) return s.read.has(o.read as string);
   if ('unlocked' in o) return s.unlocked.has(o.unlocked as string);
   if ('searched' in o) return s.searched.has(o.searched as string);
@@ -100,7 +123,11 @@ export function negatedAtoms(c: AnyCondition): AtomRef[] {
     if ('all' in o) (o.all as AnyCondition[]).forEach((y) => walk(y, neg));
     else if ('any' in o) (o.any as AnyCondition[]).forEach((y) => walk(y, neg));
     else if ('not' in o) walk(o.not as AnyCondition, !neg);
-    else if (neg) for (const k of ID_ATOMS) if (k in o) out.push({ kind: k, id: o[k] as string });
+    else if (neg) {
+      const a = answeredRef(o);
+      if (a) out.push(a);
+      for (const k of ID_ATOMS) if (k in o) out.push({ kind: k, id: o[k] as string });
+    }
   };
   walk(c, false);
   return out;
@@ -144,6 +171,8 @@ export function simplify<T extends AnyCondition>(
     if (r === false) return true;
     return { not: r } as T;
   }
+  const a = answeredRef(o);
+  if (a && !exists(a)) return false;
   for (const k of ID_ATOMS) {
     if (k in o && !exists({ kind: k, id: o[k] as string })) return false;
   }

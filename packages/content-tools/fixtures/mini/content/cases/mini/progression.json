@@ -113,9 +113,19 @@
             "groupLocked": "cadets"
           },
           {
-            "not": {
-              "secret": "lettres-edda"
-            }
+            "any": [
+              {
+                "not": {
+                  "secret": "lettres-edda"
+                }
+              },
+              {
+                "answered": {
+                  "question": "lettres",
+                  "option": "bruler"
+                }
+              }
+            ]
           }
         ]
       },
@@ -131,10 +141,30 @@
           },
           {
             "secret": "lettres-edda"
+          },
+          {
+            "answered": {
+              "question": "lettres",
+              "option": "garder"
+            }
           }
         ]
       },
-      "priority": 2
+      "priority": 2,
+      "sections": {
+        "maren": {
+          "answered": {
+            "question": "heritier",
+            "option": "maren"
+          }
+        },
+        "oskar": {
+          "answered": {
+            "question": "heritier",
+            "option": "oskar"
+          }
+        }
+      }
     }
   ],
   "demo": {
@@ -149,5 +179,43 @@
     ],
     "slots": ["s-ancel", "s-ida", "s-tomas"],
     "end": "registre-val-dormant"
-  }
+  },
+  "report": [
+    {
+      "id": "heritier",
+      "prompt": "À qui revient la malle ?",
+      "kind": "question",
+      "options": [
+        {
+          "id": "maren",
+          "label": "Maren Morvan"
+        },
+        {
+          "id": "oskar",
+          "label": "Oskar Morvan"
+        }
+      ]
+    },
+    {
+      "id": "lettres",
+      "prompt": "Que faire des lettres d'Edda ?",
+      "kind": "choice",
+      "askedWhen": {
+        "secret": "lettres-edda"
+      },
+      "options": [
+        {
+          "id": "bruler",
+          "label": "Les brûler"
+        },
+        {
+          "id": "garder",
+          "label": "Les garder",
+          "availableWhen": {
+            "read": "lettre-edda"
+          }
+        }
+      ]
+    }
+  ]
 }

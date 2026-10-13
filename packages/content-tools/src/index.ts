@@ -16,4 +16,5 @@ export * from './check';
 export * from './report';
 export * from './build';
 export * from './zip';
+export * from './sections';
 export * from './cli';

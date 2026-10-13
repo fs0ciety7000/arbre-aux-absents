@@ -6,6 +6,8 @@ import { evaluate, negatedAtoms, simplify, type EvalState } from '../src/conditi
 import { normalize, hashAnswer, cyrb53, shortHash } from '../src/shared';
 import { checkSvg, optimizeSvg, prefixIds } from '../src/svg';
 import { createZip } from '../src/zip';
+import { splitSections } from '../src/sections';
+import { reportCombinations } from '../src/solver';
 
 describe('normalize / hachage', () => {
   it('NFD, diacritiques, casse, ponctuation, espaces, ligatures', () => {
@@ -220,5 +222,59 @@ describe('zip', () => {
 
   it('refuse les chemins hors archive', () => {
     expect(() => createZip([{ name: '../x', data: Buffer.from('') }])).toThrow();
+  });
+});
+
+describe('rapport final et sections', () => {
+  it('combinaisons : askedWhen dépend des réponses précédentes, options filtrées', () => {
+    const s: EvalState = {
+      read: new Set(['a']),
+      unlocked: new Set(),
+      searched: new Set(),
+      visited: new Set(),
+      locked: new Set(),
+      secrets: new Set(),
+      groups: new Map(),
+    };
+    const combos = reportCombinations(
+      [
+        {
+          id: 'q1',
+          prompt: 'Q1',
+          kind: 'question',
+          options: [
+            { id: 'x', label: 'X' },
+            { id: 'y', label: 'Y' },
+          ],
+        },
+        {
+          id: 'q2',
+          prompt: 'Q2',
+          kind: 'choice',
+          askedWhen: { answered: { question: 'q1', option: 'x' } },
+          options: [
+            { id: 'u', label: 'U' },
+            { id: 'v', label: 'V', availableWhen: { read: 'b' } },
+          ],
+        },
+      ],
+      s,
+    );
+    expect(combos.map((c) => Object.fromEntries(c))).toEqual([{ q1: 'x', q2: 'u' }, { q1: 'y' }]);
+  });
+
+  it('découpage des sections', () => {
+    const { sections, errors } = splitSections([
+      { t: 'p', c: [{ t: 'text', v: 'intro' }] },
+      { t: 'h', level: 2, c: [{ t: 'text', v: '[a] Titre A' }] },
+      { t: 'h', level: 3, c: [{ t: 'text', v: '[b] pas une section' }] },
+      { t: 'h', level: 2, c: [{ t: 'text', v: '[a]' }] },
+    ]);
+    expect(sections.map((x) => [x.label, x.title, x.body.length])).toEqual([
+      [null, null, 1],
+      ['a', 'Titre A', 1],
+      ['a', null, 0],
+    ]);
+    expect(errors).toEqual(['section [a] en double']);
   });
 });
