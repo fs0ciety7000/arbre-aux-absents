@@ -113,7 +113,7 @@ Configuration : `apps/game/src-tauri/` (Tauri ≥ 2.12, plugins `fs` et `dialog`
 | Élément | Valeur |
 |---|---|
 | Identifiant | `org.cardormedia.arbreauxabsents` |
-| Nom | « L'Arbre aux absents » (binaire `arbre-aux-absents`) |
+| Nom | « L’Arbre aux absents » avec apostrophe typographique U+2019 (binaire `arbre-aux-absents`) : l'apostrophe droite `'` casse l'installeur NSIS (`IsShortcutTarget` met le chemin du raccourci entre `'…'` : « NSISCOMCALL requires 4 parameter(s), passed 8 ») et les ressources Android |
 | Version | celle de `apps/game/package.json` |
 | Frontend | `frontendDist: ../dist`, `devUrl: http://localhost:5173` |
 | Avant build | `npm run tauri:before-build` = `content:build` + `vite build --mode tauri` (`apps/game/.env.tauri` → `VITE_TARGET=tauri`) |
@@ -192,8 +192,12 @@ Cache : npm (`setup-node`), cargo (`Swatinem/rust-cache`), couches Docker (`type
   `[tauri]` lance les mêmes builds, en artefacts seulement (les autres poussées sont sautées).
 - Matrice desktop via `tauri-apps/tauri-action` : `ubuntu-22.04` (AppImage, deb, rpm),
   `windows-latest` (NSIS, msi), `macos-latest` (`--target universal-apple-darwin`, dmg).
-- Android : JDK 17, SDK + NDK 27, cibles Rust Android, `tauri android init --ci`, puis APK/AAB
-  signés si les 4 secrets existent, sinon APK debug.
+- Android : JDK 17, SDK **préinstallé** de l'image (`$ANDROID_HOME`, pas `setup-android`) + NDK 27,
+  cibles Rust Android, `tauri android init --ci`, puis APK/AAB signés si les 4 secrets existent,
+  sinon APK debug.
+- Pièges connus : `tauriScript: npm run tauri` **sans** `--` final (tauri-action ajoute lui-même
+  `--` avant `args`) ; sur `ubuntu-22.04`, retirer `libunwind-14-dev` avant d'installer
+  `libgstreamer1.0-dev` (conflit avec `libunwind-dev`).
 
 ## 4. Variables et secrets
 

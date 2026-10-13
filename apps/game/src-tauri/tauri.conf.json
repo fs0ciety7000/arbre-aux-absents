@@ -1,6 +1,6 @@
 {
   "$schema": "../../../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "L'Arbre aux absents",
+  "productName": "L’Arbre aux absents",
   "mainBinaryName": "arbre-aux-absents",
   "version": "../package.json",
   "identifier": "org.cardormedia.arbreauxabsents",

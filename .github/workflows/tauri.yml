@@ -81,7 +81,10 @@ jobs:
           key: ${{ matrix.name }}
       - name: Dépendances système (Linux, GStreamer pour bundleMediaFramework)
         if: matrix.name == 'linux'
+        # L'image ubuntu-22.04 préinstalle libunwind-14-dev, incompatible avec libunwind-dev
+        # (dépendance de libgstreamer1.0-dev) : on le retire avant l'installation.
         run: |
+          sudo apt-get remove -y libunwind-14-dev
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             libwebkit2gtk-4.1-dev libxdo-dev libssl-dev librsvg2-dev libayatana-appindicator3-dev \
@@ -117,7 +120,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           projectPath: apps/game
-          tauriScript: npm run tauri --
+          # Sans « -- » final : tauri-action insère lui-même « -- » avant `args` avec npm
+          # (sinon `--target` partirait à cargo au lieu de la CLI Tauri).
+          tauriScript: npm run tauri
           args: ${{ matrix.args }}
           releaseId: ${{ needs.release.outputs.id }}
       - uses: actions/upload-artifact@v4
@@ -154,10 +159,19 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - name: NDK
+      # SDK Android préinstallé sur l'image (ANDROID_HOME) : android-actions/setup-android@v3
+      # échoue (`sdkmanager tools` : paquet « tools » retiré du dépôt Google).
+      - name: SDK Android (préinstallé) + NDK
         run: |
-          sdkmanager --install "ndk;${NDK_VERSION}"
+          test -n "$ANDROID_HOME" && test -d "$ANDROID_HOME"
+          sdkmanager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -x "$sdkmanager" ]; then
+            sdkmanager=$(ls -d "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager | sort -V | tail -n 1)
+          fi
+          echo "sdkmanager : $sdkmanager"
+          yes | "$sdkmanager" --licenses > /dev/null || true
+          "$sdkmanager" --install "platform-tools" "ndk;${NDK_VERSION}"
+          echo "ANDROID_SDK_ROOT=${ANDROID_HOME}" >> "$GITHUB_ENV"
           echo "NDK_HOME=${ANDROID_HOME}/ndk/${NDK_VERSION}" >> "$GITHUB_ENV"
       - uses: dtolnay/rust-toolchain@stable
         with:
