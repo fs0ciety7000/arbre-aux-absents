@@ -1,0 +1,387 @@
+/*
+ * Base globale : reset léger, typographie, focus, sélection, mots-clés, surlignages,
+ * curseurs contextuels, mouvement réduit, couleurs forcées. Ne lit que des tokens.
+ * Ordre d'import : fonts.css → tokens.css → base.css → art.css (voir index.css).
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  font-family: var(--font-ui);
+  font-size: 100%; /* respecte la taille de police du système */
+  line-height: var(--leading-ui);
+  font-synthesis: none;
+  color: var(--text);
+  background-color: var(--canvas);
+  scrollbar-color: var(--line-strong) transparent;
+  hanging-punctuation: first;
+}
+
+body {
+  min-height: 100dvh;
+  font-size: var(--step-0);
+  color: var(--text);
+  /* La lampe : un halo chaud très discret au-dessus du bureau */
+  background:
+    radial-gradient(120% 70% at 22% -12%, var(--lamp-glow), transparent 62%) fixed,
+    var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-wrap: break-word;
+}
+
+img,
+svg,
+video,
+canvas,
+picture {
+  display: block;
+  max-width: 100%;
+}
+svg:not([width]) {
+  height: auto;
+}
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+button,
+[role='button'],
+a,
+label,
+summary {
+  touch-action: manipulation;
+}
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+a:hover {
+  color: var(--accent-strong);
+  text-decoration-thickness: 2px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+h1 {
+  font-size: var(--step-4);
+}
+h2 {
+  font-size: var(--step-3);
+}
+h3 {
+  font-size: var(--step-2);
+  line-height: var(--leading-snug);
+}
+h4 {
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+}
+p,
+li,
+dd {
+  text-wrap: pretty;
+}
+small {
+  font-size: var(--step--1);
+}
+
+/* ── Contexte papier ─────────────────────────────────────────────── */
+[data-surface='paper'] {
+  color-scheme: light;
+  color: var(--text);
+}
+/* Grain de papier optionnel : ajouter .grain à une surface papier positionnée */
+.grain {
+  position: relative;
+  isolation: isolate;
+}
+.grain::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  background-image: var(--paper-grain-image);
+  opacity: var(--paper-grain);
+  mix-blend-mode: multiply;
+}
+
+/* ── Lecture (documents, transcriptions, textes longs du site) ───── */
+.reading {
+  font-family: var(--font-read);
+  font-size: var(--step-read);
+  line-height: var(--leading-read);
+  letter-spacing: var(--tracking-read);
+  max-width: var(--measure);
+  text-align: start; /* jamais justifié */
+  hyphens: manual;
+}
+.reading > * + * {
+  margin-block-start: 0.9em;
+}
+.ink-type {
+  font-family: var(--font-type);
+  color: var(--ink-type);
+  letter-spacing: 0;
+}
+.ink-hand {
+  font-family: var(--font-hand);
+  font-size: calc(1em * var(--hand-boost));
+  line-height: 1.35;
+  color: var(--ink-hand);
+}
+.num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.caps {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  font-size: var(--step--1);
+  font-weight: var(--weight-semibold);
+}
+
+/* ── Mots-clés soulignés : 3 états distingués par la FORME ───────── */
+/* <span class="kw" data-state="new|known|searched" role="button" tabindex="0">…</span> */
+.kw {
+  position: relative;
+  color: inherit;
+  cursor: var(--cursor-look);
+  text-decoration-line: underline;
+  text-decoration-color: var(--keyword);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22em;
+  border-radius: var(--radius-xs);
+}
+.kw::before {
+  /* zone sensible étendue à ≥ 44 px de haut, invisible */
+  content: '';
+  position: absolute;
+  inset: -9px -2px;
+  inset-block: calc((var(--hit) - 1lh) / -2);
+}
+.kw[data-state='new'] {
+  text-decoration-style: dotted;
+  text-decoration-thickness: 3px;
+}
+.kw[data-state='new']::after {
+  content: '●';
+  font-size: 0.5em;
+  vertical-align: super;
+  margin-inline-start: 0.15em;
+  color: var(--keyword);
+}
+.kw[data-state='searched']::after {
+  content: '';
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  vertical-align: super;
+  margin-inline-start: 0.15em;
+  background: var(--keyword);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='6.5' cy='6.5' r='4.5' fill='none' stroke='black' stroke-width='2.2'/%3E%3Cpath d='M10 10l4.5 4.5' stroke='black' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='6.5' cy='6.5' r='4.5' fill='none' stroke='black' stroke-width='2.2'/%3E%3Cpath d='M10 10l4.5 4.5' stroke='black' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+.kw:hover {
+  background: var(--accent-tint);
+}
+:root[data-contrast='high'] .kw {
+  text-decoration-thickness: 3px;
+}
+
+/* ── Surlignages : couleur + motif (lisibles sans la couleur) ─────── */
+.hl-1,
+.hl-2,
+.hl-3,
+.hl-4,
+.hl-5 {
+  color: inherit;
+  border-radius: 1px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding-inline: 0.08em;
+}
+.hl-1 {
+  background-color: var(--hl-1);
+}
+.hl-2 {
+  background-color: var(--hl-2);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    color-mix(in oklch, var(--text) 22%, transparent) 0 1px,
+    transparent 1px 5px
+  );
+}
+.hl-3 {
+  background-color: var(--hl-3);
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--text) 30%, transparent) 0.7px,
+    transparent 1px
+  );
+  background-size: 5px 5px;
+}
+.hl-4 {
+  background-color: var(--hl-4);
+  text-decoration: underline wavy color-mix(in oklch, var(--text) 55%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.28em;
+}
+.hl-5 {
+  background-color: var(--hl-5);
+  box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--text) 60%, transparent);
+}
+
+/* ── Focus ───────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+::selection {
+  background: var(--selection);
+  color: var(--text);
+}
+
+/* ── Curseurs contextuels : les verbes du point & click ──────────── */
+/* data-verb sur l'élément survolé ; l'état est TOUJOURS doublé à l'écran (icône, soulignement). */
+[data-verb='look'] {
+  cursor: var(--cursor-look);
+}
+[data-verb='take'] {
+  cursor: var(--cursor-take);
+}
+[data-verb='take']:active,
+[data-verb='hold'],
+.is-dragging {
+  cursor: var(--cursor-hold);
+}
+[data-verb='write'] {
+  cursor: var(--cursor-write);
+}
+[data-verb='pin'] {
+  cursor: var(--cursor-pin);
+}
+[data-verb='use'] {
+  cursor: var(--cursor-use);
+}
+
+/* ── Utilitaires ─────────────────────────────────────────────────── */
+.visually-hidden:not(:focus):not(:active) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.skip-link {
+  position: fixed;
+  inset-block-start: var(--space-2);
+  inset-inline-start: var(--space-2);
+  z-index: var(--z-skip);
+  padding: var(--space-3) var(--space-4);
+  min-height: var(--hit);
+  border-radius: var(--radius-s);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: var(--weight-semibold);
+  transform: translateY(calc(-100% - var(--space-4)));
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.skip-link:focus-visible {
+  transform: none;
+}
+[hidden] {
+  display: none !important;
+}
+
+/* ── Mouvement réduit : filet de sécurité (les durées sont déjà à ~0 dans tokens.css) ── */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) {
+    scroll-behavior: auto;
+  }
+  :root:not([data-motion='full']) *,
+  :root:not([data-motion='full']) *::before,
+  :root:not([data-motion='full']) *::after {
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+:root[data-motion='reduced'] *,
+:root[data-motion='reduced'] *::before,
+:root[data-motion='reduced'] *::after {
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+}
+
+/* ── Logos de la maison (DESIGN.md §11) ─────────────────────────── */
+/* SVG inlinés dont les teintes passent par --logo-t1/t2/t3 : monochrome par défaut. */
+.logo-mono {
+  --logo-t1: var(--text-muted);
+  --logo-t2: var(--text-muted);
+  --logo-t3: var(--text-muted);
+}
+[data-surface='paper'] .logo-mono,
+.logo-mono[data-surface='paper'] {
+  --logo-t1: var(--ink);
+  --logo-t2: var(--ink);
+  --logo-t3: var(--ink);
+}
+
+/* ── Couleurs forcées (Windows) ──────────────────────────────────── */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline-color: Highlight;
+  }
+  .kw {
+    text-decoration-color: LinkText;
+  }
+  .hl-1,
+  .hl-2,
+  .hl-3,
+  .hl-4,
+  .hl-5 {
+    forced-color-adjust: none;
+    background: Mark;
+    color: MarkText;
+  }
+  .grain::after {
+    display: none;
+  }
+  .logo-mono {
+    --logo-t1: CanvasText;
+    --logo-t2: CanvasText;
+    --logo-t3: CanvasText;
+  }
+}

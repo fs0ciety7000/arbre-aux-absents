@@ -9,8 +9,8 @@ Fait :
 - [x] Agents spécialisés : game-designer, level-designer, scenariste, cartographe
 - [x] Stack et contrat (architect) : `docs/ARCHITECTURE.md`
 - [x] Game design : `docs/game/`
-- [ ] Bible du monde et de l'affaire : `docs/monde/`, `docs/scenario/`
-- [ ] Lot 0 : monorepo, contrat zod, `check` vert
+- [x] Bible du monde et de l'affaire : `docs/monde/`, `docs/scenario/`
+- [x] Lot 0 : monorepo, contrat zod, `check` vert
 - [ ] Vague A : moteur, outils de contenu, caméra, design system, infra
 - [ ] Vague B : interface du jeu, plateforme, site vitrine
 - [ ] Vague C : carte du monde, textes, progression, portraits
@@ -40,3 +40,9 @@ Fait :
 | 13/10 | Manette : navigation par focus par défaut | Plus fiable qu'un curseur virtuel sur une interface de panneaux. |
 | 13/10 | Démo itch.io : prologue + première branche | Montre la boucle complète sans divulguer l'intrigue. |
 | 13/10 | Domaine par défaut du site : `arbre.fs0ciety.org`, rien en ligne sans feu vert | Instruction du projet. |
+| 13/10 | DA « Le bureau sous la lampe » : thème sombre, documents sur papier, contraste élevé 7:1, pas de thème clair | Ambiance d'enquête nocturne ; le papier joue le rôle du clair. |
+| 13/10 | Accent laiton pour l'action, « établi » marqué par un tampon violet | Le doré se lisait comme une récompense. |
+| 13/10 | Polices OFL : Literata, Instrument Sans, Courier Prime, Caveat (désactivable), Atkinson Hyperlegible Next | Lecture, UI, documents tapés, manuscrit ; option lisibilité. |
+| 13/10 | Carte : encre ferro-gallique bleu-noir et pigments propres au jeu, même procédé que carte.fs0ciety.org | Référence demandée, identité distincte. |
+| 13/10 | Curseurs-verbes point & click via `data-verb`, toujours doublés d'un libellé | Références point & click sans dépendre du survol. |
+| 13/10 | Logos de la maison : crédits, pied du site et écran de lancement uniquement | Demande : aucune autre référence. |

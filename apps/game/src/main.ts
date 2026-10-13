@@ -1,5 +1,5 @@
 import { mount } from 'svelte';
-import '@arbre/ui/tokens.css';
+import '@arbre/ui/styles/index.css';
 import App from './App.svelte';
 
 const target = document.getElementById('app');

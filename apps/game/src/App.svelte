@@ -12,8 +12,8 @@
 <style>
   :global(body) {
     margin: 0;
-    background: var(--color-canvas);
-    color: var(--color-text);
+    background: var(--canvas);
+    color: var(--text);
     font-family: var(--font-body);
   }
   main {
@@ -34,6 +34,6 @@
     margin: 0 auto;
   }
   .muted {
-    color: var(--color-text-muted);
+    color: var(--text-muted);
   }
 </style>

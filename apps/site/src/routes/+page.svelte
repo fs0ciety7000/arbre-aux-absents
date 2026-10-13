@@ -30,6 +30,6 @@
     font-size: clamp(2rem, 6vw, 3.5rem);
   }
   .muted {
-    color: var(--color-text-muted);
+    color: var(--text-muted);
   }
 </style>

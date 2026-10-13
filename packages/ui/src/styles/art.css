@@ -1,0 +1,334 @@
+/*
+ * Classes d'art : seules couleurs admises dans les SVG de contenu (carte, portraits,
+ * illustrations, photographies). Liste exportée par src/art-classes.ts (ART_CLASSES),
+ * vérifiée par content:check (ARCHITECTURE §3.7, règle 8). Guide : docs/DESIGN.md §10.
+ *
+ * Tout SVG d'art est inliné avec la classe .art sur sa racine. Les motifs (#art-hatch,
+ * #art-hatch-dense, #art-stipple) viennent de <ArtDefs />, rendu une fois par écran.
+ * Technique : taille-douce à l'encre ferro-gallique (bleu-noir) rehaussée d'aquarelle.
+ */
+
+.art {
+  color: var(--art-ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+}
+
+/* ── Papier ──────────────────────────────────────────────────────── */
+.art .paper {
+  fill: var(--art-paper);
+  stroke: none;
+}
+.art .paper-shade {
+  fill: var(--art-paper-shade);
+  stroke: none;
+}
+
+/* ── Traits (colorent le stroke ; fill="currentColor" pour une silhouette pleine) ── */
+.art .ink,
+.art .ink-soft,
+.art .ink-faint {
+  fill: none;
+  stroke: currentColor;
+}
+.art .ink {
+  color: var(--art-ink);
+}
+.art .ink:not([stroke-width]) {
+  stroke-width: var(--art-stroke-base);
+}
+.art .ink-soft {
+  color: var(--art-ink-soft);
+}
+.art .ink-soft:not([stroke-width]) {
+  stroke-width: var(--art-stroke-fine);
+}
+.art .ink-faint {
+  color: var(--art-ink-faint);
+}
+.art .ink-faint:not([stroke-width]) {
+  stroke-width: var(--art-stroke-hair);
+}
+.art .ink[fill='currentColor'],
+.art .ink-soft[fill='currentColor'],
+.art .ink-faint[fill='currentColor'] {
+  fill: currentColor;
+}
+
+/* ── Motifs de gravure ───────────────────────────────────────────── */
+.art .hatch {
+  fill: url(#art-hatch);
+  stroke: none;
+}
+.art .hatch-dense {
+  fill: url(#art-hatch-dense);
+  stroke: none;
+}
+.art .stipple {
+  fill: url(#art-stipple);
+  stroke: none;
+}
+/* Traits à l'intérieur d'un <pattern> */
+.art pattern .hatch,
+.art pattern .hatch-dense {
+  fill: none;
+  stroke: var(--art-ink-faint);
+  stroke-width: var(--art-hatch-width);
+}
+.art pattern .hatch-dense {
+  stroke: var(--art-ink-soft);
+  stroke-width: var(--art-hatch-dense-width);
+}
+.art pattern .stipple {
+  fill: var(--art-ink-soft);
+  stroke: none;
+}
+
+/* ── Eau ─────────────────────────────────────────────────────────── */
+.art .water {
+  fill: var(--art-water);
+  fill-opacity: var(--art-water-opacity);
+  stroke: none;
+  color: var(--art-water-ink);
+}
+.art .water-deep {
+  fill: var(--art-water-deep);
+  fill-opacity: var(--art-water-opacity);
+  stroke: none;
+  color: var(--art-water-ink);
+}
+.art .water[stroke='currentColor'],
+.art .water-deep[stroke='currentColor'] {
+  stroke: currentColor;
+  stroke-width: var(--art-stroke-fine);
+}
+
+/* ── Lavis (aquarelle transparente ; jamais plus de 2 couches) ───── */
+.art [class*='wash-'] {
+  /* niveau du lavis porté par `opacity` (seule propriété animée, composée par le GPU) */
+  opacity: var(--art-wash-opacity);
+  stroke: none;
+  color: var(--art-ink-soft);
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.art .wash-safran {
+  fill: var(--art-wash-safran);
+}
+.art .wash-carmin {
+  fill: var(--art-wash-carmin);
+}
+.art .wash-indigo {
+  fill: var(--art-wash-indigo);
+}
+.art .wash-sienne {
+  fill: var(--art-wash-sienne);
+}
+.art .wash-sauge {
+  fill: var(--art-wash-sauge);
+}
+.art .wash-lilas {
+  fill: var(--art-wash-lilas);
+}
+.art .wash-celadon {
+  fill: var(--art-wash-celadon);
+}
+.art .wash-ardoise {
+  fill: var(--art-wash-ardoise);
+}
+.art [class*='wash-'][stroke='currentColor'] {
+  stroke: currentColor;
+  stroke-width: var(--art-stroke-hair);
+}
+
+/* ── Portraits ───────────────────────────────────────────────────── */
+.art [class*='skin-'],
+.art [class*='hair-'] {
+  fill-opacity: var(--art-skin-opacity);
+  stroke: none;
+}
+.art .skin-1 {
+  fill: var(--art-skin-1);
+}
+.art .skin-2 {
+  fill: var(--art-skin-2);
+}
+.art .skin-3 {
+  fill: var(--art-skin-3);
+}
+.art .skin-4 {
+  fill: var(--art-skin-4);
+}
+.art .skin-5 {
+  fill: var(--art-skin-5);
+}
+.art .skin-6 {
+  fill: var(--art-skin-6);
+}
+.art .hair-blond {
+  fill: var(--art-hair-blond);
+}
+.art .hair-roux {
+  fill: var(--art-hair-roux);
+}
+.art .hair-chatain {
+  fill: var(--art-hair-chatain);
+}
+.art .hair-brun {
+  fill: var(--art-hair-brun);
+}
+.art .hair-noir {
+  fill: var(--art-hair-noir);
+}
+.art .hair-gris {
+  fill: var(--art-hair-gris);
+}
+.art .blush {
+  fill: var(--art-blush);
+  fill-opacity: var(--art-blush-opacity);
+  stroke: none;
+}
+.art .rehaut {
+  fill: var(--art-rehaut);
+  fill-opacity: var(--art-rehaut-opacity);
+  stroke: none;
+}
+.art .ombre {
+  fill: var(--art-ombre);
+  fill-opacity: var(--art-ombre-opacity);
+  stroke: none;
+}
+
+/* ── Photographies d'époque (monochrome viré) ────────────────────── */
+.art .photo-paper {
+  fill: var(--art-photo-paper);
+  stroke: none;
+}
+.art .photo-light {
+  fill: var(--art-photo-light);
+  stroke: none;
+}
+.art .photo-mid {
+  fill: var(--art-photo-mid);
+  stroke: none;
+}
+.art .photo-dark {
+  fill: var(--art-photo-dark);
+  stroke: none;
+}
+
+/* ── Toponymes et légendes (texte SVG réel, capitales par CSS) ───── */
+.art .label,
+.art .label-major,
+.art .label-region,
+.art .label-water,
+.art .label-note {
+  fill: var(--art-ink);
+  stroke: var(--art-paper);
+  stroke-width: var(--art-label-halo);
+  stroke-linejoin: round;
+  paint-order: stroke;
+  font-weight: var(--art-label-weight);
+}
+.art .label:not([font-size]) {
+  font-size: var(--art-label-size);
+}
+.art .label {
+  text-transform: uppercase;
+  letter-spacing: var(--art-tracking-label);
+}
+.art .label-major:not([font-size]) {
+  font-size: var(--art-label-major-size);
+}
+.art .label-major {
+  text-transform: uppercase;
+  letter-spacing: var(--art-tracking-major);
+  font-weight: var(--weight-semibold);
+}
+.art .label-region:not([font-size]) {
+  font-size: var(--art-label-region-size);
+}
+.art .label-region {
+  text-transform: uppercase;
+  letter-spacing: var(--art-tracking-region);
+  fill: var(--art-ink-soft);
+  font-weight: var(--weight-regular);
+}
+.art .label-water:not([font-size]) {
+  font-size: var(--art-label-water-size);
+}
+.art .label-water {
+  font-style: italic;
+  letter-spacing: 0.04em;
+  fill: var(--art-water-ink);
+}
+.art .label-note:not([font-size]) {
+  font-size: var(--art-label-note-size);
+}
+.art .label-note {
+  font-style: italic;
+  fill: var(--art-ink-soft);
+}
+
+/* ── États des lieux sur la carte (attributs posés par le jeu, pas par le SVG) ── */
+/* <g id="place-<id>" data-state="mentioned|open|exhausted"> */
+.art g[data-state='mentioned'] [class*='wash-'] {
+  opacity: 0;
+}
+.art g[data-state='mentioned'] .ink,
+.art g[data-state='mentioned'] .ink-soft {
+  stroke-dasharray: var(--art-mentioned-dash);
+  color: var(--art-ink-faint);
+}
+.art g[data-state='mentioned'] .label,
+.art g[data-state='mentioned'] .label-major {
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+.art g[id^='place-']:hover [class*='wash-'],
+.art g[id^='place-']:focus-visible [class*='wash-'],
+.art g[id^='place-']:focus-within [class*='wash-'],
+.art g[id^='place-'][aria-current='true'] [class*='wash-'],
+.art g[id^='place-'][data-active] [class*='wash-'] {
+  opacity: var(--art-wash-opacity-active);
+}
+.art g[id^='place-']:focus-visible {
+  outline: none; /* l'anneau est dessiné par <FocusRing> en surimpression HTML */
+}
+
+/* ── Couleurs forcées : le trait et le texte survivent, les lavis disparaissent ── */
+@media (forced-colors: active) {
+  .art .paper,
+  .art .paper-shade,
+  .art .photo-paper {
+    fill: Canvas;
+  }
+  .art .ink,
+  .art .ink-soft,
+  .art .ink-faint {
+    color: CanvasText;
+  }
+  .art [class*='wash-'],
+  .art [class*='skin-'],
+  .art [class*='hair-'],
+  .art .water,
+  .art .water-deep,
+  .art .blush,
+  .art .ombre,
+  .art .rehaut {
+    fill: none;
+  }
+  .art .label,
+  .art .label-major,
+  .art .label-region,
+  .art .label-water,
+  .art .label-note {
+    fill: CanvasText;
+    stroke: Canvas;
+  }
+  .art g[id^='place-']:focus-visible {
+    outline: 3px solid Highlight;
+  }
+}

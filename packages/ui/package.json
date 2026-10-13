@@ -2,13 +2,22 @@
   "name": "@arbre/ui",
   "version": "0.0.0",
   "private": true,
-  "description": "Design system : tokens, art.css, polices, primitives Svelte (squelette, lot 0).",
+  "description": "Design system : tokens, art.css, polices, primitives Svelte.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./tokens.css": "./src/tokens.css"
+    "./styles/index.css": "./src/styles/index.css",
+    "./styles/*": "./src/styles/*",
+    "./art-classes": "./src/art-classes.ts",
+    "./primitives": "./src/primitives/index.ts",
+    "./fonts/*": "./src/fonts/*"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
+    "contrast:check": "node scripts/contrast.mjs --strict"
+  },
+  "svelte": "./src/index.ts",
+  "peerDependencies": {
+    "svelte": "^5"
   }
 }

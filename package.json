@@ -14,8 +14,12 @@
   "scripts": {
     "dev": "npm run content:build && npm run dev -w @arbre/game",
     "dev:site": "npm run content:build && npm run dev -w @arbre/site",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run content:check",
+    "dev:tauri": "npm run tauri:dev",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run contrast:check -w @arbre/ui && npm run test && npm run content:check",
     "build": "npm run content:build && npm run build -w @arbre/game && npm run build -w @arbre/site",
+    "tauri:dev": "npm run tauri:dev -w @arbre/game",
+    "tauri:build": "npm run tauri:build -w @arbre/game",
+    "tauri:android": "npm run tauri:android -w @arbre/game",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import '@arbre/ui/tokens.css';
+  import '@arbre/ui/styles/index.css';
   import type { Snippet } from 'svelte';
 
   let { children }: { children: Snippet } = $props();
@@ -10,8 +10,8 @@
 <style>
   :global(body) {
     margin: 0;
-    background: var(--color-canvas);
-    color: var(--color-text);
+    background: var(--canvas);
+    color: var(--text);
     font-family: var(--font-body);
   }
 </style>

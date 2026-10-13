@@ -1,0 +1,5 @@
+/* Point d'entrée des styles : importer une fois par application (jeu, site). */
+@import './fonts.css';
+@import './tokens.css';
+@import './base.css';
+@import './art.css';

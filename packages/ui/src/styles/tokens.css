@@ -1,0 +1,504 @@
+/*
+ * L'Arbre aux absents — tokens du design system (« Le bureau sous la lampe »).
+ * Source de vérité documentée : docs/DESIGN.md. Tout ajout ici est documenté là-bas
+ * dans le même changement. Contrastes : node packages/ui/scripts/contrast.mjs
+ *
+ * Trois couches :
+ *   1. palette brute  --raw-*            jamais lue par un composant
+ *   2. sémantique     --canvas, --text…  seule couche lue par les composants
+ *   3. contextes      [data-surface='paper'] remappe la sémantique sur le papier ;
+ *                     :root[data-contrast='high'] remappe tout en contraste élevé.
+ * Réglages joueur (posés sur <html> par le jeu, cf. Settings) :
+ *   data-text-scale, data-reading-font, data-handwriting, data-contrast, data-motion,
+ *   data-texture.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* ── 1. Palette brute ─────────────────────────────────────────────── */
+  /* Nuit : bleu d'encre du bureau, du plus profond au plus clair */
+  --raw-night-1000: oklch(0.14 0.02 258);
+  --raw-night-950: oklch(0.17 0.022 258);
+  --raw-night-900: oklch(0.215 0.024 258);
+  --raw-night-850: oklch(0.255 0.026 258);
+  --raw-night-800: oklch(0.3 0.028 258);
+  --raw-night-700: oklch(0.37 0.026 258);
+  --raw-night-500: oklch(0.6 0.03 258);
+  --raw-night-400: oklch(0.66 0.025 258);
+  /* Vélin : blancs chauds du texte sous la lampe */
+  --raw-vellum-100: oklch(0.95 0.012 88);
+  --raw-vellum-300: oklch(0.81 0.018 85);
+  /* Laiton : la lampe, unique couleur d'action */
+  --raw-brass-300: oklch(0.87 0.11 84);
+  --raw-brass-400: oklch(0.81 0.125 78);
+  --raw-brass-600: oklch(0.48 0.1 66);
+  --raw-brass-700: oklch(0.43 0.095 62);
+  /* Encre violette des tampons administratifs : « Établi » */
+  --raw-stamp-300: oklch(0.76 0.12 300);
+  --raw-stamp-700: oklch(0.46 0.16 300);
+  /* États */
+  --raw-red-300: oklch(0.75 0.14 25);
+  --raw-red-700: oklch(0.48 0.16 25);
+  --raw-green-300: oklch(0.8 0.12 160);
+  --raw-green-700: oklch(0.46 0.09 155);
+  --raw-orange-300: oklch(0.8 0.13 55);
+  --raw-orange-700: oklch(0.52 0.13 50);
+  --raw-blue-300: oklch(0.8 0.08 230);
+  --raw-blue-700: oklch(0.47 0.1 240);
+  /* Papiers et encres des documents */
+  --raw-paper-new: oklch(0.978 0.01 92);
+  --raw-paper: oklch(0.955 0.018 90);
+  --raw-paper-aged: oklch(0.925 0.024 88);
+  --raw-paper-stain: oklch(0.89 0.03 84);
+  --raw-paper-line: oklch(0.84 0.025 86);
+  --raw-ink-gall: oklch(0.27 0.045 264); /* encre ferro-gallique bleu-noir */
+  --raw-ink-gall-muted: oklch(0.44 0.045 262);
+  --raw-ink-gall-faint: oklch(0.58 0.035 262);
+  --raw-ink-pen: oklch(0.38 0.1 258); /* encre bleue de plume */
+  --raw-ink-ribbon: oklch(0.26 0.012 260); /* ruban de machine à écrire */
+
+  /* ── 2. Sémantique : contexte « lampe » (défaut, bureau sombre) ───── */
+  --canvas: var(--raw-night-950);
+  --surface-1: var(--raw-night-900);
+  --surface-2: var(--raw-night-850);
+  --surface-3: var(--raw-night-800);
+  --line: var(--raw-night-700);
+  --line-strong: var(--raw-night-500);
+  --text: var(--raw-vellum-100);
+  --text-muted: var(--raw-vellum-300);
+  --text-faint: var(--raw-night-400);
+  --accent: var(--raw-brass-400);
+  --accent-strong: var(--raw-brass-300);
+  --accent-contrast: var(--raw-night-1000);
+  --accent-tint: oklch(0.81 0.125 78 / 0.14);
+  --focus: var(--raw-brass-300);
+  --focus-halo: var(--raw-night-1000);
+  --danger: var(--raw-red-300);
+  --success: var(--raw-green-300);
+  --warning: var(--raw-orange-300);
+  --info: var(--raw-blue-300);
+  --established: var(--raw-stamp-300);
+  --established-contrast: var(--raw-night-1000);
+  --keyword: var(--raw-brass-400);
+  --selection: oklch(0.6 0.1 78 / 0.45);
+  --scrim: oklch(0.1 0.02 258 / 0.66);
+  --lamp-glow: oklch(0.81 0.125 78 / 0.07);
+  --edge-light: oklch(1 0 0 / 0.06); /* liseré haut des surfaces : la lumière de la lampe */
+
+  /* Papier (global : les documents sont toujours sur papier, même sous la lampe) */
+  --paper-new: var(--raw-paper-new);
+  --paper: var(--raw-paper);
+  --paper-aged: var(--raw-paper-aged);
+  --paper-stain: var(--raw-paper-stain);
+  --paper-line: var(--raw-paper-line);
+  --paper-line-strong: var(--raw-ink-gall-faint);
+  --ink: var(--raw-ink-gall);
+  --ink-muted: var(--raw-ink-gall-muted);
+  --ink-faint: var(--raw-ink-gall-faint);
+  --ink-hand: var(--raw-ink-pen);
+  --ink-type: var(--raw-ink-ribbon);
+  --paper-accent: var(--raw-brass-600);
+  --paper-accent-strong: var(--raw-brass-700);
+  --paper-grain: 0.5; /* opacité du grain de papier (0 avec data-texture='off') */
+  --paper-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+
+  /* Encrage irrégulier des tampons (masque alpha, aucune couleur) */
+  --stamp-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.6 0 0 0 2.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+
+  /* Surlignage : 5 teintes, chacune doublée d'un motif (base.css .hl-1…5) */
+  --hl-1: oklch(0.9 0.13 98 / 0.6); /* jaune, plein */
+  --hl-2: oklch(0.87 0.1 150 / 0.55); /* vert, hachuré */
+  --hl-3: oklch(0.85 0.07 235 / 0.6); /* bleu, pointillé */
+  --hl-4: oklch(0.85 0.08 350 / 0.55); /* rose, ondulé */
+  --hl-5: oklch(0.86 0.09 60 / 0.6); /* orange, encadré */
+
+  /* ── Typographie ─────────────────────────────────────────────────── */
+  --font-read: 'Literata', 'Literata fallback', Georgia, serif;
+  --font-display: var(--font-read);
+  --font-ui: 'Instrument Sans', 'Instrument Sans fallback', system-ui, sans-serif;
+  --font-type: 'Courier Prime', 'Courier New', monospace;
+  --font-hand: 'Caveat', 'Segoe Print', cursive;
+  --font-legible: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+
+  --text-scale: 1;
+  --step--1: calc(clamp(0.875rem, 0.8505rem + 0.1087vw, 0.9375rem) * var(--text-scale));
+  --step-0: calc(clamp(1rem, 0.9755rem + 0.1087vw, 1.0625rem) * var(--text-scale));
+  --step-read: calc(clamp(1.0625rem, 1.0136rem + 0.2174vw, 1.1875rem) * var(--text-scale));
+  --step-1: calc(clamp(1.1875rem, 1.1386rem + 0.2174vw, 1.3125rem) * var(--text-scale));
+  --step-2: calc(clamp(1.375rem, 1.2772rem + 0.4348vw, 1.625rem) * var(--text-scale));
+  --step-3: calc(clamp(1.625rem, 1.4293rem + 0.8696vw, 2.125rem) * var(--text-scale));
+  --step-4: calc(clamp(2rem, 1.6087rem + 1.7391vw, 3rem) * var(--text-scale));
+  --step-5: calc(clamp(2.5rem, 1.8152rem + 3.0435vw, 4.25rem) * var(--text-scale));
+  --hand-boost: 1.3; /* Caveat a un petit œil : ×1,3 pour le même confort que le romain */
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-ui: 1.4;
+  --leading-read: 1.6;
+  --tracking-caps: 0.08em;
+  --tracking-label: 0.02em;
+  --tracking-read: 0;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --measure: 66ch;
+
+  /* ── Espacement (échelle 4 px), rayons, mise en page ──────────────── */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --gutter: clamp(1rem, 0.6087rem + 1.7391vw, 2rem);
+
+  --radius-paper: 2px;
+  --radius-xs: 4px;
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  --border: 1px;
+  --border-strong: 2px;
+
+  --hit: 44px;
+  --hit-l: 48px;
+  --hit-row: 56px;
+  --header-h: 48px;
+  --header-h-phone: 56px;
+  --rail-w: 64px;
+  --rail-w-tablet: 56px;
+  --tabbar-h: 64px;
+  --side-min: 360px;
+  --side-default: 440px;
+  --side-max: 640px;
+  --side-step: 40px;
+  --mini-reader-h: 72px;
+  --drawer-handle: 24px;
+  --popover-w: 320px;
+  --popover-max-h: 480px;
+  --sheet-w: 480px;
+  --slot-w: 144px;
+  --slot-h: 168px;
+  --container: 76rem;
+  --container-narrow: 44rem;
+
+  /* ── Profondeur ──────────────────────────────────────────────────── */
+  --shadow-1: 0 1px 0 var(--edge-light) inset, 0 1px 2px oklch(0.05 0.02 258 / 0.5);
+  --shadow-2: 0 1px 0 var(--edge-light) inset, 0 6px 16px -4px oklch(0.05 0.02 258 / 0.55);
+  --shadow-3: 0 1px 0 var(--edge-light) inset, 0 24px 48px -12px oklch(0.05 0.02 258 / 0.7);
+  --shadow-inset: inset 0 1px 2px oklch(0.05 0.02 258 / 0.35);
+  --shadow-paper: 0 1px 1px oklch(0.1 0.03 60 / 0.3), 0 8px 18px -6px oklch(0.05 0.02 258 / 0.6);
+  --shadow-lifted:
+    0 2px 2px oklch(0.1 0.03 60 / 0.25), 0 22px 40px -10px oklch(0.05 0.02 258 / 0.75);
+
+  --z-desk: 0;
+  --z-raised: 1;
+  --z-rail: 10;
+  --z-header: 20;
+  --z-drawer: 30;
+  --z-popover: 40;
+  --z-dialog: 50;
+  --z-toast: 60;
+  --z-tooltip: 70;
+  --z-drag: 80;
+  --z-skip: 100;
+
+  /* ── Mouvement ───────────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
+  --ease-paper: cubic-bezier(0.22, 1.2, 0.36, 1); /* la feuille se pose : léger rebond */
+  --ease-stamp: cubic-bezier(0.55, 0, 0.3, 1.45); /* le tampon frappe */
+  --dur-instant: 80ms;
+  --dur-fast: 140ms;
+  --dur-base: 220ms;
+  --dur-open: 250ms;
+  --dur-slow: 420ms;
+  --dur-stamp: 320ms;
+  --dur-camera: 600ms;
+  --stagger: 120ms;
+  --dur-loop: 1000ms; /* boucles : spinner, plume du Loader */
+  --dur-fade-fast: 140ms;
+  --dur-fade: 220ms;
+  --rise: 8px;
+  --lift: -3px;
+  --tilt-max: 1.5deg;
+  --blur-ink: 3px;
+  --stamp-from: 1.35;
+  --toast-timeout: 6000ms;
+  --tooltip-delay: 400ms;
+  --long-press: 400ms;
+
+  /* ── Curseurs contextuels (verbes point & click) ─────────────────── */
+  /* Flèche d'encre + pastille du verbe ; couleurs figées (une image de curseur ne lit pas les var()). */
+  --cursor-look:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Ccircle cx='22' cy='22' r='3.3' fill='none' stroke='%23161b26' stroke-width='1.7'/%3E%3Cpath d='M24.5 24.5l2.6 2.6' stroke='%23161b26' stroke-width='1.9' stroke-linecap='round'/%3E%3C/svg%3E")
+      3 2,
+    zoom-in;
+  --cursor-take:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Cpath d='M19.5 23.5v-3m2 2.5v-4.5m2 4.5v-4m2 4.5v-3m-6 3c0 2.5 1.5 4 3.5 4s3.5-1.5 3.5-4' fill='none' stroke='%23161b26' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")
+      3 2,
+    grab;
+  --cursor-hold:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Cpath d='M23 18.5v9m-4.5-4.5h9m-7.5-2l-1.5 2 1.5 2m6-4l1.5 2-1.5 2' fill='none' stroke='%23161b26' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      3 2,
+    grabbing;
+  --cursor-write:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Cpath d='M19.5 26.5l1-3.5 5.5-5.5 2.5 2.5-5.5 5.5zm1-3.5l2.5 2.5' fill='none' stroke='%23161b26' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E")
+      3 2,
+    text;
+  --cursor-pin:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Cpath d='M20 18.5h6m-4.8 0v3.5l-1.7 1.5h7l-1.7-1.5v-3.5m-1.3 5v4' fill='none' stroke='%23161b26' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      3 2,
+    copy;
+  --cursor-use:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3 2v20l5.5-5 3.5 8 3-1.5-3.5-7.5h7z' fill='%23161b26' stroke='%23f6efe0' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23' cy='23' r='8' fill='%23f6efe0' stroke='%23161b26' stroke-width='1.5'/%3E%3Cpath d='M19 23h8m-3-3l3 3-3 3' fill='none' stroke='%23161b26' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      3 2,
+    alias;
+}
+
+/* ── 3a. Contexte « papier » : documents, fiches papier, carte ─────── */
+[data-surface='paper'] {
+  --canvas: var(--paper);
+  --surface-1: var(--paper-new);
+  --surface-2: var(--paper-aged);
+  --surface-3: var(--paper-stain);
+  --line: var(--paper-line);
+  --line-strong: var(--paper-line-strong);
+  --text: var(--ink);
+  --text-muted: var(--ink-muted);
+  --text-faint: var(--ink-faint);
+  --accent: var(--paper-accent);
+  --accent-strong: var(--paper-accent-strong);
+  --accent-contrast: var(--paper-new);
+  --accent-tint: oklch(0.48 0.1 66 / 0.12);
+  --focus: var(--paper-accent);
+  --focus-halo: var(--paper-new);
+  --danger: var(--raw-red-700);
+  --success: var(--raw-green-700);
+  --warning: var(--raw-orange-700);
+  --info: var(--raw-blue-700);
+  --established: var(--raw-stamp-700);
+  --established-contrast: var(--paper-new);
+  --keyword: var(--paper-accent);
+  --selection: oklch(0.86 0.09 85 / 0.6);
+  --edge-light: oklch(1 0 0 / 0.5);
+  --shadow-1: 0 1px 2px oklch(0.3 0.04 70 / 0.18);
+  --shadow-2: 0 4px 12px -4px oklch(0.3 0.04 70 / 0.25);
+  --shadow-3: 0 18px 40px -12px oklch(0.3 0.04 70 / 0.35);
+  --shadow-inset: inset 0 1px 2px oklch(0.3 0.04 70 / 0.14);
+}
+
+/* ── 3b. Contraste élevé (option Accessibilité, AAA pour le texte) ─── */
+:root[data-contrast='high'] {
+  --canvas: oklch(0.1 0 0);
+  --surface-1: oklch(0.13 0 0);
+  --surface-2: oklch(0.17 0 0);
+  --surface-3: oklch(0.21 0 0);
+  --line: oklch(0.7 0 0);
+  --line-strong: oklch(0.92 0 0);
+  --text: oklch(1 0 0);
+  --text-muted: oklch(0.93 0 0);
+  --text-faint: oklch(0.82 0 0);
+  --accent: oklch(0.9 0.125 90);
+  --accent-strong: oklch(0.96 0.06 95);
+  --accent-contrast: oklch(0.1 0 0);
+  --accent-tint: oklch(0.9 0.125 90 / 0.16);
+  --focus: oklch(0.9 0.125 90);
+  --focus-halo: oklch(0 0 0);
+  --danger: oklch(0.83 0.09 25);
+  --success: oklch(0.88 0.13 160);
+  --warning: oklch(0.87 0.085 60);
+  --info: oklch(0.87 0.075 230);
+  --established: oklch(0.85 0.085 300);
+  --established-contrast: oklch(0.1 0 0);
+  --keyword: oklch(0.9 0.125 90);
+  --selection: oklch(0.42 0.12 260 / 0.9);
+  --lamp-glow: transparent;
+  --edge-light: transparent;
+
+  --paper-new: oklch(1 0 0);
+  --paper: oklch(1 0 0);
+  --paper-aged: oklch(0.97 0 0);
+  --paper-stain: oklch(0.94 0 0);
+  --paper-line: oklch(0.55 0 0);
+  --paper-line-strong: oklch(0.25 0.02 264);
+  --ink: oklch(0.13 0.02 264);
+  --ink-muted: oklch(0.28 0.03 264);
+  --ink-faint: oklch(0.42 0.03 264);
+  --ink-hand: oklch(0.27 0.09 258);
+  --ink-type: oklch(0.13 0.01 260);
+  --paper-accent: oklch(0.38 0.085 62);
+  --paper-accent-strong: oklch(0.3 0.07 60);
+  --paper-grain: 0;
+  --hl-1: oklch(0.92 0.12 98 / 0.75);
+  --hl-2: oklch(0.9 0.09 150 / 0.75);
+  --hl-3: oklch(0.89 0.06 235 / 0.75);
+  --hl-4: oklch(0.89 0.065 350 / 0.75);
+  --hl-5: oklch(0.89 0.07 60 / 0.75);
+}
+:root[data-contrast='high'] [data-surface='paper'] {
+  --accent-tint: oklch(0.38 0.085 62 / 0.1);
+  --danger: oklch(0.4 0.15 25);
+  --success: oklch(0.38 0.09 155);
+  --warning: oklch(0.42 0.11 50);
+  --info: oklch(0.38 0.085 240);
+  --established: oklch(0.38 0.15 300);
+  --selection: oklch(0.88 0.1 90 / 0.8);
+  --shadow-1: none;
+  --shadow-2: 0 0 0 2px var(--ink);
+  --shadow-3: 0 0 0 2px var(--ink);
+}
+
+/* ── Illustration : carte, portraits, documents (consommés par art.css) ── */
+/* Technique : taille-douce à l'encre ferro-gallique, rehaussée d'aquarelle. */
+:root {
+  --art-paper: var(--paper);
+  --art-paper-shade: var(--paper-stain);
+  --art-ink: var(--ink);
+  --art-ink-soft: var(--ink-muted);
+  --art-ink-faint: var(--ink-faint);
+  --art-water: oklch(0.86 0.045 205);
+  --art-water-deep: oklch(0.78 0.06 215);
+  --art-water-ink: oklch(0.42 0.07 225);
+  /* Pigments de lavis (carte, vêtements, décors) */
+  --art-wash-safran: oklch(0.86 0.1 85);
+  --art-wash-carmin: oklch(0.79 0.085 15);
+  --art-wash-indigo: oklch(0.79 0.06 265);
+  --art-wash-sienne: oklch(0.8 0.08 50);
+  --art-wash-sauge: oklch(0.84 0.06 130);
+  --art-wash-lilas: oklch(0.82 0.06 310);
+  --art-wash-celadon: oklch(0.86 0.05 170);
+  --art-wash-ardoise: oklch(0.8 0.02 250);
+  /* Portraits : carnations (claire → foncée), cheveux, joues, rehauts, ombres */
+  --art-skin-1: oklch(0.91 0.035 65);
+  --art-skin-2: oklch(0.85 0.055 58);
+  --art-skin-3: oklch(0.77 0.07 55);
+  --art-skin-4: oklch(0.67 0.08 50);
+  --art-skin-5: oklch(0.56 0.075 45);
+  --art-skin-6: oklch(0.46 0.06 40);
+  --art-hair-blond: oklch(0.85 0.08 85);
+  --art-hair-roux: oklch(0.66 0.12 45);
+  --art-hair-chatain: oklch(0.54 0.06 55);
+  --art-hair-brun: oklch(0.4 0.04 50);
+  --art-hair-noir: oklch(0.3 0.02 260);
+  --art-hair-gris: oklch(0.8 0.01 250);
+  --art-blush: oklch(0.8 0.08 20);
+  --art-rehaut: oklch(0.99 0.008 95); /* gouache blanche */
+  --art-ombre: oklch(0.45 0.03 260);
+  /* Photographies d'époque (tirage argentique viré) */
+  --art-photo-light: oklch(0.9 0.018 75);
+  --art-photo-mid: oklch(0.64 0.022 70);
+  --art-photo-dark: oklch(0.34 0.02 65);
+  --art-photo-paper: oklch(0.97 0.012 85);
+
+  --art-wash-opacity: 0.6;
+  --art-wash-opacity-active: 0.9;
+  --art-water-opacity: 0.75;
+  --art-skin-opacity: 0.9;
+  --art-ombre-opacity: 0.22;
+  --art-blush-opacity: 0.5;
+  --art-rehaut-opacity: 0.85;
+  --art-stroke-hair: 0.5;
+  --art-stroke-fine: 0.8;
+  --art-stroke-base: 1.2;
+  --art-stroke-bold: 2;
+  --art-stroke-frame: 3;
+  --art-hatch-width: 0.5;
+  --art-hatch-dense-width: 0.6;
+  --art-label-size: 13px;
+  --art-label-major-size: 22px;
+  --art-label-region-size: 30px;
+  --art-label-water-size: 12px;
+  --art-label-note-size: 10px;
+  --art-label-halo: 2.6px;
+  --art-label-weight: 500;
+  --art-tracking-label: 0.16em;
+  --art-tracking-major: 0.22em;
+  --art-tracking-region: 0.5em;
+  --art-mentioned-dash: 2 2.5;
+}
+:root[data-contrast='high'] {
+  --art-wash-opacity: 0.35;
+  --art-wash-opacity-active: 0.55;
+  --art-water-opacity: 0.45;
+  --art-water-ink: oklch(0.32 0.06 225);
+  --art-label-halo: 3.4px;
+  --art-label-weight: 650;
+}
+
+/* ── Réglages joueur ──────────────────────────────────────────────── */
+:root[data-text-scale='1.25'] {
+  --text-scale: 1.25;
+}
+:root[data-text-scale='1.5'] {
+  --text-scale: 1.5;
+}
+:root[data-text-scale='2'] {
+  --text-scale: 2;
+}
+/* Police de lisibilité : remplace la serif de lecture ET la sans d'interface */
+:root[data-reading-font='hyperlegible'] {
+  --font-read: var(--font-legible);
+  --font-ui: var(--font-legible);
+  --font-display: 'Literata', 'Literata fallback', Georgia, serif;
+  --leading-read: 1.8;
+  --tracking-read: 0.05em;
+}
+/* Écriture manuscrite remplacée par une écriture lisible (le document garde son style) */
+:root[data-handwriting='replace'] {
+  --font-hand: var(--font-read);
+  --hand-boost: 1;
+}
+:root[data-texture='off'] {
+  --paper-grain: 0;
+}
+
+/* Mouvement réduit : système (sauf si le joueur force « complet ») ou réglage en jeu */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) {
+    --dur-instant: 0.01ms;
+    --dur-fast: 0.01ms;
+    --dur-base: 0.01ms;
+    --dur-open: 0.01ms;
+    --dur-slow: 0.01ms;
+    --dur-stamp: 0.01ms;
+    --dur-camera: 0.01ms;
+    --stagger: 0ms;
+    --dur-fade-fast: 100ms;
+    --dur-fade: 150ms;
+    --rise: 0px;
+    --lift: 0px;
+    --blur-ink: 0px;
+    --stamp-from: 1;
+  }
+}
+:root[data-motion='reduced'] {
+  --dur-instant: 0.01ms;
+  --dur-fast: 0.01ms;
+  --dur-base: 0.01ms;
+  --dur-open: 0.01ms;
+  --dur-slow: 0.01ms;
+  --dur-stamp: 0.01ms;
+  --dur-camera: 0.01ms;
+  --stagger: 0ms;
+  --dur-fade-fast: 100ms;
+  --dur-fade: 150ms;
+  --rise: 0px;
+  --lift: 0px;
+  --blur-ink: 0px;
+  --stamp-from: 1;
+}
