@@ -1,11 +1,11 @@
 // Serveur statique du site prérendu, au plus près de nginx.conf : `/x` → `/x/` (301) puis
 // `index.html`, sinon `404.html` en 404 ; gzip (comme gzip_static) ; même CSP, avec les
-// empreintes des scripts en ligne calculées comme scripts/csp-hashes.sh. Construit le site
+// empreintes des scripts et styles en ligne calculées par scripts/csp-hashes.sh. Construit le site
 // d'abord, sauf E2E_SKIP_BUILD=1.
 import { execFileSync } from 'node:child_process';
-import { createHash } from 'node:crypto';
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
+import { tmpdir } from 'node:os';
 import { extname, join, normalize, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { gzipSync } from 'node:zlib';
@@ -18,17 +18,15 @@ if (process.env.E2E_SKIP_BUILD !== '1' || !existsSync(join(root, 'index.html')))
   execFileSync('npm', ['run', 'build', '-w', '@arbre/site'], { cwd: repo, stdio: 'inherit' });
 }
 
-// Empreintes des <script> en ligne (même règle que scripts/csp-hashes.sh).
-const hashes = new Set();
-const inline = /<script(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi;
-for (const page of readdirSync(root, { recursive: true }).filter((f) => f.endsWith('.html'))) {
-  for (const [, body] of readFileSync(join(root, page), 'utf8').matchAll(inline)) {
-    if (body.trim() === '') continue;
-    hashes.add(`'sha256-${createHash('sha256').update(body, 'utf8').digest('base64')}'`);
-  }
-}
+// Empreintes des <script> et <style> en ligne : celles de scripts/csp-hashes.sh (même script
+// que l'image Docker), lues dans le fragment nginx qu'il produit.
+const conf = join(mkdtempSync(join(tmpdir(), 'arbre-csp-')), 'csp-hashes.conf');
+execFileSync('sh', [resolve(repo, 'scripts/csp-hashes.sh'), root, conf], { stdio: 'inherit' });
+const confText = readFileSync(conf, 'utf8');
+const nginxVar = (name) => new RegExp(`set \\$${name} "([^"]*)";`).exec(confText)?.[1] ?? '';
 const CSP =
-  `default-src 'self'; script-src 'self' ${[...hashes].sort().join(' ')}; style-src 'self'; ` +
+  `default-src 'self'; script-src 'self' ${nginxVar('csp_script_hashes')}; ` +
+  `style-src 'self' ${nginxVar('csp_style_hashes')}; ` +
   "style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; " +
   "connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; " +
   "base-uri 'self'; form-action 'self'; frame-ancestors 'none'";

@@ -670,6 +670,13 @@ Objectif : **reconnaissables entre 25 et 35 personnes**, à 72 px (case) comme �
 
 Le texte est toujours du texte réel (transcription disponible, `T`), jamais une image de texte.
 
+### 10.9 Art autonome (site vitrine)
+
+Hors des pages hydratées, le site sert l'art en **SVG autonomes** (`/art/<nom>.<hash>.svg`, cache
+immuable) : `art.css` y est embarqué avec chaque `var()` résolue depuis `tokens.css` au build, et les
+motifs de `ArtDefs` copiés. Les toponymes restent en `<text>` inline par-dessus, car un SVG chargé en
+image ne peut pas utiliser les polices web.
+
 ### 10.10 Art de nuit (`.art.on-night`)
 
 Un SVG d'art posé **directement sur le bureau sombre** (écran titre, vignettes) reste illisible

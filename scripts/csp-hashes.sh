@@ -1,7 +1,10 @@
 #!/bin/sh
-# Calcule les empreintes sha256 des <script> en ligne des pages prérendues (amorce SvelteKit)
-# et écrit un fragment nginx qui définit $csp_script_hashes, utilisé par la CSP de nginx.conf.
-# Ainsi la CSP reste stricte (aucun 'unsafe-inline' pour les scripts) sans config côté site.
+# Calcule les empreintes sha256 des blocs en ligne du site prérendu et écrit un fragment nginx,
+# inclus par nginx.conf pour la CSP. Ainsi la CSP reste stricte (aucun 'unsafe-inline' pour les
+# scripts ni pour les feuilles <style>) sans config côté site :
+#   $csp_script_hashes : <script> sans src des pages .html (amorce SvelteKit) ;
+#   $csp_style_hashes  : <style> des pages .html (CSS en ligne, kit.inlineStyleThreshold) et des
+#                        SVG autonomes .svg (art.css embarqué dans /art/*.svg).
 # Usage : scripts/csp-hashes.sh <dossier> <fichier-sortie>
 #   défaut : apps/site/build  →  csp-hashes.conf
 set -eu
@@ -16,17 +19,30 @@ import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const [dir, out] = process.argv.slice(2);
-const pages = readdirSync(dir, { recursive: true }).filter((f) => String(f).endsWith('.html'));
-const hashes = new Set();
-// <script> sans attribut src : seul le contenu exact entre les balises est haché (CSP niveau 2).
-const inline = /<script(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi;
-for (const page of pages) {
-  for (const [, body] of readFileSync(join(dir, String(page)), 'utf8').matchAll(inline)) {
-    if (body.trim() === '') continue;
-    hashes.add(`'sha256-${createHash('sha256').update(body, 'utf8').digest('base64')}'`);
+const files = readdirSync(dir, { recursive: true }).map(String);
+const pages = files.filter((f) => f.endsWith('.html'));
+const svgs = files.filter((f) => f.endsWith('.svg'));
+const sha = (body) => `'sha256-${createHash('sha256').update(body, 'utf8').digest('base64')}'`;
+// Seul le contenu exact entre les balises est haché (CSP niveau 2).
+const collect = (list, re) => {
+  const hashes = new Set();
+  for (const f of list) {
+    for (const [, body] of readFileSync(join(dir, f), 'utf8').matchAll(re)) {
+      if (body.trim() !== '') hashes.add(sha(body));
+    }
   }
-}
-const list = [...hashes].sort().join(' ');
-writeFileSync(out, `# Généré par scripts/csp-hashes.sh — ne pas modifier.\nset $csp_script_hashes "${list}";\n`);
-console.log(`csp-hashes: ${hashes.size} empreinte(s) pour ${pages.length} page(s) → ${out}`);
+  return [...hashes].sort();
+};
+const scripts = collect(pages, /<script(?![^>]*\bsrc\s*=)[^>]*>([\s\S]*?)<\/script>/gi);
+const styles = collect([...pages, ...svgs], /<style\b[^>]*>([\s\S]*?)<\/style>/gi);
+writeFileSync(
+  out,
+  '# Généré par scripts/csp-hashes.sh — ne pas modifier.\n' +
+    `set $csp_script_hashes "${scripts.join(' ')}";\n` +
+    `set $csp_style_hashes "${styles.join(' ')}";\n`,
+);
+console.log(
+  `csp-hashes: ${scripts.length} script(s), ${styles.length} style(s) ` +
+    `pour ${pages.length} page(s) et ${svgs.length} SVG → ${out}`,
+);
 JS

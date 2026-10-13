@@ -1,11 +1,11 @@
 <!-- Planche de portrait : tirage sur papier, légende graphique (jamais de nom : pas de spoiler). -->
 <script lang="ts">
   import type { PortraitPlate } from '#lib/content/portraits';
-  import type { SvgNode } from '#lib/svg/parse';
-  import ArtSvg from '#lib/svg/ArtSvg.svelte';
+  import type { ArtImage } from '#lib/prerender/art';
 
   interface Props {
-    plate: Omit<PortraitPlate, 'person'> & { node: SvgNode | null };
+    /** `image` : SVG autonome externe (couleurs des tokens embarquées), chargé en différé. */
+    plate: Omit<PortraitPlate, 'person'> & { image: ArtImage | null };
     /** Inclinaison décorative (bornée à ±1,5°, DESIGN §7). */
     tilt?: number;
     caption?: boolean;
@@ -15,8 +15,16 @@
 </script>
 
 <figure class="plate grain" data-surface="paper" style:--plate-tilt="{angle}deg">
-  {#if plate.node}
-    <ArtSvg node={plate.node} label={plate.alt} class="portrait" />
+  {#if plate.image}
+    <img
+      class="portrait"
+      src={plate.image.src}
+      width={plate.image.width}
+      height={plate.image.height}
+      alt={plate.alt}
+      loading="lazy"
+      decoding="async"
+    />
   {:else}
     <div class="missing" role="img" aria-label="Portrait à venir">
       <span aria-hidden="true">Portrait à venir</span>
@@ -42,8 +50,9 @@
     rotate: var(--plate-tilt);
     break-inside: avoid;
   }
-  .plate :global(.portrait),
+  .portrait,
   .missing {
+    display: block;
     inline-size: 100%;
     aspect-ratio: 160 / 200;
     block-size: auto;

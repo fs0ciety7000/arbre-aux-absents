@@ -45,9 +45,8 @@ test('accueil, desktop : LCP < 2 s', async ({ page }) => {
 });
 
 test('accueil, mobile Slow 4G : LCP < 2 s', async ({ page }) => {
-  // Connu (revue QA) : ~2,4–2,6 s. 6 feuilles CSS bloquantes + 186 Ko gzip de HTML (carte et
-  // portraits en ligne). Retirer `test.fail` quand la correction (CSS en ligne) sera faite.
-  test.fail();
+  // Avant correction ~2,4–2,6 s (6 feuilles CSS bloquantes, 186 Ko gzip de HTML). Désormais :
+  // CSS en ligne, dessin de la carte et portraits en SVG externes, fond de carte embarqué.
   const t = await lcp(page, 'mobile');
   test.info().annotations.push({ type: 'LCP mobile (ms)', description: String(Math.round(t)) });
   expect(t).toBeLessThan(2_000);

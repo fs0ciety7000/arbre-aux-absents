@@ -110,7 +110,7 @@
         : à vous de les y retrouver.
       </p>
     </div>
-    {#if data.plates.some((p) => p.node)}
+    {#if data.plates.some((p) => p.image)}
       <ul class="gallery">
         {#each data.plates as plate, i (plate.plate)}
           <li><PortraitPlate {plate} tilt={i % 3 === 0 ? -1 : i % 3 === 1 ? 0.75 : -0.5} /></li>

@@ -35,12 +35,18 @@ Deux livrables, deux chaînes :
 
 ### nginx (`nginx.conf`)
 
-- **CSP** : `default-src 'self'` ; `script-src 'self'` + empreintes sha256 générées au build (aucun
-  `'unsafe-inline'` pour les scripts) ; `style-src 'self'` et `style-src-attr 'unsafe-inline'`
-  (attributs `style` du HTML prérendu) ; `img-src 'self' data:` ; `object-src 'none'` ;
+- **CSP** : `default-src 'self'` ; `script-src 'self'` + empreintes sha256 des `<script>` en ligne ;
+  `style-src 'self'` + empreintes sha256 des `<style>` en ligne : CSS de chaque page (inlinée par
+  `kit.inlineStyleThreshold`, aucune feuille bloquante) et `art.css` embarqué dans les SVG d'art
+  `/art/*.svg`. Aucun `'unsafe-inline'` pour les scripts ni les `<style>`. Les empreintes sont
+  calculées au build par `scripts/csp-hashes.sh` (fragment `csp-hashes.conf` : `$csp_script_hashes`,
+  `$csp_style_hashes`), et le serveur e2e (`tests/e2e/servers/static.mjs`) réutilise ce script.
+  `style-src-attr 'unsafe-inline'` reste pour les attributs `style` du HTML prérendu (variables CSS
+  posées par les composants : une empreinte ne les couvrirait qu'avec `'unsafe-hashes'`) ;
+  `img-src 'self' data:` (fond de la carte d'accueil embarqué en `data:`) ; `object-src 'none'` ;
   `frame-ancestors 'none'` ; `base-uri`/`form-action 'self'`. Plus `nosniff`, `X-Frame-Options`,
   `Referrer-Policy`, `Permissions-Policy`, COOP/CORP, HSTS.
-- **Cache** : `/_app/immutable/**` 1 an `immutable` ; HTML et `version.json` `no-cache` ;
+- **Cache** : `/_app/immutable/**` et `/art/<nom>.<empreinte>.svg` 1 an `immutable` ; HTML et `version.json` `no-cache` ;
   `/healthz` `no-store` ; autres fichiers statiques 1 jour.
 - `gzip_static on` (fichiers précompressés), pas de compression à la volée. Cloudflare ajoute Brotli.
 - **404** : `404.html` du site s'il existe (route prérendue `src/routes/404/`), sinon une page HTML
