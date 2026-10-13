@@ -149,40 +149,62 @@ Variantes possibles si itch.io en propose de plus suivies : `noir`, `historical`
 
 ### Captures (5, dans l'ordre d'affichage)
 
-Choisies dans `/mnt/project-files/arbre-aux-absents/captures/` (v2, affaire réelle « Succession
-Varenque », aucune réponse visible). Ne pas utiliser les captures `v2-jeu-arbre-etabli-*`,
-`v2-jeu-revelation-*`, `v2-jeu-rapport-*` et `v2-jeu-fin-*` : elles montrent l'affaire d'essai
-« La malle du grenier » (fixture de développement), absente du jeu publié.
+Produites le 13/10/2026 dans `/mnt/project-files/arbre-aux-absents/itch/` depuis le **build de
+production** (`apps/game/dist`, design v2), affaire réelle « Succession Varenque » : partie en cours
+avec le prologue (« Les fondateurs des Tilleuls ») et le Cap (« Le Phare — les gens du cap ») établis,
+l'Atelier entamé (Lucien, case ouverte). Aucun secret découvert, aucune fin, aucune réponse hors de
+ces deux groupes. Chaque capture existe en 1440 × 900 (`-1440`, 16:10, s'affiche sans recadrage) et
+en 1920 × 1080 (`-1920`, 16:9).
 
-| # | Fichier | Taille | Montre |
-|---|---|---|---|
-| 1 | `v2-jeu-titre-1440.png` | 1440 × 900 | Écran titre sur l'art clé « Le bureau sous la lampe » |
-| 2 | `v2-jeu-lecteur-1440.png` | 1440 × 900 | L'arbre vide et un document ouvert (annuaire de 1906) |
-| 3 | `v2-jeu-catalogue-1440.png` | 1440 × 900 | Le Catalogue (Lecteur des archives) et une fiche trouvée |
-| 4 | `v2-jeu-carte-1440.png` | 1440 × 900 | La carte gravée de la Velmarche et ses lieux |
-| 5 | `v2-jeu-carte-390.png` | 780 × 1688 | La même carte sur téléphone (Android), barre d'onglets en bas |
+| # | Fichier | Montre |
+|---|---|---|
+| 1 | `jeu-titre-1440.png` | Écran titre sur l'art clé « Le bureau sous la lampe », menu d'une première visite |
+| 2 | `jeu-arbre-zoom-1440.png` | L'arbre en cours (75 %) : Atelier entamé, Adélaïde, les gens du Cap tamponnés « ÉTABLI » |
+| 3 | `jeu-lecteur-lettre-1440.png` | Le Lecteur : lettre manuscrite de Maaren (ostrien et traduction), l'arbre à côté |
+| 4 | `jeu-catalogue-1440.png` | Le Catalogue (Lecteur des archives) : quatre fiches pour « Tennok » |
+| 5 | `jeu-carte-1440.png` | La carte gravée de la Velmarche, lieux visités et à explorer |
 
-itch.io recommande 3 à 5 captures ; le format 16:10 s'affiche sans recadrage. La capture
-téléphone montre la parité mobile ; la remplacer par `v2-jeu-bureau-1440.png` si l'on veut cinq
-images de même format.
+Autres captures disponibles (même dossier, mêmes deux tailles) :
+
+- `jeu-etabli-*.png` : la carte « Branche établie : Le Phare — les gens du cap » et son tampon,
+  juste après la dernière case du groupe (bonne 5e image si l'on préfère montrer la validation).
+- `jeu-lecteur-photo-*.png` : le Lecteur sur une photographie (« Mariage au cap de Tennok, 1873 »).
+- `jeu-arbre-*.png` : l'arbre entier en vue d'ensemble (50 %), volet latéral replié.
+
+Vidéo muette de 10 s, 1280 × 720 : `jeu-parcours-1280.webm` (0,8 Mo) et `jeu-parcours-1280.gif`
+(5,5 Mo, 12 i/s) : une recherche au Catalogue (« Tenna Orrvik »), la lecture de la fiche trouvée,
+le métier choisi dans la fiche de la case, puis le tampon du groupe. itch.io n'accepte pas de vidéo
+en fichier dans la galerie (seulement un lien YouTube ou Vimeo) : le GIF peut s'ajouter comme
+capture, ou s'insérer dans la description.
+
+Les anciennes captures `captures/v2-jeu-*` restent valables pour le titre et la carte, mais pas
+`v2-jeu-arbre-etabli-*`, `v2-jeu-revelation-*`, `v2-jeu-rapport-*` et `v2-jeu-fin-*` (affaire d'essai
+« La malle du grenier », absente du jeu publié).
 
 ### Image de couverture (630 × 500)
 
-- **Format** : 630 × 500 px (ratio 1,26), PNG, idéalement fournie en 1260 × 1000 (itch.io la
-  réduit). Elle s'affiche aussi en vignette 315 × 250 : le titre doit rester lisible à cette taille.
-- **Source** : `art/keyart/keyart-desk.svg` (art clé 16:9, viewBox 1600 × 900, rendu avec
-  `class="art"` **sans** `on-night`, voir `art/keyart/README.md`). Ne pas partir de
-  `keyart-desk-tall.svg` (4:5, trop haut pour le cadre).
-- **Cadrage** : fenêtre 1134 × 900 en unités du viewBox, de x = 466 à x = 1600 (toute la hauteur) :
-  la lampe et sa flaque de lumière à gauche, la zone calme du tiers droit (mur sombre, liège,
-  carte dans la pénombre) pour le titre.
-- **Titre** : le logotype de l'écran titre (« L'Arbre » / « aux » / « absents »), « aux » en
-  `--brand`, le reste en `--text`, posé dans le tiers droit, avec le voile `--scrim-art` si besoin
-  (contrastes vérifiés dans `docs/DESIGN.md`). Aucun autre texte, aucun logo de la maison.
-- **Rendu** : `node art/tools/keyart/sheet.mjs <sortie.png> --cols 1 --width 1600 art/keyart/keyart-desk.svg`
-  (Playwright, classes résolues par les tokens), puis recadrage et ajout du titre ; aperçu rapide
-  possible depuis `captures/keyart-desk-1440.png` ou `captures/v2-jeu-titre-1440.png`.
-- Aucun visage de personnage, aucun secret (règle de l'art clé).
+Produite le 13/10/2026 dans `/mnt/project-files/arbre-aux-absents/itch/` :
+
+| Fichier | Taille | Contenu |
+|---|---|---|
+| `cover-1260x1000.png` | 1260 × 1000 | **À envoyer** (itch.io réduit) : art clé recadré, logotype et accroche |
+| `cover-630x500.png` | 630 × 500 | La même à la taille d'affichage |
+| `cover-315x250.png` | 315 × 250 | La même en vignette (contrôle de lisibilité) |
+| `cover-*-titre.png` | mêmes trois tailles | Variante sans accroche (logotype seul), plus nette en vignette |
+
+- **Source** : `art/keyart/keyart-desk.svg` (art clé 16:9, viewBox 1600 × 900, `class="art"`
+  **sans** `on-night`, voir `art/keyart/README.md`), recadré par le viewBox à la fenêtre
+  1134 × 900 de x = 466 à x = 1600 (ratio 1,26) : la lampe et sa flaque de lumière à gauche, le
+  tiers droit calme (mur sombre, liège, carte dans la pénombre) pour le titre.
+- **Titre** : le logotype de l'écran titre (`Wordmark` : Fraunces noire, « aux » en italique
+  `--brand`, le reste en `--text`, volute de fougère `--fern`), dans le tiers droit, sur un voile
+  dégradé vers `--scrim-art`. Accroche : `title.hook` de `apps/game/src/messages.fr.ts`
+  (« Velmarche, automne 1974. Une famille entière à rendre à ses noms. »), Fraunces italique
+  `--text-muted`. Aucun logo de la maison, aucun visage, aucun secret.
+- **Rendu** : page HTML qui charge `fonts.css`, `tokens.css`, `art.css`, `materials.css` de
+  `packages/ui` et `<ArtDefs />`, capturée par Playwright/Chromium aux facteurs 1, 2 et 0,5.
+  Le titre reste lisible à 315 × 250 ; l'accroche y devient petite (≈ 8 px) : préférer la
+  variante `-titre` si itch.io montre surtout la vignette.
 
 ### Thème de la page (Edit theme)
 
