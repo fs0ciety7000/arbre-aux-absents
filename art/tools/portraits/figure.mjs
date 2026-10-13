@@ -219,7 +219,7 @@ export function renderFigure(input, { prefix, mode = 'color' } = {}) {
   const faceLine = U([...faceFar, chinB, ...faceNear]);
   const headPts = U([...faceFar, chinB, ...faceNear, ...skullBack]);
   const headD = smooth(headPts, true);
-  const jawPts = U([faceFar[6], faceFar[7], chinB, ...faceNear.slice(0, 2)]);
+  void U([faceFar[6], faceFar[7], chinB, ...faceNear.slice(0, 2)]);
 
   const nb = 0.47 * (s.nose.len ?? 1); // base du nez (v)
   const mv = 0.7 + 0.02 * (s.nose.len ?? 1) - 0.02 + cl * 0.3; // bouche (v)
@@ -1291,7 +1291,7 @@ const BEARD = {
     hairMass(h, top, bot, 26, { bulge: 0.4 });
     h.shade(h.U([[-0.76, 0.5], [-0.62, 0.92 * g], [-0.3, 1.18 * g], [0.15, 1.28 * g], [0.0, 1.0], [-0.4, 0.75]]), { angle: 70, sp: 1.3, cls: 'ink-soft', sw: 0.5 });
   },
-  short(h, o) {
+  short(h, _o) {
     const top = [[-0.72, 0.36], [-0.5, 0.56], [-0.28, 0.66], [0.05, 0.82], [0.45, 0.66], [0.8, 0.5], [1.05, 0.3], [1.14, 0.02]];
     const bot = [[-0.72, 0.5], [-0.5, 0.86], [-0.2, 1.06], [0.15, 1.12], [0.5, 1.06], [0.92, 0.84], [1.2, 0.5], [1.2, 0.04]];
     hairMass(h, top, bot, 30, { bulge: 0.2, jit: 0.2 });
@@ -1328,7 +1328,7 @@ const MOUSTACHE = {
     hairMass(h, top, bot, 22, { bulge: 0.2, cls: o.cls });
     h.emit(h.path('rehaut', smooth(h.U([[0.1, nb + 0.08], [0.45, nb + 0.1], [0.65, mv - 0.06], [0.42, nb + 0.12]]), true)));
   },
-  fine(h, o, mv, nb) {
+  fine(h, o, mv, _nb) {
     const top = [[-0.24, mv - 0.03], [-0.1, mv - 0.07], [0.05, mv - 0.065], [0.25, mv - 0.07], [0.44, mv - 0.03]];
     const bot = [[-0.24, mv - 0.015], [-0.1, mv - 0.035], [0.05, mv - 0.03], [0.25, mv - 0.035], [0.44, mv - 0.012]];
     hairMass(h, top, bot, 12, { bulge: 0, jit: 0.1, line: 'ink-soft', cls: o.cls });
@@ -1524,7 +1524,7 @@ const HATS = {
 
 const GLASSES = {
   round(h, o) {
-    const { emit, path, P, ex1, ex2, s } = h;
+    const { emit, path, P, ex1, ex2 } = h;
     const W = h.W;
     const R1 = 0.31 * W * (o.size ?? 1);
     const rx2 = 0.22 * W * (o.size ?? 1);
@@ -1546,9 +1546,9 @@ const GLASSES = {
     emit(path('ink', bridge + temple, { 'stroke-width': o.shell ? 1.4 : 0.75 }));
     if (o.chain) emit(path('ink-soft', smooth([P(1.24, -0.06), P(1.38, 0.5), P(1.2, 1.2), P(0.9, 1.6)]), { 'stroke-width': 0.6, 'stroke-dasharray': '0.7 0.7' }));
   },
-  half(h, o) {
+  half(h, _o) {
     // demi-lunes basses sur le nez, retenues par une chaînette
-    const { emit, path, P, ex1, ex2, s } = h;
+    const { emit, path, P, ex1, ex2 } = h;
     const W = h.W;
     const R1 = 0.27 * W;
     const rx2 = 0.19 * W;
@@ -1563,7 +1563,7 @@ const GLASSES = {
     emit(path('ink-soft', smooth([P(1.24, -0.03), P(1.42, 0.45), P(1.3, 1.0), P(1.0, 1.5), P(0.5, 1.72)]), { 'stroke-width': 0.7, 'stroke-dasharray': '0.8 0.6' }));
   },
   pinceNez(h) {
-    const { emit, path, P, ex1, ex2, s } = h;
+    const { emit, path, P, ex1, ex2 } = h;
     const W = h.W;
     const R = 0.24 * W;
     const rx2 = 0.17 * W;
@@ -1954,7 +1954,7 @@ const CLOTHES = {
 const COLLARS = {
   /** Col cassé (pointes rabattues) : fin XIXe. */
   wing(b) {
-    const { yN, nx0, nx1, emit, path, solid } = b;
+    const { yN, nx0, nx1, solid } = b;
     const yT = yN - 0.22 * b.s.H * b.G;
     const band = smooth([[nx0 - 1, yT], [(nx0 + nx1) / 2, yT + 4], [nx1 + 1, yT - 3], [nx1 + 2, yN - 2], [(nx0 + nx1) / 2, yN + 2], [nx0 - 1, yN - 1]], true);
     solid(band, 'paper', 'ink');
