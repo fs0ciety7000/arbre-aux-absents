@@ -1097,9 +1097,11 @@ toutes des tokens.
 
 ### 13.0 Écran fixe (téléphone)
 
-Le jeu ne se zoome pas et ne glisse pas latéralement comme une page web : viewport
-`maximum-scale=1, user-scalable=no` (`apps/game/index.html`), `touch-action: pan-x pan-y` et
-`overscroll-behavior: none` sur `html`, `overflow-x: clip` sur `html` et `body` (`App.svelte`).
+Le jeu ne se zoome pas et ne glisse pas latéralement comme une page web : `touch-action: pan-x
+pan-y` et `overscroll-behavior: none` sur `html`, `overflow-x: clip` sur `html` et `body`
+(`App.svelte`) ; le Bureau est en `position: fixed; inset: 0` (pas de `100dvh`, ignoré par
+certaines WebView). Le viewport garde le zoom autorisé (`user-scalable=no` est refusé par axe,
+WCAG 1.4.4) : c'est `touch-action` qui bloque le pincement de la page dans Chrome et la WebView.
 Le pincement reste disponible là où il a un sens (arbre, carte), géré par le jeu ; la lisibilité
 passe par la taille du texte des options (87,5 % à 200 %), pas par le zoom du navigateur.
 Le site vitrine, lui, garde le zoom.

@@ -258,10 +258,13 @@
 </Dialog>
 
 <style>
+  /* Collé aux bords de la fenêtre (position fixe) plutôt qu'à 100dvh : certaines WebView
+     Android ignorent dvh, et le menu du bas partait alors sous l'écran avec la page qui défile. */
   .desk {
+    position: fixed;
+    inset: 0;
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
-    height: 100dvh;
     overflow: hidden;
   }
   .desk.single {
