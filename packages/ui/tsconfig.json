@@ -1,17 +1,8 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.svelte"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.svelte"],
   "compilerOptions": {
-    "lib": [
-      "ES2023",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "types": [
-      "svelte"
-    ]
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["svelte"]
   }
 }

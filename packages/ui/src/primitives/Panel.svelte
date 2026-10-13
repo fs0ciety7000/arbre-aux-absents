@@ -2,6 +2,7 @@
 	Panneau du Bureau (DESIGN.md §9.4) : Arbre, Archives, Lecteur, Carnet…
 	Un en-tête (titre réel hN, surtitre, actions, fermer) et un corps défilant.
 	`surface="paper"` bascule tout le contenu dans le contexte papier.
+	Téléphone (< 600 px) : rayon 0, bord à bord.
 -->
 <script lang="ts">
   import type { Snippet } from 'svelte';
@@ -153,6 +154,13 @@
     padding: var(--space-2) var(--space-4);
     border-block-start: var(--border) solid var(--line);
     background: var(--surface-2);
+  }
+  /* Téléphone : panneau plein écran, bord à bord (DESIGN §5.3) */
+  @media (max-width: 37.4375rem) {
+    .panel,
+    .paper {
+      border-radius: 0;
+    }
   }
   .visually-hidden {
     position: absolute;

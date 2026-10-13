@@ -3,6 +3,11 @@
 	Variantes : `line` (onglets d'un volet), `bar` (barre basse du téléphone, 64 px),
 	`rail` (rail vertical d'icônes du Bureau, 64 px). Le snippet `children` reçoit l'id actif
 	et est rendu dans le tabpanel.
+	`line` compact : quand les libellés débordent (`compact="auto"`, défaut) ou toujours
+	(`compact`), les onglets passent en icônes seules (libellé caché + info-bulle) si tous ont
+	une icône ; sinon la liste défile horizontalement avec fondus de bord visibles.
+	Tabindex itinérant : si `value` ne désigne aucun onglet (panneau ouvert ailleurs), le
+	premier onglet actif reste atteignable au clavier.
 -->
 <script lang="ts" module>
   import type { IconName } from './icons';
@@ -28,6 +33,8 @@
     /** Nom accessible de la liste d'onglets. */
     label: string;
     variant?: 'line' | 'bar' | 'rail';
+    /** `line` seulement : icônes seules si les libellés débordent (`auto`), toujours (`true`) ou jamais. */
+    compact?: boolean | 'auto';
     /** `auto` : la flèche active l'onglet ; `manual` : Entrée/Espace active. */
     activation?: 'auto' | 'manual';
     idPrefix?: string;
@@ -41,6 +48,7 @@
     value = $bindable(items[0]?.id ?? ''),
     label,
     variant = 'line',
+    compact = 'auto',
     activation = 'auto',
     idPrefix = `tabs-${Math.random().toString(36).slice(2, 8)}`,
     onchange,
@@ -50,6 +58,52 @@
 
   const vertical = $derived(variant === 'rail');
   let focusedId = $state<string | null>(null);
+
+  // ── Mode compact (line) : mesure des libellés dans une copie invisible ──
+  let listEl = $state<HTMLDivElement>();
+  let measureEl = $state<HTMLDivElement>();
+  let labelsOverflow = $state(false);
+  let scrollStart = $state(false);
+  let scrollEnd = $state(false);
+  const allIcons = $derived(items.length > 0 && items.every((t) => t.icon));
+  const iconOnly = $derived(
+    variant === 'line' && allIcons && (compact === true || (compact === 'auto' && labelsOverflow)),
+  );
+  /** Débordement résiduel (pas d'icônes, ou icônes elles-mêmes trop nombreuses) : défilement. */
+  const scrolling = $derived(variant === 'line' && (scrollStart || scrollEnd));
+
+  function measure() {
+    if (!listEl) return;
+    if (measureEl) labelsOverflow = measureEl.scrollWidth > listEl.clientWidth + 1;
+    const max = listEl.scrollWidth - listEl.clientWidth;
+    const pos = Math.abs(listEl.scrollLeft); // négatif en rtl
+    scrollStart = max > 1 && pos > 1;
+    scrollEnd = max > 1 && pos < max - 1;
+  }
+
+  $effect(() => {
+    if (variant !== 'line' || !listEl) return;
+    const ro = new ResizeObserver(() => measure());
+    ro.observe(listEl);
+    if (measureEl) ro.observe(measureEl);
+    measure();
+    return () => ro.disconnect();
+  });
+
+  // Garde l'onglet actif visible quand la liste défile (sans animer la page)
+  $effect(() => {
+    if (variant !== 'line' || !listEl) return;
+    void iconOnly;
+    void value;
+    const el = listEl.querySelector<HTMLElement>('[aria-selected="true"]');
+    if (!el) return;
+    const start = el.offsetLeft - listEl.offsetLeft;
+    const end = start + el.offsetWidth;
+    if (start < listEl.scrollLeft) listEl.scrollLeft = start;
+    else if (end > listEl.scrollLeft + listEl.clientWidth)
+      listEl.scrollLeft = end - listEl.clientWidth;
+    measure();
+  });
 
   function select(id: string) {
     if (id === value) return;
@@ -79,15 +133,39 @@
     if (activation === 'auto') select(target.id);
   }
 
-  const tabbable = $derived(focusedId ?? value);
+  /** Onglet atteignable par Tab : le focalisé, sinon l'actif, sinon le premier activable. */
+  const tabbable = $derived.by(() => {
+    if (focusedId) return focusedId;
+    if (items.some((t) => t.id === value && !t.disabled)) return value;
+    return items.find((t) => !t.disabled)?.id ?? '';
+  });
+  const hasSelected = $derived(items.some((t) => t.id === value));
 </script>
 
-<div class="tabs {variant} {className}">
+<div class="tabs {variant} {className}" class:icon-only={iconOnly}>
+  {#if variant === 'line' && allIcons && compact === 'auto'}
+    <!-- Copie invisible des libellés : sert seulement à savoir s'ils tiennent -->
+    <div class="measure-box" aria-hidden="true" inert>
+      <div class="list measure" bind:this={measureEl}>
+        {#each items as item (item.id)}
+          <span class="tab"
+            ><Icon name={item.icon ?? 'close'} size="1.5rem" /><span class="text">{item.label}</span
+            >{#if item.badge}<span class="badge num">{item.badge}</span>{/if}</span
+          >
+        {/each}
+      </div>
+    </div>
+  {/if}
   <div
     class="list"
+    class:scrolling
+    class:fade-start={scrollStart}
+    class:fade-end={scrollEnd}
     role="tablist"
     aria-label={label}
     aria-orientation={vertical ? 'vertical' : 'horizontal'}
+    bind:this={listEl}
+    onscroll={variant === 'line' ? measure : undefined}
   >
     {#each items as item (item.id)}
       {@const selected = item.id === value}
@@ -106,12 +184,14 @@
         onblur={() => (focusedId = null)}
       >
         {#if item.icon}<Icon name={item.icon} size="1.5rem" />{/if}
-        <span class="text" class:visually-hidden={variant === 'rail'}>{item.label}</span>
+        <span class="text" class:visually-hidden={variant === 'rail' || iconOnly}>{item.label}</span
+        >
         {#if item.badge}
           <span class="badge num" aria-hidden="true">{item.badge}</span>
           {#if item.badgeLabel}<span class="visually-hidden">, {item.badgeLabel}</span>{/if}
         {/if}
-        {#if variant === 'rail'}<span class="tip" aria-hidden="true">{item.label}</span>{/if}
+        {#if variant === 'rail' || iconOnly}<span class="tip" aria-hidden="true">{item.label}</span
+          >{/if}
       </button>
     {/each}
   </div>
@@ -120,7 +200,8 @@
       class="panel"
       role="tabpanel"
       id="{idPrefix}-panel"
-      aria-labelledby="{idPrefix}-tab-{value}"
+      aria-labelledby={hasSelected ? `${idPrefix}-tab-${value}` : undefined}
+      aria-label={hasSelected ? undefined : label}
       tabindex="-1"
     >
       {@render children(value)}
@@ -149,6 +230,66 @@
     padding: var(--space-2) 0;
     align-items: center;
     overflow: visible;
+  }
+  /* Copie de mesure : hors flux, invisible, à la largeur naturelle des libellés */
+  .measure-box {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .measure {
+    width: max-content;
+    overflow: visible;
+  }
+  .line {
+    position: relative;
+  }
+  /* Défilement résiduel : fondus de bord (masque, non animé) + barre fine visible */
+  .line .list.scrolling {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+    scroll-padding-inline: var(--space-8);
+  }
+  .line .list.fade-start {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--space-8));
+    mask-image: linear-gradient(to right, transparent, #000 var(--space-8));
+  }
+  .line .list.fade-end {
+    -webkit-mask-image: linear-gradient(to left, transparent, #000 var(--space-8));
+    mask-image: linear-gradient(to left, transparent, #000 var(--space-8));
+  }
+  .line .list.fade-start.fade-end {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--space-8),
+      #000 calc(100% - var(--space-8)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--space-8),
+      #000 calc(100% - var(--space-8)),
+      transparent
+    );
+  }
+  /* Icônes seules : la liste ne déborde plus, les info-bulles peuvent sortir */
+  .icon-only [role='tablist'] {
+    overflow: visible;
+    justify-content: space-between;
+  }
+  .icon-only [role='tablist'] .tab {
+    flex: 1 1 0;
+    min-width: var(--hit);
+    padding: 0 var(--space-2);
+  }
+  .icon-only .tip {
+    inset-inline-start: 50%;
+    inset-block-start: calc(100% + var(--space-2));
+    transform: translateX(-50%);
   }
   .bar .list {
     height: var(--tabbar-h);
@@ -234,7 +375,7 @@
     min-width: 0;
     padding: var(--space-1) 0;
     font-size: var(--step--1);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--tracking-tight);
     border-radius: 0;
   }
   .bar .tab::after {
@@ -278,7 +419,8 @@
     line-height: 1;
   }
   .bar .badge,
-  .rail .badge {
+  .rail .badge,
+  .icon-only [role='tablist'] .badge {
     position: absolute;
     inset-block-start: var(--space-1);
     inset-inline-start: calc(50% + 0.4rem);

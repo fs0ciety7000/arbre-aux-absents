@@ -62,6 +62,13 @@ export type ArtClass = (typeof ART_CLASSES)[number];
 /** Classe posée sur la racine de tout SVG d'art inliné (sans elle, rien n'est coloré). */
 export const ART_ROOT_CLASS = 'art';
 
+/**
+ * Modificateur de la racine (`class="art on-night"`, ou sur un ancêtre) : palette d'art pour un
+ * SVG posé sur le bureau sombre (écran titre…), DESIGN.md §10.10. Posé par l'application,
+ * jamais par un SVG de contenu (ce n'est pas une classe d'élément : absent de ART_CLASSES).
+ */
+export const ART_NIGHT_CLASS = 'on-night';
+
 /** Identifiants des motifs fournis par <ArtDefs /> : `url(#…)` admis dans les SVG. */
 export const ART_PATTERN_IDS = ['art-hatch', 'art-hatch-dense', 'art-stipple'] as const;
 

@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 // Calcul des contrastes WCAG 2.2 des tokens de couleur (docs/DESIGN.md §2.6).
 // Usage : node packages/ui/scripts/contrast.mjs [--md] [--strict]
+// Couvre aussi les variantes « vision des couleurs » (data-color-vision, §3.7) : contraste
+// des tons d'état en vision normale ET simulée (Machado 2009, sévérité 1), et écart OKLab
+// minimal entre états (distinguables), comparé à la palette par défaut ; et l'illustration
+// de nuit (.art.on-night, §10.10).
 //   --md      imprime les tableaux Markdown recopiés dans DESIGN.md
 //   --strict  code de sortie 1 si une paire passe sous son seuil (utilisable en CI)
 // Lit packages/ui/src/styles/tokens.css, résout les var() par contexte (lampe, papier,
@@ -30,6 +34,14 @@ const ROOT = ':root';
 const PAPER = "[data-surface='paper']";
 const HC = ":root[data-contrast='high']";
 const HC_PAPER = ":root[data-contrast='high'] [data-surface='paper']";
+const NIGHT = '.art.on-night';
+const HC_NIGHT = ":root[data-contrast='high'] .art.on-night";
+const VISIONS = { protanopia: 'protan', deuteranopia: 'deutan', tritanopia: 'tritan' };
+const CV = (v) => `:root[data-color-vision='${v}']`;
+const CV_PAPER = (v) => `${CV(v)} ${PAPER}`;
+const HC_CV = (v) => `:root[data-contrast='high'][data-color-vision='${v}']`;
+const HC_CV_PAPER = (v) => `${HC_CV(v)} ${PAPER}`;
+/** Contextes : sélecteurs dans l'ordre de la cascade (racine puis élément papier). */
 const contexts = {
   lampe: [ROOT],
   papier: [ROOT, PAPER],
@@ -37,7 +49,25 @@ const contexts = {
   'papier HC': [ROOT, HC, PAPER, HC_PAPER],
   carte: [ROOT],
   'carte HC': [ROOT, HC],
+  'carte nuit': [ROOT, NIGHT],
+  'carte nuit HC': [ROOT, HC, NIGHT, HC_NIGHT],
 };
+/** Contexte de base (palette par défaut) de chaque contexte « vision des couleurs ». */
+const visionBase = {};
+for (const v of Object.keys(VISIONS)) {
+  const add = (name, sels, base) => {
+    contexts[name] = sels;
+    visionBase[name] = { base, vision: v };
+  };
+  add(`lampe ${v}`, [ROOT, CV(v)], 'lampe');
+  add(`papier ${v}`, [ROOT, CV(v), PAPER, CV_PAPER(v)], 'papier');
+  add(`lampe HC ${v}`, [ROOT, HC, CV(v), HC_CV(v)], 'lampe HC');
+  add(
+    `papier HC ${v}`,
+    [ROOT, HC, CV(v), HC_CV(v), PAPER, HC_PAPER, CV_PAPER(v), HC_CV_PAPER(v)],
+    'papier HC',
+  );
+}
 
 function scope(selectors) {
   const out = {};
@@ -179,14 +209,75 @@ const art = (min) => [
   ...washes.map((w) => ['--art-ink', [`--art-wash-${w}`], min, `toponyme sur lavis ${w} pur`]),
   ['--art-ink-faint', ['--art-paper'], NT, 'trait mine de plomb (non-texte)'],
 ];
+// Illustration de nuit : même grille, plus le trait posé directement sur le bureau sombre
+const night = (min) => [
+  ...art(min),
+  ['--art-ink', ['--canvas'], min, 'trait, toponyme sur le bureau'],
+  ['--art-ink-soft', ['--canvas'], min, 'légende sur le bureau'],
+  ['--art-ink-faint', ['--canvas'], NT, 'trait fin sur le bureau (non-texte)'],
+];
+const STATES = ['--danger', '--warning', '--success', '--info', '--established'];
+const isStatePair = ([fg, bgs]) => [fg, ...bgs].some((t) => STATES.includes(t));
 const pairs = {
   carte: art(T),
   'carte HC': art(AAA),
+  'carte nuit': night(T),
+  'carte nuit HC': night(AAA),
   lampe: common(T),
   papier: [...common(T), ...paperOnly(T)],
   'lampe HC': common(AAA),
   'papier HC': [...common(AAA), ...paperOnly(AAA)],
 };
+// Vision des couleurs : seuls les tons d'état changent → paires qui en impliquent un
+for (const [name, { base }] of Object.entries(visionBase)) {
+  pairs[name] = pairs[base].filter(isStatePair);
+}
+
+// Simulation des dichromasies (Machado, Oliveira, Fernandes 2009, sévérité 1), sRGB linéaire
+const MACHADO = {
+  protan: [
+    [0.152286, 1.052583, -0.204868],
+    [0.114503, 0.786281, 0.099216],
+    [-0.003882, -0.048116, 1.051998],
+  ],
+  deutan: [
+    [0.367322, 0.860646, -0.227968],
+    [0.280085, 0.672501, 0.047413],
+    [-0.01182, 0.04294, 0.968881],
+  ],
+  tritan: [
+    [1.255528, -0.076749, -0.178779],
+    [-0.078411, 0.930809, 0.147602],
+    [0.004733, 0.691367, 0.3039],
+  ],
+};
+const toLin = (rgb) => rgb.map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+const toEnc = (lin) =>
+  lin.map((c) => {
+    c = Math.min(1, Math.max(0, c));
+    return c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055;
+  });
+const simulate = (rgb, kind) => {
+  const lin = toLin(rgb);
+  return toEnc(MACHADO[kind].map((r) => r[0] * lin[0] + r[1] * lin[1] + r[2] * lin[2]));
+};
+const oklab = (rgb) => {
+  const [r, g, b] = toLin(rgb);
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  return [
+    0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+    1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+    0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
+  ];
+};
+const deltaE = (a, b) => {
+  const [x, y] = [oklab(a), oklab(b)];
+  return Math.hypot(x[0] - y[0], x[1] - y[1], x[2] - y[2]);
+};
+/** Écart OKLab minimal exigé entre deux tons d'état, en vision simulée. */
+const MIN_DELTA_E = 0.06;
 
 const args = new Set(process.argv.slice(2));
 let failures = 0;
@@ -210,11 +301,68 @@ for (const [ctx, selectors] of Object.entries(contexts)) {
     const ok = r >= min;
     if (!ok) failures++;
     rows.push({ fg, bg: bgs.join(' sur '), r, min, ok, usage, fgHex: hex(f), bgHex: hex(bg) });
+    const vision = visionBase[ctx]?.vision;
+    if (vision) {
+      // Même paire vue par la personne concernée (le rouge s'assombrit en protanopie…)
+      const kind = VISIONS[vision];
+      const rs = ratio(simulate(f, kind), simulate(bg, kind));
+      const oks = rs >= min;
+      if (!oks) failures++;
+      rows.push({
+        fg,
+        bg: bgs.join(' sur '),
+        r: rs,
+        min,
+        ok: oks,
+        usage: `${usage} (vision simulée)`,
+        fgHex: hex(simulate(f, kind)),
+        bgHex: hex(simulate(bg, kind)),
+      });
+    }
   }
   report.push({ ctx, rows });
 }
 
+// Tons d'état distinguables : écart minimal, en vision simulée, sur --surface-1
+const distinct = [];
+const stateColors = (ctx, kind) => {
+  const vars = scope(contexts[ctx]);
+  const surface = parseColor(resolveVar(vars, '--surface-1')).rgb;
+  return STATES.map((t) => {
+    const rgb = over(parseColor(resolveVar(vars, t)), surface);
+    return { t, rgb: kind ? simulate(rgb, kind) : rgb };
+  });
+};
+const minPair = (cols) => {
+  let best = { d: Infinity, a: '', b: '' };
+  for (let i = 0; i < cols.length; i++)
+    for (let j = i + 1; j < cols.length; j++) {
+      const d = deltaE(cols[i].rgb, cols[j].rgb);
+      if (d < best.d) best = { d, a: cols[i].t, b: cols[j].t };
+    }
+  return best;
+};
+for (const [ctx, { base, vision }] of Object.entries(visionBase)) {
+  const kind = VISIONS[vision];
+  const now = minPair(stateColors(ctx, kind));
+  const before = minPair(stateColors(base, kind));
+  const ok = now.d >= MIN_DELTA_E && now.d > before.d;
+  if (!ok) failures++;
+  distinct.push({ ctx, now, before, ok });
+}
+
 if (args.has('--md')) {
+  console.log(
+    '\n#### Vision des couleurs : tons d’état distinguables (ΔE OKLab, vision simulée)\n',
+  );
+  console.log('| Contexte | Écart minimal (paire) | Palette par défaut | Seuil |');
+  console.log('|---|---|---|---|');
+  for (const { ctx, now, before, ok } of distinct) {
+    const f = (x) => x.d.toFixed(3).replace('.', ',');
+    console.log(
+      `| ${ctx} | **${f(now)}** ${ok ? '✓' : '✗'} (\`${now.a}\` / \`${now.b}\`) | ${f(before)} (\`${before.a}\` / \`${before.b}\`) | ${String(MIN_DELTA_E).replace('.', ',')} et > défaut |`,
+    );
+  }
   for (const { ctx, rows } of report) {
     console.log(`\n#### Contexte ${ctx}\n`);
     console.log('| Premier plan | Fond | Ratio | Seuil | Usage |');
@@ -227,6 +375,12 @@ if (args.has('--md')) {
     }
   }
 } else {
+  console.log('\n== vision des couleurs : écart OKLab minimal entre tons d’état (vision simulée)');
+  for (const { ctx, now, before, ok } of distinct) {
+    console.log(
+      `${ok ? 'ok ' : 'KO '} ${now.d.toFixed(3)} (>= ${MIN_DELTA_E}, défaut ${before.d.toFixed(3)})  ${ctx}  · ${now.a} / ${now.b}`,
+    );
+  }
   for (const { ctx, rows } of report) {
     console.log(`\n== ${ctx}`);
     for (const r of rows) {

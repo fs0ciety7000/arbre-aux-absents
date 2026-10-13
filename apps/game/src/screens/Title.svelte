@@ -40,7 +40,7 @@
   <div class="scene" aria-hidden="true">
     <ArtDefs />
     <!-- Objets du bureau cliquables à la souris ; la liste de boutons est l'accès clavier. -->
-    <svg class="art desk-art" viewBox="0 0 400 260">
+    <svg class="art on-night desk-art" viewBox="0 0 400 260">
       <ellipse class="lamp-light" cx="250" cy="200" rx="170" ry="52" />
       <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
       <g class="object" data-verb="look" onclick={() => go('slots')}>

@@ -8,9 +8,10 @@
  *   2. sémantique     --canvas, --text…  seule couche lue par les composants
  *   3. contextes      [data-surface='paper'] remappe la sémantique sur le papier ;
  *                     :root[data-contrast='high'] remappe tout en contraste élevé.
- * Réglages joueur (posés sur <html> par le jeu, cf. Settings) :
- *   data-text-scale, data-reading-font, data-handwriting, data-contrast, data-motion,
- *   data-texture.
+ * Réglages joueur (posés sur <html> par le jeu, cf. Settings et settings-dom.ts) :
+ *   data-text-scale, data-reading-font, data-line-spacing, data-letter-spacing,
+ *   data-handwriting, data-contrast, data-texture, data-color-vision, data-motion.
+ * Illustration de nuit : .art.on-night remappe les --art-* pour un fond nuit (§10.10).
  */
 
 :root {
@@ -120,6 +121,10 @@
   --font-type: 'Courier Prime', 'Courier New', monospace;
   --font-hand: 'Caveat', 'Segoe Print', cursive;
   --font-legible: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  /* OpenDyslexic n'est PAS embarquée : utilisée si installée sur l'appareil, sinon repli
+     sur Atkinson Hyperlegible Next (embarquée), puis Verdana. Aucun téléchargement. */
+  --font-dyslexic:
+    'OpenDyslexic', 'OpenDyslexic3', 'Atkinson Hyperlegible Next', Verdana, system-ui, sans-serif;
 
   --text-scale: 1;
   --step--1: calc(clamp(0.875rem, 0.8505rem + 0.1087vw, 0.9375rem) * var(--text-scale));
@@ -136,9 +141,15 @@
   --leading-snug: 1.3;
   --leading-ui: 1.4;
   --leading-read: 1.6;
-  --tracking-caps: 0.08em;
-  --tracking-label: 0.02em;
-  --tracking-read: 0;
+  --paragraph-gap: 0.9em; /* entre paragraphes de .reading */
+  /* Approche additionnelle du réglage « espacement des lettres » (0 par défaut) : ajoutée
+     à chaque approche ci-dessous et, réglage actif, à tout élément (base.css). */
+  --tracking-extra: 0em;
+  --word-spacing: 0em;
+  --tracking-tight: calc(-0.01em + var(--tracking-extra)); /* titres, onglets compacts */
+  --tracking-caps: calc(0.08em + var(--tracking-extra));
+  --tracking-label: calc(0.02em + var(--tracking-extra));
+  --tracking-read: calc(0em + var(--tracking-extra));
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
@@ -363,6 +374,75 @@
   --shadow-3: 0 0 0 2px var(--ink);
 }
 
+/* ── 3c. Vision des couleurs (option Accessibilité, data-color-vision) ──
+ * Seuls les tons d'état changent (danger, avertissement, succès, info, établi) : l'accent
+ * laiton, le texte et les surfaces restent. Palettes choisies par simulation (Machado 2009,
+ * sévérité 1) pour maximiser l'écart OKLab perçu entre états, tout en restant AA (AAA en
+ * HC) en vision normale ET simulée. Vérifié par scripts/contrast.mjs (§3.7, §14).
+ * Protanopie et deutéranopie partagent l'axe bleu ↔ jaune : succès bleu, danger orangé
+ * sombre, avertissement jaune clair, info neutre, établi violet. Tritanopie : axe rouge ↔
+ * cyan : danger rouge, succès vert d'eau clair, info bleu moyen, établi violet sombre. */
+:root[data-color-vision='protanopia'],
+:root[data-color-vision='deuteranopia'] {
+  --danger: oklch(0.75 0.15 45);
+  --warning: oklch(0.89 0.14 95);
+  --success: oklch(0.82 0.09 245);
+  --info: oklch(0.91 0.04 200);
+  --established: oklch(0.72 0.14 305);
+}
+:root[data-color-vision='protanopia'] [data-surface='paper'],
+:root[data-color-vision='deuteranopia'] [data-surface='paper'] {
+  --danger: oklch(0.37 0.12 33);
+  --warning: oklch(0.48 0.095 92);
+  --success: oklch(0.46 0.09 255);
+  --info: oklch(0.37 0.05 230);
+  --established: oklch(0.37 0.19 295);
+}
+:root[data-contrast='high'][data-color-vision='protanopia'],
+:root[data-contrast='high'][data-color-vision='deuteranopia'] {
+  --danger: oklch(0.8 0.12 49);
+  --warning: oklch(0.87 0.17 93);
+  --success: oklch(0.89 0.06 237);
+  --info: oklch(0.81 0.02 193);
+  --established: oklch(0.8 0.13 311);
+}
+:root[data-contrast='high'][data-color-vision='protanopia'] [data-surface='paper'],
+:root[data-contrast='high'][data-color-vision='deuteranopia'] [data-surface='paper'] {
+  --danger: oklch(0.3 0.11 17);
+  --warning: oklch(0.41 0.087 74);
+  --success: oklch(0.4 0.05 243);
+  --info: oklch(0.3 0.12 270);
+  --established: oklch(0.4 0.18 286);
+}
+:root[data-color-vision='tritanopia'] {
+  --danger: oklch(0.74 0.15 22);
+  --warning: oklch(0.88 0.1 75);
+  --success: oklch(0.86 0.12 165);
+  --info: oklch(0.76 0.09 250);
+  --established: oklch(0.72 0.13 310);
+}
+:root[data-color-vision='tritanopia'] [data-surface='paper'] {
+  --danger: oklch(0.5 0.15 22);
+  --warning: oklch(0.38 0.09 57);
+  --success: oklch(0.47 0.1 159);
+  --info: oklch(0.36 0.03 245);
+  --established: oklch(0.49 0.14 309);
+}
+:root[data-contrast='high'][data-color-vision='tritanopia'] {
+  --danger: oklch(0.88 0.055 16);
+  --warning: oklch(0.8 0.15 68);
+  --success: oklch(0.9 0.16 155);
+  --info: oklch(0.8 0.09 235);
+  --established: oklch(0.8 0.11 300);
+}
+:root[data-contrast='high'][data-color-vision='tritanopia'] [data-surface='paper'] {
+  --danger: oklch(0.41 0.16 29);
+  --warning: oklch(0.4 0.07 73);
+  --success: oklch(0.3 0.06 156);
+  --info: oklch(0.4 0.08 236);
+  --established: oklch(0.3 0.14 316);
+}
+
 /* ── Illustration : carte, portraits, documents (consommés par art.css) ── */
 /* Technique : taille-douce à l'encre ferro-gallique, rehaussée d'aquarelle. */
 :root {
@@ -440,7 +520,50 @@
   --art-label-weight: 650;
 }
 
+/* ── Illustration de nuit : .art.on-night (ou .on-night .art) ─────────
+ * Pour un SVG d'art posé directement sur le bureau sombre (écran titre, vignettes de nuit) :
+ * gravure « à la lueur de la lampe ». Le trait devient vélin, le papier une feuille dans
+ * l'ombre, les lavis des pigments sourds (L ≤ 0,46) sous lesquels le trait clair reste lisible.
+ * Carnations, cheveux et photographies ne changent pas (portraits et photos restent sur papier). */
+.art.on-night,
+.on-night .art {
+  --art-paper: oklch(0.3 0.02 75);
+  --art-paper-shade: oklch(0.26 0.02 70);
+  --art-ink: oklch(0.93 0.015 85);
+  --art-ink-soft: oklch(0.8 0.02 82);
+  --art-ink-faint: oklch(0.64 0.025 250);
+  --art-water: oklch(0.42 0.05 215);
+  --art-water-deep: oklch(0.36 0.06 220);
+  --art-water-ink: oklch(0.82 0.06 220);
+  --art-wash-safran: oklch(0.46 0.08 80);
+  --art-wash-carmin: oklch(0.42 0.09 18);
+  --art-wash-indigo: oklch(0.42 0.07 265);
+  --art-wash-sienne: oklch(0.44 0.08 50);
+  --art-wash-sauge: oklch(0.44 0.06 135);
+  --art-wash-lilas: oklch(0.42 0.07 310);
+  --art-wash-celadon: oklch(0.44 0.05 170);
+  --art-wash-ardoise: oklch(0.4 0.02 250);
+  --art-ombre: oklch(0.08 0.02 258);
+  --art-wash-opacity: 0.7;
+  --art-wash-opacity-active: 0.95;
+}
+:root[data-contrast='high'] .art.on-night,
+:root[data-contrast='high'] .on-night .art {
+  --art-paper: oklch(0.2 0 0);
+  --art-paper-shade: oklch(0.17 0 0);
+  --art-ink: oklch(1 0 0);
+  --art-ink-soft: oklch(0.92 0 0);
+  --art-ink-faint: oklch(0.75 0 0);
+  --art-water: oklch(0.36 0.05 215);
+  --art-water-ink: oklch(0.92 0.04 220);
+  --art-wash-opacity: 0.45;
+  --art-wash-opacity-active: 0.65;
+}
+
 /* ── Réglages joueur ──────────────────────────────────────────────── */
+:root[data-text-scale='0.875'] {
+  --text-scale: 0.875;
+}
 :root[data-text-scale='1.25'] {
   --text-scale: 1.25;
 }
@@ -456,7 +579,38 @@
   --font-ui: var(--font-legible);
   --font-display: 'Literata', 'Literata fallback', Georgia, serif;
   --leading-read: 1.8;
-  --tracking-read: 0.05em;
+  --tracking-read: calc(0.05em + var(--tracking-extra));
+}
+/* Police pour lecteurs dyslexiques (repli documenté sur --font-dyslexic) */
+:root[data-reading-font='dyslexic'] {
+  --font-read: var(--font-dyslexic);
+  --font-ui: var(--font-dyslexic);
+  --font-display: 'Literata', 'Literata fallback', Georgia, serif;
+  --leading-read: 1.8;
+  --tracking-read: calc(0.05em + var(--tracking-extra));
+  --word-spacing: 0.12em;
+  --paragraph-gap: 1.2em;
+}
+/* Interlignage (après la police : le réglage explicite l'emporte). « wider » dépasse les
+   seuils WCAG 1.4.12 : interligne ≥ 1,5, paragraphes ≥ 2 × la taille du texte. */
+:root[data-line-spacing='wide'] {
+  --leading-tight: 1.25;
+  --leading-snug: 1.45;
+  --leading-ui: 1.6;
+  --leading-read: 1.95;
+  --paragraph-gap: 1.4em;
+}
+:root[data-line-spacing='wider'] {
+  --leading-tight: 1.4;
+  --leading-snug: 1.6;
+  --leading-ui: 1.8;
+  --leading-read: 2.2;
+  --paragraph-gap: 2em;
+}
+/* Espacement des lettres et des mots : valeurs WCAG 1.4.12 (0,12 em / 0,16 em) */
+:root[data-letter-spacing='wide'] {
+  --tracking-extra: 0.12em;
+  --word-spacing: 0.16em;
 }
 /* Écriture manuscrite remplacée par une écriture lisible (le document garde son style) */
 :root[data-handwriting='replace'] {
@@ -465,6 +619,7 @@
 }
 :root[data-texture='off'] {
   --paper-grain: 0;
+  --stamp-texture: none; /* tampons à encrage plein, sans usure */
 }
 
 /* Mouvement réduit : système (sauf si le joueur force « complet ») ou réglage en jeu */

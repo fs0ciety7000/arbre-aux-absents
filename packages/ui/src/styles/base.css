@@ -83,7 +83,7 @@ h4 {
   font-family: var(--font-display);
   font-weight: var(--weight-semibold);
   line-height: var(--leading-tight);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-tight);
   text-wrap: balance;
 }
 h1 {
@@ -107,6 +107,23 @@ dd {
 }
 small {
   font-size: var(--step--1);
+}
+
+/* ── Réglage « espacement des lettres » (data-letter-spacing='wide') ── */
+/* Appliqué à CHAQUE élément (letter-spacing hérite en px : il faut le recalculer en em à
+   chaque taille) avec une spécificité nulle : toute approche posée par un composant gagne,
+   et elle inclut déjà --tracking-extra via les tokens --tracking-*. */
+:where(:root[data-letter-spacing='wide'] *) {
+  letter-spacing: var(--tracking-extra);
+  word-spacing: var(--word-spacing);
+}
+/* Le texte de lecture garde son approche propre (+0,05 em en police de lisibilité) */
+:where(:root[data-letter-spacing='wide'] .reading *) {
+  letter-spacing: var(--tracking-read);
+}
+/* Police dyslexie : espacement des mots accru (même sans le réglage ci-dessus) */
+:where(:root[data-reading-font='dyslexic'] *) {
+  word-spacing: var(--word-spacing);
 }
 
 /* ── Contexte papier ─────────────────────────────────────────────── */
@@ -142,12 +159,12 @@ small {
   hyphens: manual;
 }
 .reading > * + * {
-  margin-block-start: 0.9em;
+  margin-block-start: var(--paragraph-gap);
 }
 .ink-type {
   font-family: var(--font-type);
   color: var(--ink-type);
-  letter-spacing: 0;
+  letter-spacing: var(--tracking-extra);
 }
 .ink-hand {
   font-family: var(--font-hand);

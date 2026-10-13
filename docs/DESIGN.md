@@ -1,7 +1,8 @@
 # DESIGN — Système de design de *L'Arbre aux absents*
 
 > Source de vérité de l'UI, du mouvement et de l'illustration. Tenu par l'agent `design-lead`.
-> **v1 — 13 oct. 2026.** Toute UI du jeu et du site s'y conforme.
+> **v1.1 — 13 oct. 2026** (réglages d'accessibilité complets, vision des couleurs, art de nuit,
+> onglets compacts). Toute UI du jeu et du site s'y conforme.
 >
 > | Quoi | Où |
 > |---|---|
@@ -95,7 +96,9 @@ iconé ou décrit (P5 : rien en survol seul, rien sur téléphone).
 3. **Contextes** qui remappent la sémantique :
    - **lampe** (`:root`, défaut) — le bureau sombre ;
    - **papier** (`[data-surface='paper']`, sur un document, une fiche papier, le Lecteur, la carte) — tous les composants à l'intérieur (boutons, pastilles, focus) prennent automatiquement les couleurs papier ;
-   - **contraste élevé** (`:root[data-contrast='high']`, + `… [data-surface='paper']`) — AAA pour le texte.
+   - **contraste élevé** (`:root[data-contrast='high']`, + `… [data-surface='paper']`) — AAA pour le texte ;
+   - **vision des couleurs** (`:root[data-color-vision='protanopia|deuteranopia|tritanopia']`, combinable
+     avec papier et contraste élevé) — ne remappe que les tons d'état (§3.7).
 
 Aucune palette de framework, aucune couleur littérale dans les composants. Seules exceptions
 documentées : les images de curseur (`--cursor-*`, une image ne lit pas les variables) et les
@@ -174,8 +177,9 @@ Grain : `--paper-grain-image` (bruit fractal en data-URI, alpha 0,09) à l'opaci
 | `--hl-4` | `oklch(0.85 0.08 350 / 0.55)` rose | soulignement ondulé | 11,4:1 |
 | `--hl-5` | `oklch(0.86 0.09 60 / 0.6)` orange | encadré 1,5 px | 11,6:1 |
 
-Couleurs forcées : tous deviennent `Mark` / `MarkText`. Palettes daltonisme (GAME_DESIGN §17) :
-le motif suffit à distinguer ; des palettes alternatives redéfiniront `--hl-*` seulement.
+Couleurs forcées : tous deviennent `Mark` / `MarkText`. Vision des couleurs (GAME_DESIGN §17) :
+les surlignages **ne changent pas** — le motif suffit à distinguer les cinq ; seuls les tons
+d'état sont remappés (§3.7).
 
 ### 3.5 Contraste élevé (`data-contrast='high'`)
 
@@ -187,7 +191,10 @@ masque d'usure, lavis de carte à 0,35. Tous les textes ≥ **7:1** (tableaux en
 
 Méthode : OKLCH → OKLab → sRGB linéaire (Ottosson) → luminance WCAG → `(L1 + 0,05)/(L2 + 0,05)` ;
 couleurs translucides composées en sRGB sur leur fond. Toutes les valeurs sont dans le gamut
-sRGB (le script le vérifie). **213 paires, toutes conformes** (détail : annexe §14).
+sRGB (le script le vérifie). **572 paires, toutes conformes** — 236 pour les contextes de base
+(lampe, papier, HC, carte, carte de nuit) et 336 pour les douze contextes « vision des couleurs »
+(chaque paire d'état en vision normale **et** simulée) — plus **12 contrôles d'écart** entre
+tons d'état (§3.7). Détail : annexe §14.
 
 | Paire (pire cas) | Lampe | Papier | Lampe HC | Papier HC |
 |---|---|---|---|---|
@@ -201,7 +208,47 @@ sRGB (le script le vérifie). **213 paires, toutes conformes** (détail : annexe
 | `--text-faint` sur `--surface-1` (grand texte ≥ 3) | 5,4 | 4,0 | 11,0 | 8,5 |
 
 Commande : `node packages/ui/scripts/contrast.mjs` (lisible), `--md` (tableaux), `--strict` (code
-de sortie 1 si une paire échoue — **à brancher dans `npm run check`**, voir §13).
+de sortie 1 si une paire échoue ; c'est `npm run contrast:check -w @arbre/ui`, branché dans
+`npm run check`).
+
+### 3.7 Vision des couleurs (`data-color-vision`)
+
+Option Accessibilité (GAME_DESIGN §17, `Settings.colorVision`). **Seuls les cinq tons d'état
+changent** (`--danger`, `--warning`, `--success`, `--info`, `--established`) : le laiton d'action,
+le texte, les surfaces, les surlignages (motifs) et l'illustration restent. Les tons d'état sont
+déjà toujours doublés d'une forme (icône, texte, cadre, tampon) ; ces palettes rendent la couleur
+**aussi** discriminante pour la personne concernée.
+
+Méthode : simulation des dichromasies **Machado, Oliveira & Fernandes (2009), sévérité 1**, en
+sRGB linéaire ; écart perçu = distance euclidienne OKLab. Chaque palette maximise l'écart minimal
+entre états en vision simulée, sous contrainte : AA (≥ 4,5) sur `--surface-1/3` et `--canvas`, en
+vision **normale et simulée**, dans le gamut sRGB. Protanopie et deutéranopie partagent l'axe
+bleu ↔ jaune et donc la même palette ; la tritanopie suit l'axe rouge ↔ cyan.
+
+| Contexte | `--danger` | `--warning` | `--success` | `--info` | `--established` |
+|---|---|---|---|---|---|
+| **Protan./deutan.** lampe | `oklch(0.75 0.15 45)` orangé | `oklch(0.89 0.14 95)` jaune clair | `oklch(0.82 0.09 245)` bleu | `oklch(0.91 0.04 200)` givre | `oklch(0.72 0.14 305)` violet |
+| papier | `oklch(0.37 0.12 33)` brique | `oklch(0.48 0.095 92)` ocre | `oklch(0.46 0.09 255)` bleu | `oklch(0.37 0.05 230)` ardoise | `oklch(0.37 0.19 295)` violet |
+| lampe HC | `oklch(0.8 0.12 49)` | `oklch(0.87 0.17 93)` | `oklch(0.89 0.06 237)` | `oklch(0.81 0.02 193)` | `oklch(0.8 0.13 311)` |
+| papier HC | `oklch(0.3 0.11 17)` | `oklch(0.41 0.087 74)` | `oklch(0.4 0.05 243)` | `oklch(0.3 0.12 270)` | `oklch(0.4 0.18 286)` |
+| **Tritan.** lampe | `oklch(0.74 0.15 22)` rouge | `oklch(0.88 0.1 75)` paille | `oklch(0.86 0.12 165)` vert d'eau | `oklch(0.76 0.09 250)` bleu moyen | `oklch(0.72 0.13 310)` violet |
+| papier | `oklch(0.5 0.15 22)` | `oklch(0.38 0.09 57)` brun | `oklch(0.47 0.1 159)` | `oklch(0.36 0.03 245)` ardoise | `oklch(0.49 0.14 309)` |
+| lampe HC | `oklch(0.88 0.055 16)` | `oklch(0.8 0.15 68)` | `oklch(0.9 0.16 155)` | `oklch(0.8 0.09 235)` | `oklch(0.8 0.11 300)` |
+| papier HC | `oklch(0.41 0.16 29)` | `oklch(0.4 0.07 73)` | `oklch(0.3 0.06 156)` | `oklch(0.4 0.08 236)` | `oklch(0.3 0.14 316)` |
+
+**Écart minimal entre tons d'état, en vision simulée** (ΔE OKLab ; seuil **0,06** et strictement
+supérieur à la palette par défaut, vérifié par `contrast:check`) :
+
+| | Lampe | Papier | Lampe HC | Papier HC |
+|---|---|---|---|---|
+| Protanopie : défaut → réglage | 0,088 → **0,105** | 0,051 → **0,105** | 0,058 → **0,100** | 0,042 → **0,113** |
+| Deutéranopie | 0,054 → **0,103** | 0,046 → **0,099** | 0,021 → **0,089** | 0,022 → **0,113** |
+| Tritanopie | 0,022 → **0,110** | 0,032 → **0,127** | 0,036 → **0,101** | 0,021 → **0,113** |
+
+Contraste des tons d'état dans ces contextes (pire cas, vision normale / simulée) : lampe ≥ 5,22 /
+4,77 ; papier ≥ 4,66 / 4,60 ; contraste élevé ≥ 7,67 / 7,26 (AAA de fait). Sélecteurs combinés :
+`:root[data-color-vision=…]`, `… [data-surface='paper']`, `:root[data-contrast='high'][data-color-vision=…]`
+et `… [data-surface='paper']` — la combinaison HC + vision l'emporte toujours par spécificité.
 
 ---
 
@@ -220,6 +267,14 @@ téléchargée que si la langue inventée l'utilise. `font-display: swap`, repli
 | Machine à écrire | `--font-type` | **Courier Prime** 400/700 — documents dactylographiés, fiches du Catalogue, tampons | 18,2 + 18,9 (+ 12,4 + 12,6) Ko | 400, 700 |
 | Manuscrite décorative | `--font-hand` | **Caveat** (variable) — lettres, dos de photos, annotations. **Remplaçable** | 73,2 + 28,8 Ko | 400–600 |
 | Lisibilité (option) | `--font-legible` | **Atkinson Hyperlegible Next** (variable, + italique) | 33,2 + 18,6 ; ital. 36,8 + 19,7 Ko | 400–700 |
+| Dyslexie (option) | `--font-dyslexic` | **OpenDyslexic si installée sur l'appareil**, sinon repli Atkinson Hyperlegible Next (embarquée), puis Verdana | — (non embarquée) | 400–700 |
+
+**OpenDyslexic n'est pas embarquée** (aucun WOFF2 dans `packages/ui/src/fonts/`, aucun
+téléchargement à l'exécution) : la pile `--font-dyslexic` l'utilise si le système la fournit
+(`local`), sinon retombe sur Atkinson Hyperlegible Next, déjà livrée. Le réglage reste utile sans
+elle : interlignage 1,8, approche +0,05 em, mots +0,12 em, paragraphes 1,2 em. Pour l'embarquer
+plus tard : WOFF2 sous-ensemblés `latin`/`latin-ext` + licence (OFL/Bitstream Vera) dans
+`fonts/`, `@font-face` dans `fonts.css`, ligne ajoutée à ce tableau.
 
 **Budget au premier écran** : Instrument Sans latin (29 Ko) + Literata opsz latin (108 Ko) =
 **137 Ko**, les deux seuls préchargements autorisés (`<link rel="preload" as="font" crossorigin>`).
@@ -243,8 +298,11 @@ de police du système).
 | `--step--1` | 14 → 15 px | Métadonnées, surtitres en capitales, pastilles, touches. **Jamais** pour un texte qu'il faut lire pour jouer |
 
 `--hand-boost` (1,3) : Caveat a un petit œil, elle s'affiche à 130 % (1 si remplacée).
-Interlignage : `--leading-tight` 1,1 · `--leading-snug` 1,3 · `--leading-ui` 1,4 · `--leading-read` 1,6 (1,8 en lisibilité).
-Approche : `--tracking-caps` 0,08 em (surtitres) · `--tracking-label` 0,02 em (boutons) · `--tracking-read` 0 (0,05 em en lisibilité).
+Interlignage : `--leading-tight` 1,1 · `--leading-snug` 1,3 · `--leading-ui` 1,4 · `--leading-read` 1,6 (1,8 en lisibilité) — tous relevés par `data-line-spacing` (§4.2).
+Écart entre paragraphes de `.reading` : `--paragraph-gap` 0,9 em.
+Approche : `--tracking-tight` −0,01 em (titres, barre d'onglets) · `--tracking-caps` 0,08 em (surtitres) · `--tracking-label` 0,02 em (boutons, champs) · `--tracking-read` 0 (0,05 em en lisibilité).
+Chacune vaut `calc(valeur + var(--tracking-extra))` : `--tracking-extra` (0 ; 0,12 em avec
+`data-letter-spacing="wide"`) et `--word-spacing` (0 ; 0,16 em) portent le réglage d'espacement.
 Graisses : `--weight-regular` 400 · `--weight-medium` 500 · `--weight-semibold` 600 · `--weight-bold` 700. Mesure : `--measure` 66 ch.
 
 Conventions : titres Literata 600, `text-wrap: balance` ; paragraphes `text-wrap: pretty` ;
@@ -255,12 +313,25 @@ texte **jamais justifié** ; capitales espacées réservées aux surtitres et à
 
 | `Settings` | Attribut | Effet |
 |---|---|---|
-| `textScale: 1 \| 1.25 \| 1.5 \| 2` | `data-text-scale="1.25"`… | `--text-scale` multiplie toute l'échelle |
+Posés par `apps/game/src/lib/game/settings-dom.ts` (`applySettings`) ; valeur par défaut =
+attribut absent. Tous sont consommés par `tokens.css` / `base.css` et combinables entre eux.
+
+| `Settings` | Attribut | Effet |
+|---|---|---|
+| `textScale: 0.875 \| 1.25 \| 1.5 \| 2` | `data-text-scale="0.875"`… | `--text-scale` multiplie toute l'échelle (0,875 : texte réduit, choix explicite du joueur) |
 | `readingFont: 'hyperlegible'` | `data-reading-font="hyperlegible"` | Atkinson pour la lecture **et** l'interface ; interlignage 1,8 ; approche +0,05 em ; titres restent en Literata |
+| `readingFont: 'dyslexic'` | `data-reading-font="dyslexic"` | `--font-dyslexic` (OpenDyslexic locale, sinon Atkinson) pour lecture et interface ; interlignage 1,8 ; approche +0,05 em ; mots +0,12 em ; paragraphes 1,2 em ; titres en Literata |
+| `lineSpacing: 'wide'` | `data-line-spacing="wide"` | Interlignes tight 1,25 · snug 1,45 · ui 1,6 · read 1,95 ; paragraphes 1,4 em |
+| `lineSpacing: 'wider'` | `data-line-spacing="wider"` | tight 1,4 · snug 1,6 · ui 1,8 · read 2,2 ; paragraphes 2 em (au-delà de WCAG 1.4.12) |
+| `letterSpacing: true` | `data-letter-spacing="wide"` | +0,12 em sur les lettres, +0,16 em sur les mots (WCAG 1.4.12), appliqué à **chaque** élément (`:where(…)`, spécificité nulle) et ajouté aux approches des composants via `--tracking-*` |
 | `replaceHandwriting: true` | `data-handwriting="replace"` | `--font-hand` → `--font-read`, le style (couleur d'encre) reste |
 | `highContrast: true` | `data-contrast="high"` | Contexte contraste élevé (§3.5) |
+| `reducePaperTexture: true` | `data-texture="off"` | Grain de papier à 0 (`--paper-grain`) et tampons sans usure (`--stamp-texture: none`) |
+| `colorVision: 'protanopia' \| 'deuteranopia' \| 'tritanopia'` | `data-color-vision="…"` | Tons d'état remappés (§3.7) |
 | `motion: 'reduced' \| 'full'` | `data-motion="reduced"` / `"full"` | Force ou ignore `prefers-reduced-motion` ; `'system'` = attribut absent |
-| *(à ajouter au contrat)* | `data-texture="off"` | Option « réduire la texture papier » (GAME_DESIGN §17) |
+
+Ordre de priorité dans `tokens.css` : police → interlignage → espacement (le réglage le plus
+explicite l'emporte : `wider` relève l'interligne de la police de lisibilité).
 
 Sous 360 px CSS effectifs (texte à 200 %), les dispositions passent au cran inférieur
 (cf. §5.2 : les points de rupture sont en `rem`, ils suivent la taille du texte système).
@@ -447,8 +518,8 @@ français, aucun `{@html}`.
 |---|---|---|---|---|
 | 9.1 | `Button` | `variant: primary\|secondary\|ghost\|danger` (déf. secondary) · `size: m\|l` (44/48) · `href` (→ `<a>`) · `target`, `rel` (noopener auto) · `loading` · `block` · `disabled` · `iconName` ou snippet `icon` · `iconEnd` · `verb` · attributs `<button>` | hover (couche `::before` en opacité), focus-visible, active (1 px), disabled (50 %), loading (spinner) | `loading` → `aria-busy` + `aria-disabled`, garde le focus, ignore le clic. Un seul `primary` par vue. |
 | 9.2 | `IconButton` | `label` **obligatoire** · `icon` ou snippet · `variant: ghost\|secondary\|primary` · `size` · `pressed` · `badge`, `badgeLabel` · `tooltip`, `tooltipPlacement` | hover, focus, active (scale .94), **pressed** (laiton + bord), disabled ; info-bulle CSS au survol (délai) et au focus, absente au toucher | `aria-label` (+ badge verbalisé), `aria-pressed` si bascule. |
-| 9.3 | `Tabs` | `items: {id,label,icon?,badge?,badgeLabel?,disabled?}[]` · `value` (bindable) · `label` · `variant: line\|bar\|rail` · `activation: auto\|manual` · snippet `children(id)` (panneau) | line = volets ; bar = barre basse 64 px ; rail = rail vertical d'icônes ; indicateur 3 px qui s'encre ; pastilles | Motif ARIA tabs, tabindex itinérant, flèches (verticales pour rail), Début/Fin, `aria-controls`/`aria-labelledby`. Rail : libellé visuellement caché + info-bulle. |
-| 9.4 | `Panel` | `title` · `headingLevel` · `kicker` · `surface: desk\|paper` · `as` · `scroll` · `padded` · `hideHeader` · `onclose` · snippets `actions`, `footer` | bureau (surface-1, rayon 16) ou papier (grain, rayon 2, ombre chaude) | `<section aria-labelledby>` avec vrai `hN` ; bouton fermer nommé. |
+| 9.3 | `Tabs` | `items: {id,label,icon?,badge?,badgeLabel?,disabled?}[]` · `value` (bindable) · `label` · `variant: line\|bar\|rail` · `compact: 'auto'\|true\|false` (line, déf. `'auto'`) · `activation: auto\|manual` · snippet `children(id)` (panneau) | line = volets ; bar = barre basse 64 px ; rail = rail vertical d'icônes ; indicateur 3 px qui s'encre ; pastilles. **line compact** (§9.3 bis) : icônes seules quand les libellés débordent ; sans icônes, défilement horizontal à fondus de bord | Motif ARIA tabs, tabindex itinérant, flèches (verticales pour rail), Début/Fin, `aria-controls`/`aria-labelledby`. Rail et line compact : libellé visuellement caché + info-bulle. **Si `value` ne désigne aucun onglet** (panneau ouvert d'ailleurs), le premier onglet activable garde `tabindex=0` : la liste reste atteignable par Tab, et le panneau prend `aria-label`. |
+| 9.4 | `Panel` | `title` · `headingLevel` · `kicker` · `surface: desk\|paper` · `as` · `scroll` · `padded` · `hideHeader` · `onclose` · snippets `actions`, `footer` | bureau (surface-1, rayon 16) ou papier (grain, rayon 2, ombre chaude) ; **téléphone (< 600 px) : rayon 0**, bord à bord (§5.3) | `<section aria-labelledby>` avec vrai `hN` ; bouton fermer nommé. |
 | 9.5 | `Card` | `variant: fiche\|document\|photo` · `title` · `headingLevel` · `kicker` · `meta` · `href` / `onactivate` · `selected` · `unread` · `pinned` · `tilt` (±1,5°) · `verb` · snippets `media`, `children`, `footer` | fiche (bureau), document (papier + grain), photo (bord blanc, légende manuscrite) ; survol = se soulève ; sélection = contour laiton + ▸ | Le titre est le lien/bouton (zone étendue à la carte), pied cliquable au-dessus ; « Non lu », « Épinglé » verbalisés. |
 | 9.6 | `Dialog` | `open` (bindable) · `title` · `kicker` · `description` · `size: s\|m\|l` · `surface` · `dismissible` · `mobile: sheet\|fullscreen` · `onclose` · snippets `children`, `actions` | se pose ; feuille basse < 600 px (actions empilées) ou plein écran | `<dialog>` + `showModal()` (reste inerte), Échap, clic fond (pression et relâchement sur le fond), retour du focus, `aria-labelledby/describedby`, défilement de page verrouillé. |
 | 9.7 | `TextField` | `label` · `value` (bindable) · `hint` · `error` · `multiline`, `rows` · `maxlength` (compteur) · `variant: default\|typewriter` · `iconName` · `hideLabel` · snippet `end` | focus (anneau sur le contrôle), erreur (bord 2 px + icône + texte), disabled ; typewriter = Courier Prime (Catalogue) | Libellé `<label for>`, aide/erreur/compteur via `aria-describedby`, `aria-invalid`, compteur poli. |
@@ -468,6 +539,24 @@ français, aucun `{@html}`.
 
 Utilitaires CSS (base.css) : `.reading`, `.ink-type`, `.ink-hand`, `.num`, `.caps`, `.grain`,
 `.kw[data-state]`, `.hl-1…5`, `.visually-hidden`, `.skip-link`, `[data-verb]`, `.logo-mono`.
+
+### 9.3 bis Onglets `line` compacts
+
+Le volet latéral du Bureau porte six onglets (Lecteur, Archives, Catalogue, Carnet, Journal,
+Aide) : à 440 px, icônes + libellés débordent. `compact` règle le repli :
+
+- `'auto'` (défaut) : une copie invisible, hors flux et rognée, mesure la largeur naturelle des
+  libellés (`ResizeObserver` sur la liste et la copie, donc aucune oscillation) ; s'ils ne tiennent
+  pas **et que tous les onglets ont une icône**, la liste passe en **icônes seules** (cases ≥ 44 px
+  réparties, libellé `visually-hidden` toujours lu, info-bulle sous l'onglet au survol/focus,
+  pastilles en exposant). Dès que la place revient, les libellés reviennent.
+- `true` : icônes seules en permanence (si toutes les icônes existent) ; `false` : jamais.
+- **Repli sans icônes** (ou icônes elles-mêmes trop nombreuses) : défilement horizontal visible —
+  barre fine `--line-strong`, **fondus de bord** (masque `linear-gradient`, alpha seul, non animé)
+  du côté où il reste du contenu, et l'onglet actif est ramené dans la vue (sans défilement animé).
+
+Recommandation Bureau : `Tabs variant="line"` du volet avec les icônes de `PANEL_ICONS` (déjà le
+cas) — le mode `'auto'` suffit, aucune prop à ajouter.
 
 ### 9.21 Mots-clés soulignés (`.kw`)
 
@@ -579,6 +668,30 @@ Objectif : **reconnaissables entre 25 et 35 personnes**, à 72 px (case) comme �
 
 Le texte est toujours du texte réel (transcription disponible, `T`), jamais une image de texte.
 
+### 10.10 Art de nuit (`.art.on-night`)
+
+Un SVG d'art posé **directement sur le bureau sombre** (écran titre, vignettes) reste illisible
+avec la palette papier : trait bleu-noir sur fond nuit. Ajouter `on-night` à la racine
+(`<svg class="art on-night">`, ou `on-night` sur un ancêtre) remappe les `--art-*` : gravure
+« à la lueur de la lampe ». Aucune nouvelle classe d'élément ; les SVG de contenu ne changent pas.
+Constante : `ART_NIGHT_CLASS` (`'on-night'`), posée par l'application, jamais par le contenu.
+
+| Token | Papier (défaut) | Nuit | HC nuit |
+|---|---|---|---|
+| `--art-ink` | encre `oklch(0.27 0.045 264)` | vélin `oklch(0.93 0.015 85)` | `oklch(1 0 0)` |
+| `--art-ink-soft` | `oklch(0.44 0.045 262)` | `oklch(0.8 0.02 82)` | `oklch(0.92 0 0)` |
+| `--art-ink-faint` | `oklch(0.58 0.035 262)` | `oklch(0.64 0.025 250)` | `oklch(0.75 0 0)` |
+| `--art-paper` / `--art-paper-shade` | papier clair | feuille dans l'ombre `oklch(0.3 0.02 75)` / `oklch(0.26 0.02 70)` | `oklch(0.2 0 0)` / `oklch(0.17 0 0)` |
+| `--art-wash-*` | pigments clairs L 0,79–0,86 | pigments sourds L 0,40–0,46, même teinte (safran 80, carmin 18, indigo 265, sienne 50, sauge 135, lilas 310, céladon 170, ardoise 250) | idem, opacité 0,45 / 0,65 |
+| `--art-water` / `-deep` / `-ink` | | `oklch(0.42 0.05 215)` / `oklch(0.36 0.06 220)` / `oklch(0.82 0.06 220)` | eau `oklch(0.36 0.05 215)`, nom `oklch(0.92 0.04 220)` |
+| `--art-ombre` | | `oklch(0.08 0.02 258)` | |
+| `--art-wash-opacity` / `-active` | 0,6 / 0,9 | 0,7 / 0,95 | 0,45 / 0,65 |
+
+Carnations, cheveux et photographies **ne changent pas** : portraits et photos restent sur papier.
+Le halo des toponymes (`stroke: --art-paper`) devient sombre de lui-même. Contrastes (contextes
+« carte nuit » de §14) : toponyme sur lavis pur ≥ 5,85 (HC ≥ 7,2), nom d'eau sur l'eau ≥ 4,83,
+trait et légendes sur le bureau ≥ 4,5, trait fin ≥ 4,07 (non-texte).
+
 ### 10.9 Tableau `ART_CLASSES` (source : `packages/ui/src/art-classes.ts`)
 
 | Groupe | Classes |
@@ -592,7 +705,7 @@ Le texte est toujours du texte réel (transcription disponible, `T`), jamais une
 | Photographie | `photo-paper` `photo-light` `photo-mid` `photo-dark` |
 | Texte | `label` `label-major` `label-region` `label-water` `label-note` |
 
-Exports annexes : `ART_ROOT_CLASS` (`'art'`), `ART_PATTERN_IDS`, `ART_PAINT_KEYWORDS`,
+Exports annexes : `ART_ROOT_CLASS` (`'art'`), `ART_NIGHT_CLASS` (`'on-night'`, §10.10), `ART_PATTERN_IDS`, `ART_PAINT_KEYWORDS`,
 `isArtClass()`. Tokens d'art : `--art-*` (§10.3–10.7, valeurs dans tokens.css), dont
 `--art-skin-opacity` 0,9, `--art-blush-opacity` 0,5, `--art-ombre-opacity` 0,22,
 `--art-rehaut-opacity` 0,85, `--art-water-opacity` 0,75, `--art-hatch-width` 0,5,
@@ -635,6 +748,14 @@ Lecteur papier), illustration (extrait de carte avec états `open`/`mentioned`, 
 pigments, motifs), icônes (`ICON_NAMES`), curseurs (zones `data-verb` à survoler), logos (§11).
 Vérifiée à 360 px (pas de défilement horizontal) et 1280 px, en contraste élevé et en mouvement réduit.
 
+**À ajouter à la page (v1.1, `apps/site`, hors périmètre design-lead → frontend)** : sélecteurs
+de réglage pour `data-text-scale="0.875"`, `data-reading-font="dyslexic"`, `data-line-spacing`,
+`data-letter-spacing`, `data-texture`, `data-color-vision` ; une rangée de pastilles et tampons
+d'état sur bureau **et** papier (pour juger les palettes §3.7) ; onglets `line` à 440 px avec
+icônes (compact auto) et sans icônes (défilement à fondus), `bar` dont la valeur est hors barre ;
+la scène de l'écran titre en `.art.on-night` à côté de sa version papier ; un `Panel` dans un
+cadre de 360 px (rayon 0).
+
 ---
 
 ## 13. Checklist de conformité (utilisée par `qa-reviewer`)
@@ -644,7 +765,7 @@ Tokens et styles
 - [x] Composants ne lisant que la sémantique (jamais `--raw-*`)
 - [x] Espacements sur l'échelle 4 px ; 1–3 px littéraux seulement pour filets et insets
 - [x] Contexte papier : tout composant posé dans `[data-surface='paper']` reste conforme
-- [ ] `node packages/ui/scripts/contrast.mjs --strict` branché dans `npm run check` (orchestrateur)
+- [x] `node packages/ui/scripts/contrast.mjs --strict` branché dans `npm run check` (`contrast:check`), variantes vision des couleurs et art de nuit comprises
 - [ ] SVG d'art : seulement `ART_CLASSES`, `none`, `currentColor`, `url(#…)` (règle 8 de `content:check`, backend)
 
 Accessibilité
@@ -656,6 +777,10 @@ Accessibilité
 - [x] Tabs, Combobox, Toggle, Slider : motifs ARIA, clavier complet
 - [x] Info-bulles jamais indispensables (absentes au toucher)
 - [x] Taille du texte ×2 sans perte (échelle en rem × `--text-scale`), police de lisibilité, manuscrit remplaçable
+- [x] Tous les attributs de `settings-dom.ts` ont un effet CSS (§4.2) : 0,875, dyslexie (repli documenté), interlignage, espacement WCAG 1.4.12, texture, vision des couleurs
+- [x] Vision des couleurs : tons d'état distinguables en vision simulée (§3.7) et AA en vision normale et simulée
+- [x] Onglets : liste toujours atteignable par Tab, même sans onglet actif ; volet 440 px sans débordement (compact)
+- [ ] Page `/design` : démonstration des réglages et composants v1.1 (§12, frontend)
 - [x] Couleurs forcées (`forced-colors`) gérées dans base.css, art.css et les primitives
 - [ ] Lecteur d'écran sur le Bureau réel (arbre en liste hiérarchique, annonces de verrouillage) — frontend, vague D
 - [ ] Parité manette (navigation spatiale + `KeyHint`) — frontend, vague D
@@ -676,7 +801,25 @@ Illustration
 
 Généré par `node packages/ui/scripts/contrast.mjs --md` (à régénérer à chaque changement de
 couleur). Fonds composés : « A sur B » = A translucide posé sur B. Seuils : 4,5 texte ; 3
-non-texte / grand texte ; 7 en contraste élevé.
+non-texte / grand texte ; 7 en contraste élevé. Contextes « vision des couleurs » : seules les
+paires impliquant un ton d'état, chacune en vision normale puis « (vision simulée) ».
+
+#### Vision des couleurs : tons d’état distinguables (ΔE OKLab, vision simulée)
+
+| Contexte | Écart minimal (paire) | Palette par défaut | Seuil |
+|---|---|---|---|
+| lampe protanopia | **0,105** ✓ (`--success` / `--info`) | 0,088 (`--danger` / `--warning`) | 0,06 et > défaut |
+| papier protanopia | **0,105** ✓ (`--success` / `--info`) | 0,051 (`--warning` / `--success`) | 0,06 et > défaut |
+| lampe HC protanopia | **0,100** ✓ (`--success` / `--info`) | 0,058 (`--info` / `--established`) | 0,06 et > défaut |
+| papier HC protanopia | **0,113** ✓ (`--info` / `--established`) | 0,042 (`--warning` / `--success`) | 0,06 et > défaut |
+| lampe deuteranopia | **0,103** ✓ (`--success` / `--established`) | 0,054 (`--danger` / `--success`) | 0,06 et > défaut |
+| papier deuteranopia | **0,099** ✓ (`--success` / `--info`) | 0,046 (`--danger` / `--warning`) | 0,06 et > défaut |
+| lampe HC deuteranopia | **0,089** ✓ (`--info` / `--established`) | 0,021 (`--info` / `--established`) | 0,06 et > défaut |
+| papier HC deuteranopia | **0,113** ✓ (`--info` / `--established`) | 0,022 (`--danger` / `--warning`) | 0,06 et > défaut |
+| lampe tritanopia | **0,110** ✓ (`--success` / `--info`) | 0,022 (`--success` / `--info`) | 0,06 et > défaut |
+| papier tritanopia | **0,127** ✓ (`--success` / `--info`) | 0,032 (`--success` / `--info`) | 0,06 et > défaut |
+| lampe HC tritanopia | **0,101** ✓ (`--danger` / `--established`) | 0,036 (`--success` / `--info`) | 0,06 et > défaut |
+| papier HC tritanopia | **0,113** ✓ (`--warning` / `--established`) | 0,021 (`--success` / `--info`) | 0,06 et > défaut |
 
 #### Contexte lampe
 
@@ -909,5 +1052,445 @@ non-texte / grand texte ; 7 en contraste élevé.
 | `--art-ink` | `--art-wash-celadon` | **13,42** ✓ | 7 | toponyme sur lavis celadon pur |
 | `--art-ink` | `--art-wash-ardoise` | **10,79** ✓ | 7 | toponyme sur lavis ardoise pur |
 | `--art-ink-faint` | `--art-paper` | **8,47** ✓ | 3 | trait mine de plomb (non-texte) |
+
+#### Contexte carte nuit
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--art-ink` | `--art-paper` | **11,12** ✓ | 4,5 | toponyme sur papier |
+| `--art-ink-soft` | `--art-paper` | **7,31** ✓ | 4,5 | légende secondaire |
+| `--art-water-ink` | `--art-paper` | **7,96** ✓ | 4,5 | nom de cours d’eau |
+| `--art-water-ink` | `--art-water` | **4,83** ✓ | 4,5 | nom de cours d’eau sur l’eau |
+| `--art-ink` | `--art-water-deep` | **8,67** ✓ | 4,5 | toponyme sur eau profonde |
+| `--art-ink` | `--art-wash-safran` | **5,85** ✓ | 4,5 | toponyme sur lavis safran pur |
+| `--art-ink` | `--art-wash-carmin` | **7,21** ✓ | 4,5 | toponyme sur lavis carmin pur |
+| `--art-ink` | `--art-wash-indigo` | **6,93** ✓ | 4,5 | toponyme sur lavis indigo pur |
+| `--art-ink` | `--art-wash-sienne` | **6,51** ✓ | 4,5 | toponyme sur lavis sienne pur |
+| `--art-ink` | `--art-wash-sauge` | **6,17** ✓ | 4,5 | toponyme sur lavis sauge pur |
+| `--art-ink` | `--art-wash-lilas` | **7,10** ✓ | 4,5 | toponyme sur lavis lilas pur |
+| `--art-ink` | `--art-wash-celadon` | **6,15** ✓ | 4,5 | toponyme sur lavis celadon pur |
+| `--art-ink` | `--art-wash-ardoise` | **7,48** ✓ | 4,5 | toponyme sur lavis ardoise pur |
+| `--art-ink-faint` | `--art-paper` | **4,07** ✓ | 3 | trait mine de plomb (non-texte) |
+| `--art-ink` | `--canvas` | **15,56** ✓ | 4,5 | trait, toponyme sur le bureau |
+| `--art-ink-soft` | `--canvas` | **10,23** ✓ | 4,5 | légende sur le bureau |
+| `--art-ink-faint` | `--canvas` | **5,70** ✓ | 3 | trait fin sur le bureau (non-texte) |
+
+#### Contexte carte nuit HC
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--art-ink` | `--art-paper` | **18,10** ✓ | 7 | toponyme sur papier |
+| `--art-ink-soft` | `--art-paper` | **14,29** ✓ | 7 | légende secondaire |
+| `--art-water-ink` | `--art-paper` | **14,44** ✓ | 7 | nom de cours d’eau |
+| `--art-water-ink` | `--art-water` | **8,51** ✓ | 7 | nom de cours d’eau sur l’eau |
+| `--art-ink` | `--art-water-deep` | **10,66** ✓ | 7 | toponyme sur eau profonde |
+| `--art-ink` | `--art-wash-safran` | **7,20** ✓ | 7 | toponyme sur lavis safran pur |
+| `--art-ink` | `--art-wash-carmin` | **8,87** ✓ | 7 | toponyme sur lavis carmin pur |
+| `--art-ink` | `--art-wash-indigo` | **8,52** ✓ | 7 | toponyme sur lavis indigo pur |
+| `--art-ink` | `--art-wash-sienne` | **8,00** ✓ | 7 | toponyme sur lavis sienne pur |
+| `--art-ink` | `--art-wash-sauge` | **7,59** ✓ | 7 | toponyme sur lavis sauge pur |
+| `--art-ink` | `--art-wash-lilas` | **8,73** ✓ | 7 | toponyme sur lavis lilas pur |
+| `--art-ink` | `--art-wash-celadon` | **7,56** ✓ | 7 | toponyme sur lavis celadon pur |
+| `--art-ink` | `--art-wash-ardoise` | **9,19** ✓ | 7 | toponyme sur lavis ardoise pur |
+| `--art-ink-faint` | `--art-paper` | **8,14** ✓ | 3 | trait mine de plomb (non-texte) |
+| `--art-ink` | `--canvas` | **20,59** ✓ | 7 | trait, toponyme sur le bureau |
+| `--art-ink-soft` | `--canvas` | **16,25** ✓ | 7 | légende sur le bureau |
+| `--art-ink-faint` | `--canvas` | **9,25** ✓ | 3 | trait fin sur le bureau (non-texte) |
+
+#### Contexte lampe protanopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **7,48** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **6,19** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **10,13** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **10,71** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **12,63** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **11,82** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **13,60** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **13,91** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **6,70** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **6,56** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **7,32** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **7,19** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **7,62** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **7,50** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **11,05** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **11,74** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **8,17** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **6,78** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **13,79** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **12,95** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **14,84** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **15,24** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **7,88** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **8,27** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **5,82** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **4,77** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **5,22** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **5,07** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte papier protanopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **10,35** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **12,31** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **6,70** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **6,20** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **6,15** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **6,48** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **9,67** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **9,16** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **10,82** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **9,47** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **10,11** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **8,82** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **10,82** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **9,47** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **6,26** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **5,77** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **9,68** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **11,47** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **5,75** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **6,04** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **9,04** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **8,53** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **5,13** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **4,68** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **7,92** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **9,31** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **8,28** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **7,16** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte lampe HC protanopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **10,40** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **9,16** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **14,61** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **15,29** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **13,56** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **12,59** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **11,23** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **11,43** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **10,27** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **10,03** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **10,51** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **10,27** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **10,51** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **10,27** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **14,95** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **15,65** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **10,64** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **9,37** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **13,88** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **12,89** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **11,49** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **11,70** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **12,87** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **13,47** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **9,16** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **8,06** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **9,05** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **8,84** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte papier HC protanopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **14,30** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **16,35** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **9,15** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **8,72** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **8,97** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **9,74** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **14,04** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **12,92** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **9,99** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **8,74** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **9,99** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **8,74** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **9,99** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **8,74** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **9,15** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **8,72** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **14,30** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **16,35** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **8,97** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **9,74** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **14,04** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **12,92** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **7,67** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **7,31** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **11,99** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **13,72** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **8,38** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **7,33** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte lampe deuteranopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **7,48** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **8,34** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **10,13** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **9,75** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **12,63** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **13,14** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **13,60** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **13,38** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **6,70** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **6,83** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **7,32** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **7,44** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **7,62** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **7,73** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **11,05** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **10,62** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **8,17** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **9,08** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **13,79** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **14,31** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **14,84** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **14,57** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **7,88** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **7,63** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **5,82** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **6,52** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **5,22** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **5,34** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte papier deuteranopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **10,35** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **9,38** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **6,70** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **7,05** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **6,15** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **5,96** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **9,67** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **10,03** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **10,82** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **10,01** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **10,11** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **9,38** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **10,82** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **10,01** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **6,26** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **6,60** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **9,68** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **8,78** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **5,75** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **5,58** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **9,04** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **9,40** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **5,13** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **5,43** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **7,92** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **7,23** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **8,28** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **7,72** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte lampe HC deuteranopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **10,40** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **11,20** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **14,61** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **14,17** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **13,56** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **14,17** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **11,23** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **11,10** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **10,27** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **10,47** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **10,51** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **10,72** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **10,51** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **10,72** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **14,95** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **14,51** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **10,64** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **11,47** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **13,88** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **14,50** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **11,49** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **11,36** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **12,87** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **12,48** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **9,16** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **9,87** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **9,05** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **9,23** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte papier HC deuteranopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **14,30** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **13,20** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **9,15** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **9,44** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **8,97** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **8,54** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **14,04** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **14,00** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **9,99** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **9,51** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **9,99** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **9,51** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **9,99** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **9,51** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **9,15** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **9,44** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **14,30** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **13,20** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **8,97** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **8,54** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **14,04** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **14,00** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **7,67** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **7,91** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **11,99** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **11,07** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **8,38** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **7,98** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte lampe tritanopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **7,12** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **6,52** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **12,01** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **11,90** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **12,08** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **11,39** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **8,21** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **8,29** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **6,71** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **6,83** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **7,33** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **7,46** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **7,63** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **7,78** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **13,11** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **13,00** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **7,77** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **7,13** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **13,18** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **12,44** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **8,96** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **9,06** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **9,34** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **9,25** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **5,54** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **5,07** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **5,22** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **5,31** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte papier tritanopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **6,09** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **6,10** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **6,09** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **6,03** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **9,68** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **9,73** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **10,16** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **10,10** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **6,30** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **6,12** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **5,89** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **5,71** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **6,30** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **6,12** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **5,69** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **5,63** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **5,70** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **5,70** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **9,04** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **9,09** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **9,50** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **9,44** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **4,66** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **4,60** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **4,66** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **4,66** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **4,82** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **4,67** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte lampe HC tritanopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **13,72** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **13,53** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **15,81** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **15,64** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **10,47** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **9,59** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **10,94** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **11,05** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **10,42** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **10,59** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **10,66** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **10,84** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **10,66** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **10,84** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **16,18** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **16,01** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **14,04** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **13,84** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **10,72** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **9,81** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **11,20** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **11,31** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **13,92** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **13,78** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **12,09** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **11,91** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **9,17** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **9,33** ✓ | 4,5 | pastille douce (vision simulée) |
+
+#### Contexte papier HC tritanopia
+
+| Premier plan | Fond | Ratio | Seuil | Usage |
+|---|---|---|---|---|
+| `--danger` | `--surface-1` | **9,57** ✓ | 4,5 | erreur |
+| `--danger` | `--surface-1` | **8,65** ✓ | 4,5 | erreur (vision simulée) |
+| `--success` | `--surface-1` | **13,30** ✓ | 4,5 | succès |
+| `--success` | `--surface-1` | **13,36** ✓ | 4,5 | succès (vision simulée) |
+| `--warning` | `--surface-1` | **9,33** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **9,40** ✓ | 4,5 | avertissement (vision simulée) |
+| `--info` | `--surface-1` | **9,08** ✓ | 4,5 | information |
+| `--info` | `--surface-1` | **8,54** ✓ | 4,5 | information (vision simulée) |
+| `--established` | `--surface-1` | **14,54** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--surface-1` | **14,20** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established` | `--canvas` | **14,54** ✓ | 4,5 | tampon « Établi » |
+| `--established` | `--canvas` | **14,20** ✓ | 4,5 | tampon « Établi » (vision simulée) |
+| `--established-contrast` | `--established` | **14,54** ✓ | 4,5 | texte sur tampon plein |
+| `--established-contrast` | `--established` | **14,20** ✓ | 4,5 | texte sur tampon plein (vision simulée) |
+| `--canvas` | `--success` | **13,30** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--success` | **13,36** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--danger` | **9,57** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--danger` | **8,65** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--warning` | **9,33** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **9,40** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--canvas` | `--info` | **9,08** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--info` | **8,54** ✓ | 4,5 | pastille pleine (vision simulée) |
+| `--success` | `--surface-3` | **11,16** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **11,21** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--danger` | `--surface-3` | **8,03** ✓ | 4,5 | pastille douce |
+| `--danger` | `--surface-3` | **7,26** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--established` | `--surface-3` | **12,19** ✓ | 4,5 | pastille douce |
+| `--established` | `--surface-3` | **11,91** ✓ | 4,5 | pastille douce (vision simulée) |
 
 Toutes les paires passent.

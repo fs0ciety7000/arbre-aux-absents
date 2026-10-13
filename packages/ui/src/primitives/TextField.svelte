@@ -158,7 +158,7 @@
   .typewriter input,
   .typewriter textarea {
     font-family: var(--font-type);
-    letter-spacing: 0.02em;
+    letter-spacing: var(--tracking-label);
   }
   .typewriter input {
     caret-color: var(--accent);
