@@ -1,6 +1,6 @@
 {
   "name": "@arbre/game",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Le jeu : SPA Vite + Svelte 5 (web, itch.io, Tauri 2).",
   "type": "module",

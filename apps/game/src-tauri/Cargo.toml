@@ -1,6 +1,6 @@
 [package]
 name = "arbre-aux-absents"
-version = "0.0.0"
+version = "1.0.0"
 description = "L'Arbre aux absents : jeu d'enquête généalogique (CM Interactive, CM Creative Lab)."
 authors = ["CM Interactive"]
 license = "LicenseRef-Proprietary"
