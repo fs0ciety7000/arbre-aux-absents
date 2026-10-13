@@ -780,7 +780,7 @@ Accessibilité
 - [x] Tous les attributs de `settings-dom.ts` ont un effet CSS (§4.2) : 0,875, dyslexie (repli documenté), interlignage, espacement WCAG 1.4.12, texture, vision des couleurs
 - [x] Vision des couleurs : tons d'état distinguables en vision simulée (§3.7) et AA en vision normale et simulée
 - [x] Onglets : liste toujours atteignable par Tab, même sans onglet actif ; volet 440 px sans débordement (compact)
-- [ ] Page `/design` : démonstration des réglages et composants v1.1 (§12, frontend)
+- [x] Page `/design` : démonstration des réglages et composants v1.1 (§12, frontend ; `apps/site/src/routes/design/`, vérifiée à 390 et 1440 px, axe : reste `--warning` sur `--surface-3` papier à 4,16 : paire absente de §14, signalée au design-lead)
 - [x] Couleurs forcées (`forced-colors`) gérées dans base.css, art.css et les primitives
 - [ ] Lecteur d'écran sur le Bureau réel (arbre en liste hiérarchique, annonces de verrouillage) — frontend, vague D
 - [ ] Parité manette (navigation spatiale + `KeyHint`) — frontend, vague D

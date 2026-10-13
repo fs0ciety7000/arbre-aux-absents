@@ -4,6 +4,11 @@
   "private": true,
   "description": "Site vitrine : SvelteKit + adapter-static, entièrement prérendu.",
   "type": "module",
+  "imports": {
+    "#lib/*.svelte": "./src/lib/*.svelte",
+    "#lib/*.css": "./src/lib/*.css",
+    "#lib/*": "./src/lib/*.ts"
+  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",

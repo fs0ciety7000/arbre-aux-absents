@@ -1,0 +1,81 @@
+/*
+ * Mise en page commune du site vitrine (DESIGN §5.4). Uniquement des tokens de @arbre/ui.
+ * Les media queries sont en rem (DESIGN §5.2).
+ */
+
+.container {
+  max-inline-size: var(--container);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.container-narrow {
+  max-inline-size: var(--container-narrow);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Bandes : nuit (défaut) ou papier (data-surface="paper"). */
+.band {
+  padding-block: var(--space-16);
+}
+.band[data-surface='paper'] {
+  background: var(--canvas);
+  color: var(--text);
+}
+@media (max-width: 37.4375rem) {
+  .band {
+    padding-block: var(--space-12);
+  }
+}
+
+/* En-tête de page intérieure. */
+.page-head {
+  display: grid;
+  gap: var(--space-4);
+  padding-block: var(--space-16) var(--space-10);
+}
+.page-head h1 {
+  font-size: var(--step-5);
+}
+
+/* Surtitre en capitales espacées. */
+.kicker {
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+[data-surface='paper'] .kicker {
+  color: var(--text-muted);
+}
+
+.lede {
+  max-inline-size: var(--measure);
+  font-family: var(--font-read);
+  font-size: var(--step-1);
+  line-height: var(--leading-snug);
+  color: var(--text-muted);
+}
+
+/* Texte long en Literata. */
+.prose {
+  max-inline-size: var(--measure);
+  font-family: var(--font-read);
+  font-size: var(--step-read);
+  line-height: var(--leading-read);
+}
+.prose > * + * {
+  margin-block-start: var(--space-4);
+}
+.prose h2,
+.prose h3 {
+  margin-block-start: var(--space-10);
+}
+
+.section-head {
+  display: grid;
+  gap: var(--space-3);
+  margin-block-end: var(--space-8);
+}
