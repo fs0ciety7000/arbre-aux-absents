@@ -828,7 +828,7 @@ Svelte 5 runes, tokens sémantiques seulement, focus `outline 3px --focus` déca
 | 9.8–9.9 | `Select`, `Combobox` | inchangées | | |
 | 9.10 | `Toggle` | inchangée | curseur qui claque (`--ease-snap`) | `role="switch"` |
 | 9.11 | `Slider` | inchangée | pouce qui grossit à l'appui | |
-| 9.12 | `Toast` | inchangée | **fiche papier** distribuée, inclinée −0,6°, titre tapé | `aria-live` |
+| 9.12 | `Toast` | inchangée | **fiche papier** distribuée, inclinée −0,6°, titre tapé. **Téléphone** (< 600 px) : bande compacte pleine largeur, titre en `--font-ui` demi-gras casse normale (`--tracking-read`, `--leading-snug`), glyphe 20 px, inclinaison −0,3° ; `ToastRegion` la pose en bas, à `--space-2` des bords et des encoches (`env(safe-area-inset-*)`), au-dessus de la barre d'onglets (`offset`) | `aria-live` |
 | 9.13 | `Tooltip` | inchangée | bande d'étiqueteuse | |
 | 9.14 | `Badge` | inchangée | | |
 | 9.15 | `Stamp` | `text` · `tone` · `size` · `rotate` · `animate` · `delay` · `label` | **Structure v2** : `.stamp-wrap` (`role="img"`) contenant le tampon et son **halo d'encre** `.spread` ; Oswald ; frappe + étalement | `aria-label` |
@@ -1118,7 +1118,11 @@ toutes des tokens.
 - Zone principale : `Folder title cote enter` dont le snippet `tabs` porte
   `Tabs variant="folder"` (Arbre, Archives, Catalogue, Carte, Carnet ; icônes seules sous ~600 px).
 - Volet : `PaperSheet` (Lecteur) + notes `IndexCard` scotchées (`Tape`).
-- Mouvement : chorégraphie §8.7. Capture : `ds2-mock-desk-1440.png`, `-390.png`.
+- Un panneau à la fois (téléphone, tablette portrait) : la cote rouge n'est plus dans la chemise
+  mais **sur la rangée de l'onglet**, à droite (comme au desktop) ; l'onglet du dossier se limite à
+  60 % et s'abrège (ellipse, vrai titre hN complet), la cote à 40 % moins les marges. L'étiquette
+  rouge du panneau (« Arbre ») ouvre donc directement la chemise.
+- Mouvement : chorégraphie §8.7. Capture : `ds2-mock-desk-1440.png`, `-390.png`. Bureau v2.1 : `v2-1-jeu-bureau-{avant,apres}-{390,768}.png`.
 
 ### 13.3 Case d'arbre
 
@@ -1137,6 +1141,14 @@ toutes des tokens.
 `--paper-accent-strong` (fonds, cote) ; titre Fraunces `--step-2` ; corps `.reading` ou Courier
 Prime ; mots-clés `.kw`, surlignages `.hl-*` ; actions `Button secondary` (Épingler) et `ghost`
 (Surligner). Ouverture `sheetPull`, nouvel indice `use:rustle`.
+
+Barre d'outils du Lecteur (v2.1) : **deux rangées**, dans l'ordre du DOM (= ordre de tabulation) —
+1) affichage Original / Transcription, zoom, épingle et note (à droite) ; 2) surlignage (5 pastilles)
+et Retourner (à droite, photos et cartes). Sous **40 rem** de large (mesure de la barre, donc volet
+latéral étroit compris), tout passe en `IconButton` (icônes `reader`, `transcript`, `flip` ;
+`aria-pressed`, nom accessible et info-bulle étiqueteuse conservés) et le facteur de zoom affiché
+devient le bouton « Ajuster » (nom « ×1 · Ajuster », cible ≥ 44 px). À 390 px : deux lignes au lieu
+de quatre. Captures : `v2-1-jeu-lecteur-*`, `v2-1-jeu-toast-*`.
 
 ### 13.5 Catalogue (LX-2)
 

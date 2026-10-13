@@ -157,6 +157,36 @@
     outline: 3px solid var(--focus);
     outline-offset: 2px;
   }
+  /* Téléphone : bande compacte pleine largeur (la région la pose au-dessus de la barre
+     d'onglets). Titre en Instrument Sans demi-gras, casse normale : la capitale tapée
+     s'étalait sur quatre lignes et masquait le panneau. */
+  @media (max-width: 37.4375rem) {
+    .toast {
+      width: auto;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+      transform: rotate(-0.3deg);
+    }
+    .glyph {
+      padding-block-start: 0;
+    }
+    .glyph :global(.icon) {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    .title {
+      font-family: var(--font-ui);
+      font-weight: var(--weight-semibold);
+      text-transform: none;
+      letter-spacing: var(--tracking-read);
+      line-height: var(--leading-snug);
+      text-wrap: pretty;
+    }
+    .action {
+      padding-inline: var(--space-2);
+    }
+  }
   @media (forced-colors: active) {
     .toast {
       border-inline-start-color: CanvasText;

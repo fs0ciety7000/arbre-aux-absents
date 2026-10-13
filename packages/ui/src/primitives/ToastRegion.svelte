@@ -32,7 +32,7 @@
 <style>
   .region {
     position: fixed;
-    inset-inline-end: var(--gutter);
+    inset-inline-end: max(var(--gutter), env(safe-area-inset-right));
     inset-block-end: calc(var(--gutter) + var(--offset) + env(safe-area-inset-bottom));
     z-index: var(--z-toast);
     display: flex;
@@ -45,9 +45,14 @@
     pointer-events: auto;
   }
   @media (max-width: 37.4375rem) {
+    /* Bas d'écran, pleine largeur moins les gouttières (et les encoches) ; empilement du
+       plus ancien au plus récent, le plus récent contre la barre. */
     .region {
-      inset-inline: var(--gutter);
+      inset-inline-start: max(var(--space-2), env(safe-area-inset-left));
+      inset-inline-end: max(var(--space-2), env(safe-area-inset-right));
+      inset-block-end: calc(var(--space-2) + var(--offset) + env(safe-area-inset-bottom));
       align-items: stretch;
+      gap: var(--space-1);
     }
   }
 </style>

@@ -44,12 +44,22 @@
 
   const game = getGame();
 
+  /** Taille du rem racine (suit la taille du texte système), 16 px hors navigateur. */
+  function rootFontSize(): number {
+    if (typeof document === 'undefined') return 16;
+    return parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  }
+
   const id = $derived(game.ui.openDocument);
   const doc = $derived(id ? game.content.documents[id] : undefined);
 
   let mode = $state<ReadMode>(game.settings.transcriptByDefault ? 'transcript' : 'original');
   let face = $state<'front' | 'back'>('front');
   let zoom = $state(1);
+  const zoomText = $derived(`×${zoom.toLocaleString('fr-FR')}`);
+  /** Largeur de la barre d'outils (ResizeObserver de Svelte) → mode compact sous 40 rem. */
+  let toolbarWidth = $state(0);
+  const compact = $derived(toolbarWidth > 0 && toolbarWidth < 40 * rootFontSize());
   let sheet: HTMLDivElement | undefined = $state();
   let stage: HTMLDivElement | undefined = $state();
   let status = $state('');
@@ -422,63 +432,119 @@
   {:else}
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="reader" bind:this={readerEl}>
-      <div class="toolbar" role="toolbar" aria-label={pm.reader.mode}>
-        <div class="seg" role="group" aria-label={pm.reader.mode}>
-          <Button
-            variant={mode === 'original' ? 'secondary' : 'ghost'}
-            aria-pressed={mode === 'original'}
-            onclick={() => (mode = 'original')}>{pm.reader.original}</Button
-          >
-          <Button
-            variant={mode === 'transcript' ? 'secondary' : 'ghost'}
-            aria-pressed={mode === 'transcript'}
-            iconName="transcript"
-            onclick={() => (mode = 'transcript')}>{pm.reader.transcript}</Button
-          >
+      <!-- Deux rangées dans l'ordre du DOM (= ordre de tabulation) : affichage, zoom, épingle/note ;
+           puis surlignage et verso. Étroit (< 40 rem, volet ou téléphone) : boutons icônes seuls,
+           nom accessible et info-bulle conservés, le zoom affiché sert de bouton « Ajuster ». -->
+      <div
+        class="toolbar"
+        class:compact
+        role="toolbar"
+        aria-label={pm.reader.mode}
+        bind:clientWidth={toolbarWidth}
+      >
+        <div class="row">
+          <div class="seg" role="group" aria-label={pm.reader.mode}>
+            {#if compact}
+              <IconButton
+                icon="reader"
+                label={pm.reader.original}
+                pressed={mode === 'original'}
+                onclick={() => (mode = 'original')}
+              />
+              <IconButton
+                icon="transcript"
+                label={pm.reader.transcript}
+                pressed={mode === 'transcript'}
+                onclick={() => (mode = 'transcript')}
+              />
+            {:else}
+              <Button
+                variant={mode === 'original' ? 'secondary' : 'ghost'}
+                aria-pressed={mode === 'original'}
+                onclick={() => (mode = 'original')}>{pm.reader.original}</Button
+              >
+              <Button
+                variant={mode === 'transcript' ? 'secondary' : 'ghost'}
+                aria-pressed={mode === 'transcript'}
+                iconName="transcript"
+                onclick={() => (mode = 'transcript')}>{pm.reader.transcript}</Button
+              >
+            {/if}
+          </div>
+          <div class="seg" role="group" aria-label={pm.reader.zoom}>
+            <IconButton
+              icon="zoom-out"
+              label={pm.reader.zoomOut}
+              disabled={zoom <= 1}
+              onclick={() => setZoom(zoom - 0.25)}
+            />
+            {#if compact}
+              <IconButton
+                class="zoom num"
+                label="{zoomText} · {pm.reader.fit}"
+                onclick={() => setZoom(1)}>{zoomText}</IconButton
+              >
+            {:else}
+              <span class="num zoom">{zoomText}</span>
+            {/if}
+            <IconButton
+              icon="zoom-in"
+              label={pm.reader.zoomIn}
+              disabled={zoom >= 4}
+              onclick={() => setZoom(zoom + 0.25)}
+            />
+            {#if !compact}
+              <IconButton icon="fit" label={pm.reader.fit} onclick={() => setZoom(1)} />
+            {/if}
+          </div>
+          <div class="seg end">
+            <IconButton
+              icon="pin"
+              label={pinned ? pm.common.unpin : pm.common.pin}
+              pressed={pinned}
+              tooltipPlacement="start"
+              onclick={togglePin}
+            />
+            <IconButton
+              icon="note"
+              label={pm.reader.noteTitle}
+              pressed={!!note}
+              tooltipPlacement="start"
+              onclick={openNote}
+            />
+          </div>
         </div>
-        {#if flippable && mode === 'original'}
-          <Button iconName="flip" onclick={() => (face = face === 'front' ? 'back' : 'front')}
-            >{pm.reader.flip} · {face === 'front' ? pm.reader.front : pm.reader.back}</Button
-          >
-        {/if}
-        <div class="seg" role="group" aria-label={pm.reader.zoom}>
-          <IconButton
-            icon="zoom-out"
-            label={pm.reader.zoomOut}
-            disabled={zoom <= 1}
-            onclick={() => setZoom(zoom - 0.25)}
-          />
-          <span class="num zoom">×{zoom.toLocaleString('fr-FR')}</span>
-          <IconButton
-            icon="zoom-in"
-            label={pm.reader.zoomIn}
-            disabled={zoom >= 4}
-            onclick={() => setZoom(zoom + 0.25)}
-          />
-          <IconButton icon="fit" label={pm.reader.fit} onclick={() => setZoom(1)} />
-        </div>
-        <div class="seg hl" role="group" aria-label={pm.reader.highlight}>
-          <Icon name="highlight" />
-          {#each [1, 2, 3, 4, 5] as const as c (c)}
-            <button
-              type="button"
-              class="swatch"
-              aria-label="{pm.reader.highlight} : {HL_LABELS[c - 1]}"
-              onpointerdown={(e) => e.preventDefault()}
-              onclick={() => highlight(c)}
-            >
-              <span class="hl-{c}">Aa</span>
-            </button>
-          {/each}
-        </div>
-        <div class="seg end">
-          <IconButton
-            icon="pin"
-            label={pinned ? pm.common.unpin : pm.common.pin}
-            pressed={pinned}
-            onclick={togglePin}
-          />
-          <IconButton icon="note" label={pm.reader.noteTitle} pressed={!!note} onclick={openNote} />
+        <div class="row">
+          <div class="seg hl" role="group" aria-label={pm.reader.highlight}>
+            <span class="hl-icon"><Icon name="highlight" /></span>
+            {#each [1, 2, 3, 4, 5] as const as c (c)}
+              <button
+                type="button"
+                class="swatch"
+                aria-label="{pm.reader.highlight} : {HL_LABELS[c - 1]}"
+                onpointerdown={(e) => e.preventDefault()}
+                onclick={() => highlight(c)}
+              >
+                <span class="hl-{c}">Aa</span>
+              </button>
+            {/each}
+          </div>
+          {#if flippable && mode === 'original'}
+            <div class="seg end">
+              {#if compact}
+                <IconButton
+                  icon="flip"
+                  label="{pm.reader.flip} · {face === 'front' ? pm.reader.front : pm.reader.back}"
+                  tooltipPlacement="start"
+                  onclick={() => (face = face === 'front' ? 'back' : 'front')}
+                />
+              {:else}
+                <Button iconName="flip" onclick={() => (face = face === 'front' ? 'back' : 'front')}
+                  >{pm.reader.flip} · {face === 'front' ? pm.reader.front : pm.reader.back}</Button
+                >
+              {/if}
+            </div>
+          {/if}
         </div>
       </div>
       <p class="status" role="status">{status}</p>
@@ -692,11 +758,23 @@
   }
   .toolbar {
     display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3);
+    border-block-end: 1.5px dashed var(--stitch);
+  }
+  .toolbar.compact {
+    padding-inline: var(--space-2);
+  }
+  .row {
+    display: flex;
     flex-wrap: wrap;
     gap: var(--space-1) var(--space-3);
     align-items: center;
-    padding: var(--space-2) var(--space-3);
-    border-block-end: 1.5px dashed var(--stitch);
+    min-inline-size: 0;
+  }
+  .compact .row {
+    gap: var(--space-1) var(--space-2);
   }
   .seg {
     display: flex;
@@ -712,6 +790,17 @@
     min-inline-size: 2.75rem;
     text-align: center;
     font-family: var(--font-type);
+  }
+  /* Étroit : le zoom affiché devient le bouton « Ajuster » (cible ≥ 44 px, texte réel). */
+  .toolbar :global(.ibtn.zoom) {
+    inline-size: auto;
+    min-inline-size: var(--hit);
+    padding-inline: var(--space-1);
+    color: var(--text);
+    font-size: var(--step--1);
+  }
+  .hl-icon {
+    display: inline-flex;
   }
   .swatch {
     display: grid;

@@ -123,7 +123,10 @@
   {#if single}
     <main id={contentId} class="single-main" tabindex="-1" aria-label={m.region}>
       {#if inFolder}
-        <Folder title={folderTitle} {cote} class="main-folder">
+        <!-- Cote posée à côté de l'onglet de la chemise (comme au desktop) : une seule rangée
+             au-dessus du carton au lieu d'une ligne de plus dans la chemise. -->
+        <span class="cote single-cote mat-label red" aria-hidden="true">{cote}</span>
+        <Folder title={folderTitle} class="main-folder">
           <div
             class="panel-host"
             role="tabpanel"
@@ -473,6 +476,25 @@
   }
   .single-main > :global(.main-folder) {
     flex: 1;
+  }
+  /* Onglet et cote se partagent la rangée de tête : l'intitulé du dossier s'abrège (ellipse,
+     titre complet dans le vrai hN), la cote garde sa taille d'étiquette et s'abrège en dernier. */
+  .single-main {
+    position: relative;
+  }
+  .single-main > :global(.main-folder > .tab) {
+    max-inline-size: 60%;
+  }
+  .single-cote {
+    position: absolute;
+    z-index: 2;
+    inset-block-start: calc(var(--space-1) + var(--space-1));
+    inset-inline-end: calc(max(var(--space-2), env(safe-area-inset-right)) + var(--space-3));
+    display: block;
+    max-inline-size: calc(40% - 2 * var(--space-4));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .single-main > :global(.main-folder > .body) {
     border-start-start-radius: var(--radius-m);
