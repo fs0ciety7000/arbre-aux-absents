@@ -325,22 +325,23 @@ sh scripts/itch-push.sh artefacts <compte>/arbre-aux-absents             # envoi
 - [ ] Page en `Draft` puis aperçu, puis `Public` (ou `Restricted` pour une clé de test presse).
 - [ ] Lien itch.io ajouté au site (presse : « Bientôt sur itch.io » → lien réel).
 
-## 9. Prix et pages (décidé le 13/10)
+## 9. Prix et page (décidé le 13/10, révisé le même jour)
 
-Choix du propriétaire : **jeu payant + démo gratuite sur une page séparée**, sur le compte studio
-**cardorinteractive** (https://cardorinteractive.itch.io/).
+Choix du propriétaire : **jeu entièrement gratuit, une seule page, pas de démo séparée**, sur le
+compte studio **cardorinteractive** (https://cardorinteractive.itch.io/). Le choix précédent
+(12 € + démo gratuite) est abandonné.
 
 | Page | URL prévue | Canaux | Prix |
 |---|---|---|---|
-| Jeu complet | `cardorinteractive.itch.io/arbre-aux-absents` | `html5`, `windows`, `macos`, `linux`, `android` | **12 €** minimum (décidé le 13/10), « payer plus » ouvert ; téléchargements et version navigateur réservés aux acheteurs |
-| Démo | `cardorinteractive.itch.io/arbre-aux-absents-demo` | `html5-demo` (jouable dans le navigateur) | gratuite, lien vers la page complète en fin de démo |
+| Jeu | `cardorinteractive.itch.io/arbre-aux-absents` | `html5` (jouable dans le navigateur), `windows`, `macos`, `linux`, `android` | gratuit (« No payments », ou « Donate » au choix du propriétaire) |
 
-Envoi : `sh scripts/itch-push.sh <artefacts> cardorinteractive/arbre-aux-absents` puis, pour la
-démo, `--channels html5-demo` vers `cardorinteractive/arbre-aux-absents-demo`.
+Le canal `html5-demo` n'est plus envoyé. Envoi :
+`sh scripts/itch-push.sh --channels "html5 windows macos linux android" <artefacts> cardorinteractive/arbre-aux-absents`.
+Guide de création de la page pour le propriétaire (téléphone) : https://claude.ai/artifact/3QvRuti1CuRr5un8KAUF3p
 
 ## 10. Questions ouvertes pour le propriétaire
 
-1. ~~Modèle~~, ~~compte~~ et ~~prix (12 €)~~ : décidés (§9). Reste : réduction de lancement éventuelle.
+1. ~~Modèle~~, ~~compte~~ et ~~prix~~ : décidés (§9), jeu gratuit.
 4. **Classification d'âge** : itch.io n'a qu'un indicateur « contenu pour adultes » ; vu
    l'avertissement de contenu (§2), proposition : non coché, avec la mention « déconseillé aux moins
    de 12 ans » dans la description. Faut-il viser une classification formelle (IARC, utile pour
