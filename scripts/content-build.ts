@@ -1,22 +1,60 @@
 /**
- * npm run content:build — PROVISOIRE (lot 0) : écrit des modules générés vides pour le jeu et
- * le site. La compilation réelle (ARCHITECTURE §3.3) arrive avec packages/content-tools.
+ * npm run content:build [-- --edition full|demo] [-- --root <dossier> --out <dossier>]
+ *
+ * Compile le contenu (éditions complète et démo) et écrit apps/game/src/generated/ et
+ * apps/site/src/generated/. `--edition` choisit l'édition importée par le jeu (défaut : full ;
+ * aussi via ARBRE_EDITION). Avec `--root` hors dépôt, rien n'est écrit sans `--out` (le jeu
+ * dans <out>/game, le site dans <out>/site). Refuse d'écrire si content:check échoue.
  */
-import { mkdir, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { join } from 'node:path';
+import { parseArgs } from 'node:util';
+import type { Edition } from '@arbre/contract';
+import {
+  REPO_ROOT,
+  checkContentRoot,
+  printIssues,
+  resolveRoot,
+  writeGenerated,
+  type BuildTargets,
+} from '@arbre/content-tools';
 
-const repo = resolve(import.meta.dirname, '..');
-const targets = ['apps/game/src/generated', 'apps/site/src/generated'];
-
-const moduleSource = `// Généré par \`npm run content:build\`. Ne pas modifier.
-import type { CompiledCase } from '@arbre/contract';
-
-export const cases: CompiledCase[] = [];
-`;
-
-for (const target of targets) {
-  const dir = resolve(repo, target);
-  await mkdir(dir, { recursive: true });
-  await writeFile(resolve(dir, 'cases.ts'), moduleSource, 'utf8');
-  console.log(`content:build — ${target}/cases.ts (aucune affaire compilée, lot 0)`);
+const { values } = parseArgs({
+  options: {
+    root: { type: 'string' },
+    out: { type: 'string' },
+    edition: { type: 'string', default: process.env.ARBRE_EDITION ?? 'full' },
+  },
+});
+if (values.edition !== 'full' && values.edition !== 'demo') {
+  console.error(`content:build — --edition attend full ou demo (reçu : ${values.edition})`);
+  process.exit(2);
 }
+const edition: Edition = values.edition;
+const root = await resolveRoot(values.root);
+const result = await checkContentRoot(root);
+const errors = printIssues(result.issues);
+if (errors > 0) {
+  console.error(
+    `content:build — ${errors} erreur(s) : rien n'est écrit (voir npm run content:check).`,
+  );
+  process.exit(1);
+}
+
+let targets: BuildTargets;
+if (values.out) {
+  targets = { game: join(values.out, 'game'), site: join(values.out, 'site') };
+} else if (root === REPO_ROOT) {
+  targets = {
+    game: join(REPO_ROOT, 'apps/game/src/generated'),
+    site: join(REPO_ROOT, 'apps/site/src/generated'),
+  };
+} else {
+  console.log(
+    `content:build — ${result.cases.length} affaire(s) compilée(s) (aucune écriture sans --out).`,
+  );
+  process.exit(0);
+}
+const changed = await writeGenerated(result, targets, edition);
+console.log(
+  `content:build — ${result.cases.length} affaire(s), jeu en édition ${edition}, ${changed.length} fichier(s) mis à jour.`,
+);

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "tout-trouve",
+    "title": "Rien ne se perd",
+    "description": "Trouver tous les secrets.",
+    "hidden": false,
+    "when": {
+      "allSecrets": true
+    }
+  },
+  {
+    "id": "discretion",
+    "title": "Discrétion",
+    "description": "Finir sans lire les lettres d'Edda.",
+    "hidden": true,
+    "when": {
+      "endingReached": "fin-arbre"
+    }
+  }
+]

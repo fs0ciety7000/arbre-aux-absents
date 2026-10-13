@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1000">
+  <rect class="paper" width="1500" height="1000"/>
+  <path id="base-cote" class="ink-soft" fill="none" d="M100 800 Q600 650 1400 820"/>
+  <path class="water" d="M0 900 L1500 900 L1500 1000 L0 1000 Z"/>
+</svg>

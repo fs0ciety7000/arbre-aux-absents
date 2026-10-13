@@ -22,5 +22,5 @@ apps/game/src-tauri/target/
 apps/game/src-tauri/gen/
 
 # Zips itch.io
-release/
+dist/itch/
 apps/game/dist-demo/

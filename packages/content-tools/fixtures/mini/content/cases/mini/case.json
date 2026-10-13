@@ -1,0 +1,8 @@
+{
+  "id": "mini",
+  "title": "La malle du grenier",
+  "subtitle": "Affaire d'essai",
+  "version": "0.1.0",
+  "intro": "intro",
+  "credits": ["Fixture de test"]
+}

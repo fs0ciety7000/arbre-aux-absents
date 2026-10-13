@@ -1,6 +1,19 @@
 /**
- * Outils de contenu (ARCHITECTURE §3.6, §3.7) : parseur Markdown maison, compilation,
- * contrôles et solveur. Squelette du lot 0 : à implémenter par backend.
+ * Outils de contenu (ARCHITECTURE §3.6, §3.7) : parseur Markdown restreint, liens automatiques,
+ * compilation des éditions complète et démo, contrôles, solveur et rapport.
  */
-export { CONTENT_FILE_SCHEMAS } from '@arbre/contract';
-export type { CompiledCase, ContentFileKind } from '@arbre/contract';
+export * from './shared';
+export * from './issues';
+export * from './markdown';
+export * from './autolink';
+export * from './conditions';
+export * from './svg';
+export * from './load';
+export * from './prepare';
+export * from './solver';
+export * from './compile';
+export * from './check';
+export * from './report';
+export * from './build';
+export * from './zip';
+export * from './cli';

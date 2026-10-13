@@ -29,7 +29,8 @@
     "content:check": "tsx scripts/content-check.ts",
     "content:build": "tsx scripts/content-build.ts",
     "content:solve": "tsx scripts/content-solve.ts",
-    "schemas:json": "npm run schemas:json -w @arbre/contract"
+    "schemas:json": "npm run schemas:json -w @arbre/contract",
+    "package:itch": "tsx scripts/package-itch.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -185,6 +185,7 @@ export interface CompiledCase {
   progression: Pick<Progression, 'start' | 'unlocks' | 'occupationsUnlock' | 'secrets'>;
   endings: Record<EndingId, { when: OutcomeCondition; priority: number; title: string; body: Block[] }>;
   hints: Hint[]; achievements: Achievement[];
+  // illustrations SVG : écrites à part (generated/assets.<édition>.json), clé = chemin `illustrations/<file>`
   candidates: { given: string[]; family: string[] }; // noms proposables (lus dans les documents), pour la saisie par liste
 }
 ```
@@ -255,7 +256,7 @@ export type GameEvent =
   | { type: 'rejected'; reason: 'unknownId' | 'slotLocked' | 'notAvailable' | 'tooLong' | 'limit' };
 export interface SearchOutcome { query: string; normalized: string; keyword: KeywordId | null; documents: DocumentId[]; newDocuments: DocumentId[] }
 
-normalize(text): string                                   // NFD, sans diacritiques, minuscules, ponctuation → espace
+normalize(text): string                                   // NFKD + œ/æ/ß/ø/ł dépliés, sans diacritiques, minuscules, ponctuation → espace
 newGame(c, { slot, mode, at }): SaveState
 applyAction(s, a, c): { state; events }                   // en validation auto, setSlot déclenche validate
 search(query, s, c): SearchOutcome                        // correspondance exacte du terme normalisé, sans flou
@@ -282,7 +283,7 @@ content/world/places/<placeId>.json            Place
 art/map/{base,relief,water,places,labels}.svg  couches, viewBox 0 0 1000·aspect 1000
 content/cases/<caseId>/
   case.json  family.json                       scenariste
-  documents/<docId>.md  endings/<endingId>.md  scenariste
+  documents/<docId>.md  endings/<endingId>.md (frontmatter `title`)  scenariste
   tree.json  progression.json  hints.json  achievements.json   level-designer
   portraits/<portraitId>.svg  illustrations/*.svg              cartographe
 content/*.schema.json                          générés par z.toJSONSchema()
