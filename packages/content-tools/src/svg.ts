@@ -158,6 +158,18 @@ export interface SvgCheckOptions {
   viewBox?: string;
 }
 
+/** Nom local d'un élément ou d'un attribut (`svg:script` → `script`). */
+const localName = (name: string) => name.slice(name.indexOf(':') + 1);
+
+/**
+ * Nom d'attribut normalisé pour les contrôles : tout `<préfixe>:href` (XLink sous un autre
+ * préfixe que `xlink`, ex. `x:href`) est traité comme `xlink:href`.
+ */
+function hrefName(name: string): string {
+  const lower = name.toLowerCase();
+  return lower.includes(':') && localName(lower) === 'href' ? 'xlink:href' : lower;
+}
+
 /** Contrôle d'un SVG source selon la règle 8. */
 export function checkSvg(src: string, opts: SvgCheckOptions): SvgProblem[] {
   const { elements, problems } = parseSvgElements(src);
@@ -197,11 +209,14 @@ export function checkSvg(src: string, opts: SvgCheckOptions): SvgProblem[] {
   }
   const refOk = (target: string) => ids.has(target) || EXTERNAL_IDS.has(target);
   for (const el of elements) {
-    if (FORBIDDEN_ELEMENTS.has(el.name)) {
+    if (el.name.includes(':')) {
+      problems.push({ line: el.line, message: `élément préfixé <${el.name}> interdit` });
+    }
+    if (FORBIDDEN_ELEMENTS.has(localName(el.name))) {
       problems.push({ line: el.line, message: `élément <${el.name}> interdit` });
     }
     for (const [name, value] of el.attrs) {
-      const lower = name.toLowerCase();
+      const lower = hrefName(name);
       if (lower.startsWith('on')) {
         problems.push({ line: el.line, message: `attribut d'événement ${name} interdit` });
       } else if (lower === 'style') {
@@ -284,9 +299,11 @@ export function optimizeSvg(src: string, prefix: string): OptimizedSvg {
   const { elements, problems: parseProblems } = parseSvgElements(out);
   problems.push(...parseProblems);
   for (const el of elements) {
-    if (FORBIDDEN_ELEMENTS.has(el.name)) problems.push({ message: `<${el.name}> après svgo` });
+    if (FORBIDDEN_ELEMENTS.has(localName(el.name)) || el.name.includes(':')) {
+      problems.push({ message: `<${el.name}> après svgo` });
+    }
     for (const [name, value] of el.attrs) {
-      const lower = name.toLowerCase();
+      const lower = hrefName(name);
       if (lower.startsWith('on') || lower === 'style') {
         problems.push({ message: `${name} après svgo` });
       }

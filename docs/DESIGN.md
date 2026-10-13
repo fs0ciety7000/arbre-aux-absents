@@ -490,7 +490,9 @@ Calques : `--z-desk` 0 · `--z-raised` 1 · `--z-rail` 10 · `--z-header` 20 · 
   navigation `menu pause back forward chevron-down chevron-up close plus minus external grip list layers settings sound` ·
   verbes `look search take write pin use highlight note` ·
   lecteur `flip transcript zoom-in zoom-out fit` ·
-  états `lock check stamp face star clock info warning danger trash save quill`.
+  états `lock check stamp face unknown-person star clock info warning danger trash save quill`
+  (`unknown-person` : buste neutre à point d'interrogation, portrait encore inconnu d'une case de l'arbre ;
+  jamais `face`, qui sourit).
 - Une icône = un sens partout : `pin` = épingler, `use` = utiliser dans l'arbre, `lock` = établi.
 - **Curseurs** (§2) : flèche d'encre `#161b26` à liseré vélin `#f6efe0` + pastille du verbe, 32 px,
   point chaud (3, 2), repli sur le curseur système équivalent (`zoom-in`, `grab`, `grabbing`,

@@ -1,4 +1,5 @@
 import { pushToast } from '@arbre/ui';
+import { tick } from 'svelte';
 import type { AppController } from '../lib/game/app.svelte';
 import { announcer } from '../lib/game/announcer.svelte';
 import type { PanelId } from '../lib/game/types';
@@ -71,7 +72,18 @@ export function runCommand(
   if (!inDesk || !g) return false;
   if (g.modal !== null) return false;
 
-  if (!SHELL_COMMANDS.has(cmd)) return relayCommand(cmd, source);
+  if (!SHELL_COMMANDS.has(cmd)) {
+    if (relayCommand(cmd, source)) return true;
+    // `/`, Ctrl+F, Y : aucun panneau monté ne l'a traitée → ouvrir le Catalogue, puis lui
+    // relayer la commande une fois monté (le champ de requête prend le focus).
+    if (cmd === 'search') {
+      g.showPanel('catalogue');
+      announcer.say(messages.panels.catalogue);
+      void tick().then(() => relayCommand(cmd, source));
+      return true;
+    }
+    return false;
+  }
 
   const panel = TAB_COMMANDS[cmd];
   if (panel) {

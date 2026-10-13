@@ -168,6 +168,21 @@ describe('SVG', () => {
     ['url inconnue', '<svg viewBox="0 0 1 1"><rect fill="url(#nope)"/></svg>', /inconnu/],
     ['DOCTYPE', '<!DOCTYPE svg [<!ENTITY x "y">]><svg viewBox="0 0 1 1"/>', /DOCTYPE/],
     ['viewBox absente', '<svg/>', /viewBox/],
+    [
+      'href XLink sous un autre préfixe',
+      '<svg viewBox="0 0 1 1" xmlns:x="http://www.w3.org/1999/xlink"><a x:href="javascript:alert(1)"><rect/></a></svg>',
+      /externe/,
+    ],
+    [
+      'élément préfixé (svg:script)',
+      '<svg viewBox="0 0 1 1" xmlns:s="http://www.w3.org/2000/svg"><s:script>alert(1)</s:script></svg>',
+      /interdit/,
+    ],
+    [
+      '<set> qui réécrit un lien',
+      '<svg viewBox="0 0 1 1"><a href="#p-a"><set attributeName="href" to="javascript:alert(1)"/></a></svg>',
+      /set/,
+    ],
   ])('refuse : %s', (_name, src, re) => {
     expect(
       checkSvg(src, { idPrefix: 'p' })

@@ -71,6 +71,13 @@ export const ICONS = {
   check: ['M5 12.5l4.5 4.5L19 7'],
   stamp: ['M9 3h6v5l2 3H7l2-3z', 'M5 14h14v3H5z', 'M5 21h14'],
   face: [c(12, 12, 9), 'M9 10h.01', 'M15 10h.01', 'M8.5 15a5 5 0 0 0 7 0'],
+  /** Personne inconnue : buste neutre, point d'interrogation à la place du visage. */
+  'unknown-person': [
+    c(12, 8, 5),
+    'M10.5 6.9a1.6 1.6 0 1 1 2.3 1.45c-.5.25-.8.6-.8 1.15',
+    'M12 11h.01',
+    'M4.5 21.5a7.5 7.5 0 0 1 15 0',
+  ],
   star: ['M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z'],
   clock: [c(12, 13, 8), 'M12 9v4l2.5 2.5', 'M9 2h6'],
   info: [c(12, 12, 9), 'M12 11v6', 'M12 7.5h.01'],

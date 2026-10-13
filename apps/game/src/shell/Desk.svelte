@@ -44,7 +44,7 @@
       id,
       label: messages.panels[id],
       icon: PANEL_ICONS[id],
-      ...(badge ? { badge, badgeLabel: `${badge} non lus` } : {}),
+      ...(badge ? { badge, badgeLabel: `${badge} non ${badge > 1 ? 'lus' : 'lu'}` } : {}),
     };
   }
 

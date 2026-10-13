@@ -578,7 +578,7 @@
         <div class="slots">
           {#each ['Prénom Nom', 'Prénom Nom', 'Prénom Nom'] as s, i (i)}
             <div class="slot" class:locked={i === 0}>
-              <Icon name={i === 0 ? 'lock' : 'face'} />
+              <Icon name={i === 0 ? 'lock' : 'unknown-person'} />
               <span>{s}</span>
             </div>
           {/each}

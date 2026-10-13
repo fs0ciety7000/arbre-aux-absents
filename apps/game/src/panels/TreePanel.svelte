@@ -267,7 +267,7 @@
       {#if portrait}
         <span class="svg" use:svgContent={portrait.svg}></span>
       {:else}
-        <Icon name="face" size="2.5rem" />
+        <Icon name="unknown-person" size="2.5rem" />
       {/if}
     </span>
     <span class="name" aria-hidden="true">
@@ -302,6 +302,7 @@
       <Tabs
         label={pm.tree.views}
         variant="line"
+        idPrefix="tree-view"
         bind:value={view}
         items={[
           { id: 'graph', label: pm.tree.viewGraph, icon: 'tree' },
@@ -310,7 +311,7 @@
         ]}
       />
       {#if view === 'graph'}
-        <div class="zoom" role="group" aria-label={pm.tree.views}>
+        <div class="zoom" role="group" aria-label={pm.tree.zoom}>
           <IconButton icon="minus" label={pm.tree.zoomOut} onclick={() => setZoom(zoom - 0.25)} />
           <span class="num zoom-level" aria-live="polite"
             >{pm.tree.zoomLevel(Math.round(zoom * 100))}</span
@@ -331,142 +332,150 @@
       <p class="bubble" role="note"><Icon name="info" /> {pm.tree.firstHint}</p>
     {/if}
 
-    {#if view === 'graph'}
-      <!-- svelte-ignore a11y_no_static_element_interactions -->
-      <div
-        class="canvas-wrap"
-        bind:this={wrap}
-        data-tree-view="graph"
-        onpointerdown={onPointerDown}
-        onpointermove={onPointerMove}
-        onpointerup={onPointerUp}
-        onpointercancel={onPointerUp}
-        onwheel={onWheel}
-      >
+    <!-- Panneau des onglets de vue (cible de leur `aria-controls`). -->
+    <div
+      class="view-panel"
+      role="tabpanel"
+      id="tree-view-panel"
+      aria-labelledby="tree-view-tab-{view}"
+    >
+      {#if view === 'graph'}
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
         <div
-          class="sizer"
-          style:width="{layout.width * zoom}px"
-          style:height="{layout.height * zoom}px"
+          class="canvas-wrap"
+          bind:this={wrap}
+          data-tree-view="graph"
+          onpointerdown={onPointerDown}
+          onpointermove={onPointerMove}
+          onpointerup={onPointerUp}
+          onpointercancel={onPointerUp}
+          onwheel={onWheel}
         >
           <div
-            class="canvas"
-            role="group"
-            aria-label={pm.tree.title}
-            aria-describedby="tree-instructions"
-            style:width="{layout.width}px"
-            style:height="{layout.height}px"
-            style:transform="scale({zoom})"
+            class="sizer"
+            style:width="{layout.width * zoom}px"
+            style:height="{layout.height * zoom}px"
           >
-            <svg class="links" width={layout.width} height={layout.height} aria-hidden="true">
-              {#each layout.links as link, i (i)}
-                <path class="link {link.kind}" d={link.d} />
+            <div
+              class="canvas"
+              role="group"
+              aria-label={pm.tree.title}
+              aria-describedby="tree-instructions"
+              style:width="{layout.width}px"
+              style:height="{layout.height}px"
+              style:transform="scale({zoom})"
+            >
+              <svg class="links" width={layout.width} height={layout.height} aria-hidden="true">
+                {#each layout.links as link, i (i)}
+                  <path class="link {link.kind}" d={link.d} />
+                {/each}
+              </svg>
+              {#each nodes as n (n.id)}
+                {@const p = layout.slots[n.id]!}
+                <div class="pos" style:left="{p.x}px" style:top="{p.y}px">
+                  {@render card(n.id)}
+                </div>
               {/each}
-            </svg>
-            {#each nodes as n (n.id)}
-              {@const p = layout.slots[n.id]!}
-              <div class="pos" style:left="{p.x}px" style:top="{p.y}px">
-                {@render card(n.id)}
-              </div>
-            {/each}
+            </div>
           </div>
         </div>
-      </div>
-      <p id="tree-instructions" class="visually-hidden">{pm.tree.instructions}</p>
-    {:else if view === 'generation'}
-      <div class="gen-view" data-tree-view="generation">
-        <div class="gen-tabs" role="group" aria-label={pm.tree.generations}>
-          {#each genItems as item, i (item.id)}
-            <button
-              type="button"
-              class="gen-dot num"
-              aria-pressed={generation === i}
-              aria-label={item.label}
-              onclick={() => (generation = i)}>{i + 1}</button
-            >
-          {/each}
+        <p id="tree-instructions" class="visually-hidden">{pm.tree.instructions}</p>
+      {:else if view === 'generation'}
+        <div class="gen-view" data-tree-view="generation">
+          <div class="gen-tabs" role="group" aria-label={pm.tree.generations}>
+            {#each genItems as item, i (item.id)}
+              <button
+                type="button"
+                class="gen-dot num"
+                aria-pressed={generation === i}
+                aria-label={item.label}
+                onclick={() => (generation = i)}>{i + 1}</button
+              >
+            {/each}
+          </div>
+          <h3 class="gen-title">{pm.tree.generation(generation + 1)}</h3>
+          <div
+            class="gen-list"
+            role="group"
+            aria-label={pm.tree.generation(generation + 1)}
+            onpointerdown={onSwipeStart}
+            onpointerup={onSwipeEnd}
+          >
+            {#each genSlots as n (n.id)}
+              {@render card(n.id)}
+            {/each}
+          </div>
+          <p class="swipe-hint">{pm.tree.swipeHint}</p>
         </div>
-        <h3 class="gen-title">{pm.tree.generation(generation + 1)}</h3>
-        <div
-          class="gen-list"
-          role="group"
-          aria-label={pm.tree.generation(generation + 1)}
-          onpointerdown={onSwipeStart}
-          onpointerup={onSwipeEnd}
-        >
-          {#each genSlots as n (n.id)}
-            {@render card(n.id)}
-          {/each}
+      {:else}
+        <div class="list-view" data-tree-view="list">
+          <ol class="gens" aria-label={pm.tree.listCaption}>
+            {#each layout.generations as gen, i (gen)}
+              <li>
+                <h3>{pm.tree.generation(i + 1)}</h3>
+                <ol class="slots">
+                  {#each nodes
+                    .filter((n) => n.generation === gen)
+                    .sort((a, b) => a.column - b.column) as n (n.id)}
+                    {@const g = guessOf(game.state, game.content, n.id)}
+                    {@const s = game.content.slots[n.id]!}
+                    <li class="list-slot" class:locked={isLocked(n.id)}>
+                      <button
+                        type="button"
+                        class="list-open"
+                        data-slot={n.id}
+                        data-verb="write"
+                        tabindex={n.id === current ? 0 : -1}
+                        onclick={() => activate(n.id)}
+                        onfocus={() => (focusId = n.id)}
+                        onkeydown={(e) => onCardKey(e, n.id)}
+                      >
+                        {#if isLocked(n.id)}<Icon name="lock" />{/if}
+                        <span>{summary(n.id)}</span>
+                      </button>
+                      <dl>
+                        {#each ['given', 'family', 'portrait', 'occupation'] as const as f (f)}
+                          <div>
+                            <dt>{FIELD_LABELS[f]}</dt>
+                            <dd>{fieldValueLabel(game.content, f, g) ?? pm.tree.fieldEmpty}</dd>
+                          </div>
+                        {/each}
+                        {#if s.parents.length > 0}
+                          <div>
+                            <dt>{pm.tree.relations.parents}</dt>
+                            <dd>
+                              {s.parents
+                                .map(
+                                  (p) =>
+                                    slotName(game.state, game.content, p) ?? pm.tree.unknownPerson,
+                                )
+                                .join(', ')}
+                            </dd>
+                          </div>
+                        {/if}
+                        {#if s.unions.length > 0}
+                          <div>
+                            <dt>{pm.tree.relations.unions}</dt>
+                            <dd>
+                              {s.unions
+                                .map(
+                                  (p) =>
+                                    slotName(game.state, game.content, p) ?? pm.tree.unknownPerson,
+                                )
+                                .join(', ')}
+                            </dd>
+                          </div>
+                        {/if}
+                      </dl>
+                    </li>
+                  {/each}
+                </ol>
+              </li>
+            {/each}
+          </ol>
         </div>
-        <p class="swipe-hint">{pm.tree.swipeHint}</p>
-      </div>
-    {:else}
-      <div class="list-view" data-tree-view="list">
-        <ol class="gens" aria-label={pm.tree.listCaption}>
-          {#each layout.generations as gen, i (gen)}
-            <li>
-              <h3>{pm.tree.generation(i + 1)}</h3>
-              <ol class="slots">
-                {#each nodes
-                  .filter((n) => n.generation === gen)
-                  .sort((a, b) => a.column - b.column) as n (n.id)}
-                  {@const g = guessOf(game.state, game.content, n.id)}
-                  {@const s = game.content.slots[n.id]!}
-                  <li class="list-slot" class:locked={isLocked(n.id)}>
-                    <button
-                      type="button"
-                      class="list-open"
-                      data-slot={n.id}
-                      data-verb="write"
-                      tabindex={n.id === current ? 0 : -1}
-                      onclick={() => activate(n.id)}
-                      onfocus={() => (focusId = n.id)}
-                      onkeydown={(e) => onCardKey(e, n.id)}
-                    >
-                      {#if isLocked(n.id)}<Icon name="lock" />{/if}
-                      <span>{summary(n.id)}</span>
-                    </button>
-                    <dl>
-                      {#each ['given', 'family', 'portrait', 'occupation'] as const as f (f)}
-                        <div>
-                          <dt>{FIELD_LABELS[f]}</dt>
-                          <dd>{fieldValueLabel(game.content, f, g) ?? pm.tree.fieldEmpty}</dd>
-                        </div>
-                      {/each}
-                      {#if s.parents.length > 0}
-                        <div>
-                          <dt>{pm.tree.relations.parents}</dt>
-                          <dd>
-                            {s.parents
-                              .map(
-                                (p) =>
-                                  slotName(game.state, game.content, p) ?? pm.tree.unknownPerson,
-                              )
-                              .join(', ')}
-                          </dd>
-                        </div>
-                      {/if}
-                      {#if s.unions.length > 0}
-                        <div>
-                          <dt>{pm.tree.relations.unions}</dt>
-                          <dd>
-                            {s.unions
-                              .map(
-                                (p) =>
-                                  slotName(game.state, game.content, p) ?? pm.tree.unknownPerson,
-                              )
-                              .join(', ')}
-                          </dd>
-                        </div>
-                      {/if}
-                    </dl>
-                  </li>
-                {/each}
-              </ol>
-            </li>
-          {/each}
-        </ol>
-      </div>
-    {/if}
+      {/if}
+    </div>
   </div>
 </Panel>
 
@@ -484,6 +493,13 @@
     flex-direction: column;
     block-size: 100%;
     min-block-size: 0;
+  }
+  .view-panel {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-block-size: 0;
+    min-inline-size: 0;
   }
   .toolbar {
     display: flex;

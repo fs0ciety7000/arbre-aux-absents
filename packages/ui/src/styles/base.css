@@ -207,6 +207,8 @@ small {
 }
 .kw[data-state='new']::after {
   content: '●';
+  /* Texte de remplacement vide : le point reste visuel, absent du nom accessible. */
+  content: '●' / '';
   font-size: 0.5em;
   vertical-align: super;
   margin-inline-start: 0.15em;

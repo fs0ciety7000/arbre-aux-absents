@@ -5,7 +5,19 @@
  * seconde fois (défense en profondeur), puis importées comme nœuds DOM.
  */
 
-const FORBIDDEN_TAGS = new Set(['script', 'foreignobject', 'iframe', 'object', 'embed', 'style']);
+const FORBIDDEN_TAGS = new Set([
+  'script',
+  'foreignobject',
+  'iframe',
+  'object',
+  'embed',
+  'style',
+  // Animations SMIL : `<set attributeName="href" to="javascript:…">` réécrirait un lien.
+  'set',
+  'animate',
+  'animatemotion',
+  'animatetransform',
+]);
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /** Une référence est interne si elle vise un id du document (`#…`). */
@@ -17,11 +29,10 @@ function scrub(el: Element): void {
     else scrub(child);
   }
   for (const attr of [...el.attributes]) {
-    const name = attr.name.toLowerCase();
+    // Nom local : `xlink:href`, mais aussi tout autre préfixe lié à l'espace XLink (`x:href`).
+    const name = attr.localName.toLowerCase();
     if (name.startsWith('on') || name === 'style') el.removeAttribute(attr.name);
-    else if ((name === 'href' || name === 'xlink:href') && !isInternalRef(attr.value)) {
-      el.removeAttribute(attr.name);
-    }
+    else if (name === 'href' && !isInternalRef(attr.value)) el.removeAttribute(attr.name);
   }
 }
 

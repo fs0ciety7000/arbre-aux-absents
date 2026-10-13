@@ -19,7 +19,11 @@
   onMount(() => {
     void import('./brand/InteractiveLogo.svelte').then((m) => (Logo = m.default));
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab' && app.ready) next();
+      if (e.key === 'Tab' || !app.ready) return;
+      // La touche ne fait que passer le logo : sans cela, Entrée / Espace activeraient aussi le
+      // premier bouton du titre (focalisé au montage), « Continuer » ou « Nouvelle partie ».
+      e.preventDefault();
+      next();
     };
     window.addEventListener('keydown', onKey);
     return () => {

@@ -95,6 +95,7 @@ export const pm = {
     views: 'Affichage de l’arbre',
     generation: (n: number) => `Génération ${n}`,
     generations: 'Générations',
+    zoom: 'Zoom de l’arbre',
     zoomIn: 'Agrandir l’arbre',
     zoomOut: 'Réduire l’arbre',
     fit: 'Vue d’ensemble',
