@@ -43,7 +43,7 @@
   });
 </script>
 
-<ScreenFrame title={m.title} onback={() => app.closeSecondary()}>
+<ScreenFrame title={m.title} onback={() => app.closeSecondary()} surface="paper">
   <div class="stack">
     <section aria-labelledby="stats-current">
       <h2 id="stats-current">{m.current}</h2>
@@ -80,9 +80,13 @@
     gap: var(--space-8);
   }
   h2 {
-    font-family: var(--font-display);
-    font-size: var(--step-2);
-    margin-block-end: var(--space-3);
+    margin-block: 0 var(--space-3);
+    font-family: var(--font-label);
+    font-weight: var(--weight-medium);
+    font-size: var(--step-0);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
+    color: var(--accent-strong);
   }
   dl {
     display: grid;
@@ -93,11 +97,17 @@
     justify-content: space-between;
     gap: var(--space-4);
     min-height: var(--hit-row);
-    align-items: center;
-    border-block-end: var(--border) solid var(--line);
+    align-items: baseline;
+    padding-block-start: var(--space-2);
+    border-block-end: 1px dotted var(--line-strong);
   }
   dt {
     color: var(--text-muted);
+  }
+  dd {
+    margin: 0;
+    font-family: var(--font-type);
+    font-weight: var(--weight-bold);
   }
   .muted {
     color: var(--text-muted);

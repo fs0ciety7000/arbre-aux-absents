@@ -8,6 +8,7 @@
   import { Button, Card, IconButton, Panel, Select, TextField } from '@arbre/ui';
   import { fold } from '@arbre/ui';
   import { getGame } from '../lib/game/context';
+  import Spot from '../shell/Spot.svelte';
   import { dateKey, formatPartialDate } from './lib/view';
   import { KIND_LABELS, pm } from './messages';
 
@@ -96,6 +97,7 @@
 
   {#if unlocked.length === 0}
     <div class="empty">
+      <Spot name="archives" size="9rem" />
       <p>{pm.archives.empty}</p>
       <Button variant="primary" iconName="reader" onclick={openFirst}
         >{pm.archives.openFirst}</Button
@@ -145,16 +147,18 @@
 
     {#if docs.length === 0}
       <div class="empty">
+        <Spot name="magnifier" size="8rem" />
         <p>{pm.archives.noMatch}</p>
         {#if filtered}<Button onclick={clearFilters}>{pm.archives.clearFilters}</Button>{/if}
       </div>
     {:else}
       <ul class="docs {layout}">
-        {#each docs as id (id)}
+        {#each docs as id, i (id)}
           {@const d = game.content.documents[id]!}
           <li>
             <Card
-              variant={layout === 'grid' ? (d.kind === 'photo' ? 'photo' : 'document') : 'fiche'}
+              variant={layout === 'grid' ? (d.kind === 'photo' ? 'photo' : 'document') : 'index'}
+              deal={i < 12 ? i : undefined}
               title={d.title}
               kicker={KIND_LABELS[d.kind]}
               meta={[formatPartialDate(d.date), d.place ? game.content.places[d.place]?.name : '']
@@ -194,8 +198,9 @@
   .empty {
     display: grid;
     gap: var(--space-3);
-    justify-items: start;
+    justify-items: center;
     padding-block: var(--space-6);
+    text-align: center;
   }
   .empty p {
     margin: 0;
@@ -209,6 +214,8 @@
   }
   .docs.grid {
     grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: var(--space-5) var(--space-4);
+    padding-block: var(--space-2);
   }
   .docs.list {
     gap: var(--space-2);

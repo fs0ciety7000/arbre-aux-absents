@@ -8,7 +8,19 @@
 <script lang="ts">
   import type { KeywordId } from '@arbre/contract';
   import { keywordMentions } from '@arbre/engine';
-  import { Badge, Button, Dialog, Icon, IconButton, Panel, TextField } from '@arbre/ui';
+  import {
+    Badge,
+    Button,
+    Dialog,
+    Icon,
+    IconButton,
+    Ornament,
+    Tape,
+    TextField,
+    rustle,
+    sheetPull,
+  } from '@arbre/ui';
+  import Spot from '../shell/Spot.svelte';
   import { svgContent } from '@arbre/map/svelte';
   import { illustration, portraitSvg } from './lib/assets.svelte';
   import { onMount, tick } from 'svelte';
@@ -355,33 +367,53 @@
     };
   });
 
+  // Bruissement de la feuille quand elle livre un indice : pièce débloquée, secret, passage
+  // surligné ou épinglé (§7.4, `use:rustle`).
+  let clue = $state(0);
+  onMount(() =>
+    game.onEvents((events) => {
+      if (events.some((e) => e.type === 'documentsUnlocked' || e.type === 'secretFound')) clue++;
+    }),
+  );
+  let lastMarks = -1;
+  $effect(() => {
+    const n = myHighlights.length + (pinned ? 1 : 0) + (note ? 1 : 0);
+    if (lastMarks >= 0 && n > lastMarks) clue++;
+    lastMarks = n;
+  });
+
+  /** Matière de la feuille selon le type de pièce (§10.8, §13.4). */
+  type Edge = 'straight' | 'torn' | 'perforated';
+  type Fastener = 'clip' | 'tape' | 'none';
+  const SHEET: Partial<Record<string, { edge: Edge; fastener: Fastener; tone: string }>> = {
+    register: { edge: 'perforated', fastener: 'none', tone: 'paper' },
+    directory: { edge: 'perforated', fastener: 'none', tone: 'aged' },
+    newspaper: { edge: 'torn', fastener: 'tape', tone: 'aged' },
+    advert: { edge: 'torn', fastener: 'tape', tone: 'aged' },
+    photo: { edge: 'straight', fastener: 'tape', tone: 'new' },
+    postcard: { edge: 'straight', fastener: 'tape', tone: 'new' },
+    letter: { edge: 'straight', fastener: 'clip', tone: 'new' },
+    telegram: { edge: 'torn', fastener: 'clip', tone: 'new' },
+  };
+  const look = $derived(
+    (doc && SHEET[doc.kind]) ?? {
+      edge: 'straight' as Edge,
+      fastener: 'clip' as Fastener,
+      tone: 'paper',
+    },
+  );
+
   const place = $derived(doc?.place ? game.content.places[doc.place] : undefined);
   const facesOf = $derived(doc?.reveals?.portraits ?? []);
   const occupations = $derived(doc?.reveals?.occupations ?? []);
 </script>
 
-<Panel
-  title={doc?.title ?? pm.reader.title}
-  kicker={doc ? KIND_LABELS[doc.kind] : undefined}
-  surface="paper"
-  scroll={false}
-  padded={false}
-  class="reader-panel"
->
-  {#snippet actions()}
-    {#if doc}
-      <IconButton
-        icon="pin"
-        label={pinned ? pm.common.unpin : pm.common.pin}
-        pressed={pinned}
-        onclick={togglePin}
-      />
-      <IconButton icon="note" label={pm.reader.noteTitle} pressed={!!note} onclick={openNote} />
-    {/if}
-  {/snippet}
-
+<!-- Lecteur (§13.4) : la pièce est une feuille tirée de sa chemise, posée sur le sous-main. -->
+<section class="reader-panel" aria-labelledby="reader-title">
   {#if !doc}
     <div class="none">
+      <h2 id="reader-title" class="none-title">{pm.reader.title}</h2>
+      <Spot name="letter" />
       <p>{pm.reader.none}</p>
       <Button iconName="archives" onclick={() => game.navigate({ kind: 'panel', id: 'archives' })}
         >{pm.reader.toArchives}</Button
@@ -393,12 +425,12 @@
       <div class="toolbar" role="toolbar" aria-label={pm.reader.mode}>
         <div class="seg" role="group" aria-label={pm.reader.mode}>
           <Button
-            variant={mode === 'original' ? 'primary' : 'ghost'}
+            variant={mode === 'original' ? 'secondary' : 'ghost'}
             aria-pressed={mode === 'original'}
             onclick={() => (mode = 'original')}>{pm.reader.original}</Button
           >
           <Button
-            variant={mode === 'transcript' ? 'primary' : 'ghost'}
+            variant={mode === 'transcript' ? 'secondary' : 'ghost'}
             aria-pressed={mode === 'transcript'}
             iconName="transcript"
             onclick={() => (mode = 'transcript')}>{pm.reader.transcript}</Button
@@ -439,6 +471,15 @@
             </button>
           {/each}
         </div>
+        <div class="seg end">
+          <IconButton
+            icon="pin"
+            label={pinned ? pm.common.unpin : pm.common.pin}
+            pressed={pinned}
+            onclick={togglePin}
+          />
+          <IconButton icon="note" label={pm.reader.noteTitle} pressed={!!note} onclick={openNote} />
+        </div>
       </div>
       <p class="status" role="status">{status}</p>
 
@@ -450,44 +491,75 @@
         onpointerleave={() => (lens = null)}
       >
         <div class="meta">
-          {#if doc.date}<span class="num">{formatPartialDate(doc.date)}</span>{/if}
           {#if doc.author}<span>{pm.reader.author} : {doc.author}</span>{/if}
-          {#if doc.archive}<span>{pm.reader.archive} : {doc.archive}</span>{/if}
           {#if place}
             <Button
               variant="ghost"
               iconName="map"
+              verb="look"
               onclick={() => game.navigate({ kind: 'place', id: place.id })}>{place.name}</Button
             >
           {/if}
         </div>
 
-        <div
-          class="sheet grain kind-{doc.kind}"
-          class:transcript={mode === 'transcript'}
-          bind:this={sheet}
-          style:zoom
-        >
-          <div class="reading">
-            <DocumentBody blocks={doc.body} {opts} {highlights} {figure} {only} />
+        {#snippet sheetHead()}
+          <p class="doc-kicker">
+            {KIND_LABELS[doc.kind]}{#if doc.date}&nbsp;· <span class="num"
+                >{formatPartialDate(doc.date)}</span
+              >{/if}
+          </p>
+        {/snippet}
+
+        {#key id}
+          <div class="sheet-wrap fasten-{look.fastener}" in:sheetPull>
+            <div class="sheet-rustle" use:rustle={clue}>
+              <div
+                class="sheet mat-paper tone-{look.tone} kind-{doc.kind}"
+                class:edge-torn={look.edge === 'torn' && mode !== 'transcript'}
+                class:edge-perforated={look.edge === 'perforated' && mode !== 'transcript'}
+                class:transcript={mode === 'transcript'}
+                data-surface="paper"
+                bind:this={sheet}
+                style:zoom
+              >
+                {@render sheetHead()}
+                <h2 id="reader-title" class="doc-title">{doc.title}</h2>
+                <div class="reading">
+                  <DocumentBody blocks={doc.body} {opts} {highlights} {figure} {only} />
+                </div>
+                {#if doc.archive}
+                  <p class="doc-fonds">{pm.reader.archive} : {doc.archive}</p>
+                {/if}
+              </div>
+              {#if look.fastener === 'clip'}
+                <span class="clip" aria-hidden="true"
+                  ><Ornament name="clip" size="22px" weight={1.6} /></span
+                >
+              {:else if look.fastener === 'tape'}
+                <span class="tape tl" aria-hidden="true"><Tape rotate={-38} length="76px" /></span>
+                <span class="tape tr" aria-hidden="true"><Tape rotate={38} length="76px" /></span>
+              {/if}
+            </div>
           </div>
-        </div>
+        {/key}
 
         {#if lens && sheet}
           <div class="lens" aria-hidden="true" style:left="{lens.x}px" style:top="{lens.y}px">
             <div
-              class="lens-inner sheet kind-{doc.kind}"
+              class="lens-inner sheet mat-paper tone-{look.tone} kind-{doc.kind}"
               class:transcript={mode === 'transcript'}
+              data-surface="paper"
               style:width="{sheet.offsetWidth}px"
               style:transform="translate({90 - lens.ox * 2.5}px, {90 - lens.oy * 2.5}px) scale(2.5)"
             >
+              {@render sheetHead()}
+              <p class="doc-title">{doc.title}</p>
               <div class="reading">
                 <DocumentBody blocks={doc.body} opts={lensOpts} {highlights} {figure} {only} />
               </div>
             </div>
           </div>
         {/if}
-
         {#if bubble}
           <KeywordBubble
             label={pm.reader.bubble(bubble.label)}
@@ -502,13 +574,15 @@
           <section class="extra" aria-labelledby="reader-faces">
             <h3 id="reader-faces">{pm.reader.faces}</h3>
             <ul class="faces">
-              {#each facesOf as p (p)}
+              {#each facesOf as p, i (p)}
                 {@const pr = game.content.portraits[p]}
                 {#if pr}
-                  <li>
+                  <li class="mv-deal" style:--i={Math.min(i, 8)}>
                     <button
                       type="button"
-                      class="face"
+                      class="face mv-liftable"
+                      data-surface="paper"
+                      style:--tilt="{i % 2 ? 1.2 : -1}deg"
                       data-verb="take"
                       draggable="true"
                       ondragstart={(e) => {
@@ -568,7 +642,7 @@
       </div>
     </div>
   {/if}
-</Panel>
+</section>
 
 <Dialog bind:open={noteOpen} title={pm.reader.noteTitle} size="s">
   <TextField
@@ -585,14 +659,30 @@
 </Dialog>
 
 <style>
-  :global(.reader-panel) {
+  .reader-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     block-size: 100%;
+    min-block-size: 0;
+    min-inline-size: 0;
+    /* La largeur vient du volet, jamais du contenu (barre d'outils, feuille zoomée). */
+    contain: inline-size;
+    color: var(--text);
   }
   .none {
     display: grid;
     gap: var(--space-3);
     justify-items: start;
     padding: var(--space-6);
+    color: var(--text-muted);
+  }
+  .none-title {
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-weight: var(--weight-display);
+    font-size: var(--step-2);
+    color: var(--text);
   }
   .reader {
     display: flex;
@@ -603,19 +693,25 @@
   .toolbar {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2) var(--space-4);
+    gap: var(--space-1) var(--space-3);
     align-items: center;
     padding: var(--space-2) var(--space-3);
-    border-block-end: var(--border) solid var(--line);
+    border-block-end: 1.5px dashed var(--stitch);
   }
   .seg {
     display: flex;
+    flex-wrap: wrap;
+    min-inline-size: 0;
     gap: var(--space-1);
     align-items: center;
+  }
+  .seg.end {
+    margin-inline-start: auto;
   }
   .zoom {
     min-inline-size: 2.75rem;
     text-align: center;
+    font-family: var(--font-type);
   }
   .swatch {
     display: grid;
@@ -625,10 +721,20 @@
     padding: 0;
     border: var(--border) solid var(--line-strong);
     border-radius: var(--radius-s);
-    background: var(--surface-1);
-    color: var(--text);
+    background: var(--paper-new);
+    color: var(--ink);
     font: inherit;
     font-weight: var(--weight-semibold);
+    transition: transform var(--dur-base) var(--ease-snap);
+  }
+  @media (hover: hover) {
+    .swatch:hover {
+      transform: translateY(var(--lift)) rotate(-3deg);
+    }
+  }
+  .swatch:active {
+    transform: translateY(var(--press-depth));
+    transition-duration: var(--dur-instant);
   }
   .status {
     margin: 0;
@@ -644,34 +750,73 @@
     flex: 1;
     min-block-size: 0;
     overflow: auto;
-    padding: var(--space-3) var(--space-4) var(--space-6);
+    padding: var(--space-3) var(--space-5) var(--space-6);
   }
   .meta {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-1) var(--space-4);
     align-items: center;
-    margin-block-end: var(--space-3);
+    margin-block-end: var(--space-4);
     color: var(--text-muted);
+    font-family: var(--font-type);
+    font-size: var(--step--1);
+  }
+
+  /* ── La feuille (PaperSheet, §6.1 ; style par type, §10.8) ── */
+  .sheet-wrap {
+    position: relative;
+    max-inline-size: calc(var(--measure) + 2 * var(--space-6));
+    margin-block-start: var(--space-3);
+    transform-origin: 50% 100%;
+  }
+  .sheet-rustle {
+    position: relative;
+    --tilt: -0.5deg;
+    transform: rotate(var(--tilt));
   }
   .sheet {
-    max-inline-size: calc(var(--measure) + 2 * var(--space-6));
-    padding: var(--space-6);
-    border-radius: var(--radius-paper);
-    background: var(--surface-1);
-    color: var(--text);
-    box-shadow: var(--shadow-2);
-    rotate: -0.4deg;
+    padding: var(--space-6) var(--space-6) var(--space-8);
   }
   .sheet.transcript {
-    rotate: none;
+    padding-block-end: var(--space-6);
+  }
+  .tone-new {
+    background: var(--paper-new);
+  }
+  .tone-aged {
+    background: var(--paper-aged);
+  }
+  .doc-fonds {
+    margin: var(--space-6) 0 0;
+    padding-block-start: var(--space-2);
+    border-block-start: 1px solid var(--line);
+    color: var(--text-muted);
+    font-family: var(--font-type);
+    font-size: var(--step--1);
+  }
+  .doc-kicker {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--step--1);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
+    color: var(--paper-accent-strong);
+  }
+  .doc-title {
+    margin: var(--space-1) 0 var(--space-4);
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-weight: var(--weight-display);
+    font-size: var(--step-2);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    color: var(--ink);
+    text-wrap: balance;
   }
   .sheet .reading {
     max-inline-size: none;
-  }
-  .kind-newspaper,
-  .kind-directory {
-    background: var(--surface-2);
   }
   .kind-telegram:not(.transcript),
   .kind-report:not(.transcript),
@@ -691,50 +836,82 @@
     color: var(--ink-hand);
     line-height: 1.4;
   }
+  .clip {
+    position: absolute;
+    inset-block-start: calc(var(--space-4) * -1);
+    inset-inline-start: var(--space-6);
+    color: var(--metal);
+    rotate: -6deg;
+  }
+  .tape {
+    position: absolute;
+    inset-block-start: calc(var(--space-3) * -1);
+  }
+  .tape.tl {
+    inset-inline-start: calc(var(--space-6) * -1);
+  }
+  .tape.tr {
+    inset-inline-end: calc(var(--space-6) * -1);
+  }
   .lens {
     position: absolute;
     z-index: var(--z-popover);
     inline-size: 180px;
     block-size: 180px;
     margin: -90px 0 0 -90px;
-    border: var(--border-strong) solid var(--line-strong);
+    border: 3px solid var(--metal);
     border-radius: var(--radius-pill);
     overflow: hidden;
-    background: var(--surface-1);
-    box-shadow: var(--shadow-3);
+    background: var(--paper);
+    box-shadow:
+      var(--shadow-3),
+      inset 0 0 0 2px var(--metal-shade);
     pointer-events: none;
   }
   .lens-inner {
     transform-origin: 0 0;
-    rotate: none;
     box-shadow: none;
+    padding: var(--space-6) var(--space-6) var(--space-8);
+  }
+  .lens-inner .doc-title {
+    margin-block-start: var(--space-1);
   }
   .extra {
     margin-block-start: var(--space-6);
   }
   .extra h3 {
-    margin: 0 0 var(--space-2);
-    font-size: var(--step-1);
+    margin: 0 0 var(--space-3);
+    font-family: var(--font-label);
+    font-weight: var(--weight-medium);
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
+    color: var(--text-muted);
   }
   .faces {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: var(--space-4);
   }
+  /* Tirage photo (DESIGN §6.4) : marge blanche, légende manuscrite, se soulève au survol. */
   .face {
     display: grid;
     gap: var(--space-1);
     inline-size: 100%;
-    padding: var(--space-2);
-    border: var(--border) solid var(--line-strong);
-    border-radius: var(--radius-m);
+    padding: var(--space-2) var(--space-2) var(--space-3);
+    border: 0;
+    border-radius: var(--radius-s);
     background: var(--surface-1);
+    box-shadow: var(--shadow-paper);
     color: var(--text);
     font: inherit;
+    font-size: var(--step--1);
     text-align: start;
+    transform: rotate(var(--tilt, 0deg));
+    cursor: inherit;
   }
   .face-art {
     display: block;
@@ -745,6 +922,11 @@
   .face-art :global(svg) {
     inline-size: 100%;
     block-size: 100%;
+  }
+  @media (forced-colors: active) {
+    .face {
+      border: 1px solid CanvasText;
+    }
   }
   .verb {
     display: inline-flex;

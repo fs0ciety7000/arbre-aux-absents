@@ -71,7 +71,7 @@
 <ScreenFrame title={m.title} width="wide" onback={() => app.closeSecondary()}>
   <Tabs items={tabs} bind:value={tab} label={m.tabsLabel} idPrefix="options">
     {#snippet children(id)}
-      <div class="section">
+      <div class="section blotter mv-rise">
         {#if id === 'game'}
           <Select
             label={m.validation}
@@ -295,7 +295,8 @@
   .section {
     display: grid;
     gap: var(--space-5);
-    padding-block: var(--space-6);
+    margin-block-start: var(--space-4);
+    padding: var(--space-6);
     justify-items: start;
   }
   .section > :global(*) {
@@ -306,9 +307,13 @@
     width: auto;
   }
   h2 {
-    font-family: var(--font-display);
-    font-size: var(--step-1);
     margin-block-start: var(--space-4);
+    font-family: var(--font-label);
+    font-weight: var(--weight-medium);
+    font-size: var(--step-0);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
+    color: var(--accent);
   }
   .muted {
     color: var(--text-muted);
@@ -329,10 +334,11 @@
     align-items: center;
     gap: var(--space-3);
     min-height: var(--hit-row);
-    border-block-end: var(--border) solid var(--line);
+    border-block-end: 1px dashed var(--line);
   }
   .binding {
     color: var(--text-muted);
+    font-family: var(--font-type);
   }
   .pad-hints {
     display: flex;

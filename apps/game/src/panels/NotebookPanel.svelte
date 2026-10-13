@@ -154,7 +154,7 @@
                     {@const def = game.content.keywords[kw]}
                     {@const open = expanded === kw}
                     {@const isEx = exhausted.has(kw)}
-                    <li id="nb-{kw}" class="term" class:exhausted={isEx}>
+                    <li id="nb-{kw}" class="term" class:exhausted={isEx} data-surface="paper">
                       <button
                         type="button"
                         class="term-head"
@@ -250,9 +250,9 @@
           <p class="muted">{pm.notebook.passagesEmpty}</p>
         {:else}
           <ul class="passages">
-            {#each passages as h (h.index)}
+            {#each passages as h, i (h.index)}
               {@const d = game.content.documents[h.doc]!}
-              <li>
+              <li class="mv-deal" style:--i={Math.min(i, 12)} data-surface="paper">
                 <blockquote class="reading">
                   <span class="hl-{h.color}">{passageText(d.body, h.path, h.start, h.end)}</span>
                 </blockquote>
@@ -301,8 +301,8 @@
           <p class="muted">{pm.notebook.notesEmpty}</p>
         {:else}
           <ul class="notes">
-            {#each notes as n (n.id)}
-              <li>
+            {#each notes as n, i (n.id)}
+              <li class="mv-deal" style:--i={Math.min(i, 12)} data-surface="paper">
                 {#if targetLabel(n.target)}<p class="muted">
                     {pm.notebook.on(targetLabel(n.target)!)}
                   </p>{/if}
@@ -350,8 +350,12 @@
     margin-block-start: var(--space-4);
   }
   .rubric h3 {
-    font-size: var(--step-1);
     margin: 0 0 var(--space-2);
+    font-family: var(--font-label);
+    font-weight: var(--weight-medium);
+    font-size: var(--step-0);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
   }
   .terms,
   .links,
@@ -367,10 +371,22 @@
     display: flex;
     flex-wrap: wrap;
   }
+  /* Fiche bristol (§6.3) : ligne de tête vermillon, se soulève au survol. */
   .term {
-    border: var(--border) solid var(--line);
-    border-radius: var(--radius-m);
-    background: var(--surface-1);
+    border-radius: var(--radius-xs);
+    border-inline-start: 3px solid var(--card-margin);
+    background: var(--card);
+    box-shadow: var(--shadow-paper);
+    color: var(--text);
+    transition:
+      transform var(--dur-base) var(--ease-paper),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  @media (hover: hover) {
+    .term:hover {
+      transform: translateY(var(--lift));
+      box-shadow: var(--shadow-lifted);
+    }
   }
   .term.exhausted .label {
     color: var(--text-muted);
@@ -390,7 +406,10 @@
     text-align: start;
   }
   .label {
-    font-weight: var(--weight-semibold);
+    font-family: var(--font-type);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
   }
   .term-body {
     padding: 0 var(--space-3) var(--space-3);
@@ -409,9 +428,18 @@
   .passages li,
   .notes li {
     padding: var(--space-3);
-    border: var(--border) solid var(--line);
-    border-radius: var(--radius-m);
-    background: var(--surface-1);
+    border-radius: var(--radius-xs);
+    background: var(--card);
+    box-shadow: var(--shadow-paper);
+    color: var(--text);
+  }
+  .notes li {
+    border-block-start: 2px solid var(--card-margin);
+  }
+  .note-text {
+    font-family: var(--font-hand);
+    font-size: var(--step-1);
+    line-height: var(--leading-read);
   }
   .passages blockquote {
     margin: 0 0 var(--space-2);
@@ -431,5 +459,12 @@
   .note-text {
     margin: 0 0 var(--space-2);
     white-space: pre-wrap;
+  }
+  @media (forced-colors: active) {
+    .term,
+    .passages li,
+    .notes li {
+      border: 1px solid CanvasText;
+    }
   }
 </style>

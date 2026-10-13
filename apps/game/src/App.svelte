@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ArtDefs, SkipLink, ToastRegion } from '@arbre/ui';
+  import { ArtDefs, SkipLink, ToastRegion, paperIn, screenIn } from '@arbre/ui';
   import { onMount, type Component } from 'svelte';
   import { audio } from './audio/engine';
   import { installGamepad, installKeyboard } from './input/controller';
@@ -7,6 +7,7 @@
   import { announcer } from './lib/game/announcer.svelte';
   import { AppController, CONTENT_SCREENS } from './lib/game/app.svelte';
   import { setApp } from './lib/game/context';
+  import { screenLeave } from './lib/game/screen-motion';
   import { viewport } from './lib/game/viewport.svelte';
   import { messages } from './messages.fr';
   import Achievements from './screens/Achievements.svelte';
@@ -39,6 +40,8 @@
   });
 
   onMount(() => {
+    // Curseurs de verbes à la plume (DESIGN §9.0) : flèche d'encre partout, repli système.
+    document.documentElement.dataset.cursors = 'ink';
     input.install();
     void app.init();
     // Accès de recette (e2e, développement uniquement ; éliminé du build).
@@ -74,6 +77,17 @@
     });
   });
 
+  /** Identité de la scène affichée : change → transition d'écran. */
+  const sceneKey = $derived(
+    app.fatal
+      ? 'fatal'
+      : needsContent && app.contentStatus !== 'ready'
+        ? 'loading'
+        : app.screen === 'desk' && !(app.game && app.desk)
+          ? 'desk-wait'
+          : app.screen,
+  );
+
   const toastOffset = $derived(
     app.screen === 'desk' && viewport.single ? 'calc(var(--tabbar-h) + var(--space-2))' : '0px',
   );
@@ -90,52 +104,57 @@
 {/if}
 
 <div class="app" class:hidden={viewport.tooSmall}>
-  {#if app.fatal}
-    <ErrorScreen
-      error={app.fatal}
-      onback={() => {
-        app.fatal = null;
-        app.closeGame();
-        app.goto('title');
-      }}
-    />
-  {:else if needsContent && app.contentStatus !== 'ready'}
-    <ContentLoading />
-  {:else if app.screen === 'launch'}
-    <Launch />
-  {:else if app.screen === 'title'}
-    <Title />
-  {:else if app.screen === 'slots'}
-    <Slots />
-  {:else if app.screen === 'new-game'}
-    <NewGame />
-  {:else if app.screen === 'options'}
-    <Options />
-  {:else if app.screen === 'achievements'}
-    <Achievements />
-  {:else if app.screen === 'stats'}
-    <Stats />
-  {:else if app.screen === 'bonus'}
-    <Bonus />
-  {:else if app.screen === 'credits'}
-    {#if Credits}<Credits />{/if}
-  {:else if app.screen === 'ending'}
-    <Ending />
-  {:else if app.screen === 'desk' && app.game && app.desk}
-    {#key app.game}
-      <app.desk game={app.game} />
-    {/key}
-    {#if app.overlay}
-      <div class="overlay">
-        {#if app.overlay === 'options'}
-          <Options />
-        {:else if app.overlay === 'achievements'}
-          <Achievements />
-        {:else}
-          <Stats />
-        {/if}
-      </div>
-    {/if}
+  <!-- Une scène par écran : la nouvelle monte dans la lumière, l'ancienne s'escamote (§8.7). -->
+  {#key sceneKey}
+    <div class="scene" in:screenIn out:screenLeave>
+      {#if app.fatal}
+        <ErrorScreen
+          error={app.fatal}
+          onback={() => {
+            app.fatal = null;
+            app.closeGame();
+            app.goto('title');
+          }}
+        />
+      {:else if needsContent && app.contentStatus !== 'ready'}
+        <ContentLoading />
+      {:else if app.screen === 'launch'}
+        <Launch />
+      {:else if app.screen === 'title'}
+        <Title />
+      {:else if app.screen === 'slots'}
+        <Slots />
+      {:else if app.screen === 'new-game'}
+        <NewGame />
+      {:else if app.screen === 'options'}
+        <Options />
+      {:else if app.screen === 'achievements'}
+        <Achievements />
+      {:else if app.screen === 'stats'}
+        <Stats />
+      {:else if app.screen === 'bonus'}
+        <Bonus />
+      {:else if app.screen === 'credits'}
+        {#if Credits}<Credits />{/if}
+      {:else if app.screen === 'ending'}
+        <Ending />
+      {:else if app.screen === 'desk' && app.game && app.desk}
+        {#key app.game}
+          <app.desk game={app.game} />
+        {/key}
+      {/if}
+    </div>
+  {/key}
+  {#if app.screen === 'desk' && app.game && app.desk && app.overlay && !app.fatal}
+    <div class="overlay" in:paperIn>
+      {#if app.overlay === 'options'}
+        <Options />
+      {:else if app.overlay === 'achievements'}
+        <Achievements />
+      {:else}
+        <Stats />
+      {/if}
+    </div>
   {/if}
 </div>
 
@@ -156,7 +175,20 @@
 
 <style>
   .app {
+    position: relative;
     min-height: 100dvh;
+  }
+  .scene {
+    position: relative;
+    z-index: 1;
+    min-height: 100dvh;
+  }
+  /* L'écran sortant (inerte) reste dessous le temps de s'escamoter. */
+  .scene:global(.screen-leaving) {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
   }
   .hidden {
     display: none;

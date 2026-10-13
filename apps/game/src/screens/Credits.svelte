@@ -15,15 +15,15 @@
 <ScreenFrame title={m.title} onback={() => app.goto('title')}>
   <div class="stack">
     <ul class="logos">
-      <li>
+      <li class="mv-deal" style:--i="2">
         <CardorMonogram class="logo emblem" />
         <span>{m.publisher}</span>
       </li>
-      <li>
+      <li class="mv-deal" style:--i="3">
         <InteractiveLogo class="logo" />
         <span>{m.edition}</span>
       </li>
-      <li>
+      <li class="mv-deal" style:--i="4">
         <CreativeLogo class="logo" />
         <span>{m.writing}</span>
       </li>
@@ -60,8 +60,14 @@
     gap: var(--space-3);
     padding: var(--space-4);
     color: var(--text-muted);
+    font-family: var(--font-label);
     font-size: var(--step--1);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
     text-align: center;
+  }
+  .logos :global(.logo) {
+    color: var(--text);
   }
   .logos :global(.logo) {
     height: var(--space-16);
@@ -72,8 +78,12 @@
   }
   h2 {
     font-family: var(--font-display);
-    font-size: var(--step-1);
+    font-variation-settings: var(--display-settings);
+    font-size: var(--step-2);
     margin-block-end: var(--space-3);
+  }
+  .lines {
+    font-family: var(--font-type);
   }
   .lines {
     padding-inline-start: var(--space-5);

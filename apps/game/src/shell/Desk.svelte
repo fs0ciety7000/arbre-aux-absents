@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, Dialog, IconButton, Tabs, type TabItem } from '@arbre/ui';
+  import { Button, Dialog, Folder, LampLight, Tabs, sheetPull, type TabItem } from '@arbre/ui';
   import { unreadDocuments } from '@arbre/engine';
   import { getApp, setGame } from '../lib/game/context';
   import {
@@ -95,6 +95,14 @@
     e.preventDefault();
   }
 
+  /** Cote du dossier à l'étiqueteuse (décor stable, tirée de l'empreinte de l'affaire). */
+  const cote = $derived(
+    `ORC 74-${(parseInt(game.content.contentHash.slice(0, 4), 16) % 900) + 100}`,
+  );
+  const folderTitle = $derived(m.folder(game.content.meta.title));
+  /** Les panneaux principaux sont des chemises ; les autres, des feuilles sur le sous-main. */
+  const inFolder = $derived(MAIN_PANELS.includes(game.ui.main));
+
   function openMore(id: PanelId) {
     menuOpen = false;
     game.showPanel(id);
@@ -102,27 +110,43 @@
 </script>
 
 <div
-  class="desk"
+  class="desk desk-surface"
   class:single
   class:tablet={viewport.kind === 'tablet' && !single}
   class:collapsed={game.sideCollapsed}
   style:--side-w="{game.sideWidth}px"
   inert={app.overlay !== null}
 >
-  <DeskHeader {game} onmenu={() => (menuOpen = true)} />
+  <LampLight x={64} y={-6} dust={12} />
+  <DeskHeader {game} onmenu={() => (menuOpen = true)} sideToggle={!single} />
 
   {#if single}
     <main id={contentId} class="single-main" tabindex="-1" aria-label={m.region}>
-      <div
-        class="panel-host"
-        role="tabpanel"
-        id="desk-bar-panel"
-        aria-label={messages.panels[game.ui.main]}
-      >
-        {#key game.ui.main}
-          <MainPanel />
-        {/key}
-      </div>
+      {#if inFolder}
+        <Folder title={folderTitle} {cote} class="main-folder">
+          <div
+            class="panel-host"
+            role="tabpanel"
+            id="desk-bar-panel"
+            aria-label={messages.panels[game.ui.main]}
+          >
+            {#key game.ui.main}
+              <div class="panel-in"><MainPanel /></div>
+            {/key}
+          </div>
+        </Folder>
+      {:else}
+        <div
+          class="panel-host sheet-host"
+          role="tabpanel"
+          id="desk-bar-panel"
+          aria-label={messages.panels[game.ui.main]}
+        >
+          {#key game.ui.main}
+            <div class="panel-in"><MainPanel /></div>
+          {/key}
+        </div>
+      {/if}
       {#if showMini}
         <MiniReader {game} />
       {/if}
@@ -139,35 +163,33 @@
     </nav>
   {:else}
     <main id={contentId} class="zones" tabindex="-1" aria-label={m.region}>
-      <nav class="rail" aria-label={m.railLabel}>
-        <Tabs
-          items={railItems}
-          value={game.ui.main}
-          label={m.railLabel}
-          variant="rail"
-          idPrefix="desk-rail"
-          onchange={(id) => game.showPanel(id as PanelId)}
-        />
-        <div class="rail-foot">
-          <IconButton
-            icon="reader"
-            label={game.sideCollapsed ? m.sideExpand : m.sideCollapse}
-            pressed={!game.sideCollapsed}
-            tooltipPlacement="end"
-            onclick={() => (game.sideCollapsed = !game.sideCollapsed)}
-          />
+      <Folder title={folderTitle} enter class="main-folder">
+        {#snippet tabs()}
+          <div class="folder-row">
+            <nav class="folder-tabs" aria-label={m.railLabel}>
+              <Tabs
+                items={railItems}
+                value={game.ui.main}
+                label={m.railLabel}
+                variant="folder"
+                idPrefix="desk-rail"
+                onchange={(id) => game.showPanel(id as PanelId)}
+              />
+            </nav>
+            <span class="cote mat-label red" aria-hidden="true">{cote}</span>
+          </div>
+        {/snippet}
+        <div
+          class="main-zone panel-host"
+          role="tabpanel"
+          id="desk-rail-panel"
+          aria-labelledby="desk-rail-tab-{game.ui.main}"
+        >
+          {#key game.ui.main}
+            <div class="panel-in"><MainPanel /></div>
+          {/key}
         </div>
-      </nav>
-      <div
-        class="main-zone panel-host"
-        role="tabpanel"
-        id="desk-rail-panel"
-        aria-labelledby="desk-rail-tab-{game.ui.main}"
-      >
-        {#key game.ui.main}
-          <MainPanel />
-        {/key}
-      </div>
+      </Folder>
       {#if !game.sideCollapsed}
         <!-- Séparateur focalisable (motif ARIA « window splitter ») : interactif par conception. -->
         <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
@@ -186,7 +208,7 @@
           onpointercancel={onHandleUp}
           onkeydown={onHandleKey}
         ></div>
-        <aside class="side" aria-label={m.sideLabel}>
+        <aside class="side" aria-label={m.sideLabel} in:sheetPull|global={{ delay: 120 }}>
           <Tabs
             items={sideItems}
             value={game.ui.side ?? 'reader'}
@@ -198,7 +220,7 @@
             {#snippet children(id)}
               {@const SidePanel = PANELS[id as PanelId]}
               {#key id}
-                <SidePanel />
+                <div class="panel-in"><SidePanel /></div>
               {/key}
             {/snippet}
           </Tabs>
@@ -243,45 +265,125 @@
     grid-template-rows: auto minmax(0, 1fr) auto;
   }
   .zones {
+    position: relative;
     display: grid;
     grid-template-columns:
-      var(--rail-w) minmax(0, 1fr) var(--space-2)
+      minmax(0, 1fr) var(--space-3)
       clamp(var(--side-min), var(--side-w), var(--side-max));
-    gap: var(--space-3);
+    gap: var(--space-2);
     min-height: 0;
-    padding: var(--space-3);
-    padding-inline-start: max(var(--space-3), env(safe-area-inset-left));
-    padding-inline-end: max(var(--space-3), env(safe-area-inset-right));
-    padding-block-end: max(var(--space-3), env(safe-area-inset-bottom));
+    padding: var(--space-2) var(--space-5) var(--space-5);
+    padding-inline-start: max(var(--space-5), env(safe-area-inset-left));
+    padding-inline-end: max(var(--space-5), env(safe-area-inset-right));
+    padding-block-end: max(var(--space-5), env(safe-area-inset-bottom));
     outline: none;
   }
   .tablet .zones {
-    grid-template-columns: var(--rail-w-tablet) minmax(0, 55fr) var(--space-2) minmax(0, 45fr);
-    gap: var(--space-2);
-    padding: var(--space-2);
+    grid-template-columns: minmax(0, 55fr) var(--space-2) minmax(0, 45fr);
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-3) var(--space-3);
   }
-  .collapsed .zones {
-    grid-template-columns: var(--rail-w) minmax(0, 1fr);
-  }
+  .collapsed .zones,
   .tablet.collapsed .zones {
-    grid-template-columns: var(--rail-w-tablet) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
   }
-  .rail {
+
+  /* ── La chemise des panneaux principaux (Folder + onglets de chemise) ── */
+  .zones > :global(.main-folder),
+  .single-main > :global(.main-folder) {
+    min-height: 0;
+    min-width: 0;
+    /* La largeur vient de la zone, jamais du panneau (carte, toile de l'arbre). */
+    contain: inline-size;
+  }
+  .zones > :global(.main-folder > .body),
+  .single-main > :global(.main-folder > .body) {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2);
-    min-height: 0;
+    padding: var(--space-3) var(--space-3) var(--space-4);
+  }
+  .folder-row {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .folder-tabs {
+    flex: 1;
+    min-width: 0;
+  }
+  .cote {
+    align-self: center;
+    flex: none;
+    transform: rotate(-1.5deg);
+  }
+
+  /* Les onglets sortent de la chemise en cascade (mv-tab, §7.3). */
+  .folder-tabs :global(.tab) {
+    animation:
+      m-fade-in var(--dur-fade-fast) var(--ease-out) backwards,
+      m-tab var(--dur-base) var(--ease-snap) backwards;
+    animation-delay: calc(var(--i, 0) * var(--stagger-deal) + var(--dur-deal) * 0.5);
+  }
+  /* Le panneau principal se pose à même le carton : pas de second fond ; son titre devient
+     l'étiquette rouge collée sur le carton (le vrai titre hN reste). */
+  .desk :global(.main-folder .panel.desk) {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+  .desk :global(.main-folder .panel.desk::after) {
+    display: none;
+  }
+  .desk :global(.main-folder .panel.desk > .head) {
+    min-height: var(--hit);
+    padding: 0 0 var(--space-2);
+    border-block-end: 0;
+  }
+  .desk :global(.main-folder .panel.desk > .head .title) {
+    display: inline-block;
+    padding: 0.18em 0.7em 0.14em;
+    background: var(--label-tape-red);
+    color: var(--label-tape-text);
+    font-family: var(--font-label);
+    font-size: var(--step-0);
+    font-weight: var(--weight-medium);
+    letter-spacing: calc(0.12em + var(--tracking-extra));
+    text-transform: uppercase;
+    line-height: 1.2;
+    border-radius: 2px;
+    text-shadow:
+      0 1px 0 var(--label-emboss),
+      0 -1px 0 var(--label-sheen);
+    box-shadow:
+      inset 0 1px 0 var(--label-sheen),
+      inset 0 -1px 0 var(--label-emboss),
+      var(--shadow-1);
+    transform: rotate(-1.2deg);
   }
   .panel-host {
+    position: relative;
     display: flex;
     flex-direction: column;
+    flex: 1;
     min-width: 0;
     min-height: 0;
     overflow: hidden;
   }
-  .panel-host > :global(*) {
+  .panel-in {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    min-width: 0;
+    animation:
+      m-fade-in var(--dur-fade) var(--ease-out) backwards,
+      m-deal var(--dur-deal) var(--ease-deal) backwards;
+    --deal-x: 0px;
+    --deal-distance: calc(var(--rise) * 2);
+    --deal-rotate: 0.6deg;
+  }
+  .panel-in > :global(*) {
     flex: 1;
     min-height: 0;
   }
@@ -299,25 +401,39 @@
     inset-inline: calc(50% - 1px);
     background: var(--line-strong);
     border-radius: var(--radius-pill);
+    transition: transform var(--dur-base) var(--ease-snap);
   }
   .handle:hover::after,
   .handle:focus-visible::after {
     background: var(--accent);
+    transform: scaleY(1.4);
   }
   .handle:focus-visible {
     outline: 3px solid var(--focus);
     outline-offset: 2px;
   }
+
+  /* ── Le volet : un sous-main surpiqué où l'on pose feuilles et fiches ── */
   .side {
     position: relative;
     display: flex;
     flex-direction: column;
     min-width: 0;
     min-height: 0;
+    margin-block-start: var(--space-8);
     background: var(--surface-1);
     border-radius: var(--radius-l);
     box-shadow: var(--shadow-2);
     overflow: hidden;
+  }
+  .side::after {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    z-index: 2;
+    pointer-events: none;
+    border: 1.5px dashed var(--stitch);
+    border-radius: calc(var(--radius-l) - 4px);
   }
   .side > :global(.tabs) {
     flex: 1;
@@ -326,6 +442,7 @@
   .side :global([role='tablist']) {
     overflow-x: auto;
     scrollbar-width: thin;
+    padding-inline: var(--space-2);
   }
   .side :global([role='tabpanel']) {
     display: flex;
@@ -337,15 +454,33 @@
     flex: 1;
     min-height: 0;
   }
+  .side :global(.panel.desk) {
+    background: transparent;
+    box-shadow: none;
+  }
+  .side :global(.panel.desk::after) {
+    display: none;
+  }
   .single-main {
     display: flex;
     flex-direction: column;
+    gap: var(--space-2);
     min-height: 0;
+    min-width: 0;
     outline: none;
-    padding-inline: env(safe-area-inset-left) env(safe-area-inset-right);
+    padding: var(--space-1) max(var(--space-2), env(safe-area-inset-right)) var(--space-2)
+      max(var(--space-2), env(safe-area-inset-left));
   }
-  .single-main .panel-host {
+  .single-main > :global(.main-folder) {
     flex: 1;
+  }
+  .single-main > :global(.main-folder > .body) {
+    border-start-start-radius: var(--radius-m);
+  }
+  .sheet-host {
+    background: var(--surface-1);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-2);
   }
   .bar {
     position: relative;
@@ -354,5 +489,10 @@
   .more {
     display: grid;
     gap: var(--space-2);
+  }
+  @media (forced-colors: active) {
+    .side::after {
+      border-color: CanvasText;
+    }
   }
 </style>

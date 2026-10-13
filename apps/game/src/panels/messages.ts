@@ -117,6 +117,7 @@ export const pm = {
     fieldEmpty: 'À remplir',
     carry: (what: string) => `En main : « ${what} ». Choisissez une case pour le déposer.`,
     carryDrop: 'Déposer ici',
+    dropHint: 'Déposer une pièce',
     carryCancel: 'Reposer',
     carryIncompatible: 'Ce champ n’accepte pas cet élément.',
     instructions:

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, Dialog } from '@arbre/ui';
+  import { Button, Celebrate, Dialog, Icon, Stamp } from '@arbre/ui';
   import { getApp } from '../../lib/game/context';
   import type { GameStoreImpl } from '../../lib/game/store.svelte';
   import { messages } from '../../messages.fr';
@@ -35,6 +35,12 @@
         size="s"
         onclose={() => closed(current.uid)}
       >
+        <!-- Verrouillage (§13.3) : le tampon frappe, le cadenas se ferme, la gerbe part. -->
+        <div class="seal" aria-hidden="true">
+          <Stamp size="m" rotate={-8} animate />
+          <span class="lock mv-lock" style:--i="3"><Icon name="lock" size="1.5rem" /></span>
+          <Celebrate key={current.uid} x={50} y={40} count={30} />
+        </div>
         {#each current.lines as line, i (i)}
           <p class="reading">{line}</p>
         {/each}
@@ -54,6 +60,10 @@
         size="s"
         onclose={() => closed(current.uid)}
       >
+        <div class="seal" aria-hidden="true">
+          <Stamp size="m" rotate={6} tone="danger" text={messages.secret.kicker} animate />
+          <Celebrate key={current.uid} x={50} y={40} count={24} />
+        </div>
         <p class="reading">{messages.secret.text}</p>
         <p class="note">{messages.secret.archived}</p>
         {#snippet actions()}
@@ -67,6 +77,18 @@
 {/if}
 
 <style>
+  .seal {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    min-block-size: 5rem;
+    margin-block-end: var(--space-3);
+  }
+  .lock {
+    color: var(--established);
+  }
   .note {
     margin-block-start: var(--space-3);
     color: var(--text-muted);

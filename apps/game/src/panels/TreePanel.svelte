@@ -8,7 +8,7 @@
 <script lang="ts">
   import type { SlotGuess, SlotId } from '@arbre/contract';
   import { progress, visibleSlots } from '@arbre/engine';
-  import { Badge, Button, Icon, IconButton, Panel, Stamp, Tabs } from '@arbre/ui';
+  import { Badge, Button, Celebrate, Icon, IconButton, Panel, Stamp, Tabs } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
   import { portraitSvg } from './lib/assets.svelte';
   import { onMount, tick } from 'svelte';
@@ -16,6 +16,7 @@
   import { listenCommands, ownsCommands } from './lib/commands';
   import { carry, decodeCarry, DRAG_MIME } from './lib/carry.svelte';
   import {
+    DEFAULT_DIMS,
     layoutTree,
     neighbourSlot,
     type TreeDirection,
@@ -52,6 +53,8 @@
   let wrap: HTMLDivElement | undefined = $state();
   let focusId = $state<SlotId | null>(null);
   let justLocked = $state<Set<SlotId>>(new Set());
+  /** Gerbe de confettis sur la branche qui vient d'être établie (§13.3). */
+  let burst = $state<{ key: number; x: number; y: number } | null>(null);
 
   const ZMIN = 0.5;
   const ZMAX = 2;
@@ -74,12 +77,43 @@
       for (const e of events) {
         if (e.type === 'slotsLocked') {
           justLocked = new Set(e.ids);
+          celebrate(e.ids);
           setTimeout(() => (justLocked = new Set()), 1500);
         }
       }
     });
     return off;
   });
+
+  /** Centre de la branche établie, en % de la toile : origine des confettis. */
+  function celebrate(ids: readonly SlotId[]) {
+    const pts = ids.map((id) => layout.slots[id]).filter((p) => p !== undefined);
+    if (pts.length === 0 || layout.width === 0 || layout.height === 0) return;
+    const cx = pts.reduce((a, p) => a + p.x, 0) / pts.length + DEFAULT_DIMS.slotW / 2;
+    const cy = pts.reduce((a, p) => a + p.y, 0) / pts.length + DEFAULT_DIMS.slotH / 2;
+    burst = {
+      key: (burst?.key ?? 0) + 1,
+      x: (cx / layout.width) * 100,
+      y: (cy / layout.height) * 100,
+    };
+  }
+
+  const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+  /** Génération en chiffres romains (cote de la fiche). */
+  function genCote(id: SlotId): string {
+    const g = layout.generations.indexOf(game.content.slots[id]?.generation ?? 0);
+    return ROMAN[g] ?? String(g + 1);
+  }
+  /** Rang de distribution (≤ 12 animées) et inclinaison de repos, stables par case. */
+  function dealRank(id: SlotId): number | undefined {
+    const i = nodes.findIndex((n) => n.id === id);
+    return i >= 0 && i < 12 ? i : undefined;
+  }
+  function restTilt(id: SlotId): number {
+    let h = 0;
+    for (const c of id) h = (h * 31 + c.charCodeAt(0)) | 0;
+    return ((Math.abs(h) % 5) - 2) * 0.35;
+  }
 
   // Navigation transverse vers une case : la montrer et la sélectionner.
   $effect(() => {
@@ -248,14 +282,22 @@
   {@const portrait = portraitId ? game.content.portraits[portraitId] : undefined}
   {@const occ = fieldValueLabel(game.content, 'occupation', g)}
   {@const droppable = carry.item !== null && !locked}
+  {@const fresh = justLocked.has(id)}
+  {@const rank = [...justLocked].indexOf(id)}
+  <!-- Fiche bristol (IndexCard, §13.3) : le bouton est la fiche (un hN n'irait pas dans un bouton). -->
   <button
     type="button"
-    class="slot"
+    class="slot mat-card mv-liftable"
     class:locked
+    class:empty={!g}
     class:selected={game.ui.selectedSlot === id}
     class:droppable
+    class:mv-thud={fresh}
+    data-surface="paper"
     data-slot={id}
     data-verb={locked ? 'look' : droppable ? 'use' : 'write'}
+    style:--tilt="{restTilt(id)}deg"
+    style:--i={Math.max(0, rank)}
     tabindex={id === current ? 0 : -1}
     aria-label={summary(id)}
     aria-haspopup="dialog"
@@ -265,29 +307,40 @@
     ondragover={(e) => onDragOver(e, id)}
     ondrop={(e) => onDrop(e, id)}
   >
-    <span class="portrait" aria-hidden="true">
-      {#if portrait}
-        <span class="svg" use:svgContent={portraitId ? portraitSvg(game.content, portraitId) : null}
-        ></span>
+    <span class="head" aria-hidden="true">
+      <span class="name">
+        <span class:unknown={!g?.given}>{g?.given || pm.tree.unknown}</span>
+        <span class:unknown={!g?.family}>{g?.family || (g?.given ? pm.tree.unknown : '')}</span>
+      </span>
+      <span class="gen num">{genCote(id)}</span>
+    </span>
+    <span class="body" class:blank={!g && !droppable} aria-hidden="true">
+      {#if droppable}
+        <span class="drop"><Icon name="use" size="1.25rem" /> {pm.tree.carryDrop}</span>
+      {:else if !g}
+        <span class="occ hint"
+          ><Icon name="unknown-person" size="1.25rem" /> {pm.tree.dropHint}</span
+        >
       {:else}
-        <Icon name="unknown-person" size="2.5rem" />
+        <span class="portrait">
+          {#if portrait}
+            <span
+              class="svg"
+              use:svgContent={portraitId ? portraitSvg(game.content, portraitId) : null}
+            ></span>
+          {:else}
+            <Icon name="unknown-person" size="1.75rem" />
+          {/if}
+        </span>
+        <span class="occ" class:unknown={!occ}>{occ ?? FIELD_LABELS.occupation + ' ?'}</span>
       {/if}
     </span>
-    <span class="name" aria-hidden="true">
-      <span class:unknown={!g?.given}>{g?.given || pm.tree.unknown}</span>
-      <span class:unknown={!g?.family}>{g?.family || pm.tree.unknown}</span>
-    </span>
-    <span class="occ" class:unknown={!occ} aria-hidden="true"
-      >{occ ?? FIELD_LABELS.occupation + ' ?'}</span
-    >
     {#if locked}
-      <span class="lock" aria-hidden="true"><Icon name="lock" size="1rem" /></span>
-      <span class="stamp" aria-hidden="true"
-        ><Stamp size="s" animate={justLocked.has(id)} delay={[...justLocked].indexOf(id)} /></span
+      <span class="lock" class:mv-lock={fresh} style:--i={Math.max(0, rank)} aria-hidden="true"
+        ><Icon name="lock" size="1rem" /></span
       >
-    {:else if droppable}
-      <span class="drop" aria-hidden="true"
-        ><Icon name="use" size="1rem" /> {pm.tree.carryDrop}</span
+      <span class="stamp" aria-hidden="true"
+        ><Stamp size="s" rotate={-8} animate={fresh} delay={Math.max(0, rank)} /></span
       >
     {/if}
   </button>
@@ -326,13 +379,16 @@
     </div>
 
     {#if carry.item}
-      <div class="carry" role="status">
+      <div class="carry mv-rise" role="status" data-surface="paper">
         <Icon name="use" />
         <span>{pm.tree.carry(carry.item.label)}</span>
         <Button variant="ghost" onclick={() => carry.drop()}>{pm.tree.carryCancel}</Button>
       </div>
     {:else if empty && firstOpen}
-      <p class="bubble" role="note"><Icon name="info" /> {pm.tree.firstHint}</p>
+      <p class="bubble mv-rise" role="note" data-surface="paper">
+        <Icon name="info" />
+        {pm.tree.firstHint}
+      </p>
     {/if}
 
     <!-- Panneau des onglets de vue (cible de leur `aria-controls`). -->
@@ -368,6 +424,7 @@
               style:height="{layout.height}px"
               style:transform="scale({zoom})"
             >
+              <!-- Fil rouge tendu entre les fiches (§6.4), punaisé aux nœuds. -->
               <svg class="links" width={layout.width} height={layout.height} aria-hidden="true">
                 {#each layout.links as link, i (i)}
                   <path class="link {link.kind}" d={link.d} />
@@ -375,10 +432,20 @@
               </svg>
               {#each nodes as n (n.id)}
                 {@const p = layout.slots[n.id]!}
-                <div class="pos" style:left="{p.x}px" style:top="{p.y}px">
+                {@const r = dealRank(n.id)}
+                <div
+                  class="pos"
+                  class:mv-deal={r !== undefined}
+                  style:--i={r}
+                  style:left="{p.x}px"
+                  style:top="{p.y}px"
+                >
                   {@render card(n.id)}
                 </div>
               {/each}
+              {#if burst}
+                <Celebrate key={burst.key} x={burst.x} y={burst.y} count={30} />
+              {/if}
             </div>
           </div>
         </div>
@@ -422,7 +489,7 @@
                     .sort((a, b) => a.column - b.column) as n (n.id)}
                     {@const g = guessOf(game.state, game.content, n.id)}
                     {@const s = game.content.slots[n.id]!}
-                    <li class="list-slot" class:locked={isLocked(n.id)}>
+                    <li class="list-slot" class:locked={isLocked(n.id)} data-surface="paper">
                       <button
                         type="button"
                         class="list-open"
@@ -536,9 +603,17 @@
     align-items: center;
     margin: 0 var(--space-3) var(--space-2);
     padding: var(--space-2) var(--space-3);
-    border: var(--border) solid var(--accent);
-    border-radius: var(--radius-m);
-    background: var(--accent-tint);
+    border: 0;
+    border-inline-start: var(--border-strong) solid var(--accent);
+    border-radius: var(--radius-xs);
+    background: var(--surface-1);
+    box-shadow: var(--shadow-paper);
+    color: var(--text);
+    rotate: -0.3deg;
+  }
+  .carry :global(.icon),
+  .bubble :global(.icon) {
+    color: var(--accent);
   }
   .canvas-wrap {
     flex: 1;
@@ -563,60 +638,93 @@
   }
   .link {
     fill: none;
-    stroke: var(--line-strong);
+    stroke: var(--string);
     stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
   .link.union {
-    stroke-dasharray: none;
-    stroke-width: 3;
+    stroke-width: 2.5;
+  }
+  .links {
+    filter: drop-shadow(0 1px 0 var(--kraft-edge));
   }
   .pos {
     position: absolute;
+    --tilt: 0deg;
   }
 
+  /* ── La case : une fiche bristol (§6.3, §13.3) ── */
   .slot {
+    --head-h: 3.2em;
+    --rule-gap: 1.55em;
     position: relative;
     display: grid;
-    grid-template-rows: auto auto 1fr;
-    justify-items: center;
-    gap: var(--space-1);
+    grid-template-rows: var(--head-h) 1fr;
     inline-size: var(--slot-w);
     block-size: var(--slot-h);
-    padding: var(--space-2);
-    border: var(--border) solid var(--line-strong);
-    border-radius: var(--radius-m);
-    background: var(--surface-1);
-    color: var(--text);
-    box-shadow: var(--shadow-1);
+    padding: 0;
+    border: 0;
     font: inherit;
-    text-align: center;
-    transition: transform var(--dur-fast) var(--ease-out);
+    font-size: var(--step--1);
+    text-align: start;
+    transform: rotate(var(--tilt, 0deg));
   }
-  .slot:hover {
-    transform: translateY(var(--lift));
+  .slot.empty {
+    opacity: 0.9;
   }
-  .slot.selected {
-    border-color: var(--accent);
-    border-width: var(--border-strong);
+  .slot .head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-1);
+    padding: var(--space-2) var(--space-2) 0 var(--space-3);
+    min-width: 0;
   }
-  .slot.locked {
-    border-color: var(--established);
-    border-width: var(--border-strong);
+  .slot .name {
+    display: grid;
+    min-width: 0;
+    font-family: var(--font-type);
+    font-weight: var(--weight-bold);
+    line-height: 1.25;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--ink);
+    overflow-wrap: anywhere;
   }
-  .slot.droppable {
-    background: var(--accent-tint);
-    border-style: dashed;
-    border-color: var(--accent);
+  .slot .name > span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .slot .gen {
+    flex: none;
+    font-family: var(--font-type);
+    color: var(--ink-muted);
+  }
+  .slot .body.blank {
+    grid-template-columns: 1fr;
+  }
+  .slot .body {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: var(--space-2);
+    padding: 0 var(--space-2) var(--space-2) var(--space-3);
+    min-height: 0;
+    line-height: var(--rule-gap);
   }
   .portrait {
     display: grid;
     place-items: center;
-    inline-size: 64px;
-    block-size: 72px;
+    inline-size: 52px;
+    block-size: 64px;
     border-radius: var(--radius-xs);
     background: var(--surface-2);
-    color: var(--text-faint);
+    color: var(--ink-muted);
+    box-shadow: var(--shadow-1);
     overflow: hidden;
+    rotate: -2deg;
   }
   .portrait .svg {
     inline-size: 100%;
@@ -627,40 +735,75 @@
     inline-size: 100%;
     block-size: 100%;
   }
-  .name {
-    display: grid;
-    font-weight: var(--weight-semibold);
-    line-height: var(--leading-snug);
-    max-inline-size: 100%;
+  .occ {
+    font-family: var(--font-type);
+    line-height: var(--rule-gap);
+    color: var(--ink);
     overflow-wrap: anywhere;
   }
-  .occ {
-    color: var(--text-muted);
-    line-height: var(--leading-snug);
+  .occ.hint {
+    color: var(--ink-muted);
   }
   .unknown {
-    color: var(--text-faint);
+    color: var(--ink-faint);
+  }
+  .slot.selected {
+    box-shadow:
+      0 0 0 var(--border-strong) var(--accent),
+      var(--shadow-lifted);
+  }
+  .slot.locked {
+    box-shadow:
+      0 0 0 var(--border-strong) var(--established),
+      var(--shadow-paper);
+  }
+  .slot.droppable {
+    background-color: var(--surface-2);
+    box-shadow:
+      0 0 0 var(--border-strong) var(--accent),
+      var(--shadow-lifted);
+  }
+  .slot.droppable::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--accent-tint);
+    pointer-events: none;
   }
   .lock {
     position: absolute;
-    inset-block-start: var(--space-1);
-    inset-inline-end: var(--space-1);
+    inset-block-end: var(--space-2);
+    inset-inline-start: var(--space-3);
     color: var(--established);
   }
   .stamp {
     position: absolute;
-    inset-block-end: var(--space-1);
+    inset-block-end: calc(var(--space-2) * -1);
     inset-inline-end: calc(var(--space-2) * -1);
     pointer-events: none;
   }
+  .occ.hint :global(.icon) {
+    vertical-align: -0.3em;
+  }
   .drop {
-    position: absolute;
-    inset-block-end: var(--space-1);
+    grid-column: 1 / -1;
     display: inline-flex;
     gap: var(--space-1);
     align-items: center;
     color: var(--accent);
-    font-size: var(--step--1);
+    font-weight: var(--weight-semibold);
+  }
+
+  @media (forced-colors: active) {
+    .slot,
+    .list-slot {
+      border: 1px solid CanvasText;
+    }
+    .slot.selected,
+    .slot.droppable {
+      outline: 3px solid Highlight;
+    }
   }
 
   .gen-view {
@@ -731,12 +874,39 @@
   }
   .list-slot {
     padding: var(--space-2) var(--space-3);
-    border: var(--border) solid var(--line);
-    border-radius: var(--radius-m);
-    background: var(--surface-1);
+    border: 0;
+    border-block-start: 2px solid var(--card-margin);
+    border-radius: var(--radius-xs);
+    background: var(--card);
+    box-shadow: var(--shadow-paper);
+    color: var(--text);
+    transition:
+      transform var(--dur-base) var(--ease-paper),
+      box-shadow var(--dur-base) var(--ease-out);
+  }
+  .list-slot:focus-within {
+    box-shadow: var(--shadow-lifted);
+  }
+  @media (hover: hover) {
+    .list-slot:hover {
+      transform: translateY(var(--lift));
+    }
   }
   .list-slot.locked {
-    border-color: var(--established);
+    box-shadow:
+      inset var(--border-strong) 0 0 var(--established),
+      var(--shadow-paper);
+  }
+  .list-open {
+    font-family: var(--font-type);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+  }
+  .gens h3 {
+    font-family: var(--font-label);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
   }
   .list-open {
     display: flex;

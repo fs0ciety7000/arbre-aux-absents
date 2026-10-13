@@ -41,6 +41,10 @@ export const messages = {
     deskIllustration: 'Le bureau sous la lampe',
     version: (v: string) => `Version ${v}`,
     devBadge: 'Développement',
+    kicker: 'Dossier O.R.C. 74',
+    hook: 'Velmarche, automne 1974. Une famille entière à rendre à ses noms.',
+    lastFiled: 'Dernier classement',
+    lastFiledDetail: (pct: number, caseTitle: string) => `${caseTitle} · ${pct} % de l’arbre`,
   },
 
   slots: {
@@ -283,6 +287,7 @@ export const messages = {
     saved: 'Partie sauvegardée.',
     gamepadLost: 'Manette déconnectée.',
     noDocument: 'Aucun document ouvert.',
+    folder: (caseTitle: string) => `Dossier : ${caseTitle}`,
   },
 
   panels: {
@@ -333,6 +338,7 @@ export const messages = {
     continueInvestigation: 'Continuer l’enquête',
     toTitle: 'Revenir au titre',
     timedResults: 'Voir le temps',
+    filed: 'Classé',
   },
 
   report: {

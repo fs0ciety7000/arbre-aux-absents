@@ -1,12 +1,28 @@
 <script lang="ts">
-  import { ArtDefs, Badge, Button, Dialog } from '@arbre/ui';
+  import {
+    Badge,
+    Button,
+    Dialog,
+    DymoLabel,
+    Icon,
+    KeyArt,
+    LampLight,
+    Wordmark,
+    type IconName,
+  } from '@arbre/ui';
   import { onMount } from 'svelte';
   import { getApp } from '../lib/game/context';
   import { formatDateTime } from '../lib/game/format';
+  import { KEYART_NARROW, keyArtFrame, loadKeyArt, type KeyArtFrame } from '../lib/game/keyart';
   import type { ScreenId } from '../lib/game/types';
   import { messages } from '../messages.fr';
 
-  /** E02 : bureau illustré (objets = entrées du menu) doublé d'une liste de boutons. */
+  /**
+   * E02 — écran titre (DESIGN §13.1) : l'art clé « Le bureau sous la lampe », vivant, plein
+   * cadre ; le menu dans la zone calme à droite (sous 760 px : art 4:5 puis menu). Les objets du
+   * bureau sont aussi des entrées du menu à la souris (point & click) ; la liste de boutons reste
+   * l'accès clavier, manette et lecteur d'écran.
+   */
   const app = getApp();
   const m = messages.menu;
 
@@ -14,10 +30,26 @@
   let busy = $state(false);
   let quitOpen = $state(false);
   let first: HTMLElement | undefined = $state();
+  let hot = $state<string | null>(null);
 
   const last = $derived(app.lastSave);
   const canQuit = $derived(Boolean(app.platform?.quit) && app.platform?.kind === 'desktop');
   const dev = $derived(app.cases.some((c) => c.fixture));
+
+  // Un seul cadrage de l'art clé, choisi et rechargé selon la largeur (DESIGN §8.5).
+  let frame = $state<KeyArtFrame>(keyArtFrame());
+  let art = $state<{ frame: KeyArtFrame; svg: string } | null>(null);
+  $effect(() => {
+    const f = frame;
+    let alive = true;
+    loadKeyArt(f).then(
+      (svg) => alive && (art = { frame: f, svg }),
+      () => undefined, // décor : sans l'art, le bureau et sa lampe restent
+    );
+    return () => {
+      alive = false;
+    };
+  });
 
   async function continueGame() {
     busy = true;
@@ -31,70 +63,139 @@
     app.goto(screen);
   }
 
+  interface Hotspot {
+    id: string;
+    label: string;
+    verb: 'look' | 'take' | 'use';
+    /** Zone en unités du viewBox 16:9 (1600 × 900). */
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    run: () => void;
+  }
+  /** Objets du bureau (art 16:9) qui mènent aux entrées du menu. */
+  const hotspots: Hotspot[] = $derived([
+    {
+      id: 'lamp',
+      label: last ? m.continue : m.newGame,
+      verb: 'use',
+      x: 470,
+      y: 180,
+      w: 340,
+      h: 270,
+      run: () => (last ? void continueGame() : go('new-game')),
+    },
+    {
+      id: 'tree',
+      label: m.newGame,
+      verb: 'take',
+      x: 600,
+      y: 455,
+      w: 340,
+      h: 190,
+      run: () => go('new-game'),
+    },
+    {
+      id: 'folders',
+      label: m.load,
+      verb: 'take',
+      x: 70,
+      y: 555,
+      w: 350,
+      h: 245,
+      run: () => go('slots'),
+    },
+    {
+      id: 'stamp',
+      label: m.achievements,
+      verb: 'look',
+      x: 430,
+      y: 585,
+      w: 160,
+      h: 95,
+      run: () => go('achievements'),
+    },
+  ]);
+
+  interface Entry {
+    id: ScreenId;
+    label: string;
+    icon: IconName;
+  }
+  const more: Entry[] = [
+    { id: 'slots', label: m.load, icon: 'archives' },
+    { id: 'options', label: m.options, icon: 'settings' },
+    { id: 'achievements', label: m.achievements, icon: 'star' },
+    { id: 'stats', label: m.stats, icon: 'list' },
+    { id: 'bonus', label: m.bonus, icon: 'layers' },
+    { id: 'credits', label: m.credits, icon: 'quill' },
+  ];
+  const HOT_ENTRY: Record<string, string> = {
+    lamp: 'main',
+    tree: 'new-game',
+    folders: 'slots',
+    stamp: 'achievements',
+  };
+
   onMount(() => {
     first?.querySelector<HTMLElement>('button')?.focus();
+    const mq = matchMedia(KEYART_NARROW);
+    const on = () => (frame = mq.matches ? 'tall' : 'wide');
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
   });
 </script>
 
-<main id="contenu" class="title-screen" tabindex="-1">
-  <div class="scene" aria-hidden="true">
-    <ArtDefs />
-    <!-- Objets du bureau cliquables à la souris ; la liste de boutons est l'accès clavier. -->
-    <svg class="art on-night desk-art" viewBox="0 0 400 260">
-      <ellipse class="lamp-light" cx="250" cy="200" rx="170" ry="52" />
-      <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-      <g class="object" data-verb="look" onclick={() => go('slots')}>
-        <rect class="paper-shade" x="36" y="132" width="110" height="78" rx="2" />
-        <rect class="wash-sienne" x="36" y="132" width="110" height="78" rx="2" />
-        <rect class="ink" fill="none" x="36" y="132" width="110" height="78" rx="2" />
-        <rect class="ink-soft" fill="none" x="30" y="122" width="122" height="16" rx="2" />
-        <rect class="hatch" x="36" y="186" width="110" height="24" />
-        <rect class="paper" x="74" y="150" width="34" height="14" rx="1" />
-        <rect class="ink-soft" fill="none" x="74" y="150" width="34" height="14" rx="1" />
-      </g>
-      <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-      <g class="object" data-verb="take" onclick={() => go('new-game')}>
-        <rect class="paper" x="168" y="170" width="96" height="62" transform="rotate(-6 216 201)" />
-        <rect
-          class="ink-soft"
-          fill="none"
-          x="168"
-          y="170"
-          width="96"
-          height="62"
-          transform="rotate(-6 216 201)"
-        />
-        <path
-          class="ink-faint"
-          d="M178 186 h70 M179 196 h62 M180 206 h68 M181 216 h40"
-          transform="rotate(-6 216 201)"
-        />
-      </g>
-      <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-      <g class="object" data-verb="write" onclick={() => go('options')}>
-        <rect class="wash-indigo" x="282" y="178" width="70" height="50" rx="3" />
-        <rect class="ink" fill="none" x="282" y="178" width="70" height="50" rx="3" />
-        <path class="ink-soft" d="M290 178 v50" />
-      </g>
-      <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-      <g class="object" data-verb="look" onclick={() => (last ? continueGame() : go('new-game'))}>
-        <path class="ink" d="M336 234 h44 M358 234 v-96 l-34 -34" fill="none" />
-        <circle class="ink" fill="none" cx="358" cy="138" r="3" />
-        <path class="wash-safran" d="M300 96 l26 -30 l34 28 l-34 22 z" />
-        <path class="ink" fill="none" d="M300 96 l26 -30 l34 28 l-34 22 z" />
-        <circle class="wash-safran" cx="318" cy="112" r="6" />
-      </g>
-    </svg>
+<main id="contenu" class="title-screen" class:tall={frame === 'tall'} tabindex="-1">
+  <div class="art-layer" aria-hidden="true">
+    <LampLight x={frame === 'tall' ? 36 : 47} y={frame === 'tall' ? 22 : 18} dust={0} />
+    {#if art}
+      {#key art.frame}
+        <div class="art-fade">
+          <KeyArt
+            svg={art.svg}
+            anchor={art.frame === 'tall' ? 'center' : 'start'}
+            fade={art.frame === 'tall' ? 'bottom' : 'none'}
+          />
+        </div>
+      {/key}
+    {/if}
+    {#if art?.frame === 'wide'}
+      <!-- Objets cliquables à la souris ; le menu à droite est l'accès clavier. -->
+      <svg
+        class="hotspots"
+        viewBox="0 0 1600 900"
+        preserveAspectRatio="xMinYMid slice"
+        focusable="false"
+      >
+        {#each hotspots as h (h.id)}
+          <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+          <g
+            class="hit"
+            class:on={hot === h.id}
+            data-verb={h.verb}
+            onclick={h.run}
+            onpointerenter={() => (hot = h.id)}
+            onpointerleave={() => (hot = null)}
+          >
+            <rect class="zone" x={h.x} y={h.y} width={h.w} height={h.h} rx="14" />
+            <g class="tag" transform="translate({h.x + 10} {h.y - 16})">
+              <rect class="tag-bg" width={h.label.length * 15 + 34} height="34" rx="2" />
+              <text class="tag-text" x="17" y="24">{h.label}</text>
+            </g>
+          </g>
+        {/each}
+      </svg>
+    {/if}
   </div>
+  <div class="calm" aria-hidden="true"></div>
 
   <div class="menu-col">
-    <hgroup class="brand">
-      <h1>{messages.title}</h1>
-      <p class="tagline">{messages.tagline}</p>
-    </hgroup>
+    <Wordmark size="hero" animate glow kicker={m.kicker} tagline={m.hook} />
 
-    <nav aria-label={m.label} bind:this={first}>
-      <ul class="menu">
+    <nav class="menu mv-rise" style:--i="7" aria-label={m.label} bind:this={first}>
+      <ul class="main-actions" class:hot={hot ? HOT_ENTRY[hot] === 'main' : false}>
         {#if last}
           <li>
             <Button
@@ -102,14 +203,13 @@
               size="l"
               block
               loading={busy}
-              iconName="forward"
+              iconName="lamp"
+              class={hot === 'lamp' ? 'is-hot' : ''}
               onclick={continueGame}
             >
               <span class="label">
                 {m.continue}
-                <span class="detail"
-                  >{m.continueDetail(last.caseTitle, formatDateTime(last.updatedAt))}</span
-                >
+                <span class="detail">{last.caseTitle}</span>
               </span>
             </Button>
           </li>
@@ -119,58 +219,56 @@
             variant={last ? 'secondary' : 'primary'}
             size="l"
             block
-            iconName="plus"
+            iconName="folder"
+            class={hot === 'tree' || (!last && hot === 'lamp') ? 'is-hot' : ''}
             onclick={() => go('new-game')}>{m.newGame}</Button
           >
         </li>
-        <li>
-          <Button size="l" block iconName="archives" onclick={() => go('slots')}>{m.load}</Button>
-        </li>
-        <li>
-          <Button size="l" block iconName="settings" onclick={() => go('options')}
-            >{m.options}</Button
-          >
-        </li>
-        <li>
-          <Button size="l" block iconName="star" onclick={() => go('achievements')}
-            >{m.achievements}</Button
-          >
-        </li>
-        <li>
-          <Button size="l" block iconName="list" onclick={() => go('stats')}>{m.stats}</Button>
-        </li>
-        <li>
-          <Button size="l" block iconName="layers" onclick={() => go('bonus')}>{m.bonus}</Button>
-        </li>
-        <li>
-          <Button size="l" block iconName="info" onclick={() => go('credits')}>{m.credits}</Button>
-        </li>
-        {#if canQuit}
+      </ul>
+      <ul class="more">
+        {#each more as e (e.id)}
           <li>
             <Button
-              size="l"
-              block
               variant="ghost"
-              iconName="close"
-              onclick={() => (quitOpen = true)}>{m.quit}</Button
+              iconName={e.icon}
+              class={hot && HOT_ENTRY[hot] === e.id ? 'is-hot' : ''}
+              onclick={() => go(e.id)}>{e.label}</Button
+            >
+          </li>
+        {/each}
+        {#if canQuit}
+          <li>
+            <Button variant="ghost" iconName="close" onclick={() => (quitOpen = true)}
+              >{m.quit}</Button
             >
           </li>
         {/if}
       </ul>
     </nav>
 
-    {#if error}
-      <p class="error" role="alert">{error}</p>
-    {/if}
-    {#if app.storageWarning}
-      <p class="warning" role="status">{app.storageWarning}</p>
+    {#if last}
+      <p class="save mv-rise" style:--i="8">
+        <DymoLabel text={m.lastFiled} tilt={-1.5} />
+        <span class="when num">{formatDateTime(last.updatedAt)}</span>
+        <span class="when num"
+          >{m.lastFiledDetail(Math.round(last.progress * 100), last.caseTitle)}</span
+        >
+      </p>
     {/if}
 
-    <footer class="foot">
-      <span>{messages.credits}</span>
-      {#if dev}<Badge tone="warning" variant="outline">{m.devBadge}</Badge>{/if}
-    </footer>
+    {#if error}
+      <p class="error" role="alert"><Icon name="danger" /> {error}</p>
+    {/if}
+    {#if app.storageWarning}
+      <p class="warning" role="status"><Icon name="warning" /> {app.storageWarning}</p>
+    {/if}
   </div>
+
+  <footer class="studio">
+    <Icon name="fern" size="1rem" />
+    <span>{messages.credits}</span>
+    {#if dev}<Badge tone="warning" variant="outline">{m.devBadge}</Badge>{/if}
+  </footer>
 </main>
 
 <Dialog bind:open={quitOpen} title={m.quitConfirmTitle} description={m.quitConfirmText} size="s">
@@ -182,64 +280,144 @@
 
 <style>
   .title-screen {
+    position: relative;
+    isolation: isolate;
     display: grid;
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    align-items: center;
-    gap: var(--space-8);
+    grid-template-columns: minmax(0, 1fr) minmax(22rem, 33.4%);
     min-height: 100dvh;
-    padding: var(--space-8) var(--gutter);
-    padding-block: max(var(--space-8), env(safe-area-inset-top))
-      max(var(--space-8), env(safe-area-inset-bottom));
+    overflow: hidden;
+    background: var(--desk);
     outline: none;
   }
-  .scene {
-    max-width: 42rem;
-    justify-self: end;
+  .art-layer {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .art-layer :global(.keyart),
+  .art-fade {
+    position: absolute;
+    inset: 0;
+  }
+  .art-fade {
+    animation: m-fade-in var(--dur-slow) var(--ease-out) backwards;
+  }
+  /* Zone calme : tiers droit, mur sombre ; voile d'encre pour lire le menu (§8.5). */
+  .calm {
+    position: absolute;
+    inset: 0 0 0 auto;
+    z-index: -1;
+    width: 46%;
+    background: linear-gradient(to left, var(--scrim-art) 62%, transparent);
+    pointer-events: none;
+  }
+
+  /* ── Objets cliquables (souris) ── */
+  .hotspots {
+    position: absolute;
+    inset: 0;
     width: 100%;
+    height: 100%;
   }
-  .desk-art {
-    width: 100%;
+  .hit {
+    pointer-events: all;
   }
-  .lamp-light {
-    fill: var(--lamp-glow);
+  .zone {
+    fill: var(--accent-tint);
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-dasharray: 6 6;
+    opacity: 0;
+    transition: opacity var(--dur-base) var(--ease-out);
   }
-  .object {
-    cursor: pointer;
-    transition: transform var(--dur-base) var(--ease-out);
-    transform-box: fill-box;
+  .tag {
+    opacity: 0;
+    transition: opacity var(--dur-fast) var(--ease-out);
+    pointer-events: none;
   }
-  .object:hover {
-    transform: translateY(var(--lift));
+  .tag-bg {
+    fill: var(--label-tape);
   }
+  .tag-text {
+    fill: var(--label-tape-text);
+    font-family: var(--font-label);
+    font-size: 19px;
+    font-weight: var(--weight-medium);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .hit.on .zone,
+  .hit.on .tag {
+    opacity: 1;
+  }
+
+  /* ── Menu ── */
   .menu-col {
-    display: grid;
-    gap: var(--space-5);
-    max-width: 24rem;
-  }
-  h1 {
-    font-family: var(--font-display);
-    font-weight: var(--weight-semibold);
-    font-size: var(--step-4);
-    line-height: var(--leading-tight);
-    text-wrap: balance;
-  }
-  .tagline {
-    margin-block-start: var(--space-2);
-    color: var(--text-muted);
+    grid-column: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-6);
+    min-width: 0;
+    padding: var(--space-8) var(--space-8) var(--space-12) var(--space-4);
+    padding-block-start: max(var(--space-8), env(safe-area-inset-top));
+    padding-inline-end: max(var(--space-8), env(safe-area-inset-right));
   }
   .menu {
     display: grid;
-    gap: var(--space-2);
+    gap: var(--space-3);
+    max-width: 24rem;
+  }
+  .main-actions,
+  .more {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
     padding: 0;
     list-style: none;
+  }
+  .more {
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+    gap: var(--space-1) var(--space-2);
+  }
+  .more :global(.btn) {
+    justify-content: flex-start;
+    width: 100%;
+  }
+  /* Objet survolé dans l'art : son entrée de menu s'allume aussi. */
+  .menu :global(.is-hot) {
+    outline: 2px dashed var(--accent);
+    outline-offset: 3px;
   }
   .label {
     display: grid;
     text-align: start;
   }
   .detail {
+    font-family: var(--font-ui);
     font-size: var(--step--1);
-    font-weight: var(--weight-regular);
+    font-weight: var(--weight-medium);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .save {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    margin: 0;
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .when {
+    font-family: var(--font-type);
+  }
+  .error,
+  .warning {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    margin: 0;
   }
   .error {
     color: var(--danger);
@@ -247,27 +425,54 @@
   .warning {
     color: var(--warning);
   }
-  .foot {
+  .studio {
+    position: absolute;
+    inset: auto auto var(--space-4) var(--space-5);
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-3);
-    color: var(--text-faint);
+    gap: var(--space-2);
+    padding-block-end: env(safe-area-inset-bottom);
+    font-family: var(--font-label);
     font-size: var(--step--1);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
+    color: var(--text-muted);
   }
-  @media (max-width: 37.4375rem) {
-    .title-screen {
-      grid-template-columns: 1fr;
-      gap: var(--space-4);
-      padding-block-start: max(var(--space-4), env(safe-area-inset-top));
-    }
-    .scene {
-      justify-self: center;
-      max-width: 22rem;
-    }
-    .menu-col {
-      justify-self: center;
-      width: 100%;
+
+  /* ── Sous 760 px : art 4:5 recomposé, menu dessous (§13.1) ── */
+  .tall {
+    display: block;
+    overflow: visible;
+  }
+  .tall .art-layer {
+    position: relative;
+    inset: auto;
+    z-index: 0;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    max-height: 68dvh;
+    overflow: hidden;
+  }
+  .tall .calm {
+    display: none;
+  }
+  .tall .menu-col {
+    position: relative;
+    margin-top: -22vw;
+    padding: 0 var(--gutter) var(--space-8);
+  }
+  .tall .menu {
+    max-width: none;
+  }
+  .tall .studio {
+    position: static;
+    padding: 0 var(--gutter) max(var(--space-5), env(safe-area-inset-bottom));
+  }
+  @media (forced-colors: active) {
+    .calm,
+    .hotspots {
+      display: none;
     }
   }
 </style>

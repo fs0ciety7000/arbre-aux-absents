@@ -1,44 +1,63 @@
 <script lang="ts">
   import { progress } from '@arbre/engine';
-  import { Button, IconButton } from '@arbre/ui';
+  import { Button, DymoLabel, Icon, IconButton, Wordmark } from '@arbre/ui';
   import { formatClock } from '../lib/game/format';
   import type { GameStoreImpl } from '../lib/game/store.svelte';
   import { viewport } from '../lib/game/viewport.svelte';
   import { messages } from '../messages.fr';
 
+  /**
+   * En-tête du Bureau (DESIGN §13.2) : posé sur le sous-main, sans bandeau ; titre du jeu en
+   * une ligne, affaire à l'étiqueteuse rouge, compteurs à la machine à écrire (la valeur qui
+   * change « saute »), outils en icônes encrées.
+   */
   interface Props {
     game: GameStoreImpl;
     onmenu: () => void;
+    /** Bouton « replier / déplier le volet » (Bureau à plusieurs zones). */
+    sideToggle?: boolean;
   }
-  let { game, onmenu }: Props = $props();
+  let { game, onmenu, sideToggle = false }: Props = $props();
 
   const m = messages.desk;
   const p = $derived(progress(game.state, game.content));
   const phone = $derived(viewport.single);
+  const wide = $derived(viewport.kind === 'desktop');
   const showTimer = $derived(game.state.mode === 'timed' || game.settings.showTimer);
 </script>
 
 <header class="header" class:phone aria-label={m.headerLabel}>
-  <IconButton icon="back" label={m.back} onclick={() => game.back()} />
+  <IconButton icon="back" variant="ghost" label={m.back} onclick={() => game.back()} />
   {#if !phone}
-    <p class="name">{messages.title}</p>
+    <!-- Wordmark `as="p"` pose un aria-label interdit sur <p> : décor masqué + texte. -->
+    <span class="wm" aria-hidden="true"><Wordmark size="header" as="span" /></span>
+    <span class="visually-hidden">{messages.title}</span>
+    {#if wide}
+      <span class="case"><DymoLabel text={game.content.meta.title} tone="red" tilt={-1} /></span>
+    {/if}
   {/if}
   <div class="counters">
     <span class="counter num" title={m.identifiedLabel(p.locked, p.total)}>
-      <span aria-hidden="true"
-        >{phone ? m.identifiedShort(p.locked, p.total) : m.identified(p.locked, p.total)}</span
-      >
+      <Icon name="stamp" size="1.1rem" />
+      {#key p.locked}
+        <span class="value mv-pop" aria-hidden="true"
+          >{phone ? m.identifiedShort(p.locked, p.total) : m.identified(p.locked, p.total)}</span
+        >
+      {/key}
       <span class="visually-hidden">{m.identifiedLabel(p.locked, p.total)}</span>
     </span>
     {#if !phone}
       <span class="counter num">
-        <span aria-hidden="true">{m.secrets(p.secrets)}</span>
+        <Icon name="sparkle" size="1.1rem" />
+        {#key p.secrets}
+          <span class="value mv-pop" aria-hidden="true">{m.secrets(p.secrets)}</span>
+        {/key}
         <span class="visually-hidden">{m.secretsLabel(p.secrets)}</span>
       </span>
     {/if}
     {#if showTimer}
       <span class="counter num timer" role="timer" aria-label={m.timer}
-        >{formatClock(game.state.elapsedMs)}</span
+        ><Icon name="clock" size="1.1rem" />{formatClock(game.state.elapsedMs)}</span
       >
     {/if}
   </div>
@@ -60,42 +79,64 @@
     {#if game.settings.validation === 'manual'}
       <IconButton
         icon="check"
+        variant="ghost"
         label={m.validateBranch}
+        tooltip
         onclick={() => game.dispatch({ type: 'validate' })}
       />
     {/if}
-    <IconButton icon="help" label={m.help} onclick={() => game.showPanel('help')} />
+    {#if sideToggle}
+      <IconButton
+        icon="reader"
+        variant="ghost"
+        label={game.sideCollapsed ? m.sideExpand : m.sideCollapse}
+        pressed={!game.sideCollapsed}
+        tooltip
+        onclick={() => (game.sideCollapsed = !game.sideCollapsed)}
+      />
+    {/if}
+    <IconButton
+      icon="help"
+      variant="ghost"
+      label={m.help}
+      tooltip
+      onclick={() => game.showPanel('help')}
+    />
     {#if phone}
-      <IconButton icon="menu" label={m.menu} onclick={onmenu} />
+      <IconButton icon="menu" variant="ghost" label={m.menu} onclick={onmenu} />
     {:else}
-      <IconButton icon="pause" label={m.pause} onclick={() => game.openPause()} />
+      <IconButton
+        icon="pause"
+        variant="ghost"
+        label={m.pause}
+        tooltip
+        onclick={() => game.openPause()}
+      />
     {/if}
   </div>
 </header>
 
 <style>
   .header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    min-height: var(--header-h);
-    padding-inline: var(--space-2);
-    padding-block-start: env(safe-area-inset-top);
-    padding-inline-start: max(var(--space-2), env(safe-area-inset-left));
-    padding-inline-end: max(var(--space-2), env(safe-area-inset-right));
-    background: var(--surface-1);
-    border-block-end: var(--border) solid var(--line);
-    box-shadow: var(--shadow-1);
     position: relative;
     z-index: var(--z-header);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2) var(--space-4);
+    min-height: var(--header-h);
+    padding: var(--space-2) var(--space-3) 0;
+    padding-block-start: max(var(--space-2), env(safe-area-inset-top));
+    padding-inline-start: max(var(--space-3), env(safe-area-inset-left));
+    padding-inline-end: max(var(--space-3), env(safe-area-inset-right));
   }
   .header.phone {
     min-height: var(--header-h-phone);
+    gap: var(--space-2);
   }
-  .name {
-    font-family: var(--font-display);
-    font-weight: var(--weight-semibold);
-    font-size: var(--step-0);
+  .case {
+    flex: none;
+    max-width: 18rem;
+    overflow: hidden;
     white-space: nowrap;
   }
   .counters {
@@ -103,13 +144,23 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: var(--space-1) var(--space-4);
+    gap: var(--space-1) var(--space-5);
     min-width: 0;
     color: var(--text-muted);
+    font-family: var(--font-type);
     font-size: var(--step-0);
   }
   .counter {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
     white-space: nowrap;
+  }
+  .counter :global(.icon) {
+    color: var(--brand);
+  }
+  .value {
+    display: inline-block;
   }
   .timer {
     color: var(--text);

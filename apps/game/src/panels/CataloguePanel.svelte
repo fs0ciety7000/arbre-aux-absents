@@ -15,6 +15,7 @@
   } from '@arbre/engine';
   import { Badge, Button, Card, Icon, Panel, TextField } from '@arbre/ui';
   import { getGame } from '../lib/game/context';
+  import Spot from '../shell/Spot.svelte';
   import { listenCommands } from './lib/commands';
   import { formatPartialDate } from './lib/view';
   import { KIND_LABELS, pm } from './messages';
@@ -144,22 +145,30 @@
             {/each}
           </ul>
         {:else}
-          <p class="muted">{pm.catalogue.before}</p>
+          <div class="empty">
+            <Spot name="catalogue" size="9rem" />
+            <p class="muted">{pm.catalogue.before}</p>
+          </div>
         {/if}
       {:else}
         <h3 class="for type">{pm.catalogue.resultsFor(outcome.query)}</h3>
         {#if outcome.documents.length === 0}
-          <p class="none type">{pm.catalogue.none}</p>
+          <div class="empty">
+            <Spot name="catalogue" size="9rem" />
+            <p class="none type">{pm.catalogue.none}</p>
+          </div>
         {:else}
           <p class="muted num">{pm.catalogue.results(outcome.documents.length)}</p>
           {#if allSeen}<p class="seen"><Icon name="check" /> {pm.catalogue.allSeen}</p>{/if}
           <ul class="fiches">
-            {#each ordered as id (id)}
+            {#each ordered as id, i (id)}
               {@const d = game.content.documents[id]!}
               {@const ex = excerpt(id, outcome.query)}
               <li>
                 <Card
-                  variant="fiche"
+                  variant="index"
+                  deal={i}
+                  tilt={i % 3 === 0 ? -0.6 : i % 3 === 1 ? 0.5 : -0.2}
                   title={d.title}
                   kicker={KIND_LABELS[d.kind]}
                   meta={formatPartialDate(d.date) || undefined}
@@ -268,11 +277,23 @@
     flex-wrap: wrap;
   }
   .fiches {
-    gap: var(--space-3);
+    gap: var(--space-4);
+    padding-block: var(--space-2);
+  }
+  .empty {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+    padding-block: var(--space-4);
+    text-align: center;
   }
   .excerpt {
     margin: 0;
     color: var(--text-muted);
+  }
+  .for {
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-label);
   }
   .history {
     margin-block-start: var(--space-6);
@@ -295,7 +316,16 @@
     font-size: var(--step-0);
     text-align: start;
   }
+  .replay {
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
   .replay:hover {
     background: var(--surface-2);
+    transform: translateX(var(--space-1));
+  }
+  .replay:active {
+    transform: translateX(var(--space-1)) scale(0.99);
   }
 </style>

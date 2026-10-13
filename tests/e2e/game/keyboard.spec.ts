@@ -12,11 +12,15 @@ const activeName = (page: Page) =>
       .replace(/\s+/g, ' ');
   });
 
-/** Tabule jusqu'à l'élément dont le nom correspond (au plus `max` pressions). */
+/**
+ * Tabule jusqu'à l'élément dont le nom correspond (au plus `max` pressions). Sans tenir compte
+ * de la casse : `innerText` suit `text-transform` (boutons en capitales Oswald, DESIGN v2).
+ */
 async function tabTo(page: Page, name: RegExp, max = 60): Promise<void> {
+  const re = name.flags.includes('i') ? name : new RegExp(name.source, name.flags + 'i');
   for (let i = 0; i < max; i++) {
     await page.keyboard.press('Tab');
-    if (name.test(await activeName(page))) return;
+    if (re.test(await activeName(page))) return;
   }
   throw new Error(`Tab : « ${name} » jamais atteint (dernier : « ${await activeName(page)} »)`);
 }

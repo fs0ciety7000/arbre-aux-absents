@@ -4,6 +4,7 @@
   import { getApp } from '../lib/game/context';
   import { messages } from '../messages.fr';
   import ScreenFrame from './ScreenFrame.svelte';
+  import Spot from '../shell/Spot.svelte';
 
   /** E04 : affaire, mode, préréglage d'aide, « J'ai déjà joué », emplacement. */
   const app = getApp();
@@ -68,9 +69,10 @@
   }
 </script>
 
-<ScreenFrame title={m.title} kicker={m.kicker} onback={() => app.goto('title')}>
+<ScreenFrame title={m.title} kicker={m.kicker} onback={() => app.goto('title')} surface="paper">
   {#if app.cases.length === 0}
     <div class="empty" role="status">
+      <Spot name="fern" size="8rem" />
       <p class="lead">{m.noCases}</p>
       <p class="muted">{m.noCasesHint}</p>
       <Button onclick={() => app.goto('title')}>{messages.back}</Button>

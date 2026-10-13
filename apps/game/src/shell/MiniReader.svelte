@@ -13,7 +13,7 @@
 </script>
 
 {#if doc}
-  <aside class="mini grain" data-surface="paper" aria-label={messages.desk.miniReader}>
+  <aside class="mini mat-paper mv-sheet" data-surface="paper" aria-label={messages.desk.miniReader}>
     <button
       type="button"
       class="open"
@@ -39,10 +39,9 @@
     gap: var(--space-1);
     height: var(--mini-reader-h);
     padding-inline: var(--space-2);
-    background: var(--canvas);
     color: var(--text);
-    border-radius: var(--radius-paper);
     box-shadow: var(--shadow-paper);
+    rotate: -0.4deg;
     margin-inline: var(--space-2);
     margin-block-end: var(--space-2);
   }
@@ -70,7 +69,11 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    font-family: var(--font-read);
-    font-weight: var(--weight-semibold);
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-weight: var(--weight-display);
+  }
+  .open :global(.icon:first-child) {
+    color: var(--brand);
   }
 </style>

@@ -71,10 +71,16 @@
 <ScreenFrame title={m.title} kicker={m.kicker} onback={() => app.goto('title')}>
   <div class="stack">
     <ul class="slots" aria-label={m.listLabel}>
-      {#each SLOTS as slot (slot)}
+      {#each SLOTS as slot, i (slot)}
         {@const s = bySlot[slot]}
-        <li>
-          <Card title={m.slotName(slot)} kicker={s ? s.caseTitle : undefined}>
+        <li class:vacant={!s}>
+          <Card
+            variant="index"
+            title={m.slotName(slot)}
+            kicker={s ? s.caseTitle : undefined}
+            deal={i}
+            tilt={i % 2 ? 0.4 : -0.5}
+          >
             {#if s}
               <p class="meta">
                 <Badge tone={s.mode === 'timed' ? 'warning' : 'neutral'}
@@ -144,9 +150,14 @@
   }
   .slots {
     display: grid;
-    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: var(--space-5);
+    margin: 0;
     padding: 0;
     list-style: none;
+  }
+  .vacant {
+    opacity: 0.88;
   }
   .meta {
     display: flex;
@@ -165,8 +176,11 @@
     color: var(--danger);
   }
   h2 {
-    font-family: var(--font-display);
-    font-size: var(--step-1);
+    font-family: var(--font-label);
+    font-weight: var(--weight-medium);
+    font-size: var(--step-0);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
     margin-block-end: var(--space-3);
   }
   .import-row {

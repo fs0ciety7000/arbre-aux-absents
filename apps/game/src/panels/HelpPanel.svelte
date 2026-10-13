@@ -117,7 +117,7 @@
         <h4>{t.title}</h4>
         <ol class="hints">
           {#each t.statuses as h (h.id)}
-            <li class="hint" class:used={h.used}>
+            <li class="hint" class:used={h.used} data-surface={h.used ? 'paper' : undefined}>
               <span class="level caps">{pm.help.level(h.level)}</span>
               {#if h.used}
                 <p class="reading text" id="hint-{h.id}" tabindex="-1">{h.text}</p>
@@ -165,7 +165,7 @@
     gap: var(--space-2);
     justify-items: start;
     padding-block: var(--space-3) var(--space-5);
-    border-block-end: var(--border) solid var(--line);
+    border-block-end: 1px dashed var(--line-strong);
   }
   section:last-child {
     border-block-end: 0;
@@ -175,7 +175,14 @@
     gap: var(--space-2);
     align-items: center;
     margin: 0;
-    font-size: var(--step-1);
+    font-family: var(--font-label);
+    font-weight: var(--weight-medium);
+    font-size: var(--step-0);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
+  }
+  h3 :global(svg) {
+    color: var(--brand);
   }
   h4 {
     margin: var(--space-2) 0 0;
@@ -192,7 +199,11 @@
   }
   .answer {
     color: var(--text);
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-style: italic;
     font-size: var(--step-1);
+    line-height: var(--leading-display);
   }
   .hints,
   .howto {
@@ -214,14 +225,27 @@
     justify-items: start;
     padding: var(--space-2) var(--space-3);
     border: var(--border) solid var(--line);
-    border-radius: var(--radius-s);
+    border-radius: var(--radius-xs);
     background: var(--surface-1);
   }
   .hint.used {
-    border-color: var(--accent);
+    border-color: transparent;
+    border-inline-start: 3px solid var(--card-margin);
+    background: var(--card);
+    box-shadow: var(--shadow-paper);
+    color: var(--text);
+    animation: m-fade-in var(--dur-fade) var(--ease-out) backwards;
+  }
+  .hint.used .text {
+    color: var(--ink);
+  }
+  .hint.used .level {
+    color: var(--ink-muted);
   }
   .level {
     color: var(--text-muted);
+    font-family: var(--font-label);
+    letter-spacing: var(--tracking-stamp);
     font-size: var(--step--1);
   }
   .text {

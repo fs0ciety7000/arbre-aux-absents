@@ -3,6 +3,7 @@
   import { getApp } from '../lib/game/context';
   import { messages } from '../messages.fr';
   import ScreenFrame from './ScreenFrame.svelte';
+  import Spot from '../shell/Spot.svelte';
 
   /** Ouverture des archives de l'affaire (chargée à la demande) : attente, puis erreur. */
   const app = getApp();
@@ -12,6 +13,7 @@
 <ScreenFrame title={messages.title} onback={() => app.goto('title')}>
   {#if app.contentStatus === 'error'}
     <div class="state" role="alert">
+      <Spot name="archives" size="9rem" />
       <p>{m.contentLoad}</p>
       <div class="actions">
         <Button variant="primary" onclick={() => void app.ensureContent()}>{messages.retry}</Button>
@@ -29,11 +31,14 @@
   .state {
     display: grid;
     gap: var(--space-4);
-    justify-items: start;
+    justify-items: center;
+    padding-block: var(--space-8);
+    text-align: center;
   }
   .actions {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: var(--space-3);
   }
 </style>

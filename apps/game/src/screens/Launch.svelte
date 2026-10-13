@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { Button } from '@arbre/ui';
   import { getApp } from '../lib/game/context';
+  import { loadKeyArt } from '../lib/game/keyart';
   import { messages } from '../messages.fr';
 
   /**
@@ -22,6 +23,8 @@
 
   onMount(() => {
     void import('./brand/InteractiveLogo.svelte').then((m) => (Logo = m.default));
+    // L'art clé de l'écran titre se télécharge pendant le logo (un seul cadrage).
+    loadKeyArt().catch(() => undefined);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Tab' || !app.ready) return;
       // La touche ne fait que passer le logo : sans cela, Entrée / Espace activeraient aussi le
@@ -47,7 +50,7 @@
   });
 </script>
 
-<main id="contenu" class="launch" tabindex="-1">
+<main id="contenu" class="launch desk-surface" tabindex="-1">
   <button
     type="button"
     class="stage"
@@ -59,7 +62,7 @@
     </span>
     <span class="studio">{messages.studio}</span>
     <span class="presents">{messages.launch.presents}</span>
-    <span class="game-title">{messages.title}</span>
+    <span class="game-title">L’Arbre <em>aux</em> absents</span>
     <span class="tagline">{messages.tagline}</span>
   </button>
   <div class="skip">
@@ -68,6 +71,7 @@
 </main>
 
 <style>
+  /* Même composition que l'écran d'attente HTML (src/shell/splash.css) : rien ne saute. */
   .launch {
     position: relative;
     display: grid;
@@ -75,8 +79,9 @@
     min-height: 100dvh;
     padding: var(--space-8) var(--gutter);
     outline: none;
+    --lamp-x: 50%;
+    --lamp-y: -8%;
   }
-  /* Mêmes dimensions que .splash-stage (le titre ne doit pas changer de taille). */
   .stage {
     display: grid;
     justify-items: center;
@@ -98,43 +103,53 @@
     display: block;
     width: 8rem;
     height: 6.5rem;
-    animation: fade var(--dur-slow) var(--ease-out) both;
+    animation:
+      m-fade-in var(--dur-slow) var(--ease-out) backwards,
+      m-settle var(--dur-open) var(--ease-paper) backwards;
   }
   .logo :global(svg) {
     width: 100%;
     height: 100%;
   }
   .studio {
-    font-family: var(--font-display);
-    font-weight: var(--weight-semibold);
-    font-size: var(--step-2);
+    font-family: var(--font-label);
+    font-weight: var(--weight-medium);
+    font-size: var(--step-1);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
     color: var(--text);
   }
   .presents {
-    font-size: var(--step--1);
-    letter-spacing: var(--tracking-caps);
-    text-transform: uppercase;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-0);
   }
   .game-title {
     margin-block-start: var(--space-4);
+    max-width: 14ch;
     font-family: var(--font-display);
-    font-weight: var(--weight-semibold);
-    font-size: var(--step-5);
-    line-height: var(--leading-tight);
+    font-variation-settings: var(--display-settings);
+    font-weight: var(--weight-display-black);
+    font-size: var(--step-6);
+    line-height: var(--leading-display);
+    letter-spacing: var(--tracking-display);
     color: var(--text);
     text-wrap: balance;
   }
+  .game-title em {
+    font-style: italic;
+    font-weight: var(--weight-display);
+    color: var(--brand);
+  }
   .tagline {
     max-width: 34rem;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-1);
   }
   .skip {
     position: absolute;
     inset-block-end: max(var(--space-4), env(safe-area-inset-bottom));
     inset-inline-end: max(var(--space-4), env(safe-area-inset-right));
-  }
-  @keyframes fade {
-    from {
-      opacity: 0;
-    }
   }
 </style>

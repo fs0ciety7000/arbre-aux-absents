@@ -47,8 +47,11 @@
 <style>
   .state {
     display: grid;
-    justify-items: start;
+    justify-items: center;
+    align-content: center;
     gap: var(--space-3);
+    min-block-size: 12rem;
     padding: var(--space-4);
+    text-align: center;
   }
 </style>

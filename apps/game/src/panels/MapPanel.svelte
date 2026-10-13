@@ -13,8 +13,9 @@
     visiblePlaces,
   } from '@arbre/engine';
   import { MapView, type MapPlaceView } from '@arbre/map/svelte';
-  import { Badge, Button, Card, Icon, IconButton, Panel } from '@arbre/ui';
+  import { Badge, Button, Card, IconButton, Panel } from '@arbre/ui';
   import { getGame } from '../lib/game/context';
+  import Spot from '../shell/Spot.svelte';
   import { listenCommands, ownsCommands } from './lib/commands';
   import { worldLayers, worldMap, worldPlaces } from './lib/world';
   import { formatPartialDate } from './lib/view';
@@ -144,7 +145,7 @@
     <div class="layout" class:has-place={!!selected}>
       {#if places.length === 0}
         <div class="empty">
-          <Icon name="map" size="2rem" />
+          <Spot name="map-pin" size="9rem" />
           <p>{pm.map.noPlace}</p>
         </div>
       {:else if view === 'map'}
@@ -163,9 +164,9 @@
         </div>
       {:else}
         <ul class="list">
-          {#each listed as p (p.id)}
+          {#each listed as p, i (p.id)}
             {@const c = counters.get(p.id)}
-            <li>
+            <li class="mv-deal" style:--i={Math.min(i, 12)}>
               <button
                 type="button"
                 class="row"
@@ -190,7 +191,7 @@
       {/if}
 
       {#if selected}
-        <section class="place" aria-labelledby="map-place-title">
+        <section class="place mv-sheet" aria-labelledby="map-place-title" data-surface="paper">
           <header>
             <div>
               <p class="kicker caps">{pm.map.placeKicker} · {pm.map.kinds[selected.place.kind]}</p>
@@ -220,11 +221,12 @@
             <p class="muted">{pm.map.noDocuments}</p>
           {:else}
             <ul class="docs">
-              {#each selected.docs as id (id)}
+              {#each selected.docs as id, i (id)}
                 {@const d = game.content.documents[id]!}
                 <li>
                   <Card
-                    variant="fiche"
+                    variant="index"
+                    deal={Math.min(i, 8)}
                     title={d.title}
                     kicker={KIND_LABELS[d.kind]}
                     meta={formatPartialDate(d.date) || undefined}
@@ -270,17 +272,41 @@
   .layout {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
     block-size: 100%;
     min-block-size: 20rem;
+    padding: 0 var(--space-3) var(--space-3);
   }
   .layout.has-place {
     grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
   }
+  /* La carte est une feuille posée dans la chemise (§13.6) ; elle s'encre couche par couche. */
   .stage {
     position: relative;
     min-block-size: 20rem;
     block-size: 100%;
+    border-radius: var(--radius-xs);
+    box-shadow: var(--shadow-paper);
+    overflow: hidden;
+  }
+  .stage :global([data-map-layer]) {
+    animation:
+      m-fade-in var(--dur-draw) var(--ease-out) backwards,
+      m-ink var(--dur-draw) var(--ease-out) backwards;
+    animation-delay: calc(var(--layer-i, 0) * 2 * var(--stagger));
+  }
+  .stage :global([data-map-layer='relief']) {
+    --layer-i: 1;
+  }
+  .stage :global([data-map-layer='water']) {
+    --layer-i: 2;
+  }
+  .stage :global([data-map-layer='places']) {
+    --layer-i: 3;
+  }
+  .stage :global([data-map-layer='labels']) {
+    --layer-i: 4;
   }
   .empty {
     display: grid;
@@ -303,6 +329,9 @@
     align-content: start;
     overflow: auto;
   }
+  .list li {
+    display: block;
+  }
   .row {
     display: flex;
     flex-wrap: wrap;
@@ -317,15 +346,23 @@
     color: var(--text);
     font: inherit;
     text-align: start;
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
   }
   .row:hover {
     background: var(--surface-2);
+    transform: translateX(var(--space-1));
+  }
+  .row:active {
+    transform: translateX(var(--space-1)) scale(0.99);
   }
   .row[aria-current='true'] {
     border-color: var(--accent);
+    box-shadow: inset var(--border-strong) 0 0 var(--accent);
   }
   .name {
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
   }
   .kind,
   .muted {
@@ -340,8 +377,10 @@
     gap: var(--space-3);
     align-content: start;
     padding: var(--space-4);
-    border-inline-start: var(--border) solid var(--line-strong);
+    border-radius: var(--radius-xs);
     background: var(--surface-1);
+    box-shadow: var(--shadow-paper);
+    color: var(--text);
     overflow: auto;
   }
   .place header {
@@ -352,7 +391,18 @@
   }
   .place h3 {
     margin: 0;
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-weight: var(--weight-display-black);
     font-size: var(--step-2);
+    line-height: var(--leading-display);
+  }
+  .place h4 {
+    font-family: var(--font-label);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
+    color: var(--text-muted);
   }
   .place h4 {
     margin: var(--space-2) 0 0;
@@ -360,7 +410,10 @@
   }
   .kicker {
     margin: 0;
-    color: var(--text-muted);
+    font-family: var(--font-label);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-stamp);
+    color: var(--accent-strong);
     font-size: var(--step--1);
   }
   .desc {
@@ -388,9 +441,7 @@
     }
     .place {
       max-block-size: min(22rem, 45dvh);
-      border-inline-start: 0;
-      border-block-start: var(--border) solid var(--line-strong);
-      border-radius: var(--radius-l) var(--radius-l) 0 0;
+      border-radius: var(--radius-xs);
       box-shadow: var(--shadow-2);
     }
   }

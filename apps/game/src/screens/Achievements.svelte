@@ -20,10 +20,17 @@
     <div class="stack">
       <p class="count num">{m.count(got, list.length)}</p>
       <ul class="grid">
-        {#each list as a (a.id)}
+        {#each list as a, i (a.id)}
           {@const at = app.profile.achievements[a.id]}
           {@const hidden = a.hidden && at === undefined}
-          <li class="item" class:got={at !== undefined}>
+          <li
+            class="item mat-card mv-deal mv-liftable"
+            class:got={at !== undefined}
+            class:hidden
+            data-surface="paper"
+            style:--i={Math.min(i, 12)}
+            style:--tilt="{i % 3 === 0 ? -0.6 : i % 3 === 1 ? 0.5 : -0.2}deg"
+          >
             <span class="icon" aria-hidden="true"
               ><Icon name={at !== undefined ? 'star' : 'lock'} size="1.5rem" /></span
             >
@@ -53,30 +60,48 @@
   }
   .grid {
     display: grid;
-    gap: var(--space-3);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: var(--space-5) var(--space-4);
+    margin: 0;
     padding: 0;
     list-style: none;
   }
+  /* Une fiche bristol par succès (§6.3) : intitulé tapé sur la ligne de tête. */
   .item {
+    --head-h: 3.4rem;
     display: flex;
     gap: var(--space-3);
-    padding: var(--space-4);
-    background: var(--surface-1);
-    border-radius: var(--radius-m);
-    box-shadow: var(--shadow-1);
+    padding: var(--space-3) var(--space-4) var(--space-4);
+    transform: rotate(var(--tilt, 0deg));
+  }
+  .item.hidden {
+    opacity: 0.88;
   }
   .item.got .icon {
-    color: var(--accent);
+    color: var(--brand);
   }
   .icon {
-    color: var(--text-faint);
+    color: var(--ink-faint);
   }
   h2 {
-    font-size: var(--step-1);
-    font-family: var(--font-display);
+    display: flex;
+    align-items: flex-end;
+    min-height: calc(var(--head-h) - var(--space-3) - var(--space-1));
+    margin: 0 0 var(--space-2);
+    font-family: var(--font-type);
+    font-size: var(--step-0);
+    font-weight: var(--weight-bold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    line-height: 1.2;
   }
   .muted {
     color: var(--text-muted);
     margin-block: var(--space-1) var(--space-2);
+  }
+  @media (forced-colors: active) {
+    .item {
+      border: 1px solid CanvasText;
+    }
   }
 </style>

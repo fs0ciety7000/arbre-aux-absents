@@ -7,6 +7,7 @@
   import { endingSections } from '@arbre/engine';
   import { Button, Dialog, Icon, Panel, Stamp, type IconName } from '@arbre/ui';
   import { getGame } from '../lib/game/context';
+  import Spot from '../shell/Spot.svelte';
   import { illustration } from './lib/assets.svelte';
   import { slotName } from './lib/view';
   import DocumentBody from './doc/DocumentBody.svelte';
@@ -96,10 +97,13 @@
 
 <Panel title={pm.journal.title} class="journal-panel">
   {#if entries.length === 0}
-    <p class="empty">{pm.journal.empty}</p>
+    <div class="empty">
+      <Spot name="register" size="9rem" />
+      <p>{pm.journal.empty}</p>
+    </div>
   {:else}
     <ol class="timeline">
-      <li class="entry start">
+      <li class="entry start mv-deal" style:--i="0">
         <span class="mark" aria-hidden="true"><Icon name="clock" size="1rem" /></span>
         <div>
           <p class="title">{pm.journal.started}</p>
@@ -110,8 +114,8 @@
           </p>
         </div>
       </li>
-      {#each entries as e (e.key)}
-        <li class="entry {e.tone}">
+      {#each entries as e, i (e.key)}
+        <li class="entry {e.tone} mv-deal" style:--i={Math.min(i + 1, 12)}>
           <span class="mark" aria-hidden="true"><Icon name={e.icon} size="1rem" /></span>
           <div>
             {#if e.tone === 'locked'}
@@ -155,9 +159,15 @@
     block-size: 100%;
   }
   .empty {
-    margin: 0;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
     padding-block: var(--space-6);
     color: var(--text-muted);
+    text-align: center;
+  }
+  .empty p {
+    margin: 0;
   }
   .timeline {
     list-style: none;
@@ -165,7 +175,7 @@
     padding: 0 0 0 var(--space-2);
     display: grid;
     gap: var(--space-4);
-    border-inline-start: var(--border) solid var(--line-strong);
+    border-inline-start: 2px dashed var(--line-strong);
   }
   .entry {
     display: grid;
@@ -183,6 +193,7 @@
     border: var(--border) solid var(--line-strong);
     background: var(--surface-2);
     color: var(--text-muted);
+    box-shadow: var(--shadow-1);
   }
   .locked .mark {
     color: var(--established);
@@ -196,7 +207,11 @@
   .title {
     margin: 0;
     color: var(--text);
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-weight: var(--weight-display);
+    font-size: var(--step-1);
+    line-height: var(--leading-display);
   }
   .line {
     margin: var(--space-1) 0 0;
@@ -205,6 +220,7 @@
   .at {
     margin: var(--space-1) 0 var(--space-2);
     color: var(--text-faint);
+    font-family: var(--font-type);
     font-size: var(--step--1);
   }
   .stamp {

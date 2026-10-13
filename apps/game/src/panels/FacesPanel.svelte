@@ -9,6 +9,7 @@
   import { portraitSvg } from './lib/assets.svelte';
   import { Badge, Button, Panel } from '@arbre/ui';
   import { getGame } from '../lib/game/context';
+  import Spot from '../shell/Spot.svelte';
   import { carry, DRAG_MIME, encodeCarry } from './lib/carry.svelte';
   import { carryFromPortrait, portraitOrigins, usageCount } from './lib/view';
   import { pm } from './messages';
@@ -35,15 +36,27 @@
 
 <Panel title={pm.faces.title} class="faces-panel">
   {#if portraits.length === 0}
-    <p class="empty">{pm.faces.empty}</p>
+    <div class="empty">
+      <Spot name="magnifier" size="9rem" />
+      <p>{pm.faces.empty}</p>
+    </div>
   {:else}
     <ul class="gallery">
       {#each portraits as p, i (p)}
         {@const pr = game.content.portraits[p]!}
         {@const origins = portraitOrigins(game.state, game.content, p)}
         {@const used = usageCount(game.state, game.content, 'portrait', p)}
-        <li class="face" draggable="true" ondragstart={(e) => ondragstart(e, p, i + 1)}>
-          <figure>
+        <li
+          class="face mv-deal"
+          style:--i={Math.min(i, 12)}
+          draggable="true"
+          ondragstart={(e) => ondragstart(e, p, i + 1)}
+        >
+          <figure
+            class="print mv-liftable"
+            data-surface="paper"
+            style:--tilt="{i % 2 ? 1.2 : -1.4}deg"
+          >
             <span class="art" use:svgContent={portraitSvg(game.content, p)}></span>
             <figcaption>
               <span class="num n">{pm.faces.face(i + 1)}</span>
@@ -81,9 +94,15 @@
     block-size: 100%;
   }
   .empty {
-    margin: 0;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
     padding-block: var(--space-6);
     color: var(--text-muted);
+    text-align: center;
+  }
+  .empty p {
+    margin: 0;
   }
   .gallery {
     list-style: none;
@@ -98,16 +117,28 @@
     gap: var(--space-2);
     align-content: start;
     justify-items: start;
-    padding: var(--space-3);
-    border: var(--border) solid var(--line-strong);
-    border-radius: var(--radius-m);
-    background: var(--surface-1);
+    padding: var(--space-2);
   }
+  /* Tirage photo (§6.4) : bord blanc, légende manuscrite, se soulève au survol. */
   figure {
     margin: 0;
     display: grid;
     gap: var(--space-1);
     inline-size: 100%;
+    padding: var(--space-2) var(--space-2) var(--space-3);
+    border-radius: var(--radius-xs);
+    background: var(--surface-1);
+    box-shadow: var(--shadow-paper);
+    color: var(--text);
+    transform: rotate(var(--tilt, 0deg));
+  }
+  .face:active figure {
+    box-shadow: var(--shadow-lifted);
+  }
+  @media (forced-colors: active) {
+    figure {
+      border: 1px solid CanvasText;
+    }
   }
   .art {
     display: block;
@@ -129,6 +160,9 @@
   }
   .alt {
     color: var(--text);
+    font-family: var(--font-hand);
+    font-size: var(--step-1);
+    line-height: 1.1;
   }
   .origin {
     margin: 0;
