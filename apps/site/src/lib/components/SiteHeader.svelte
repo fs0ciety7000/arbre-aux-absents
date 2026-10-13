@@ -50,7 +50,7 @@
     justify-content: space-between;
     gap: var(--space-2) var(--space-6);
     max-inline-size: var(--container);
-    min-block-size: calc(var(--hit) + var(--space-5)); /* 64 px (DESIGN §5.4) */
+    min-block-size: var(--site-header-h);
     margin-inline: auto;
     padding: var(--space-2) var(--gutter);
   }

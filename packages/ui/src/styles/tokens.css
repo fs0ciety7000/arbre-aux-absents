@@ -44,7 +44,7 @@
   --raw-green-300: oklch(0.8 0.12 160);
   --raw-green-700: oklch(0.46 0.09 155);
   --raw-orange-300: oklch(0.8 0.13 55);
-  --raw-orange-700: oklch(0.52 0.13 50);
+  --raw-orange-700: oklch(0.49 0.125 52);
   --raw-blue-300: oklch(0.8 0.08 230);
   --raw-blue-700: oklch(0.47 0.1 240);
   /* Papiers et encres des documents */
@@ -189,6 +189,7 @@
   --hit-row: 56px;
   --header-h: 48px;
   --header-h-phone: 56px;
+  --site-header-h: 64px; /* en-tête du site vitrine (DESIGN §5.4) */
   --rail-w: 64px;
   --rail-w-tablet: 56px;
   --tabbar-h: 64px;

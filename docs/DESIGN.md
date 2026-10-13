@@ -159,7 +159,7 @@ rendus hors d'un conteneur papier.
 | `--accent` / `--focus` / `--keyword` | `--paper-accent` | `oklch(0.48 0.1 66)` | #835010 | Laiton bruni |
 | `--accent-strong` | `--paper-accent-strong` | `oklch(0.43 0.095 62)` | #744207 | Survol |
 | `--accent-contrast` | `--paper-new` | | #faf8f0 | Texte sur laiton bruni |
-| `--danger` / `--success` / `--warning` / `--info` | `--raw-*-700` | | #a5292b / #266741 / #a24e10 / #13618d | États |
+| `--danger` / `--success` / `--warning` / `--info` | `--raw-*-700` | | #a5292b / #266741 / #964702 / #13618d | États (orange `oklch(0.49 0.125 52)`, assombri en v1.1 pour la pastille douce) |
 | `--established` | `--raw-stamp-700` `oklch(0.46 0.16 300)` | | #673ba2 | Tampon violet |
 | — | `--ink-hand` | `oklch(0.38 0.1 258)` | #1d4176 | Encre bleue de plume (manuscrit) |
 | — | `--ink-type` | `oklch(0.26 0.012 260)` | #21242a | Ruban de machine à écrire |
@@ -191,8 +191,8 @@ masque d'usure, lavis de carte à 0,35. Tous les textes ≥ **7:1** (tableaux en
 
 Méthode : OKLCH → OKLab → sRGB linéaire (Ottosson) → luminance WCAG → `(L1 + 0,05)/(L2 + 0,05)` ;
 couleurs translucides composées en sRGB sur leur fond. Toutes les valeurs sont dans le gamut
-sRGB (le script le vérifie). **572 paires, toutes conformes** — 236 pour les contextes de base
-(lampe, papier, HC, carte, carte de nuit) et 336 pour les douze contextes « vision des couleurs »
+sRGB (le script le vérifie). **628 paires, toutes conformes** — 244 pour les contextes de base
+(lampe, papier, HC, carte, carte de nuit) et 384 pour les douze contextes « vision des couleurs »
 (chaque paire d'état en vision normale **et** simulée) — plus **12 contrôles d'écart** entre
 tons d'état (§3.7). Détail : annexe §14.
 
@@ -241,8 +241,8 @@ supérieur à la palette par défaut, vérifié par `contrast:check`) :
 
 | | Lampe | Papier | Lampe HC | Papier HC |
 |---|---|---|---|---|
-| Protanopie : défaut → réglage | 0,088 → **0,105** | 0,051 → **0,105** | 0,058 → **0,100** | 0,042 → **0,113** |
-| Deutéranopie | 0,054 → **0,103** | 0,046 → **0,099** | 0,021 → **0,089** | 0,022 → **0,113** |
+| Protanopie : défaut → réglage | 0,088 → **0,105** | 0,061 → **0,105** | 0,058 → **0,100** | 0,042 → **0,113** |
+| Deutéranopie | 0,054 → **0,103** | 0,025 → **0,099** | 0,021 → **0,089** | 0,022 → **0,113** |
 | Tritanopie | 0,022 → **0,110** | 0,032 → **0,127** | 0,036 → **0,101** | 0,021 → **0,113** |
 
 Contraste des tons d'état dans ces contextes (pire cas, vision normale / simulée) : lampe ≥ 5,22 /
@@ -348,7 +348,7 @@ Sous 360 px CSS effectifs (texte à 200 %), les dispositions passent au cran inf
 - **Traits** : `--border` 1 px, `--border-strong` 2 px (case établie, champ en erreur).
 - **Cibles** : `--hit` 44 px (minimum de tout contrôle), `--hit-l` 48 px (Android, boutons `l`), `--hit-row` 56 px (lignes de liste, en-tête téléphone).
 - **Bureau** : `--header-h` 48 / `--header-h-phone` 56 · `--rail-w` 64 / `--rail-w-tablet` 56 · `--tabbar-h` 64 · volet latéral `--side-min` 360, `--side-default` 440, `--side-max` 640, pas `--side-step` 40 · `--mini-reader-h` 72 · `--drawer-handle` 24 · popover `--popover-w` 320 × `--popover-max-h` 480 · feuille `--sheet-w` 480 · case d'arbre `--slot-w` 144 × `--slot-h` 168.
-- **Conteneurs (site)** : `--container` 76 rem, `--container-narrow` 44 rem.
+- **Site** : `--site-header-h` 64 px (hauteur minimale de l'en-tête, §5.4) · conteneurs `--container` 76 rem, `--container-narrow` 44 rem.
 
 ### 5.2 Points de rupture
 
@@ -404,7 +404,7 @@ basse plein écran (téléphone) → `Dialog mobile="fullscreen"` + `Combobox mo
 
 Même identité, même thème sombre : « la carte éclairée ».
 
-- **En-tête** 64 px, logo-titre du jeu (wordmark Literata 600), navigation (Le jeu · Le monde ·
+- **En-tête** 64 px (`--site-header-h`, hauteur minimale), logo-titre du jeu (wordmark Literata 600), navigation (Le jeu · Le monde ·
   Artbook · Charte · Presse), bouton `primary` « Jouer à la démo » (un seul).
 - **Accueil** : hero plein cadre = la **carte du monde** (SVG) sous la lampe (halo), titre
   `--step-5`, accroche `--step-1`, deux actions ; puis bandes alternées *papier* (documents
@@ -529,7 +529,7 @@ français, aucun `{@html}`.
 | 9.11 | `Slider` | `label` · `value` (bindable) · `min`, `max`, `step` · `format` · `marks` · `hint` · `onchange` | piste remplie laiton, pouce 24 px, crans nommés | `<input type=range>` natif, `aria-valuetext` formaté, `<output>`. |
 | 9.12 | `Toast`, `ToastRegion`, `pushToast()` | `tone: info\|success\|warning\|danger\|established` · `title` · `message` · `action` · `timeout` · `live` · `onclose` ; région : `offset` | entrée qui se pose ; ≤ 3 à l'écran ; danger/warning restent ; pause au survol/focus | Région `aria-live="polite"`, danger en `role="alert"`. Jamais d'information exclusive (tout est aussi au Journal). |
 | 9.13 | `Tooltip` | `text` · `placement: top\|bottom` · snippet `children(attrs)` | apparaît après `--tooltip-delay` au survol souris, immédiatement au focus clavier | `role="tooltip"` + `aria-describedby` ; Échap masque ; jamais d'info indispensable (absent au toucher). |
-| 9.14 | `Badge` | `tone: neutral\|accent\|success\|warning\|danger\|info\|established` · `variant: soft\|solid\|outline` · `iconName` · `dot` | 24 px de haut, non interactif | Ton toujours doublé d'un texte ou d'une icône. |
+| 9.14 | `Badge` | `tone: neutral\|accent\|success\|warning\|danger\|info\|established` · `variant: soft\|solid\|outline` · `iconName` · `dot` | 24 px de haut, non interactif | Ton toujours doublé d'un texte ou d'une icône. Pastille douce (`soft`) = ton sur `--surface-3` : les 7 tons × tous les contextes sont vérifiés par `contrast:check` (≥ 4,5, §14). |
 | 9.15 | `Stamp` | `text` (déf. « Établi ») · `tone: established\|danger\|ink` · `size: s\|m\|l` · `rotate` (déf. −6°) · `animate` · `delay` (rang) · `label` | double cadre, Courier Prime capitales, encrage irrégulier (`--stamp-texture`), frappe animée | `role="img"` + `aria-label` ; l'annonce du verrouillage est faite par le jeu (région live). |
 | 9.16 | `KeyHint` | `action` · `device: keyboard\|mouse\|touch\|gamepad` · `keys[]` · `pad: south\|east\|west\|north\|lb\|rb\|lt\|rt\|start\|select\|ls\|rs\|dpad\|lstick\|rstick` · `padStyle: xbox\|playstation\|nintendo` · `gesture` · export `padLabel()` | touches en relief ; boutons de façade = **losange de position** + lettre (A/B/X/Y, B/A/Y/X) ou symbole PlayStation dessiné ; gâchettes en pilule | Glyphe nommé (« Bouton A »), libellé d'action en texte. |
 | 9.17 | `FocusRing` | `rect` (mode projeté) · `visible` · `radius` · `offset` · `as` | anneau 3 px `--focus` + halo 2 px `--focus-halo` | Pour composites (case d'arbre) et SVG (lieux, visages) ; ne remplace pas le focus natif, le prolonge. |
@@ -809,11 +809,11 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | Contexte | Écart minimal (paire) | Palette par défaut | Seuil |
 |---|---|---|---|
 | lampe protanopia | **0,105** ✓ (`--success` / `--info`) | 0,088 (`--danger` / `--warning`) | 0,06 et > défaut |
-| papier protanopia | **0,105** ✓ (`--success` / `--info`) | 0,051 (`--warning` / `--success`) | 0,06 et > défaut |
+| papier protanopia | **0,105** ✓ (`--success` / `--info`) | 0,061 (`--danger` / `--warning`) | 0,06 et > défaut |
 | lampe HC protanopia | **0,100** ✓ (`--success` / `--info`) | 0,058 (`--info` / `--established`) | 0,06 et > défaut |
 | papier HC protanopia | **0,113** ✓ (`--info` / `--established`) | 0,042 (`--warning` / `--success`) | 0,06 et > défaut |
 | lampe deuteranopia | **0,103** ✓ (`--success` / `--established`) | 0,054 (`--danger` / `--success`) | 0,06 et > défaut |
-| papier deuteranopia | **0,099** ✓ (`--success` / `--info`) | 0,046 (`--danger` / `--warning`) | 0,06 et > défaut |
+| papier deuteranopia | **0,099** ✓ (`--success` / `--info`) | 0,025 (`--danger` / `--warning`) | 0,06 et > défaut |
 | lampe HC deuteranopia | **0,089** ✓ (`--info` / `--established`) | 0,021 (`--info` / `--established`) | 0,06 et > défaut |
 | papier HC deuteranopia | **0,113** ✓ (`--info` / `--established`) | 0,022 (`--danger` / `--warning`) | 0,06 et > défaut |
 | lampe tritanopia | **0,110** ✓ (`--success` / `--info`) | 0,022 (`--success` / `--info`) | 0,06 et > défaut |
@@ -859,10 +859,12 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--danger` | **8,11** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--warning` | **9,90** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **10,42** ✓ | 4,5 | pastille pleine |
-| `--success` | `--surface-3` | **7,66** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **5,78** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **6,11** ✓ | 4,5 | pastille douce |
-| `--accent` | `--surface-3` | **7,45** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **7,66** ✓ | 4,5 | pastille douce succès |
+| `--warning` | `--surface-3` | **7,05** ✓ | 4,5 | pastille douce avertissement |
+| `--danger` | `--surface-3` | **5,78** ✓ | 4,5 | pastille douce erreur |
+| `--info` | `--surface-3` | **7,43** ✓ | 4,5 | pastille douce information |
+| `--established` | `--surface-3` | **6,11** ✓ | 4,5 | pastille douce établi |
+| `--accent` | `--surface-3` | **7,45** ✓ | 4,5 | pastille douce accent |
 | `--canvas` | `--text` | **16,53** ✓ | 4,5 | info-bulle (inversée) |
 | `--text` | `--selection sur --surface-1` | **8,14** ✓ | 4,5 | sélection de texte |
 
@@ -894,7 +896,7 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--focus` | `--surface-3` | **4,82** ✓ | 3 | anneau de focus |
 | `--danger` | `--surface-1` | **6,67** ✓ | 4,5 | erreur |
 | `--success` | `--surface-1` | **6,40** ✓ | 4,5 | succès |
-| `--warning` | `--surface-1` | **5,44** ✓ | 4,5 | avertissement |
+| `--warning` | `--surface-1` | **6,16** ✓ | 4,5 | avertissement |
 | `--info` | `--surface-1` | **6,32** ✓ | 4,5 | information |
 | `--established` | `--surface-1` | **7,22** ✓ | 4,5 | tampon « Établi » |
 | `--established` | `--canvas` | **6,75** ✓ | 4,5 | tampon « Établi » |
@@ -902,12 +904,14 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--established-contrast` | `--established` | **7,22** ✓ | 4,5 | texte sur tampon plein |
 | `--canvas` | `--success` | **5,98** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--danger` | **6,24** ✓ | 4,5 | pastille pleine |
-| `--canvas` | `--warning` | **5,08** ✓ | 4,5 | pastille pleine |
+| `--canvas` | `--warning` | **5,76** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **5,91** ✓ | 4,5 | pastille pleine |
-| `--success` | `--surface-3` | **4,90** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **5,11** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **5,53** ✓ | 4,5 | pastille douce |
-| `--accent` | `--surface-3` | **4,82** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **4,90** ✓ | 4,5 | pastille douce succès |
+| `--warning` | `--surface-3` | **4,72** ✓ | 4,5 | pastille douce avertissement |
+| `--danger` | `--surface-3` | **5,11** ✓ | 4,5 | pastille douce erreur |
+| `--info` | `--surface-3` | **4,84** ✓ | 4,5 | pastille douce information |
+| `--established` | `--surface-3` | **5,53** ✓ | 4,5 | pastille douce établi |
+| `--accent` | `--surface-3` | **4,82** ✓ | 4,5 | pastille douce accent |
 | `--canvas` | `--text` | **13,26** ✓ | 4,5 | info-bulle (inversée) |
 | `--text` | `--selection sur --surface-1` | **11,43** ✓ | 4,5 | sélection de texte |
 | `--text` | `--hl-1 sur --surface-1` | **12,33** ✓ | 4,5 | surlignage 1 |
@@ -956,10 +960,12 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--danger` | **11,78** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--warning` | **13,66** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **14,11** ✓ | 4,5 | pastille pleine |
-| `--success` | `--surface-3` | **12,97** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **10,14** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **10,95** ✓ | 4,5 | pastille douce |
-| `--accent` | `--surface-3` | **13,13** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **12,97** ✓ | 4,5 | pastille douce succès |
+| `--warning` | `--surface-3` | **11,76** ✓ | 4,5 | pastille douce avertissement |
+| `--danger` | `--surface-3` | **10,14** ✓ | 4,5 | pastille douce erreur |
+| `--info` | `--surface-3` | **12,14** ✓ | 4,5 | pastille douce information |
+| `--established` | `--surface-3` | **10,95** ✓ | 4,5 | pastille douce établi |
+| `--accent` | `--surface-3` | **13,13** ✓ | 4,5 | pastille douce accent |
 | `--canvas` | `--text` | **20,59** ✓ | 4,5 | info-bulle (inversée) |
 | `--text` | `--selection sur --surface-1` | **9,58** ✓ | 4,5 | sélection de texte |
 
@@ -1001,10 +1007,12 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--danger` | **9,94** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--warning` | **8,83** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **9,91** ✓ | 4,5 | pastille pleine |
-| `--success` | `--surface-3` | **8,04** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **8,34** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **9,02** ✓ | 4,5 | pastille douce |
-| `--accent` | `--surface-3` | **8,60** ✓ | 4,5 | pastille douce |
+| `--success` | `--surface-3` | **8,04** ✓ | 4,5 | pastille douce succès |
+| `--warning` | `--surface-3` | **7,40** ✓ | 4,5 | pastille douce avertissement |
+| `--danger` | `--surface-3` | **8,34** ✓ | 4,5 | pastille douce erreur |
+| `--info` | `--surface-3` | **8,31** ✓ | 4,5 | pastille douce information |
+| `--established` | `--surface-3` | **9,02** ✓ | 4,5 | pastille douce établi |
+| `--accent` | `--surface-3` | **8,60** ✓ | 4,5 | pastille douce accent |
 | `--canvas` | `--text` | **20,12** ✓ | 4,5 | info-bulle (inversée) |
 | `--text` | `--selection sur --surface-1` | **15,09** ✓ | 4,5 | sélection de texte |
 | `--text` | `--hl-1 sur --surface-1` | **16,90** ✓ | 7 | surlignage 1 |
@@ -1123,12 +1131,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **12,95** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **14,84** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **15,24** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **7,88** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **8,27** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **5,82** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **4,77** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **5,22** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **5,07** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **7,88** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **8,27** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **9,83** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **9,12** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **5,82** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **4,77** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **10,58** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **10,74** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **5,22** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **5,07** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte papier protanopia
 
@@ -1156,12 +1168,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **6,04** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **9,04** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **8,53** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **5,13** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **4,68** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **7,92** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **9,31** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **8,28** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **7,16** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **5,13** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **4,68** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **4,71** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **4,90** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **7,92** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **9,31** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **7,40** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **6,92** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **8,28** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **7,16** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte lampe HC protanopia
 
@@ -1189,12 +1205,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **12,89** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **11,49** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **11,70** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **12,87** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **13,47** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **9,16** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **8,06** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **9,05** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **8,84** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **12,87** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **13,47** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **11,95** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **11,09** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **9,16** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **8,06** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **9,89** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **10,07** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **9,05** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **8,84** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte papier HC protanopia
 
@@ -1222,12 +1242,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **9,74** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **14,04** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **12,92** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **7,67** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **7,31** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **11,99** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **13,72** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **8,38** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **7,33** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **7,67** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **7,31** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **7,53** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **8,17** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **11,99** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **13,72** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **11,77** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **10,83** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **8,38** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **7,33** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte lampe deuteranopia
 
@@ -1255,12 +1279,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **14,31** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **14,84** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **14,57** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **7,88** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **7,63** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **5,82** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **6,52** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **5,22** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **5,34** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **7,88** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **7,63** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **9,83** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **10,28** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **5,82** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **6,52** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **10,58** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **10,47** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **5,22** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **5,34** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte papier deuteranopia
 
@@ -1288,12 +1316,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **5,58** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **9,04** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **9,40** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **5,13** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **5,43** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **7,92** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **7,23** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **8,28** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **7,72** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **5,13** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **5,43** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **4,71** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **4,59** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **7,92** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **7,23** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **7,40** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **7,73** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **8,28** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **7,72** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte lampe HC deuteranopia
 
@@ -1321,12 +1353,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **14,50** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **11,49** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **11,36** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **12,87** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **12,48** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **9,16** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **9,87** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **9,05** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **9,23** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **12,87** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **12,48** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **11,95** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **12,48** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **9,16** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **9,87** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **9,89** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **9,77** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **9,05** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **9,23** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte papier HC deuteranopia
 
@@ -1354,12 +1390,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **8,54** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **14,04** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **14,00** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **7,67** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **7,91** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **11,99** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **11,07** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **8,38** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **7,98** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **7,67** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **7,91** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **7,53** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **7,16** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **11,99** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **11,07** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **11,77** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **11,74** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **8,38** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **7,98** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte lampe tritanopia
 
@@ -1387,12 +1427,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **12,44** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **8,96** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **9,06** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **9,34** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **9,25** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **5,54** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **5,07** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **5,22** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **5,31** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **9,34** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **9,25** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **9,40** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **8,85** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **5,54** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **5,07** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **6,39** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **6,44** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **5,22** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **5,31** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte papier tritanopia
 
@@ -1420,12 +1464,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **9,09** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **9,50** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **9,44** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **4,66** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **4,60** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **4,66** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **4,66** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **4,82** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **4,67** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **4,66** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **4,60** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **7,41** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **7,43** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **4,66** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **4,66** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **7,78** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **7,72** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **4,82** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **4,67** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte lampe HC tritanopia
 
@@ -1453,12 +1501,16 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **9,81** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **11,20** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **11,31** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **13,92** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **13,78** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **12,09** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **11,91** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **9,17** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **9,33** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **13,92** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **13,78** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **9,22** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **8,44** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **12,09** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **11,91** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **9,64** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **9,73** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **9,17** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **9,33** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 #### Contexte papier HC tritanopia
 
@@ -1486,11 +1538,15 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--canvas` | `--warning` | **9,40** ✓ | 4,5 | pastille pleine (vision simulée) |
 | `--canvas` | `--info` | **9,08** ✓ | 4,5 | pastille pleine |
 | `--canvas` | `--info` | **8,54** ✓ | 4,5 | pastille pleine (vision simulée) |
-| `--success` | `--surface-3` | **11,16** ✓ | 4,5 | pastille douce |
-| `--success` | `--surface-3` | **11,21** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--danger` | `--surface-3` | **8,03** ✓ | 4,5 | pastille douce |
-| `--danger` | `--surface-3` | **7,26** ✓ | 4,5 | pastille douce (vision simulée) |
-| `--established` | `--surface-3` | **12,19** ✓ | 4,5 | pastille douce |
-| `--established` | `--surface-3` | **11,91** ✓ | 4,5 | pastille douce (vision simulée) |
+| `--success` | `--surface-3` | **11,16** ✓ | 4,5 | pastille douce succès |
+| `--success` | `--surface-3` | **11,21** ✓ | 4,5 | pastille douce succès (vision simulée) |
+| `--warning` | `--surface-3` | **7,82** ✓ | 4,5 | pastille douce avertissement |
+| `--warning` | `--surface-3` | **7,88** ✓ | 4,5 | pastille douce avertissement (vision simulée) |
+| `--danger` | `--surface-3` | **8,03** ✓ | 4,5 | pastille douce erreur |
+| `--danger` | `--surface-3` | **7,26** ✓ | 4,5 | pastille douce erreur (vision simulée) |
+| `--info` | `--surface-3` | **7,61** ✓ | 4,5 | pastille douce information |
+| `--info` | `--surface-3` | **7,16** ✓ | 4,5 | pastille douce information (vision simulée) |
+| `--established` | `--surface-3` | **12,19** ✓ | 4,5 | pastille douce établi |
+| `--established` | `--surface-3` | **11,91** ✓ | 4,5 | pastille douce établi (vision simulée) |
 
 Toutes les paires passent.

@@ -182,10 +182,13 @@ const common = (min) => [
   ['--canvas', ['--danger'], T, 'pastille pleine'],
   ['--canvas', ['--warning'], T, 'pastille pleine'],
   ['--canvas', ['--info'], T, 'pastille pleine'],
-  ['--success', ['--surface-3'], T, 'pastille douce'],
-  ['--danger', ['--surface-3'], T, 'pastille douce'],
-  ['--established', ['--surface-3'], T, 'pastille douce'],
-  ['--accent', ['--surface-3'], T, 'pastille douce'],
+  // Badge variant="soft" : ton sur --surface-3, pour chaque ton (neutral = --text-muted, plus haut)
+  ['--success', ['--surface-3'], T, 'pastille douce succès'],
+  ['--warning', ['--surface-3'], T, 'pastille douce avertissement'],
+  ['--danger', ['--surface-3'], T, 'pastille douce erreur'],
+  ['--info', ['--surface-3'], T, 'pastille douce information'],
+  ['--established', ['--surface-3'], T, 'pastille douce établi'],
+  ['--accent', ['--surface-3'], T, 'pastille douce accent'],
   ['--canvas', ['--text'], T, 'info-bulle (inversée)'],
   ['--text', ['--selection', '--surface-1'], T, 'sélection de texte'],
 ];
