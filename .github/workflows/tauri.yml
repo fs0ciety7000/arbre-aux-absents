@@ -202,6 +202,9 @@ jobs:
         run: |
           npm run tauri -- android init --ci
           npm run tauri:icons
+          # Barres système hors du jeu (Android 15 bord à bord) : notre MainActivity.
+          dest=$(find src-tauri/gen/android/app/src/main -name MainActivity.kt)
+          test -n "$dest" && cp src-tauri/android/MainActivity.kt "$dest"
       - name: Version
         id: version
         run: echo "value=$(node -p "require('./apps/game/package.json').version")" >> "$GITHUB_OUTPUT"
