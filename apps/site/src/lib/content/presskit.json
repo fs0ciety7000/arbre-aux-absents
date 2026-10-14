@@ -1,0 +1,481 @@
+{
+  "files": [
+    {
+      "group": "documents",
+      "path": "arbre-aux-absents-artbook.pdf",
+      "label": "Artbook : art clé, carte, vignettes, portraits, intention artistique",
+      "format": "PDF",
+      "detail": "A4 paysage, 19 pages",
+      "bytes": 5226462,
+      "preview": "apercus/arbre-aux-absents-artbook.jpg",
+      "previewSize": [480, 340]
+    },
+    {
+      "group": "documents",
+      "path": "arbre-aux-absents-fiche-presse.pdf",
+      "label": "Fiche presse : présentation courte et longue, fiche technique, liens",
+      "format": "PDF",
+      "detail": "A4 portrait, 2 pages, imprimable",
+      "bytes": 628141,
+      "preview": "apercus/arbre-aux-absents-fiche-presse.jpg",
+      "previewSize": [340, 480]
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-couleur-nuit.svg",
+      "label": "Titre empilé (écran titre), couleurs, pour fond sombre",
+      "format": "SVG",
+      "detail": "vectoriel, texte vectorisé",
+      "bytes": 42860
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-couleur-nuit-600.png",
+      "label": "Titre empilé (écran titre), couleurs, pour fond sombre",
+      "format": "PNG",
+      "detail": "600 × 637 px, fond transparent",
+      "bytes": 43879
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-couleur-nuit-1200.png",
+      "label": "Titre empilé (écran titre), couleurs, pour fond sombre",
+      "format": "PNG",
+      "detail": "1200 × 1273 px, fond transparent",
+      "bytes": 96443
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-couleur-nuit-2400.png",
+      "label": "Titre empilé (écran titre), couleurs, pour fond sombre",
+      "format": "PNG",
+      "detail": "2400 × 2546 px, fond transparent",
+      "bytes": 208178
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-couleur-papier.svg",
+      "label": "Titre empilé (écran titre), couleurs, pour fond clair",
+      "format": "SVG",
+      "detail": "vectoriel, texte vectorisé",
+      "bytes": 42818
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-couleur-papier-600.png",
+      "label": "Titre empilé (écran titre), couleurs, pour fond clair",
+      "format": "PNG",
+      "detail": "600 × 637 px, fond transparent",
+      "bytes": 44832
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-couleur-papier-1200.png",
+      "label": "Titre empilé (écran titre), couleurs, pour fond clair",
+      "format": "PNG",
+      "detail": "1200 × 1273 px, fond transparent",
+      "bytes": 98314
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-couleur-papier-2400.png",
+      "label": "Titre empilé (écran titre), couleurs, pour fond clair",
+      "format": "PNG",
+      "detail": "2400 × 2546 px, fond transparent",
+      "bytes": 212791
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-noir.svg",
+      "label": "Titre empilé (écran titre), monochrome noir",
+      "format": "SVG",
+      "detail": "vectoriel, texte vectorisé",
+      "bytes": 42291
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-noir-600.png",
+      "label": "Titre empilé (écran titre), monochrome noir",
+      "format": "PNG",
+      "detail": "600 × 637 px, fond transparent",
+      "bytes": 30592
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-noir-1200.png",
+      "label": "Titre empilé (écran titre), monochrome noir",
+      "format": "PNG",
+      "detail": "1200 × 1273 px, fond transparent",
+      "bytes": 66536
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-noir-2400.png",
+      "label": "Titre empilé (écran titre), monochrome noir",
+      "format": "PNG",
+      "detail": "2400 × 2546 px, fond transparent",
+      "bytes": 144304
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-blanc.svg",
+      "label": "Titre empilé (écran titre), monochrome blanc",
+      "format": "SVG",
+      "detail": "vectoriel, texte vectorisé",
+      "bytes": 42579
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-blanc-600.png",
+      "label": "Titre empilé (écran titre), monochrome blanc",
+      "format": "PNG",
+      "detail": "600 × 637 px, fond transparent",
+      "bytes": 33345
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-blanc-1200.png",
+      "label": "Titre empilé (écran titre), monochrome blanc",
+      "format": "PNG",
+      "detail": "1200 × 1273 px, fond transparent",
+      "bytes": 73167
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-blanc-2400.png",
+      "label": "Titre empilé (écran titre), monochrome blanc",
+      "format": "PNG",
+      "detail": "2400 × 2546 px, fond transparent",
+      "bytes": 159831
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-couleur-nuit.svg",
+      "label": "Titre en ligne, couleurs, pour fond sombre",
+      "format": "SVG",
+      "detail": "vectoriel, texte vectorisé",
+      "bytes": 42906
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-couleur-nuit-800.png",
+      "label": "Titre en ligne, couleurs, pour fond sombre",
+      "format": "PNG",
+      "detail": "800 × 169 px, fond transparent",
+      "bytes": 21681
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-couleur-nuit-1600.png",
+      "label": "Titre en ligne, couleurs, pour fond sombre",
+      "format": "PNG",
+      "detail": "1600 × 339 px, fond transparent",
+      "bytes": 47503
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-couleur-papier.svg",
+      "label": "Titre en ligne, couleurs, pour fond clair",
+      "format": "SVG",
+      "detail": "vectoriel, texte vectorisé",
+      "bytes": 42864
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-couleur-papier-800.png",
+      "label": "Titre en ligne, couleurs, pour fond clair",
+      "format": "PNG",
+      "detail": "800 × 169 px, fond transparent",
+      "bytes": 22249
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-couleur-papier-1600.png",
+      "label": "Titre en ligne, couleurs, pour fond clair",
+      "format": "PNG",
+      "detail": "1600 × 339 px, fond transparent",
+      "bytes": 48472
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-noir.svg",
+      "label": "Titre en ligne, monochrome noir",
+      "format": "SVG",
+      "detail": "vectoriel, texte vectorisé",
+      "bytes": 42337
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-noir-800.png",
+      "label": "Titre en ligne, monochrome noir",
+      "format": "PNG",
+      "detail": "800 × 169 px, fond transparent",
+      "bytes": 14884
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-noir-1600.png",
+      "label": "Titre en ligne, monochrome noir",
+      "format": "PNG",
+      "detail": "1600 × 339 px, fond transparent",
+      "bytes": 32804
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-blanc.svg",
+      "label": "Titre en ligne, monochrome blanc",
+      "format": "SVG",
+      "detail": "vectoriel, texte vectorisé",
+      "bytes": 42625
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-blanc-800.png",
+      "label": "Titre en ligne, monochrome blanc",
+      "format": "PNG",
+      "detail": "800 × 169 px, fond transparent",
+      "bytes": 16045
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-titre-ligne-blanc-1600.png",
+      "label": "Titre en ligne, monochrome blanc",
+      "format": "PNG",
+      "detail": "1600 × 339 px, fond transparent",
+      "bytes": 35741
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-icone.svg",
+      "label": "Emblème, icône d’application (coins arrondis)",
+      "format": "SVG",
+      "detail": "vectoriel, halo de lampe en image",
+      "bytes": 305571
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-icone-1024.png",
+      "label": "Emblème, icône d’application (coins arrondis)",
+      "format": "PNG",
+      "detail": "1024 × 1024 px, coins transparents",
+      "bytes": 434585
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-icone-512.png",
+      "label": "Emblème, icône d’application (coins arrondis)",
+      "format": "PNG",
+      "detail": "512 × 512 px, coins transparents",
+      "bytes": 142384
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-icone-256.png",
+      "label": "Emblème, icône d’application (coins arrondis)",
+      "format": "PNG",
+      "detail": "256 × 256 px, coins transparents",
+      "bytes": 47345
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-avatar.svg",
+      "label": "Emblème, avatar de réseau social (carré plein)",
+      "format": "SVG",
+      "detail": "vectoriel, halo de lampe en image",
+      "bytes": 221321
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-avatar-1024.png",
+      "label": "Emblème, avatar de réseau social (carré plein)",
+      "format": "PNG",
+      "detail": "1024 × 1024 px",
+      "bytes": 388814
+    },
+    {
+      "group": "logos",
+      "path": "logos/arbre-aux-absents-avatar-400.png",
+      "label": "Emblème, avatar de réseau social (carré plein)",
+      "format": "PNG",
+      "detail": "400 × 400 px",
+      "bytes": 86826
+    },
+    {
+      "group": "affiches",
+      "path": "affiches/arbre-aux-absents-affiche-bureau-a3.pdf",
+      "label": "Affiche « Le bureau sous la lampe » (art clé)",
+      "format": "PDF",
+      "detail": "A3 portrait, vectoriel, pour l’impression",
+      "bytes": 1067041,
+      "preview": "apercus/arbre-aux-absents-affiche-bureau-a3.jpg",
+      "previewSize": [340, 480]
+    },
+    {
+      "group": "affiches",
+      "path": "affiches/arbre-aux-absents-affiche-bureau-a3.png",
+      "label": "Affiche « Le bureau sous la lampe » (art clé)",
+      "format": "PNG",
+      "detail": "1755 × 2480 px (A3 à 150 dpi, A4 à 300 dpi)",
+      "bytes": 2504781
+    },
+    {
+      "group": "affiches",
+      "path": "affiches/arbre-aux-absents-affiche-carte-a3.pdf",
+      "label": "Affiche « La Velmarche » (carte, sur papier)",
+      "format": "PDF",
+      "detail": "A3 portrait, vectoriel, pour l’impression",
+      "bytes": 3352275,
+      "preview": "apercus/arbre-aux-absents-affiche-carte-a3.jpg",
+      "previewSize": [340, 480]
+    },
+    {
+      "group": "affiches",
+      "path": "affiches/arbre-aux-absents-affiche-carte-a3.png",
+      "label": "Affiche « La Velmarche » (carte, sur papier)",
+      "format": "PNG",
+      "detail": "1755 × 2480 px (A3 à 150 dpi, A4 à 300 dpi)",
+      "bytes": 1207024
+    },
+    {
+      "group": "affiches",
+      "path": "affiches/arbre-aux-absents-affiche-visages-a3.pdf",
+      "label": "Affiche « Qui sont les absents ? » (portraits)",
+      "format": "PDF",
+      "detail": "A3 portrait, vectoriel, pour l’impression",
+      "bytes": 652861,
+      "preview": "apercus/arbre-aux-absents-affiche-visages-a3.jpg",
+      "previewSize": [340, 480]
+    },
+    {
+      "group": "affiches",
+      "path": "affiches/arbre-aux-absents-affiche-visages-a3.png",
+      "label": "Affiche « Qui sont les absents ? » (portraits)",
+      "format": "PNG",
+      "detail": "1755 × 2480 px (A3 à 150 dpi, A4 à 300 dpi)",
+      "bytes": 1542033
+    },
+    {
+      "group": "bannieres",
+      "path": "bannieres/arbre-aux-absents-itch-banniere-1920x600.jpg",
+      "label": "itch.io, bannière de page (affichée en 960 × 300)",
+      "format": "JPEG",
+      "detail": "1920 × 600 px",
+      "bytes": 173073
+    },
+    {
+      "group": "bannieres",
+      "path": "bannieres/arbre-aux-absents-x-entete-1500x500.jpg",
+      "label": "X (Twitter), en-tête de profil",
+      "format": "JPEG",
+      "detail": "1500 × 500 px",
+      "bytes": 116149
+    },
+    {
+      "group": "bannieres",
+      "path": "bannieres/arbre-aux-absents-facebook-couverture-1640x624.jpg",
+      "label": "Facebook, photo de couverture (2× 820 × 312)",
+      "format": "JPEG",
+      "detail": "1640 × 624 px",
+      "bytes": 154024
+    },
+    {
+      "group": "bannieres",
+      "path": "bannieres/arbre-aux-absents-youtube-banniere-2560x1440.jpg",
+      "label": "YouTube, bannière de chaîne (zone sûre 1546 × 423 au centre)",
+      "format": "JPEG",
+      "detail": "2560 × 1440 px",
+      "bytes": 435824
+    },
+    {
+      "group": "bannieres",
+      "path": "bannieres/arbre-aux-absents-twitch-banniere-1200x480.jpg",
+      "label": "Twitch, bannière de profil",
+      "format": "JPEG",
+      "detail": "1200 × 480 px",
+      "bytes": 92061
+    },
+    {
+      "group": "bannieres",
+      "path": "bannieres/arbre-aux-absents-og-1200x630.jpg",
+      "label": "Partage (Open Graph, Discord), aperçu de lien",
+      "format": "JPEG",
+      "detail": "1200 × 630 px",
+      "bytes": 112540
+    },
+    {
+      "group": "bannieres",
+      "path": "bannieres/arbre-aux-absents-carre-1080x1080.jpg",
+      "label": "Visuel carré (Instagram, Mastodon, Bluesky)",
+      "format": "JPEG",
+      "detail": "1080 × 1080 px",
+      "bytes": 186443
+    },
+    {
+      "group": "bannieres",
+      "path": "bannieres/arbre-aux-absents-story-1080x1920.jpg",
+      "label": "Story verticale (Instagram, TikTok, Shorts), zones sûres 250 px",
+      "format": "JPEG",
+      "detail": "1080 × 1920 px",
+      "bytes": 304192
+    },
+    {
+      "group": "archive",
+      "path": "arbre-aux-absents-kit-presse.zip",
+      "label": "Le kit complet : logos, affiches, bannières, artbook et fiche",
+      "format": "ZIP",
+      "detail": "tout le kit, avec un fichier LISEZMOI",
+      "bytes": 19279728
+    }
+  ],
+  "captures": [
+    {
+      "path": "itch/jeu-titre-1440.png",
+      "label": "Capture : écran titre",
+      "format": "PNG",
+      "detail": "1440 px",
+      "bytes": 1373734
+    },
+    {
+      "path": "itch/jeu-etabli-1440.png",
+      "label": "Capture : l’établi",
+      "format": "PNG",
+      "detail": "1440 px",
+      "bytes": 449179
+    },
+    {
+      "path": "itch/jeu-catalogue-1440.png",
+      "label": "Capture : le catalogue",
+      "format": "PNG",
+      "detail": "1440 px",
+      "bytes": 701208
+    },
+    {
+      "path": "itch/jeu-lecteur-lettre-1440.png",
+      "label": "Capture : lecture d’une lettre",
+      "format": "PNG",
+      "detail": "1440 px",
+      "bytes": 888344
+    },
+    {
+      "path": "itch/jeu-carte-1440.png",
+      "label": "Capture : la carte",
+      "format": "PNG",
+      "detail": "1440 px",
+      "bytes": 1044352
+    },
+    {
+      "path": "itch/jeu-arbre-zoom-1440.png",
+      "label": "Capture : l’arbre",
+      "format": "PNG",
+      "detail": "1440 px",
+      "bytes": 602373
+    },
+    {
+      "path": "itch/cover-1260x1000-titre.png",
+      "label": "Couverture itch.io",
+      "format": "PNG",
+      "detail": "1260 × 1000 px",
+      "bytes": 1325754
+    }
+  ]
+}

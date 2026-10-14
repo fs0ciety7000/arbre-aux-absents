@@ -6,9 +6,8 @@
   mouvement se jouent à l'entrée dans la vue (data-play) et restent immobiles en mouvement réduit.
 -->
 <script lang="ts">
-  import { asset } from '$app/paths';
+  import { asset, resolve } from '$app/paths';
   import {
-    Badge,
     DymoLabel,
     Folder,
     Icon,
@@ -484,16 +483,21 @@
         </li>
       {/each}
       <li>
-        <span class="dl-soon">Titre du jeu (SVG et PNG)</span>
-        <Badge tone="neutral" variant="outline">Bientôt</Badge>
+        <a href="{resolve('presse/')}#kit-logos"><Icon name="save" /> Titre du jeu et emblème</a>
+        <span class="dl-detail">SVG et PNG, quatre teintes</span>
       </li>
       <li>
-        <span class="dl-soon">Art clé et carte de la Velmarche en haute définition</span>
-        <Badge tone="neutral" variant="outline">Bientôt</Badge>
+        <a href="{resolve('presse/')}#kit-affiches"><Icon name="save" /> Affiches et bannières</a>
+        <span class="dl-detail">PDF A3, PNG, JPEG</span>
       </li>
       <li>
-        <span class="dl-soon">Captures d’écran et planches de portraits</span>
-        <Badge tone="neutral" variant="outline">Bientôt</Badge>
+        <a href="{resolve('presse/')}#kit-documents"><Icon name="save" /> Artbook et fiche presse</a
+        >
+        <span class="dl-detail">PDF</span>
+      </li>
+      <li>
+        <a href="{resolve('presse/')}#captures"><Icon name="save" /> Captures d’écran</a>
+        <span class="dl-detail">PNG, 1440 px</span>
       </li>
     </ul>
   </div>

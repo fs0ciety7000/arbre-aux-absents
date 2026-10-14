@@ -74,6 +74,10 @@ Fait :
 - [x] Tutoriel en bulles « Note de service » (10 étapes, déclenchées par les actions, ne bloque
       jamais) ; progression dans `Profile.tutorial` ; « Revoir le tutoriel » dans Aide et Options
 - [x] Écran fixe sur téléphone (plus de zoom ni de glissement), portrait sur téléphone Android
+- [x] Kit presse sur `/presse/` (logos, 3 affiches A3, 8 bannières, artbook 19 p., fiche presse, ZIP),
+      généré par `npm run presskit` ; images du thème itch.io dans `static/itch/`
+- [x] Couverture du roman (CM Publishing), direction A « Fenêtre » validée ; hors dépôt, dossier partagé
+      `arbre-aux-absents/roman/` ; ISBN et largeur de tranche à venir
 
 ## Backlog
 

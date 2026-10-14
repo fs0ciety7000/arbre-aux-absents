@@ -1,28 +1,44 @@
 <!--
   Presse v2 : la fiche technique tapée sur une fiche bristol, le pitch en grand titre d'affiche,
-  la présentation sur une feuille, le contact dans une chemise kraft. Prérendu, sans JS.
+  la présentation sur une feuille, le contact dans une chemise kraft, puis le kit presse à
+  télécharger (généré par `npm run presskit`, manifeste lu au prérendu). Prérendu, sans JS.
 -->
 <script lang="ts">
-  import { resolve } from '$app/paths';
-  import { Button, Folder, IndexCard, Ornament, PaperSheet, Stamp } from '@arbre/ui';
+  import { asset, resolve } from '$app/paths';
+  import { Button, Folder, Icon, IndexCard, Ornament, PaperSheet, Stamp } from '@arbre/ui';
   import Seo from '#lib/components/Seo.svelte';
+  import { PRESS_FACTS as facts } from '#lib/content/press';
+  import {
+    KIT_CAPTURES,
+    KIT_FEATURES,
+    KIT_GROUPS,
+    KIT_ZIP,
+    type KitRow,
+  } from '#lib/content/presskit';
   import { ITCH_URL } from '#lib/site';
+  import type { AssetPath } from '$app/types';
 
-  const facts: { term: string; value: string }[] = [
-    { term: 'Titre', value: 'L’Arbre aux absents' },
-    { term: 'Genre', value: 'Enquête généalogique, déduction' },
-    { term: 'Développement', value: 'CM Interactive' },
-    { term: 'Écriture et illustration', value: 'CM Creative Lab' },
-    { term: 'Édition', value: 'CARDOR Media' },
-    { term: 'Plateformes', value: 'Windows, macOS, Linux, Android, navigateur' },
-    { term: 'Langue', value: 'Français (textes et interface)' },
-    { term: 'Joueurs', value: 'Un joueur' },
-    { term: 'Durée', value: 'Six à dix heures pour l’affaire principale' },
-    { term: 'Prix', value: 'Gratuit' },
-    { term: 'Sortie', value: 'Octobre 2026' },
-    { term: 'Site', value: 'arbre.cardormedia.com' },
-  ];
+  const tilts = [-1.2, 0.8, -0.5, 1, -0.7];
 </script>
+
+{#snippet rowList(rows: KitRow[], label: string)}
+  <ul class="files" aria-label={label}>
+    {#each rows as row (row.label)}
+      <li class="file">
+        <span class="file-label">{row.label}</span>
+        <span class="file-links">
+          {#each row.links as l (l.href)}
+            <a class="file-link" href={asset(l.href as AssetPath)} download>
+              <span class="fmt">{l.format}</span>
+              <span class="file-detail">{l.detail}</span>
+              <span class="file-size num">{l.size}</span>
+            </a>
+          {/each}
+        </span>
+      </li>
+    {/each}
+  </ul>
+{/snippet}
 
 <Seo
   title="Presse"
@@ -105,8 +121,8 @@
         <Folder title="Contact presse" cote="ORC 74 · CONTACT" tone="manila" headingLevel={2}>
           <div class="contact">
             <p>
-              Le contact presse sera publié ici à l’annonce de la date de sortie. Les demandes de
-              clé de test ouvriront avec la démo.
+              Le jeu est gratuit sur itch.io : aucune clé n’est nécessaire pour le tester. Le
+              contact presse sera publié ici prochainement.
             </p>
             <Stamp text="À venir" tone="ink" size="s" rotate={-8} />
           </div>
@@ -114,11 +130,76 @@
       </div>
 
       <div class="kit" data-sr style:--i="3">
-        <Button variant="secondary" href={resolve('charte/')} iconName="save"
-          >Logos et charte</Button
-        >
-        <Button variant="ghost" href={resolve('artbook/')} iconName="photo">Planches</Button>
+        <Button variant="secondary" href="#kit-title" iconName="save">Kit presse</Button>
+        <Button variant="ghost" href={resolve('charte/')} iconName="photo">Charte graphique</Button>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Kit presse ── -->
+<section class="band kit-band" aria-labelledby="kit-title">
+  <div class="container">
+    <div class="section-head" data-sr>
+      <p class="kicker">À télécharger</p>
+      <h2 id="kit-title" class="section-title">Le kit <em>presse</em></h2>
+      <p class="lede kit-lede">
+        Logos, affiches, bannières, artbook et fiche, tirés de l’art du jeu et de son système de
+        design. Libres d’usage pour parler du jeu, dans le respect de la <a
+          href={resolve('charte/')}>charte</a
+        > : aucun nom, secret ni dénouement de l’enquête.
+      </p>
+      {#if KIT_ZIP}
+        <div class="zip">
+          <Button variant="primary" size="l" href={asset(KIT_ZIP.href as AssetPath)} iconName="save"
+            >Tout télécharger <span class="zip-meta">ZIP, {KIT_ZIP.size}</span></Button
+          >
+          <span class="zip-note">{KIT_ZIP.label}</span>
+        </div>
+      {/if}
+    </div>
+
+    <ul class="features">
+      {#each KIT_FEATURES as f, i (f.href)}
+        <li data-sr style:--i={i % 5} style:--reveal-tilt="{tilts[i % 5]! * 2}deg">
+          <a
+            class="feature"
+            href={asset(f.href as AssetPath)}
+            download
+            style:--tilt="{tilts[i % 5]}deg"
+          >
+            <img
+              class="feature-img"
+              src={asset(f.preview as AssetPath)}
+              width={f.width}
+              height={f.height}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="feature-label">{f.label}</span>
+            <span class="feature-meta"
+              ><Icon name="save" size="1rem" /> PDF · {f.detail} ·
+              <span class="num">{f.size}</span></span
+            >
+          </a>
+        </li>
+      {/each}
+    </ul>
+
+    {#each KIT_GROUPS as g (g.id)}
+      <div class="group" id="kit-{g.id}" data-sr>
+        <h3 class="group-title">{g.title}</h3>
+        <p class="group-intro">{g.intro}</p>
+        {@render rowList(g.rows, g.title)}
+      </div>
+    {/each}
+    <div class="group" id="captures" data-sr>
+      <h3 class="group-title">Captures d’écran</h3>
+      <p class="group-intro">
+        Le jeu en 1440 pixels de large, et la couverture de la page itch.io.
+      </p>
+      {@render rowList(KIT_CAPTURES, 'Captures d’écran')}
     </div>
   </div>
 </section>
@@ -205,6 +286,141 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
+  }
+  /* Kit presse */
+  .kit-lede {
+    max-inline-size: var(--measure);
+  }
+  .zip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+    margin-block-start: var(--space-4);
+  }
+  .zip-meta {
+    font-weight: var(--weight-regular);
+    opacity: 0.8;
+  }
+  .zip-note {
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .features {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: var(--space-8) var(--space-6);
+    margin-block-end: var(--space-16);
+    padding: 0;
+    list-style: none;
+  }
+  .feature {
+    display: grid;
+    gap: var(--space-2);
+    color: var(--text);
+    text-decoration: none;
+    border-radius: var(--radius-s);
+  }
+  .feature-img {
+    inline-size: 100%;
+    block-size: 13rem;
+    object-fit: contain;
+    object-position: center bottom;
+    transform: rotate(var(--tilt, 0deg));
+    filter: drop-shadow(0 6px 10px var(--vignette));
+    transition: transform var(--dur-fast) var(--ease-paper);
+  }
+  .feature:hover .feature-img {
+    transform: rotate(0deg) translateY(-4px);
+  }
+  .feature-label {
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-weight: var(--weight-display);
+    font-size: var(--step-1);
+    line-height: var(--leading-snug);
+  }
+  .feature:hover .feature-label {
+    color: var(--accent);
+  }
+  .feature-meta {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+  }
+  .group {
+    margin-block-start: var(--space-12);
+  }
+  .group-title {
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-weight: var(--weight-display);
+    font-size: var(--step-3);
+  }
+  .group-intro {
+    max-inline-size: var(--measure);
+    margin-block: var(--space-2) var(--space-5);
+    color: var(--text-muted);
+  }
+  .files {
+    display: grid;
+    padding: 0;
+    list-style: none;
+    border-block-start: 1px solid var(--line);
+  }
+  .file {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: var(--space-2) var(--space-6);
+    align-items: baseline;
+    padding-block: var(--space-3);
+    border-block-end: 1px solid var(--line);
+  }
+  .file-label {
+    font-family: var(--font-read);
+  }
+  .file-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .file-link {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-s);
+    color: var(--text);
+    text-decoration: none;
+    font-size: var(--step--1);
+  }
+  .file-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .fmt {
+    font-family: var(--font-label);
+    letter-spacing: var(--tracking-stamp);
+    color: var(--accent);
+  }
+  .file-detail,
+  .file-size {
+    color: var(--text-muted);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .feature-img {
+      transition: none;
+    }
+  }
+  @media (max-width: 63.9375rem) {
+    .file {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
   @media (max-width: 63.9375rem) {
     .layout {

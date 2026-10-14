@@ -31,7 +31,8 @@
     "content:build": "tsx scripts/content-build.ts",
     "content:solve": "tsx scripts/content-solve.ts",
     "schemas:json": "npm run schemas:json -w @arbre/contract",
-    "package:itch": "tsx scripts/package-itch.ts"
+    "package:itch": "tsx scripts/package-itch.ts",
+    "presskit": "tsx scripts/presskit/build.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.11.0",
