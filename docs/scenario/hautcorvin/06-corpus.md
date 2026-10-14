@@ -276,8 +276,9 @@ Mots-clés : Évariste Tessonnal, Clotilde Mervaux, mariage.
 Prouve : C01 N, M ; C02 N, M.
 
 **RG-03** · `register` · 12 mai 1904 · `hautcorvin` · Archives communales, mariages — **Mariage d'Honoré
-Tessonnal, maître verrier, et d'Eugénie Ravenel, modiste.** Témoins : Léonce Tessonnal, opticien ;
-une modiste.
+Tessonnal, maître verrier, et d'Eugénie Ravenel, modiste.** Témoins : Gustave Ravenel, chapelier,
+frère de l'épouse, et une modiste ; Léonce Tessonnal, opticien, frère mineur de l'époux (18 ans),
+présent et signataire sans être témoin.
 Mots-clés : Honoré Tessonnal, Eugénie Ravenel, modiste, Léonce Tessonnal.
 Prouve : C06 M ; C07 N, M ; C10 M.
 

@@ -24,7 +24,8 @@
       épi (Honoré → Bastien → Agnès ; **pas Andrin**) ; sourcils Dalvarin (Dranko → Danela → Andrin).
 - [x] Aucun mot ne désigne deux métiers d'une même personne : « directeur·rice » = Évariste et Colombe
       seulement ; Honoré est « maître verrier » partout (AN-01 le dit « président », jamais « directeur ») ;
-      Bastien « chef de nuit » = grade (leurre), « souffleur » = qualité.
+      Bastien « chef de nuit » = grade (leurre), « souffleur » = qualité. La règle est **lisible** :
+      OF-01 §5 définit la qualité comme « le métier appris et exercé […] ni le grade […] ni l'emploi ».
 - [x] Les surnoms, le nom de religion et les matricules ne sont jamais la réponse (02-arbre §2).
 - [x] **Démonstration d'écriture lisible sans pièce restreinte** (v0.3) : OF-02 (le requérant
       « s'y reprend à deux fois pour le T ») ; LT-04 (1937) et RP-04 (1938, signature du prévenu) : T
@@ -121,7 +122,7 @@ Piège : Clotilde (72 ans) et sœur Agathe sont aussi sur PH-06 ; la légende pa
 ### Les maîtres verriers (C01, C02, C10)
 
 Chemin : OF-01 (Évariste) → PR-01 → PH-01 (couple devant la lentille) → RG-01, RG-02. Léonce : PH-04
-(verso) + CP-01 (lunettes dans la lanterne) ; métier par RG-03 (témoin, « opticien ») et CP-01.
+(verso) + CP-01 (lunettes dans la lanterne) ; métier par RG-03 (frère présent à l'acte, « opticien ») et CP-01.
 
 ### Le baptême de Vernezac (C03, C08, C09)
 
@@ -280,7 +281,10 @@ Relecture complète des 98 pièces et des 4 fins contre la bible, l'affaire 1 et
 - **Taille** : écart voulu, voir §3.
 - **Âge d'Honoré** : 92 ans révolus au testament (20 juin 1973), « dans sa quatre-vingt-treizième
   année » (OF-03) ; mort à 95 ans, « dans sa 96e année » (OF-01, PR-09, RG-16).
-- **PV-05 (Haask)** : conforme à la règle du caméo (§6).
+- **PV-05 (Haask)** : conforme à la règle du caméo (§6). Q7 réécrite : Haask ne compare plus les sourcils au
+  portrait de 1976 ; il dit qu'à la fin on confondait les deux détenus de dos et qu'il ne saurait
+  dire lequel est sur la photographie. Il reste affirmatif sur la mort du 0214. Le doute dure jusqu'à
+  EX-03.
 - Jours de la semaine : toutes les dates des pièces vérifiées par script.
 
 **Corrigé dans les pièces.**
@@ -306,7 +310,9 @@ Relecture complète des 98 pièces et des 4 fins contre la bible, l'affaire 1 et
 
 **Reste à vérifier.**
 - Champs `archive` de PH-06 et PH-14 : parenthèses imbriquées (frontmatter, non modifié).
-- RG-03 (1904) : Léonce témoin de mariage à 18 ans, mineur ; à confirmer ou à remplacer.
+- ~~RG-03 (1904) : Léonce témoin à 18 ans~~ **Réglé** : témoins majeurs Gustave Ravenel (frère de
+  l'épouse, parrain de Colombe en 1906) et Mathilde Corbin ; Léonce reste « présent à l'acte », signe,
+  et garde sa qualité d'opticien (preuve M de C10).
 - Illustrations de LT-04, PH-09 (barre du T) et EP-02 (Colombe assise sur le sentier, piolet) : à
   aligner par le `cartographe`.
 - PV-04 : le requérant « redescendu à la nuit » le 10 janvier est monté **vers** le refuge, pas jusqu'au

@@ -274,7 +274,7 @@ Fixés par la passe de cohérence v0.3. Ils ne portent aucune preuve et n'ont pa
 | **Germain Ardouin**, **Céleste Mazet** | Parents de Philomène, aubergistes des Guides. | RG-06 |
 | **Me Hilaire Escande** | Notaire à Hautcorvin en 1878, grand-père de Julien (« étude Escande depuis trois générations »). | RG-02, AN-02 |
 | **Abbé G. Lacoste** | Curé de Saint-Éloi, Hautcorvin (baptêmes de 1906 et 1910). | RG-04 |
-| **Gustave Ravenel** | Chapelier à Aubrelieu, frère d'Eugénie (fils d'Aristide Ravenel et de Joséphine Pélissier) ; parrain de Colombe (1906), témoin à son mariage (1928). | RG-04, RG-07 |
+| **Gustave Ravenel** | Chapelier à Aubrelieu, frère d'Eugénie (fils d'Aristide Ravenel et de Joséphine Pélissier) ; témoin au mariage de sa sœur (1904), parrain de Colombe (1906), témoin à son mariage (1928). | RG-03, RG-04, RG-07 |
 | **Raoul Brossal** | Avocat à Aubrelieu, frère d'Aimé ; témoin à son mariage (1928). | RG-07 |
 | **Clément Bousquet** | Directeur de l'école de Vernezac (1934). | RG-09 |
 | **Tesela Korin**, **Bralko Senin** | Graveuse et apprenti de la Verrerie de Brénica (catalogue de 1974). | CT-02 |

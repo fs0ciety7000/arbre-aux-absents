@@ -95,9 +95,10 @@ Le nom déclaré est lu dans une pièce de départ (OF-02, OF-01) : aucun averti
      contre OF-03 / PV-03 / RP-04 (yeux gris, main droite brûlée, épi, incisive ébréchée) : le
      requérant n'est pas Bastien. La loupe « de graveur » (OF-02, PR-10) et RP-01 / RP-03 / RG-12
      (Andrin, graveur) désignent un candidat.
-   - **B** : RG-14 (le 1171 brûlé à la main gauche en août 1943) et surtout **PV-05** (Haask : « le
-     souffleur, c'est moi qui lui ai fermé les yeux » ; « les sourcils du Thalbère ») : le requérant
-     est Andrin, de façon quasi explicite. C'était déjà le cas dans les squelettes (bible 06).
+   - **B** : RG-14 (le 1171 brûlé à la main gauche en août 1943) et **PV-05** (Haask : « le 0214,
+     c'est moi qui lui ai fermé les yeux », mais il ne sait plus dire lequel des deux est sur la
+     photographie) : le requérant n'est pas Bastien, le soupçon se porte sur Andrin sans preuve.
+     Depuis la passe v0.3, PV-05 ne compare plus les sourcils au portrait de 1976.
    Le joueur attentif sait donc dès B que le visage déclaré va dans « ? ». Il ne peut pas le faire
    confirmer : C15 exige le visage de Bastien, qui n'existe qu'en C (points 1 et 2). Les indices
    `c17-2` et `c17-3`, qui disaient la réponse dès RG-15 (couche 1), sont réservés à la porte C (v0.2).
