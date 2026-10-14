@@ -18,6 +18,7 @@ export default defineConfig(
       'apps/site/src/generated/',
       'apps/game/src-tauri/',
       'packages/contract/schema/',
+      'assets/',
     ],
   },
   js.configs.recommended,

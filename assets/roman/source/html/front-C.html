@@ -1,0 +1,1356 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Couverture</title>
+<style>/*
+ * L'Arbre aux absents — tokens du design system v2 (« Le dossier vivant », oct. 2026).
+ * Source de vérité documentée : docs/DESIGN.md. Tout ajout ici est documenté là-bas
+ * dans le même changement. Contrastes : node packages/ui/scripts/contrast.mjs
+ *
+ * Trois couches :
+ *   1. palette brute  --raw-*            jamais lue par un composant
+ *   2. sémantique     --canvas, --text…  seule couche lue par les composants
+ *                     + matières        --kraft, --card, --tape… (fournitures du bureau)
+ *   3. contextes      [data-surface='paper'] remappe la sémantique sur le papier ;
+ *                     [data-surface='kraft'] sur le carton d'une chemise ;
+ *                     :root[data-contrast='high'] remappe tout en contraste élevé.
+ * Réglages joueur (posés sur <html> par le jeu, cf. Settings et settings-dom.ts) :
+ *   data-text-scale, data-reading-font, data-line-spacing, data-letter-spacing,
+ *   data-handwriting, data-contrast, data-texture, data-color-vision, data-motion.
+ * Illustration de nuit : .art.on-night remappe les --art-* pour un fond nuit (§10.10).
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* ── 1. Palette brute ─────────────────────────────────────────────── */
+  /* Encre de nuit : le mur et le sous-main, du plus profond au plus clair (v2 : accordé à l'art
+     clé, teinte 260 du papier peint — art/keyart) */
+  --raw-night-1000: oklch(0.15 0.042 260);
+  --raw-night-950: oklch(0.2 0.054 260);
+  --raw-night-900: oklch(0.245 0.058 259);
+  --raw-night-850: oklch(0.285 0.06 258);
+  --raw-night-800: oklch(0.31 0.058 257);
+  --raw-night-700: oklch(0.41 0.056 256);
+  --raw-night-500: oklch(0.66 0.055 252);
+  --raw-night-400: oklch(0.72 0.046 250);
+  /* Vélin : blancs chauds du texte sous la lampe */
+  --raw-vellum-100: oklch(0.96 0.014 88);
+  --raw-vellum-300: oklch(0.84 0.024 85);
+  /* Safran : la lumière de la lampe, unique couleur d'action */
+  --raw-brass-300: oklch(0.91 0.12 92);
+  --raw-brass-400: oklch(0.84 0.155 80);
+  --raw-brass-500: oklch(0.66 0.13 70); /* tranche du bouton (relief) */
+  --raw-brass-600: oklch(0.485 0.112 62);
+  --raw-brass-700: oklch(0.44 0.105 58);
+  /* Vermillon : l'administration (chemises, étiquettes, fil du tableau) — jamais un état */
+  --raw-vermilion-400: oklch(0.72 0.17 36);
+  --raw-vermilion-500: oklch(0.62 0.2 33);
+  --raw-vermilion-600: oklch(0.53 0.19 30);
+  --raw-vermilion-700: oklch(0.46 0.17 29);
+  /* Céladon : la fougère, le verre, le vert-de-gris */
+  --raw-celadon-300: oklch(0.86 0.07 172);
+  --raw-celadon-400: oklch(0.79 0.09 172);
+  --raw-celadon-700: oklch(0.45 0.075 178);
+  /* Kraft, manille et carton des chemises */
+  --raw-kraft-200: oklch(0.89 0.055 88); /* manille (chemise claire) */
+  --raw-kraft-400: oklch(0.76 0.08 72); /* kraft */
+  --raw-kraft-500: oklch(0.68 0.09 66); /* kraft ombré, dos de chemise */
+  --raw-kraft-700: oklch(0.47 0.075 58); /* tranche du carton */
+  /* Encre violette des tampons administratifs : « Établi » */
+  --raw-stamp-300: oklch(0.77 0.13 300);
+  --raw-stamp-700: oklch(0.46 0.16 300);
+  /* Bois du bureau et crépuscule de la fenêtre (art clé) : décor seulement, jamais du texte */
+  --raw-wood-700: oklch(0.36 0.05 40); /* plateau dans l'ombre */
+  --raw-wood-500: oklch(0.59 0.065 46); /* plateau sous la lampe */
+  --raw-velvet: oklch(0.49 0.05 358); /* rideau de velours */
+  --raw-dusk-rose: oklch(0.85 0.05 0);
+  --raw-dusk-lilac: oklch(0.84 0.045 291);
+  --raw-dusk-peach: oklch(0.86 0.06 55);
+  /* États */
+  --raw-red-300: oklch(0.75 0.14 25);
+  --raw-red-700: oklch(0.48 0.16 25);
+  --raw-green-300: oklch(0.8 0.12 160);
+  --raw-green-700: oklch(0.46 0.09 155);
+  --raw-orange-300: oklch(0.8 0.13 55);
+  --raw-orange-700: oklch(0.49 0.125 52);
+  --raw-blue-300: oklch(0.8 0.08 230);
+  --raw-blue-700: oklch(0.47 0.1 240);
+  /* Papiers et encres des documents */
+  --raw-paper-new: oklch(0.978 0.012 92);
+  --raw-paper: oklch(0.955 0.02 90);
+  --raw-paper-aged: oklch(0.925 0.028 88);
+  --raw-paper-stain: oklch(0.89 0.034 84);
+  --raw-paper-line: oklch(0.84 0.03 86);
+  --raw-ink-gall: oklch(0.27 0.05 262); /* encre ferro-gallique bleu-noir */
+  --raw-ink-gall-muted: oklch(0.44 0.05 260);
+  --raw-ink-gall-faint: oklch(0.58 0.04 258);
+  --raw-ink-pen: oklch(0.38 0.11 258); /* encre bleue de plume */
+  --raw-ink-ribbon: oklch(0.26 0.012 260); /* ruban de machine à écrire */
+  --raw-rule-blue: oklch(0.76 0.07 236); /* réglure des fiches bristol */
+  --raw-steel: oklch(0.8 0.012 250); /* trombone, punaise */
+
+  /* ── 2. Sémantique : contexte « lampe » (défaut, bureau sombre) ───── */
+  --canvas: var(--raw-night-950);
+  --desk: var(--raw-night-950); /* le bureau lui-même : jamais remappé par papier ou kraft */
+  --surface-1: var(--raw-night-900);
+  --surface-2: var(--raw-night-850);
+  --surface-3: var(--raw-night-800);
+  --line: var(--raw-night-700);
+  --line-strong: var(--raw-night-500);
+  --text: var(--raw-vellum-100);
+  --text-muted: var(--raw-vellum-300);
+  --text-faint: var(--raw-night-400);
+  --accent: var(--raw-brass-400);
+  --accent-strong: var(--raw-brass-300);
+  --accent-contrast: var(--raw-night-1000);
+  --accent-edge: var(--raw-brass-500); /* tranche du bouton principal (relief pressable) */
+  --accent-tint: oklch(0.84 0.155 80 / 0.15);
+  --focus: var(--raw-brass-300);
+  --focus-halo: var(--raw-night-1000);
+  --danger: var(--raw-red-300);
+  --success: var(--raw-green-300);
+  --warning: var(--raw-orange-300);
+  --info: var(--raw-blue-300);
+  --established: var(--raw-stamp-300);
+  --established-contrast: var(--raw-night-1000);
+  --keyword: var(--raw-brass-400);
+  --selection: oklch(0.6 0.12 78 / 0.45);
+  --scrim: oklch(0.1 0.04 260 / 0.7);
+  /* Voile posé sur l'art clé sous un menu ou un titre (zone calme, §8.5) : assez dense pour
+     que --text-muted reste ≥ 4,5:1 même devant une feuille claire de l'illustration */
+  --scrim-art: oklch(0.14 0.045 260 / 0.9);
+  --lamp-glow: oklch(0.84 0.155 80 / 0.1);
+  --lamp-pool: oklch(0.9 0.1 88 / 0.2); /* cœur du cône de la lampe (LampLight) */
+  --lamp-dust: oklch(0.95 0.06 90 / 0.55); /* poussières dans la lumière */
+  --vignette: oklch(0.08 0.04 260 / 0.55); /* coins du bureau dans l'ombre */
+  --edge-light: oklch(1 0 0 / 0.07); /* liseré haut des surfaces : la lumière de la lampe */
+  --stitch: oklch(0.66 0.06 246 / 0.55); /* surpiqûre du sous-main (décor, < 3:1 assumé) */
+
+  /* Couleurs de marque (décor : titres, onglets, fil, étiquettes). Jamais un état. */
+  --brand: var(--raw-vermilion-400); /* sur le bureau : grand texte, filets, ornements */
+  --brand-strong: var(--raw-vermilion-500);
+  --brand-contrast: var(--raw-paper-new); /* texte sur aplat vermillon (--brand-fill) */
+  --brand-fill: var(--raw-vermilion-600);
+  --fern: var(--raw-celadon-400); /* fougère : ornements, célébration */
+  --fern-deep: var(--raw-celadon-700);
+
+  /* ── Matières : les fournitures du bureau (DESIGN §6) ─────────────── */
+  --kraft: var(--raw-kraft-400);
+  --kraft-shade: var(--raw-kraft-500);
+  --kraft-edge: var(--raw-kraft-700);
+  --manila: var(--raw-kraft-200);
+  --kraft-ink: var(--raw-ink-gall); /* texte sur kraft et manille */
+  --card: var(--raw-paper-new); /* fiche bristol */
+  --card-rule: var(--raw-rule-blue);
+  --card-margin: var(--raw-vermilion-500); /* ligne de tête rouge des fiches */
+  --tape: oklch(0.93 0.045 95 / 0.78); /* ruban adhésif mat, translucide */
+  --tape-edge: oklch(0.8 0.05 90 / 0.6);
+  --label-tape: oklch(0.36 0.12 257); /* étiqueteuse à relief (bande bleue) */
+  --label-tape-red: var(--raw-vermilion-600);
+  --label-tape-text: oklch(0.97 0.01 90);
+  --label-sheen: oklch(1 0 0 / 0.18); /* reflet de la bande plastique */
+  --label-emboss: oklch(0 0 0 / 0.3); /* creux des lettres embossées */
+  --string: var(--raw-vermilion-500); /* fil rouge du tableau d'épingles */
+  --metal: var(--raw-steel);
+  --metal-shade: oklch(0.55 0.015 250);
+  --pin-head: var(--raw-vermilion-500);
+  --wood: var(--raw-wood-700); /* bois du bureau (bords, lampe) */
+  --wood-lit: var(--raw-wood-500); /* bois dans la flaque de lumière */
+  --velvet: var(--raw-velvet);
+  /* Crépuscule (fenêtre de l'art clé) : ciels, aube de la célébration, héros du site */
+  --dusk-rose: var(--raw-dusk-rose);
+  --dusk-lilac: var(--raw-dusk-lilac);
+  --dusk-peach: var(--raw-dusk-peach);
+  --dusk-sky: linear-gradient(
+    to bottom,
+    var(--raw-dusk-lilac),
+    var(--raw-dusk-rose) 62%,
+    var(--raw-dusk-peach)
+  );
+  --desk-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55 .9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55 0 0 0 0 .62 0 0 0 0 .85 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  /* Bord déchiré / perforé (masques alpha, aucune couleur) */
+  --edge-torn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='10' preserveAspectRatio='none'%3E%3Cpath d='M0 0V4l6 2 5-3 7 3 6-4 5 3 8-2 6 3 5-4 7 4 6-3 5 2 7-3 6 4 5-2 8 3 6-4 5 3 7-2 6 3l4-3V0z'/%3E%3C/svg%3E");
+  --edge-perforated: radial-gradient(circle at 50% 0, transparent 3.5px, black 4px);
+
+  /* Papier (global : les documents sont toujours sur papier, même sous la lampe) */
+  --paper-new: var(--raw-paper-new);
+  --paper: var(--raw-paper);
+  --paper-aged: var(--raw-paper-aged);
+  --paper-stain: var(--raw-paper-stain);
+  --paper-line: var(--raw-paper-line);
+  --paper-line-strong: var(--raw-ink-gall-faint);
+  --ink: var(--raw-ink-gall);
+  --ink-muted: var(--raw-ink-gall-muted);
+  --ink-faint: var(--raw-ink-gall-faint);
+  --ink-hand: var(--raw-ink-pen);
+  --ink-type: var(--raw-ink-ribbon);
+  --paper-accent: var(--raw-brass-600);
+  --paper-accent-strong: var(--raw-brass-700);
+  --paper-grain: 0.55; /* opacité du grain de papier (0 avec data-texture='off') */
+  --paper-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  /* Fibres du kraft (masque de couleur sombre, alpha faible) */
+  --kraft-fiber-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='k'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.04 .9' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .2 0 0 0 0 .1 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23k)'/%3E%3C/svg%3E");
+
+  /* Encrage irrégulier des tampons (masque alpha, aucune couleur) */
+  --stamp-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.6 0 0 0 2.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+
+  /* Surlignage : 5 teintes, chacune doublée d'un motif (base.css .hl-1…5) */
+  --hl-1: oklch(0.9 0.13 98 / 0.6); /* jaune, plein */
+  --hl-2: oklch(0.87 0.1 150 / 0.55); /* vert, hachuré */
+  --hl-3: oklch(0.85 0.07 235 / 0.6); /* bleu, pointillé */
+  --hl-4: oklch(0.85 0.08 350 / 0.55); /* rose, ondulé */
+  --hl-5: oklch(0.86 0.09 60 / 0.6); /* orange, encadré */
+
+  /* ── Typographie ─────────────────────────────────────────────────── */
+  --font-read: 'Literata', 'Literata fallback', Georgia, serif;
+  /* Titrage v2 : Fraunces (« old style wonky », axes SOFT/WONK/opsz) — l'affiche de 1974 */
+  --font-display: 'Fraunces', 'Fraunces fallback', Georgia, serif;
+  --font-ui: 'Instrument Sans', 'Instrument Sans fallback', system-ui, sans-serif;
+  /* Étiquettes, onglets, boutons, surtitres : Oswald (gothique condensée d'étiqueteuse) */
+  --font-label: 'Oswald', 'Oswald fallback', 'Arial Narrow', sans-serif-condensed, sans-serif;
+  --font-type: 'Courier Prime', 'Courier New', monospace;
+  --font-hand: 'Caveat', 'Segoe Print', cursive;
+  --font-legible: 'Atkinson Hyperlegible Next', system-ui, sans-serif;
+  /* OpenDyslexic n'est PAS embarquée : utilisée si installée sur l'appareil, sinon repli
+     sur Atkinson Hyperlegible Next (embarquée), puis Verdana. Aucun téléchargement. */
+  --font-dyslexic:
+    'OpenDyslexic', 'OpenDyslexic3', 'Atkinson Hyperlegible Next', Verdana, system-ui, sans-serif;
+  /* Axes de Fraunces : douceur (0–100) et « bancal » (0/1) — la patte des années 70 */
+  --display-soft: 100;
+  --display-wonk: 1;
+  --display-settings: 'SOFT' var(--display-soft), 'WONK' var(--display-wonk);
+  --weight-display: 640;
+  --weight-display-black: 900;
+
+  --text-scale: 1;
+  --step--1: calc(clamp(0.875rem, 0.8505rem + 0.1087vw, 0.9375rem) * var(--text-scale));
+  --step-0: calc(clamp(1rem, 0.9755rem + 0.1087vw, 1.0625rem) * var(--text-scale));
+  --step-read: calc(clamp(1.0625rem, 1.0136rem + 0.2174vw, 1.1875rem) * var(--text-scale));
+  --step-1: calc(clamp(1.1875rem, 1.1386rem + 0.2174vw, 1.3125rem) * var(--text-scale));
+  --step-2: calc(clamp(1.375rem, 1.2772rem + 0.4348vw, 1.625rem) * var(--text-scale));
+  --step-3: calc(clamp(1.625rem, 1.4293rem + 0.8696vw, 2.125rem) * var(--text-scale));
+  --step-4: calc(clamp(2rem, 1.6087rem + 1.7391vw, 3rem) * var(--text-scale));
+  --step-5: calc(clamp(2.5rem, 1.8152rem + 3.0435vw, 4.25rem) * var(--text-scale));
+  /* v2 : titre du jeu (écran titre, hero du site) 52 → 128 px */
+  --step-6: calc(clamp(3.25rem, 1.3913rem + 8.2609vw, 8rem) * var(--text-scale));
+  --hand-boost: 1.3; /* Caveat a un petit œil : ×1,3 pour le même confort que le romain */
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-ui: 1.4;
+  --leading-read: 1.6;
+  --leading-display: 0.92; /* titrage Fraunces très serré (titre, hero) */
+  --paragraph-gap: 0.9em; /* entre paragraphes de .reading */
+  /* Approche additionnelle du réglage « espacement des lettres » (0 par défaut) : ajoutée
+     à chaque approche ci-dessous et, réglage actif, à tout élément (base.css). */
+  --tracking-extra: 0em;
+  --word-spacing: 0em;
+  --tracking-tight: calc(-0.01em + var(--tracking-extra)); /* titres, onglets compacts */
+  --tracking-display: calc(-0.025em + var(--tracking-extra)); /* titrage Fraunces */
+  --tracking-caps: calc(0.08em + var(--tracking-extra));
+  --tracking-label: calc(0.02em + var(--tracking-extra));
+  --tracking-stamp: calc(0.06em + var(--tracking-extra)); /* Oswald en capitales */
+  --tracking-read: calc(0em + var(--tracking-extra));
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --measure: 66ch;
+
+  /* ── Espacement (échelle 4 px), rayons, mise en page ──────────────── */
+  --space-0: 0;
+  --space-px: 1px;
+  --space-0-5: 0.125rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --gutter: clamp(1rem, 0.6087rem + 1.7391vw, 2rem);
+
+  /* v2 : rayons resserrés — des objets découpés, pas des cartes d'application */
+  --radius-paper: 2px;
+  --radius-xs: 3px;
+  --radius-s: 5px;
+  --radius-m: 7px;
+  --radius-l: 10px;
+  --radius-xl: 16px;
+  --radius-tab: 9px; /* coin d'onglet de chemise */
+  --radius-pill: 999px;
+  --border: 1px;
+  --border-strong: 2px;
+
+  --hit: 44px;
+  --hit-l: 48px;
+  --hit-row: 56px;
+  --header-h: 48px;
+  --header-h-phone: 56px;
+  --site-header-h: 64px; /* en-tête du site vitrine (DESIGN §5.4) */
+  --rail-w: 64px;
+  --rail-w-tablet: 56px;
+  --tabbar-h: 64px;
+  --side-min: 360px;
+  --side-default: 440px;
+  --side-max: 640px;
+  --side-step: 40px;
+  --mini-reader-h: 72px;
+  --drawer-handle: 24px;
+  --popover-w: 320px;
+  --popover-max-h: 480px;
+  --sheet-w: 480px;
+  --slot-w: 144px;
+  --slot-h: 168px;
+  --tab-h: 34px; /* hauteur d'un onglet de chemise (Folder) */
+  --container: 76rem;
+  --container-narrow: 44rem;
+
+  /* ── Profondeur ──────────────────────────────────────────────────── */
+  --shadow-1: 0 1px 0 var(--edge-light) inset, 0 1px 2px oklch(0.06 0.04 260 / 0.55);
+  --shadow-2:
+    0 1px 0 var(--edge-light) inset, 0 2px 3px oklch(0.06 0.04 260 / 0.35),
+    0 10px 22px -8px oklch(0.06 0.04 260 / 0.65);
+  --shadow-3:
+    0 1px 0 var(--edge-light) inset, 0 4px 6px oklch(0.06 0.04 260 / 0.3),
+    0 28px 56px -14px oklch(0.05 0.04 260 / 0.8);
+  --shadow-inset: inset 0 1px 3px oklch(0.06 0.04 260 / 0.45);
+  /* Papier posé : contact net + ombre portée chaude, comme sous une lampe en hauteur */
+  --shadow-paper:
+    0 1px 1px oklch(0.12 0.04 60 / 0.35), 0 3px 6px -2px oklch(0.06 0.04 260 / 0.45),
+    0 16px 30px -12px oklch(0.05 0.04 260 / 0.7);
+  --shadow-lifted:
+    0 2px 2px oklch(0.12 0.04 60 / 0.25), 0 12px 20px -6px oklch(0.06 0.04 260 / 0.45),
+    0 34px 60px -16px oklch(0.05 0.04 260 / 0.8);
+  --shadow-press: 0 3px 0 var(--accent-edge); /* tranche d'un bouton qui s'enfonce */
+
+  --z-desk: 0;
+  --z-raised: 1;
+  --z-rail: 10;
+  --z-header: 20;
+  --z-drawer: 30;
+  --z-popover: 40;
+  --z-dialog: 50;
+  --z-toast: 60;
+  --z-tooltip: 70;
+  --z-drag: 80;
+  --z-skip: 100;
+
+  /* ── Mouvement (catalogue complet : DESIGN §8) ────────────────────── */
+  /* Courbes : personnalité « geste d'archiviste » — net, lesté, un rebond court au contact */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-in: cubic-bezier(0.5, 0, 0.75, 0);
+  --ease-paper: cubic-bezier(0.22, 1.2, 0.36, 1); /* la feuille se pose : léger rebond */
+  --ease-stamp: cubic-bezier(0.55, 0, 0.3, 1.45); /* le tampon frappe */
+  --ease-deal: cubic-bezier(0.18, 0.89, 0.32, 1.12); /* la fiche est distribuée, glisse et cale */
+  --ease-snap: cubic-bezier(0.3, 1.5, 0.5, 1); /* l'onglet claque, l'interrupteur bascule */
+  --ease-flick: cubic-bezier(0.6, 0, 0.9, 0.4); /* sortie : la feuille est escamotée */
+  --ease-sway: cubic-bezier(0.37, 0, 0.63, 1); /* boucles d'ambiance (sinus) */
+  --ease-ink: cubic-bezier(0.7, 0, 0.2, 1); /* l'encre se répand, la carte se dessine */
+  --dur-instant: 80ms;
+  --dur-fast: 140ms;
+  --dur-base: 220ms;
+  --dur-open: 250ms;
+  --dur-slow: 420ms;
+  --dur-stamp: 320ms;
+  --dur-camera: 600ms;
+  --dur-deal: 480ms; /* distribution d'une fiche */
+  --dur-flip: 560ms; /* recto / verso */
+  --dur-sheet: 520ms; /* feuille tirée d'une chemise */
+  --dur-screen: 720ms; /* changement d'écran (titre → bureau) */
+  --dur-draw: 1600ms; /* la carte s'encre (couche par couche) */
+  --dur-spread: 900ms; /* l'encre du tampon s'étale */
+  --dur-celebrate: 1800ms; /* branche révélée */
+  --dur-rustle: 360ms; /* froissement */
+  --stagger: 120ms;
+  --stagger-deal: 55ms; /* entre deux fiches distribuées (≤ 12 fiches animées) */
+  --dur-loop: 1000ms; /* boucles : spinner, plume du Loader */
+  --dur-flicker: 6400ms; /* vacillement de la lampe (titre) */
+  --dur-sway: 7000ms; /* balancement d'une feuille épinglée */
+  --dur-dust: 16000ms; /* dérive d'une poussière dans la lumière */
+  --dur-breathe: 5200ms; /* respiration du halo de lampe */
+  --dur-fade-fast: 140ms;
+  --dur-fade: 220ms;
+  --rise: 8px;
+  --lift: -3px;
+  --press-depth: 2px; /* enfoncement d'un bouton (tranche --shadow-press) */
+  --tilt-max: 1.5deg;
+  --deal-distance: 56px; /* d'où arrive une fiche distribuée */
+  --deal-rotate: 7deg;
+  --sway-angle: 0.6deg;
+  --blur-ink: 3px;
+  --stamp-from: 1.35;
+  --toast-timeout: 6000ms;
+  --tooltip-delay: 400ms;
+  --long-press: 400ms;
+  /* Interrupteur des boucles d'ambiance : running | paused (paused en mouvement réduit) */
+  --idle-state: running;
+
+  /* ── Curseurs contextuels (verbes point & click) ─────────────────── */
+  /* v2 : flèche taillée à l'encre de Prusse, liseré vélin, pastille safran du verbe dessinée
+     à la plume. Couleurs figées (une image de curseur ne lit pas les var()). 32 px, point (3, 2). */
+  --cursor-default:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M5.2 6.5l.2 10.8' stroke='%23f2b33d' stroke-width='1.2' stroke-linecap='round' opacity='.85'/%3E%3C/svg%3E")
+      3 2,
+    default;
+  --cursor-look:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M21.6 18.6c2 0 3.6 1.6 3.5 3.6s-1.7 3.4-3.6 3.4-3.4-1.7-3.4-3.6 1.6-3.4 3.5-3.4z' fill='none' stroke='%23182039' stroke-width='1.7'/%3E%3Cpath d='M24.4 24.6l2.9 2.7' stroke='%23182039' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E")
+      3 2,
+    zoom-in;
+  --cursor-take:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M19.4 23.6v-3.1m2.1 2.6v-4.6m2 4.6v-4.1m2.1 4.6v-3m-6.2 3.1c.1 2.6 1.6 4.1 3.6 4s3.5-1.6 3.4-4.1' fill='none' stroke='%23182039' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
+      3 2,
+    grab;
+  --cursor-hold:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M23.1 18.4l-.1 9.2m-4.5-4.6h9.1m-7.6-2.1l-1.5 2.1 1.6 1.9m6-4l1.5 2.1-1.5 2' fill='none' stroke='%23182039' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      3 2,
+    grabbing;
+  --cursor-write:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M19.3 26.8l1.1-3.6 5.6-5.4 2.4 2.6-5.6 5.4zm1.1-3.6l2.4 2.6' fill='none' stroke='%23182039' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E")
+      3 2,
+    text;
+  --cursor-pin:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M23 17.6c1.5 0 2.7 1.2 2.7 2.7s-1.2 2.6-2.7 2.6-2.7-1.2-2.7-2.7 1.2-2.6 2.7-2.6z' fill='%23e5482d' stroke='%23182039' stroke-width='1.3'/%3E%3Cpath d='M23 22.9l-.1 5' stroke='%23182039' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E")
+      3 2,
+    copy;
+  --cursor-use:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Cpath d='M3.2 2.3l.5 20.6 5.3-5.1 3.6 7.9 3.4-1.5-3.5-7.7 7.4-.5z' fill='%23182039' stroke='%23f7efdc' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M23.2 14.6c4.6.2 8.1 3.9 7.9 8.5s-3.9 8-8.4 7.9-8-4-7.8-8.6 3.8-8 8.3-7.8z' fill='%23f2b33d' stroke='%23182039' stroke-width='1.5'/%3E%3Cpath d='M18.8 23.1l8.2-.2m-3.1-3l3.1 3-3 3.1' fill='none' stroke='%23182039' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+      3 2,
+    alias;
+}
+
+/* ── 3a. Contexte « papier » : documents, fiches papier, carte ─────── */
+[data-surface='paper'] {
+  --canvas: var(--paper);
+  --surface-1: var(--paper-new);
+  --surface-2: var(--paper-aged);
+  --surface-3: var(--paper-stain);
+  --line: var(--paper-line);
+  --line-strong: var(--paper-line-strong);
+  --text: var(--ink);
+  --text-muted: var(--ink-muted);
+  --text-faint: var(--ink-faint);
+  --accent: var(--paper-accent);
+  --accent-strong: var(--paper-accent-strong);
+  --accent-contrast: var(--paper-new);
+  --accent-edge: var(--raw-brass-700);
+  --accent-tint: oklch(0.485 0.112 62 / 0.12);
+  --focus: var(--paper-accent);
+  --focus-halo: var(--paper-new);
+  --danger: var(--raw-red-700);
+  --success: var(--raw-green-700);
+  --warning: var(--raw-orange-700);
+  --info: var(--raw-blue-700);
+  --established: var(--raw-stamp-700);
+  --established-contrast: var(--paper-new);
+  --keyword: var(--paper-accent);
+  --brand: var(--raw-vermilion-600);
+  --brand-strong: var(--raw-vermilion-700);
+  --fern: var(--raw-celadon-700);
+  --selection: oklch(0.86 0.09 85 / 0.6);
+  --edge-light: oklch(1 0 0 / 0.5);
+  --stitch: oklch(0.58 0.04 258 / 0.45);
+  --shadow-1: 0 1px 2px oklch(0.3 0.04 70 / 0.2);
+  --shadow-2: 0 4px 12px -4px oklch(0.3 0.04 70 / 0.28);
+  --shadow-3: 0 18px 40px -12px oklch(0.3 0.04 70 / 0.38);
+  --shadow-inset: inset 0 1px 2px oklch(0.3 0.04 70 / 0.16);
+}
+
+/* ── 3a bis. Contexte « kraft » : chemises cartonnées (Folder) ─────────
+ * Le texte reste à l'encre ; l'accent devient le laiton bruni du papier. Les contrôles posés
+ * sur le kraft prennent le papier neuf comme surface (étiquettes collées). */
+[data-surface='kraft'] {
+  color-scheme: light;
+  --canvas: var(--kraft);
+  --surface-1: var(--manila);
+  --surface-2: var(--paper-aged);
+  --surface-3: var(--paper-stain);
+  --line: var(--kraft-shade);
+  --line-strong: var(--kraft-edge);
+  --text: var(--kraft-ink);
+  --text-muted: oklch(0.36 0.06 255);
+  --text-faint: oklch(0.42 0.05 255);
+  --accent: var(--paper-accent-strong);
+  --accent-strong: oklch(0.38 0.09 56);
+  --accent-contrast: var(--paper-new);
+  --accent-edge: oklch(0.3 0.07 55);
+  --accent-tint: oklch(0.44 0.105 58 / 0.14);
+  --focus: var(--kraft-ink);
+  --focus-halo: var(--manila);
+  --danger: var(--raw-red-700);
+  --success: var(--raw-green-700);
+  --warning: var(--raw-orange-700);
+  --info: var(--raw-blue-700);
+  --established: var(--raw-stamp-700);
+  --established-contrast: var(--paper-new);
+  --keyword: var(--paper-accent-strong);
+  --brand: var(--raw-vermilion-700);
+  --brand-strong: var(--raw-vermilion-700);
+  --fern: var(--raw-celadon-700);
+  --selection: oklch(0.9 0.09 88 / 0.7);
+  --edge-light: oklch(1 0 0 / 0.35);
+  --stitch: oklch(0.47 0.075 58 / 0.5);
+  --shadow-1: 0 1px 2px oklch(0.3 0.05 60 / 0.25);
+  --shadow-2: 0 4px 12px -4px oklch(0.3 0.05 60 / 0.3);
+  --shadow-3: 0 18px 40px -12px oklch(0.3 0.05 60 / 0.4);
+  --shadow-inset: inset 0 1px 2px oklch(0.3 0.05 60 / 0.2);
+}
+
+/* ── 3b. Contraste élevé (option Accessibilité, AAA pour le texte) ─── */
+:root[data-contrast='high'] {
+  --canvas: oklch(0.1 0 0);
+  --desk: oklch(0.1 0 0);
+  --surface-1: oklch(0.13 0 0);
+  --surface-2: oklch(0.17 0 0);
+  --surface-3: oklch(0.21 0 0);
+  --line: oklch(0.7 0 0);
+  --line-strong: oklch(0.92 0 0);
+  --text: oklch(1 0 0);
+  --text-muted: oklch(0.93 0 0);
+  --text-faint: oklch(0.82 0 0);
+  --accent: oklch(0.9 0.125 90);
+  --accent-strong: oklch(0.96 0.06 95);
+  --accent-contrast: oklch(0.1 0 0);
+  --accent-edge: oklch(1 0 0);
+  --accent-tint: oklch(0.9 0.125 90 / 0.16);
+  --focus: oklch(0.9 0.125 90);
+  --focus-halo: oklch(0 0 0);
+  --danger: oklch(0.83 0.09 25);
+  --success: oklch(0.88 0.13 160);
+  --warning: oklch(0.87 0.085 60);
+  --info: oklch(0.87 0.075 230);
+  --established: oklch(0.85 0.085 300);
+  --established-contrast: oklch(0.1 0 0);
+  --keyword: oklch(0.9 0.125 90);
+  --selection: oklch(0.42 0.12 260 / 0.9);
+  --lamp-glow: transparent;
+  --lamp-pool: transparent;
+  --scrim: oklch(0 0 0 / 0.88);
+  --scrim-art: oklch(0 0 0 / 0.94);
+  --lamp-dust: transparent;
+  --vignette: transparent;
+  --edge-light: transparent;
+  --stitch: oklch(0.7 0 0);
+  --brand: oklch(0.86 0.075 40);
+  --brand-strong: oklch(0.9 0.07 45);
+  --brand-fill: oklch(0.36 0.14 30);
+  --brand-contrast: oklch(1 0 0);
+  --fern: oklch(0.9 0.08 172);
+
+  --kraft: oklch(0.97 0 0);
+  --kraft-shade: oklch(0.9 0 0);
+  --kraft-edge: oklch(0.13 0.02 264);
+  --manila: oklch(1 0 0);
+  --kraft-ink: oklch(0.13 0.02 264);
+  --card: oklch(1 0 0);
+  --card-rule: oklch(0.55 0 0);
+  --card-margin: oklch(0.45 0.16 29);
+  --tape: oklch(0.9 0 0 / 0.9);
+  --tape-edge: oklch(0.13 0 0);
+  --label-tape: oklch(0.1 0 0);
+  --label-tape-red: oklch(0.1 0 0);
+  --label-tape-text: oklch(1 0 0);
+  --label-sheen: transparent;
+  --label-emboss: transparent;
+  --desk-grain-image: none;
+
+  --paper-new: oklch(1 0 0);
+  --paper: oklch(1 0 0);
+  --paper-aged: oklch(0.97 0 0);
+  --paper-stain: oklch(0.94 0 0);
+  --paper-line: oklch(0.55 0 0);
+  --paper-line-strong: oklch(0.25 0.02 264);
+  --ink: oklch(0.13 0.02 264);
+  --ink-muted: oklch(0.28 0.03 264);
+  --ink-faint: oklch(0.42 0.03 264);
+  --ink-hand: oklch(0.27 0.09 258);
+  --ink-type: oklch(0.13 0.01 260);
+  --paper-accent: oklch(0.38 0.085 62);
+  --paper-accent-strong: oklch(0.3 0.07 60);
+  --paper-grain: 0;
+  --hl-1: oklch(0.92 0.12 98 / 0.75);
+  --hl-2: oklch(0.9 0.09 150 / 0.75);
+  --hl-3: oklch(0.89 0.06 235 / 0.75);
+  --hl-4: oklch(0.89 0.065 350 / 0.75);
+  --hl-5: oklch(0.89 0.07 60 / 0.75);
+}
+:root[data-contrast='high'] [data-surface='paper'] {
+  --accent-tint: oklch(0.38 0.085 62 / 0.1);
+  --accent-edge: oklch(0.13 0.02 264);
+  --danger: oklch(0.4 0.15 25);
+  --success: oklch(0.38 0.09 155);
+  --warning: oklch(0.42 0.11 50);
+  --info: oklch(0.38 0.085 240);
+  --established: oklch(0.38 0.15 300);
+  --brand: oklch(0.42 0.16 29);
+  --brand-strong: oklch(0.36 0.14 29);
+  --fern: oklch(0.36 0.07 178);
+  --selection: oklch(0.88 0.1 90 / 0.8);
+  --stitch: oklch(0.25 0.02 264);
+  --shadow-1: none;
+  --shadow-2: 0 0 0 2px var(--ink);
+  --shadow-3: 0 0 0 2px var(--ink);
+}
+:root[data-contrast='high'] [data-surface='kraft'] {
+  --text-muted: oklch(0.28 0.03 264);
+  --text-faint: oklch(0.42 0.03 264);
+  --accent: oklch(0.38 0.085 62);
+  --accent-strong: oklch(0.3 0.07 60);
+  --accent-edge: oklch(0.13 0.02 264);
+  --accent-tint: oklch(0.38 0.085 62 / 0.1);
+  --danger: oklch(0.4 0.15 25);
+  --success: oklch(0.38 0.09 155);
+  --warning: oklch(0.42 0.11 50);
+  --info: oklch(0.38 0.085 240);
+  --established: oklch(0.38 0.15 300);
+  --keyword: oklch(0.38 0.085 62);
+  --brand: oklch(0.42 0.16 29);
+  --brand-strong: oklch(0.36 0.14 29);
+  --fern: oklch(0.36 0.07 178);
+  --selection: oklch(0.88 0.1 90 / 0.8);
+  --stitch: oklch(0.13 0.02 264);
+  --shadow-1: none;
+  --shadow-2: 0 0 0 2px var(--kraft-ink);
+  --shadow-3: 0 0 0 2px var(--kraft-ink);
+}
+
+/* ── 3c. Vision des couleurs (option Accessibilité, data-color-vision) ──
+ * Seuls les tons d'état changent (danger, avertissement, succès, info, établi) : l'accent
+ * laiton, le texte et les surfaces restent. Palettes choisies par simulation (Machado 2009,
+ * sévérité 1) pour maximiser l'écart OKLab perçu entre états, tout en restant AA (AAA en
+ * HC) en vision normale ET simulée. Vérifié par scripts/contrast.mjs (§3.7, §14).
+ * Protanopie et deutéranopie partagent l'axe bleu ↔ jaune : succès bleu, danger orangé
+ * sombre, avertissement jaune clair, info neutre, établi violet. Tritanopie : axe rouge ↔
+ * cyan : danger rouge, succès vert d'eau clair, info bleu moyen, établi violet sombre. */
+:root[data-color-vision='protanopia'],
+:root[data-color-vision='deuteranopia'] {
+  --danger: oklch(0.765 0.135 45);
+  --warning: oklch(0.89 0.14 95);
+  --success: oklch(0.82 0.09 245);
+  --info: oklch(0.91 0.04 200);
+  --established: oklch(0.72 0.14 305);
+}
+:root[data-color-vision='protanopia'] [data-surface='paper'],
+:root[data-color-vision='deuteranopia'] [data-surface='paper'] {
+  --danger: oklch(0.37 0.12 33);
+  --warning: oklch(0.48 0.095 92);
+  --success: oklch(0.46 0.09 255);
+  --info: oklch(0.37 0.05 230);
+  --established: oklch(0.37 0.19 295);
+}
+:root[data-contrast='high'][data-color-vision='protanopia'],
+:root[data-contrast='high'][data-color-vision='deuteranopia'] {
+  --danger: oklch(0.8 0.12 49);
+  --warning: oklch(0.87 0.17 93);
+  --success: oklch(0.89 0.06 237);
+  --info: oklch(0.81 0.02 193);
+  --established: oklch(0.8 0.13 311);
+}
+:root[data-contrast='high'][data-color-vision='protanopia'] [data-surface='paper'],
+:root[data-contrast='high'][data-color-vision='deuteranopia'] [data-surface='paper'] {
+  --danger: oklch(0.3 0.11 17);
+  --warning: oklch(0.41 0.087 74);
+  --success: oklch(0.4 0.05 243);
+  --info: oklch(0.3 0.12 270);
+  --established: oklch(0.4 0.18 286);
+}
+:root[data-color-vision='tritanopia'] {
+  --danger: oklch(0.74 0.15 22);
+  --warning: oklch(0.88 0.1 75);
+  --success: oklch(0.86 0.12 165);
+  --info: oklch(0.76 0.09 250);
+  --established: oklch(0.72 0.13 310);
+}
+:root[data-color-vision='tritanopia'] [data-surface='paper'] {
+  --danger: oklch(0.5 0.15 22);
+  --warning: oklch(0.38 0.09 57);
+  --success: oklch(0.47 0.1 159);
+  --info: oklch(0.36 0.03 245);
+  --established: oklch(0.49 0.14 309);
+}
+:root[data-contrast='high'][data-color-vision='tritanopia'] {
+  --danger: oklch(0.88 0.055 16);
+  --warning: oklch(0.8 0.15 68);
+  --success: oklch(0.9 0.16 155);
+  --info: oklch(0.8 0.09 235);
+  --established: oklch(0.8 0.11 300);
+}
+:root[data-contrast='high'][data-color-vision='tritanopia'] [data-surface='paper'] {
+  --danger: oklch(0.41 0.16 29);
+  --warning: oklch(0.4 0.07 73);
+  --success: oklch(0.3 0.06 156);
+  --info: oklch(0.4 0.08 236);
+  --established: oklch(0.3 0.14 316);
+}
+
+/* ── Illustration : carte, portraits, documents (consommés par art.css) ── */
+/* Technique : taille-douce à l'encre ferro-gallique, rehaussée d'aquarelle. */
+:root {
+  --art-paper: var(--paper);
+  --art-paper-shade: var(--paper-stain);
+  --art-ink: var(--ink);
+  --art-ink-soft: var(--ink-muted);
+  --art-ink-faint: var(--ink-faint);
+  --art-water: oklch(0.86 0.045 205);
+  --art-water-deep: oklch(0.78 0.06 215);
+  --art-water-ink: oklch(0.42 0.07 225);
+  /* Pigments de lavis (carte, vêtements, décors) */
+  --art-wash-safran: oklch(0.86 0.1 85);
+  --art-wash-carmin: oklch(0.79 0.085 15);
+  --art-wash-indigo: oklch(0.79 0.06 265);
+  --art-wash-sienne: oklch(0.8 0.08 50);
+  --art-wash-sauge: oklch(0.84 0.06 130);
+  --art-wash-lilas: oklch(0.82 0.06 310);
+  --art-wash-celadon: oklch(0.86 0.05 170);
+  --art-wash-ardoise: oklch(0.8 0.02 250);
+  /* Portraits : carnations (claire → foncée), cheveux, joues, rehauts, ombres */
+  --art-skin-1: oklch(0.91 0.035 65);
+  --art-skin-2: oklch(0.85 0.055 58);
+  --art-skin-3: oklch(0.77 0.07 55);
+  --art-skin-4: oklch(0.67 0.08 50);
+  --art-skin-5: oklch(0.56 0.075 45);
+  --art-skin-6: oklch(0.46 0.06 40);
+  --art-hair-blond: oklch(0.85 0.08 85);
+  --art-hair-roux: oklch(0.66 0.12 45);
+  --art-hair-chatain: oklch(0.54 0.06 55);
+  --art-hair-brun: oklch(0.4 0.04 50);
+  --art-hair-noir: oklch(0.3 0.02 260);
+  --art-hair-gris: oklch(0.8 0.01 250);
+  --art-blush: oklch(0.8 0.08 20);
+  --art-rehaut: oklch(0.99 0.008 95); /* gouache blanche */
+  --art-ombre: oklch(0.45 0.03 260);
+  /* Photographies d'époque (tirage argentique viré) */
+  --art-photo-light: oklch(0.9 0.018 75);
+  --art-photo-mid: oklch(0.64 0.022 70);
+  --art-photo-dark: oklch(0.34 0.02 65);
+  --art-photo-paper: oklch(0.97 0.012 85);
+
+  --art-wash-opacity: 0.6;
+  --art-wash-opacity-active: 0.9;
+  --art-water-opacity: 0.75;
+  --art-skin-opacity: 0.9;
+  --art-ombre-opacity: 0.22;
+  --art-blush-opacity: 0.5;
+  --art-rehaut-opacity: 0.85;
+  --art-stroke-hair: 0.5;
+  --art-stroke-fine: 0.8;
+  --art-stroke-base: 1.2;
+  --art-stroke-bold: 2;
+  --art-stroke-frame: 3;
+  --art-hatch-width: 0.5;
+  --art-hatch-dense-width: 0.6;
+  --art-label-size: 13px;
+  --art-label-major-size: 22px;
+  --art-label-region-size: 30px;
+  --art-label-water-size: 12px;
+  --art-label-note-size: 10px;
+  --art-label-halo: 2.6px;
+  --art-label-weight: 500;
+  --art-tracking-label: 0.16em;
+  --art-tracking-major: 0.22em;
+  --art-tracking-region: 0.5em;
+  --art-mentioned-dash: 2 2.5;
+}
+:root[data-contrast='high'] {
+  --art-wash-opacity: 0.35;
+  --art-wash-opacity-active: 0.55;
+  --art-water-opacity: 0.45;
+  --art-water-ink: oklch(0.32 0.06 225);
+  --art-label-halo: 3.4px;
+  --art-label-weight: 650;
+}
+
+/* ── Illustration de nuit : .art.on-night (ou .on-night .art) ─────────
+ * Pour un SVG d'art posé directement sur le bureau sombre (écran titre, vignettes de nuit) :
+ * gravure « à la lueur de la lampe ». Le trait devient vélin, le papier une feuille dans
+ * l'ombre, les lavis des pigments sourds (L ≤ 0,46) sous lesquels le trait clair reste lisible.
+ * Carnations, cheveux et photographies ne changent pas (portraits et photos restent sur papier). */
+.art.on-night,
+.on-night .art {
+  --art-paper: oklch(0.3 0.02 75);
+  --art-paper-shade: oklch(0.26 0.02 70);
+  --art-ink: oklch(0.93 0.015 85);
+  --art-ink-soft: oklch(0.8 0.02 82);
+  --art-ink-faint: oklch(0.64 0.025 250);
+  --art-water: oklch(0.42 0.05 215);
+  --art-water-deep: oklch(0.36 0.06 220);
+  --art-water-ink: oklch(0.82 0.06 220);
+  --art-wash-safran: oklch(0.46 0.08 80);
+  --art-wash-carmin: oklch(0.42 0.09 18);
+  --art-wash-indigo: oklch(0.42 0.07 265);
+  --art-wash-sienne: oklch(0.44 0.08 50);
+  --art-wash-sauge: oklch(0.44 0.06 135);
+  --art-wash-lilas: oklch(0.42 0.07 310);
+  --art-wash-celadon: oklch(0.44 0.05 170);
+  --art-wash-ardoise: oklch(0.4 0.02 250);
+  --art-ombre: oklch(0.08 0.02 258);
+  --art-wash-opacity: 0.7;
+  --art-wash-opacity-active: 0.95;
+}
+:root[data-contrast='high'] .art.on-night,
+:root[data-contrast='high'] .on-night .art {
+  --art-paper: oklch(0.2 0 0);
+  --art-paper-shade: oklch(0.17 0 0);
+  --art-ink: oklch(1 0 0);
+  --art-ink-soft: oklch(0.92 0 0);
+  --art-ink-faint: oklch(0.75 0 0);
+  --art-water: oklch(0.36 0.05 215);
+  --art-water-ink: oklch(0.92 0.04 220);
+  --art-wash-opacity: 0.45;
+  --art-wash-opacity-active: 0.65;
+}
+
+/* ── Réglages joueur ──────────────────────────────────────────────── */
+:root[data-text-scale='0.875'] {
+  --text-scale: 0.875;
+}
+:root[data-text-scale='1.25'] {
+  --text-scale: 1.25;
+}
+:root[data-text-scale='1.5'] {
+  --text-scale: 1.5;
+}
+:root[data-text-scale='2'] {
+  --text-scale: 2;
+}
+/* Police de lisibilité : remplace la serif de lecture, la sans d'interface ET les étiquettes
+   condensées (Oswald). Le titrage (Fraunces) reste : grands corps, peu de texte. */
+:root[data-reading-font='hyperlegible'] {
+  --font-read: var(--font-legible);
+  --font-ui: var(--font-legible);
+  --font-label: var(--font-legible);
+  --leading-read: 1.8;
+  --tracking-read: calc(0.05em + var(--tracking-extra));
+  --tracking-stamp: calc(0.04em + var(--tracking-extra));
+}
+/* Police pour lecteurs dyslexiques (repli documenté sur --font-dyslexic) */
+:root[data-reading-font='dyslexic'] {
+  --font-read: var(--font-dyslexic);
+  --font-ui: var(--font-dyslexic);
+  --font-label: var(--font-dyslexic);
+  --leading-read: 1.8;
+  --tracking-read: calc(0.05em + var(--tracking-extra));
+  --tracking-stamp: calc(0.04em + var(--tracking-extra));
+  --word-spacing: 0.12em;
+  --paragraph-gap: 1.2em;
+}
+/* Interlignage (après la police : le réglage explicite l'emporte). « wider » dépasse les
+   seuils WCAG 1.4.12 : interligne ≥ 1,5, paragraphes ≥ 2 × la taille du texte. */
+:root[data-line-spacing='wide'] {
+  --leading-tight: 1.25;
+  --leading-snug: 1.45;
+  --leading-ui: 1.6;
+  --leading-read: 1.95;
+  --leading-display: 1.1;
+  --paragraph-gap: 1.4em;
+}
+:root[data-line-spacing='wider'] {
+  --leading-tight: 1.4;
+  --leading-snug: 1.6;
+  --leading-ui: 1.8;
+  --leading-read: 2.2;
+  --leading-display: 1.3;
+  --paragraph-gap: 2em;
+}
+/* Espacement des lettres et des mots : valeurs WCAG 1.4.12 (0,12 em / 0,16 em) */
+:root[data-letter-spacing='wide'] {
+  --tracking-extra: 0.12em;
+  --word-spacing: 0.16em;
+}
+/* Écriture manuscrite remplacée par une écriture lisible (le document garde son style) */
+:root[data-handwriting='replace'] {
+  --font-hand: var(--font-read);
+  --hand-boost: 1;
+}
+:root[data-texture='off'] {
+  --paper-grain: 0;
+  --desk-grain-image: none;
+  --kraft-fiber-image: none;
+  --stamp-texture: none; /* tampons à encrage plein, sans usure */
+}
+
+/* Mouvement réduit : système (sauf si le joueur force « complet ») ou réglage en jeu.
+   Les gestes deviennent des fondus courts ; les boucles d'ambiance s'arrêtent (--idle-state). */
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion='full']) {
+    --dur-instant: 0.01ms;
+    --dur-fast: 0.01ms;
+    --dur-base: 0.01ms;
+    --dur-open: 0.01ms;
+    --dur-slow: 0.01ms;
+    --dur-stamp: 0.01ms;
+    --dur-camera: 0.01ms;
+    --dur-deal: 0.01ms;
+    --dur-flip: 0.01ms;
+    --dur-sheet: 0.01ms;
+    --dur-screen: 150ms;
+    --dur-draw: 150ms;
+    --dur-spread: 0.01ms;
+    --dur-celebrate: 0.01ms;
+    --dur-rustle: 0.01ms;
+    --stagger: 0ms;
+    --stagger-deal: 0ms;
+    --dur-fade-fast: 100ms;
+    --dur-fade: 150ms;
+    --rise: 0px;
+    --lift: 0px;
+    --press-depth: 0px;
+    --deal-distance: 0px;
+    --deal-rotate: 0deg;
+    --sway-angle: 0deg;
+    --blur-ink: 0px;
+    --stamp-from: 1;
+    --idle-state: paused;
+  }
+}
+:root[data-motion='reduced'] {
+  --dur-instant: 0.01ms;
+  --dur-fast: 0.01ms;
+  --dur-base: 0.01ms;
+  --dur-open: 0.01ms;
+  --dur-slow: 0.01ms;
+  --dur-stamp: 0.01ms;
+  --dur-camera: 0.01ms;
+  --dur-deal: 0.01ms;
+  --dur-flip: 0.01ms;
+  --dur-sheet: 0.01ms;
+  --dur-screen: 150ms;
+  --dur-draw: 150ms;
+  --dur-spread: 0.01ms;
+  --dur-celebrate: 0.01ms;
+  --dur-rustle: 0.01ms;
+  --stagger: 0ms;
+  --stagger-deal: 0ms;
+  --dur-fade-fast: 100ms;
+  --dur-fade: 150ms;
+  --rise: 0px;
+  --lift: 0px;
+  --press-depth: 0px;
+  --deal-distance: 0px;
+  --deal-rotate: 0deg;
+  --sway-angle: 0deg;
+  --blur-ink: 0px;
+  --stamp-from: 1;
+  --idle-state: paused;
+}
+
+/*
+ * Classes d'art : seules couleurs admises dans les SVG de contenu (carte, portraits,
+ * illustrations, photographies). Liste exportée par src/art-classes.ts (ART_CLASSES),
+ * vérifiée par content:check (ARCHITECTURE §3.7, règle 8). Guide : docs/DESIGN.md §10.
+ *
+ * Tout SVG d'art est inliné avec la classe .art sur sa racine. Les motifs (#art-hatch,
+ * #art-hatch-dense, #art-stipple) viennent de <ArtDefs />, rendu une fois par écran.
+ * Technique : taille-douce à l'encre ferro-gallique (bleu-noir) rehaussée d'aquarelle.
+ */
+
+.art {
+  color: var(--art-ink);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+}
+
+/* ── Papier ──────────────────────────────────────────────────────── */
+.art .paper {
+  fill: var(--art-paper);
+  stroke: none;
+}
+.art .paper-shade {
+  fill: var(--art-paper-shade);
+  stroke: none;
+}
+
+/* ── Traits (colorent le stroke ; fill="currentColor" pour une silhouette pleine) ── */
+.art .ink,
+.art .ink-soft,
+.art .ink-faint {
+  fill: none;
+  stroke: currentColor;
+}
+.art .ink {
+  color: var(--art-ink);
+}
+.art .ink:not([stroke-width]) {
+  stroke-width: var(--art-stroke-base);
+}
+.art .ink-soft {
+  color: var(--art-ink-soft);
+}
+.art .ink-soft:not([stroke-width]) {
+  stroke-width: var(--art-stroke-fine);
+}
+.art .ink-faint {
+  color: var(--art-ink-faint);
+}
+.art .ink-faint:not([stroke-width]) {
+  stroke-width: var(--art-stroke-hair);
+}
+.art .ink[fill='currentColor'],
+.art .ink-soft[fill='currentColor'],
+.art .ink-faint[fill='currentColor'] {
+  fill: currentColor;
+}
+
+/* ── Motifs de gravure ───────────────────────────────────────────── */
+.art .hatch {
+  fill: url(#art-hatch);
+  stroke: none;
+}
+.art .hatch-dense {
+  fill: url(#art-hatch-dense);
+  stroke: none;
+}
+.art .stipple {
+  fill: url(#art-stipple);
+  stroke: none;
+}
+/* Traits à l'intérieur d'un <pattern> */
+.art pattern .hatch,
+.art pattern .hatch-dense {
+  fill: none;
+  stroke: var(--art-ink-faint);
+  stroke-width: var(--art-hatch-width);
+}
+.art pattern .hatch-dense {
+  stroke: var(--art-ink-soft);
+  stroke-width: var(--art-hatch-dense-width);
+}
+.art pattern .stipple {
+  fill: var(--art-ink-soft);
+  stroke: none;
+}
+
+/* ── Eau ─────────────────────────────────────────────────────────── */
+.art .water {
+  fill: var(--art-water);
+  fill-opacity: var(--art-water-opacity);
+  stroke: none;
+  color: var(--art-water-ink);
+}
+.art .water-deep {
+  fill: var(--art-water-deep);
+  fill-opacity: var(--art-water-opacity);
+  stroke: none;
+  color: var(--art-water-ink);
+}
+.art .water[stroke='currentColor'],
+.art .water-deep[stroke='currentColor'] {
+  stroke: currentColor;
+  stroke-width: var(--art-stroke-fine);
+}
+
+/* ── Lavis (aquarelle transparente ; jamais plus de 2 couches) ───── */
+.art [class*='wash-'] {
+  /* niveau du lavis porté par `opacity` (seule propriété animée, composée par le GPU) */
+  opacity: var(--art-wash-opacity);
+  stroke: none;
+  color: var(--art-ink-soft);
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.art .wash-safran {
+  fill: var(--art-wash-safran);
+}
+.art .wash-carmin {
+  fill: var(--art-wash-carmin);
+}
+.art .wash-indigo {
+  fill: var(--art-wash-indigo);
+}
+.art .wash-sienne {
+  fill: var(--art-wash-sienne);
+}
+.art .wash-sauge {
+  fill: var(--art-wash-sauge);
+}
+.art .wash-lilas {
+  fill: var(--art-wash-lilas);
+}
+.art .wash-celadon {
+  fill: var(--art-wash-celadon);
+}
+.art .wash-ardoise {
+  fill: var(--art-wash-ardoise);
+}
+.art [class*='wash-'][stroke='currentColor'] {
+  stroke: currentColor;
+  stroke-width: var(--art-stroke-hair);
+}
+
+/* ── Portraits ───────────────────────────────────────────────────── */
+.art [class*='skin-'],
+.art [class*='hair-'] {
+  fill-opacity: var(--art-skin-opacity);
+  stroke: none;
+}
+.art .skin-1 {
+  fill: var(--art-skin-1);
+}
+.art .skin-2 {
+  fill: var(--art-skin-2);
+}
+.art .skin-3 {
+  fill: var(--art-skin-3);
+}
+.art .skin-4 {
+  fill: var(--art-skin-4);
+}
+.art .skin-5 {
+  fill: var(--art-skin-5);
+}
+.art .skin-6 {
+  fill: var(--art-skin-6);
+}
+.art .hair-blond {
+  fill: var(--art-hair-blond);
+}
+.art .hair-roux {
+  fill: var(--art-hair-roux);
+}
+.art .hair-chatain {
+  fill: var(--art-hair-chatain);
+}
+.art .hair-brun {
+  fill: var(--art-hair-brun);
+}
+.art .hair-noir {
+  fill: var(--art-hair-noir);
+}
+.art .hair-gris {
+  fill: var(--art-hair-gris);
+}
+.art .blush {
+  fill: var(--art-blush);
+  fill-opacity: var(--art-blush-opacity);
+  stroke: none;
+}
+.art .rehaut {
+  fill: var(--art-rehaut);
+  fill-opacity: var(--art-rehaut-opacity);
+  stroke: none;
+}
+.art .ombre {
+  fill: var(--art-ombre);
+  fill-opacity: var(--art-ombre-opacity);
+  stroke: none;
+}
+
+/* ── Photographies d'époque (monochrome viré) ────────────────────── */
+.art .photo-paper {
+  fill: var(--art-photo-paper);
+  stroke: none;
+}
+.art .photo-light {
+  fill: var(--art-photo-light);
+  stroke: none;
+}
+.art .photo-mid {
+  fill: var(--art-photo-mid);
+  stroke: none;
+}
+.art .photo-dark {
+  fill: var(--art-photo-dark);
+  stroke: none;
+}
+
+/* ── Toponymes et légendes (texte SVG réel, capitales par CSS) ───── */
+.art .label,
+.art .label-major,
+.art .label-region,
+.art .label-water,
+.art .label-note {
+  fill: var(--art-ink);
+  stroke: var(--art-paper);
+  stroke-width: var(--art-label-halo);
+  stroke-linejoin: round;
+  paint-order: stroke;
+  font-weight: var(--art-label-weight);
+}
+.art .label:not([font-size]) {
+  font-size: var(--art-label-size);
+}
+.art .label {
+  text-transform: uppercase;
+  letter-spacing: var(--art-tracking-label);
+}
+.art .label-major:not([font-size]) {
+  font-size: var(--art-label-major-size);
+}
+.art .label-major {
+  text-transform: uppercase;
+  letter-spacing: var(--art-tracking-major);
+  font-weight: var(--weight-semibold);
+}
+.art .label-region:not([font-size]) {
+  font-size: var(--art-label-region-size);
+}
+.art .label-region {
+  text-transform: uppercase;
+  letter-spacing: var(--art-tracking-region);
+  fill: var(--art-ink-soft);
+  font-weight: var(--weight-regular);
+}
+.art .label-water:not([font-size]) {
+  font-size: var(--art-label-water-size);
+}
+.art .label-water {
+  font-style: italic;
+  letter-spacing: 0.04em;
+  fill: var(--art-water-ink);
+}
+.art .label-note:not([font-size]) {
+  font-size: var(--art-label-note-size);
+}
+.art .label-note {
+  font-style: italic;
+  fill: var(--art-ink-soft);
+}
+
+/* ── États des lieux sur la carte (attributs posés par le jeu, pas par le SVG) ── */
+/* <g id="place-<id>" data-state="mentioned|open|exhausted"> */
+.art g[data-state='mentioned'] [class*='wash-'] {
+  opacity: 0;
+}
+.art g[data-state='mentioned'] .ink,
+.art g[data-state='mentioned'] .ink-soft {
+  stroke-dasharray: var(--art-mentioned-dash);
+  color: var(--art-ink-faint);
+}
+.art g[data-state='mentioned'] .label,
+.art g[data-state='mentioned'] .label-major {
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+.art g[id^='place-']:hover [class*='wash-'],
+.art g[id^='place-']:focus-visible [class*='wash-'],
+.art g[id^='place-']:focus-within [class*='wash-'],
+.art g[id^='place-'][aria-current='true'] [class*='wash-'],
+.art g[id^='place-'][data-active] [class*='wash-'] {
+  opacity: var(--art-wash-opacity-active);
+}
+.art g[id^='place-']:focus-visible {
+  outline: none; /* l'anneau est dessiné par <FocusRing> en surimpression HTML */
+}
+
+/* ── Couleurs forcées : le trait et le texte survivent, les lavis disparaissent ── */
+@media (forced-colors: active) {
+  .art .paper,
+  .art .paper-shade,
+  .art .photo-paper {
+    fill: Canvas;
+  }
+  .art .ink,
+  .art .ink-soft,
+  .art .ink-faint {
+    color: CanvasText;
+  }
+  .art [class*='wash-'],
+  .art [class*='skin-'],
+  .art [class*='hair-'],
+  .art .water,
+  .art .water-deep,
+  .art .blush,
+  .art .ombre,
+  .art .rehaut {
+    fill: none;
+  }
+  .art .label,
+  .art .label-major,
+  .art .label-region,
+  .art .label-water,
+  .art .label-note {
+    fill: CanvasText;
+    stroke: Canvas;
+  }
+  .art g[id^='place-']:focus-visible {
+    outline: 3px solid Highlight;
+  }
+}
+
+@page{size:141mm 211mm;margin:0}
+html,body{width:141mm;height:211mm}
+
+
+@font-face{font-family:'Fraunces';font-style:normal;font-weight:100 900;src:url('../fonts/fraunces-latin-full-normal.woff2') format('woff2')}
+@font-face{font-family:'Fraunces';font-style:italic;font-weight:100 900;src:url('../fonts/fraunces-latin-full-italic.woff2') format('woff2')}
+@font-face{font-family:'Literata';font-style:normal;font-weight:200 900;src:url('../fonts/literata-latin-opsz-normal.woff2') format('woff2')}
+@font-face{font-family:'Literata';font-style:italic;font-weight:200 900;src:url('../fonts/literata-latin-wght-italic.woff2') format('woff2')}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+:root{color-scheme:light}
+html{background:var(--paper)}
+body{position:relative;overflow:hidden;background:var(--paper);color:var(--ink);
+  font-family:'Literata',Georgia,serif;font-optical-sizing:auto;-webkit-font-smoothing:antialiased;
+  font-kerning:normal;font-feature-settings:'kern','liga','onum';hyphens:auto}
+.panel{position:absolute;overflow:hidden}
+.author{font-family:'Literata';font-weight:500;text-transform:uppercase;letter-spacing:.26em;
+  font-size:8.4pt;line-height:1;margin:0;text-align:center;font-variation-settings:'opsz' 12}
+.title{font-family:'Fraunces';font-weight:380;font-size:28pt;line-height:1.02;margin:0;text-align:center;
+  letter-spacing:-.006em;font-variation-settings:'opsz' 144,'SOFT' 40,'WONK' 0}
+.title .l{display:block}
+.genre{font-family:'Literata';font-style:italic;font-weight:400;font-size:10.5pt;margin:0;letter-spacing:.02em}
+.rule{width:12mm;height:0;border-top:.3mm solid var(--raw-vermilion-700)}
+.emblem{display:block;color:var(--ink)}
+.emblem-cm{font-family:'Fraunces';font-style:italic;font-weight:500;font-size:14px;fill:currentColor;
+  font-variation-settings:'opsz' 72,'SOFT' 100,'WONK' 1}
+.emblem-vellum{color:var(--raw-vellum-100)}
+.imprint{display:flex;flex-direction:column;align-items:center;gap:1.4mm}
+.imprint-row{flex-direction:row;gap:2.2mm}
+.imprint-name{font-family:'Literata';font-weight:500;font-size:6.6pt;letter-spacing:.3em;text-transform:uppercase;
+  font-variation-settings:'opsz' 9;padding-left:.3em}
+.imprint-vellum{color:var(--raw-vellum-100)}
+svg.art{display:block;width:100%;height:100%}
+.kA{margin-left:.035em}
+
+
+.fc{background:var(--paper)}
+.fc .frame{position:absolute;inset:8mm;border:.5mm solid var(--raw-vermilion-700)}
+.fc .frame::after{content:'';position:absolute;inset:1.1mm;border:.2mm solid var(--ink)}
+.fc .in{position:absolute;inset:8mm;display:flex;flex-direction:column;align-items:center;padding:16mm 10mm 11mm}
+.fc .title{margin-top:7mm;font-size:30pt}
+.fc .genre{margin-top:3mm;color:var(--raw-vermilion-700)}
+.fc .vig{flex:1 1 auto;width:84mm;display:flex;align-items:center;min-height:0}
+.fc .vig svg{height:auto;max-height:100%}
+.fc .imprint{margin-top:2mm}</style></head>
+<body><svg class="art defs" style="position:absolute;width:0;height:0" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern
+      id="art-hatch"
+      width="4"
+      height="4"
+      patternUnits="userSpaceOnUse"
+      patternTransform="rotate(-45)"
+    >
+      <line class="hatch" x1="0" y1="0" x2="0" y2="4" />
+    </pattern>
+    <pattern
+      id="art-hatch-dense"
+      width="3"
+      height="3"
+      patternUnits="userSpaceOnUse"
+      patternTransform="rotate(-45)"
+    >
+      <line class="hatch-dense" x1="0" y1="0" x2="0" y2="3" />
+      <line class="hatch-dense" x1="0" y1="0" x2="3" y2="0" />
+    </pattern>
+    <pattern id="art-stipple" width="5" height="5" patternUnits="userSpaceOnUse">
+      <circle class="stipple" cx="1.2" cy="1.2" r="0.55" />
+      <circle class="stipple" cx="3.7" cy="3.6" r="0.5" />
+    </pattern>
+  </defs>
+</svg>
+<section class="panel fc" style="left:0mm;top:0mm;width:140mm;height:210mm"><div class="frame"></div><div class="in"><div class="author">Nicolas Dessenius</div><h1 class="title"><span class="l">L’<span class="kA">A</span>rbre aux absents</span></h1><p class="genre">roman</p>
+<div class="vig"><svg preserveAspectRatio="xMidYMid meet" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="art" viewBox="0 0 420 300" role="img"><title>Rameau de tilleul et étiquette vierge</title><desc>Un rameau de tilleul d'automne auquel pend une étiquette de papier sans nom.</desc><path class="paper" d="M151.2 83.7C156.8 80.1 186.8 54.9 196.7 49.2C206.6 43.5 231.7 36.5 236.2 34.7C240.8 32.8 240.5 31.9 235.8 33.3C231 34.8 205.5 41.3 195.3 46.8C185.2 52.3 153.9 76 148.8 80.3C143.6 84.6 145.7 87.3 151.2 83.7Z"/><path class="wash-sienne" d="M151.2 83.7C156.8 80.1 186.8 54.9 196.7 49.2C206.6 43.5 231.7 36.5 236.2 34.7C240.8 32.8 240.5 31.9 235.8 33.3C231 34.8 205.5 41.3 195.3 46.8C185.2 52.3 153.9 76 148.8 80.3C143.6 84.6 145.7 87.3 151.2 83.7Z"/><path class="ink" d="M151.2 83.7C156.8 80.1 186.8 54.9 196.7 49.2C206.6 43.5 231.7 36.5 236.2 34.7C240.8 32.8 240.5 31.9 235.8 33.3C231 34.8 205.5 41.3 195.3 46.8C185.2 52.3 153.9 76 148.8 80.3C143.6 84.6 145.7 87.3 151.2 83.7Z" stroke-width="0.8"/><path class="paper" d="M248.4 91.4C252.8 97 282.4 127.6 288.8 136.8C295.2 146 301.5 166.4 303.4 170.3C305.2 174.1 306.1 173.8 304.6 169.7C303.2 165.6 297.4 144.7 291.2 135.2C285 125.8 256.6 93.7 251.6 88.6C246.6 83.5 244.1 85.8 248.4 91.4Z"/><path class="wash-sienne" d="M248.4 91.4C252.8 97 282.4 127.6 288.8 136.8C295.2 146 301.5 166.4 303.4 170.3C305.2 174.1 306.1 173.8 304.6 169.7C303.2 165.6 297.4 144.7 291.2 135.2C285 125.8 256.6 93.7 251.6 88.6C246.6 83.5 244.1 85.8 248.4 91.4Z"/><path class="ink" d="M248.4 91.4C252.8 97 282.4 127.6 288.8 136.8C295.2 146 301.5 166.4 303.4 170.3C305.2 174.1 306.1 173.8 304.6 169.7C303.2 165.6 297.4 144.7 291.2 135.2C285 125.8 256.6 93.7 251.6 88.6C246.6 83.5 244.1 85.8 248.4 91.4Z" stroke-width="0.8"/><path class="paper" d="M88.4 85.3C91.6 89.8 114.5 113.6 118.8 120.7C123.1 127.8 124.4 143.2 125.3 146.2C126.2 149.1 127.2 149 126.7 145.8C126.2 142.7 125.3 126.7 121.2 119.3C117.1 111.9 95.4 86.6 91.6 82.7C87.8 78.7 85.2 80.9 88.4 85.3Z"/><path class="wash-sienne" d="M88.4 85.3C91.6 89.8 114.5 113.6 118.8 120.7C123.1 127.8 124.4 143.2 125.3 146.2C126.2 149.1 127.2 149 126.7 145.8C126.2 142.7 125.3 126.7 121.2 119.3C117.1 111.9 95.4 86.6 91.6 82.7C87.8 78.7 85.2 80.9 88.4 85.3Z"/><path class="ink" d="M88.4 85.3C91.6 89.8 114.5 113.6 118.8 120.7C123.1 127.8 124.4 143.2 125.3 146.2C126.2 149.1 127.2 149 126.7 145.8C126.2 142.7 125.3 126.7 121.2 119.3C117.1 111.9 95.4 86.6 91.6 82.7C87.8 78.7 85.2 80.9 88.4 85.3Z" stroke-width="0.8"/><path class="paper" d="M5.1 75.4C14.8 78.2 68.2 87.5 89.8 88.4C111.3 89.3 166.5 81.9 189.8 83.2C213.1 84.6 268.2 94.7 289.5 100.1C310.7 105.4 362 125.8 371.7 128.9C381.3 132.1 381.8 130.9 372.3 127.1C362.9 123.2 311.8 101.8 290.5 95.9C269.3 90.1 213.6 78.7 190.2 76.8C166.9 74.9 111.6 81.1 90.2 79.6C68.8 78.2 16.8 65.1 6.9 64.6C-3 64.1 -4.6 72.6 5.1 75.4Z"/><path class="wash-sienne" d="M5.1 75.4C14.8 78.2 68.2 87.5 89.8 88.4C111.3 89.3 166.5 81.9 189.8 83.2C213.1 84.6 268.2 94.7 289.5 100.1C310.7 105.4 362 125.8 371.7 128.9C381.3 132.1 381.8 130.9 372.3 127.1C362.9 123.2 311.8 101.8 290.5 95.9C269.3 90.1 213.6 78.7 190.2 76.8C166.9 74.9 111.6 81.1 90.2 79.6C68.8 78.2 16.8 65.1 6.9 64.6C-3 64.1 -4.6 72.6 5.1 75.4Z"/><path class="wash-ardoise" d="M5.1 75.4C14.8 78.2 68.2 87.5 89.8 88.4C111.3 89.3 166.5 81.9 189.8 83.2C213.1 84.6 268.2 94.7 289.5 100.1C310.7 105.4 362 125.8 371.7 128.9C381.3 132.1 381.8 130.9 372.3 127.1C362.9 123.2 311.8 101.8 290.5 95.9C269.3 90.1 213.6 78.7 190.2 76.8C166.9 74.9 111.6 81.1 90.2 79.6C68.8 78.2 16.8 65.1 6.9 64.6C-3 64.1 -4.6 72.6 5.1 75.4Z"/><path class="hatch" d="M6 70C15.7 72.3 68.5 82.8 90 84C111.5 85.2 166.7 78.4 190 80C213.3 81.6 268.8 92.4 290 98C311.2 103.6 362.4 124.6 372 128C381.6 131.4 381.8 130.8 372.3 127.1C362.8 123.3 311.8 101.8 290.5 95.9C269.3 90.1 213.6 78.7 190.2 76.8C166.9 74.9 111.6 81.1 90.2 79.6C68.8 78.2 16.7 65.7 6.9 64.6C-2.9 63.5 -3.7 67.7 6 70Z"/><path class="ink" d="M5.1 75.4C14.8 78.2 68.2 87.5 89.8 88.4C111.3 89.3 166.5 81.9 189.8 83.2C213.1 84.6 268.2 94.7 289.5 100.1C310.7 105.4 362 125.8 371.7 128.9C381.3 132.1 381.8 130.9 372.3 127.1C362.9 123.2 311.8 101.8 290.5 95.9C269.3 90.1 213.6 78.7 190.2 76.8C166.9 74.9 111.6 81.1 90.2 79.6C68.8 78.2 16.8 65.1 6.9 64.6C-3 64.1 -4.6 72.6 5.1 75.4Z" stroke-width="1.1"/><path class="ink" d="M130 76a2 3.4 0 1 0 4 0a2 3.4 0 1 0 -4 0Z" fill="currentColor" stroke-width="0.5"/><path class="ink" d="M212 80a2 3.4 0 1 0 4 0a2 3.4 0 1 0 -4 0Z" fill="currentColor" stroke-width="0.5"/><path class="ink" d="M328 106a2 3.4 0 1 0 4 0a2 3.4 0 1 0 -4 0Z" fill="currentColor" stroke-width="0.5"/><path class="paper" d="M239.7 36.7C239.7 36.7 240.4 25 243.4 22.3C246.4 19.6 255.4 17.9 259.9 18.4C264.4 18.9 270.3 22.3 273.2 25.8C276.2 29.3 278.8 37 279.4 41.7C279.9 46.4 277.2 53.2 277.2 57.1C277.2 61.1 279.5 68 279.5 68C279.5 68 272.1 66.8 268.3 67.8C264.5 68.8 258.8 74 254.2 74.6C249.7 75.2 242 73.9 238 71.9C234 69.8 229.5 65 227.7 61C226 57 224.8 49 226.6 45.4C228.4 41.7 239.7 36.7 239.7 36.7Z"/><path class="wash-safran" d="M239.7 36.7C239.7 36.7 240.4 25 243.4 22.3C246.4 19.6 255.4 17.9 259.9 18.4C264.4 18.9 270.3 22.3 273.2 25.8C276.2 29.3 278.8 37 279.4 41.7C279.9 46.4 277.2 53.2 277.2 57.1C277.2 61.1 279.5 68 279.5 68C279.5 68 272.1 66.8 268.3 67.8C264.5 68.8 258.8 74 254.2 74.6C249.7 75.2 242 73.9 238 71.9C234 69.8 229.5 65 227.7 61C226 57 224.8 49 226.6 45.4C228.4 41.7 239.7 36.7 239.7 36.7Z"/><path class="ink-soft" d="M239.7 36.7C239.7 36.7 240.4 25 243.4 22.3C246.4 19.6 255.4 17.9 259.9 18.4C264.4 18.9 270.3 22.3 273.2 25.8C276.2 29.3 278.8 37 279.4 41.7C279.9 46.4 277.2 53.2 277.2 57.1C277.2 61.1 279.5 68 279.5 68C279.5 68 272.1 66.8 268.3 67.8C264.5 68.8 258.8 74 254.2 74.6C249.7 75.2 242 73.9 238 71.9C234 69.8 229.5 65 227.7 61C226 57 224.8 49 226.6 45.4C228.4 41.7 239.7 36.7 239.7 36.7Z" stroke-width="0.8"/><path class="ink-faint" d="M236 34L277.7 64.3M248.5 43.1l17.9 -7.4M248.5 43.1l-1.6 19.3M258.9 50.7l17.9 -7.4M258.9 50.7l-1.6 19.3M268.5 57.6l17.9 -7.4M268.5 57.6l-1.6 19.3" stroke-width="0.5"/><path class="ink-soft" d="M236 34l-11.2 -8.1" stroke-width="0.7"/><path class="paper" d="M303.3 174.1C303.3 174.1 313.1 169.8 316.6 171.2C320.1 172.5 325.2 179.1 326.6 183C328 186.8 327.7 193.1 326.1 196.9C324.4 200.7 319.3 206 315.7 208.5C312.1 210.9 305.4 211.4 302.2 213.1C299 214.8 294.4 219.5 294.4 219.5C294.4 219.5 292.3 213 289.9 210.3C287.5 207.6 280.9 205.1 278.5 201.7C276.1 198.2 274 191.4 274 187.3C274 183.2 276.1 177.5 278.6 174.5C281.1 171.4 287.2 167.1 290.9 167.1C294.6 167 303.3 174.1 303.3 174.1Z"/><path class="wash-sienne" d="M303.3 174.1C303.3 174.1 313.1 169.8 316.6 171.2C320.1 172.5 325.2 179.1 326.6 183C328 186.8 327.7 193.1 326.1 196.9C324.4 200.7 319.3 206 315.7 208.5C312.1 210.9 305.4 211.4 302.2 213.1C299 214.8 294.4 219.5 294.4 219.5C294.4 219.5 292.3 213 289.9 210.3C287.5 207.6 280.9 205.1 278.5 201.7C276.1 198.2 274 191.4 274 187.3C274 183.2 276.1 177.5 278.6 174.5C281.1 171.4 287.2 167.1 290.9 167.1C294.6 167 303.3 174.1 303.3 174.1Z"/><path class="ink-soft" d="M303.3 174.1C303.3 174.1 313.1 169.8 316.6 171.2C320.1 172.5 325.2 179.1 326.6 183C328 186.8 327.7 193.1 326.1 196.9C324.4 200.7 319.3 206 315.7 208.5C312.1 210.9 305.4 211.4 302.2 213.1C299 214.8 294.4 219.5 294.4 219.5C294.4 219.5 292.3 213 289.9 210.3C287.5 207.6 280.9 205.1 278.5 201.7C276.1 198.2 274 191.4 274 187.3C274 183.2 276.1 177.5 278.6 174.5C281.1 171.4 287.2 167.1 290.9 167.1C294.6 167 303.3 174.1 303.3 174.1Z" stroke-width="0.8"/><path class="ink-faint" d="M304 170L296.6 216.5M301.8 183.9l13.5 11.5M301.8 183.9l-16.4 6.7M299.9 195.5l13.5 11.5M299.9 195.5l-16.4 6.7M298.2 206.2l13.5 11.5M298.2 206.2l-16.4 6.7" stroke-width="0.5"/><path class="ink-soft" d="M304 170l2 -12.4" stroke-width="0.7"/><path class="paper" d="M374.9 131.8C374.9 131.8 379.1 120.4 383 118.6C386.8 116.8 396.3 117.9 400.6 119.8C404.9 121.7 409.8 127 411.6 131.3C413.5 135.7 413.7 144.1 412.9 149C412 153.9 407.1 159.8 405.9 163.8C404.7 167.7 404.9 175.3 404.9 175.3C404.9 175.3 397.9 171.8 393.8 171.6C389.7 171.4 382.4 174.9 377.7 174.1C373 173.3 365.7 169.6 362.3 166.4C359 163.1 355.9 156.8 355.4 152.4C355 147.9 356.2 139.5 359.1 136.4C362 133.3 374.9 131.8 374.9 131.8Z"/><path class="wash-safran" d="M374.9 131.8C374.9 131.8 379.1 120.4 383 118.6C386.8 116.8 396.3 117.9 400.6 119.8C404.9 121.7 409.8 127 411.6 131.3C413.5 135.7 413.7 144.1 412.9 149C412 153.9 407.1 159.8 405.9 163.8C404.7 167.7 404.9 175.3 404.9 175.3C404.9 175.3 397.9 171.8 393.8 171.6C389.7 171.4 382.4 174.9 377.7 174.1C373 173.3 365.7 169.6 362.3 166.4C359 163.1 355.9 156.8 355.4 152.4C355 147.9 356.2 139.5 359.1 136.4C362 133.3 374.9 131.8 374.9 131.8Z"/><path class="ink-soft" d="M374.9 131.8C374.9 131.8 379.1 120.4 383 118.6C386.8 116.8 396.3 117.9 400.6 119.8C404.9 121.7 409.8 127 411.6 131.3C413.5 135.7 413.7 144.1 412.9 149C412 153.9 407.1 159.8 405.9 163.8C404.7 167.7 404.9 175.3 404.9 175.3C404.9 175.3 397.9 171.8 393.8 171.6C389.7 171.4 382.4 174.9 377.7 174.1C373 173.3 365.7 169.6 362.3 166.4C359 163.1 355.9 156.8 355.4 152.4C355 147.9 356.2 139.5 359.1 136.4C362 133.3 374.9 131.8 374.9 131.8Z" stroke-width="0.8"/><path class="ink-faint" d="M372 128L404.2 171.1M381.7 140.9l20.2 -1.9M381.7 140.9l-7.5 18.8M389.7 151.7l20.2 -1.9M389.7 151.7l-7.5 18.8M397.1 161.6l20.2 -1.9M397.1 161.6l-7.5 18.8" stroke-width="0.5"/><path class="ink-soft" d="M372 128l-8.6 -11.5" stroke-width="0.7"/><path class="paper" d="M126.6 150C126.6 150 134.2 143.3 137.8 143.5C141.3 143.7 147.8 148.3 150.2 151.4C152.6 154.6 154.1 160.3 153.7 164.3C153.2 168.2 150.1 174.5 147.5 177.7C144.9 180.9 139 183.3 136.5 185.7C134.1 188.1 131.2 193.7 131.2 193.7C131.2 193.7 127.4 188.4 124.5 186.6C121.6 184.8 114.9 184.4 111.7 182C108.6 179.5 104.7 173.9 103.6 170.2C102.5 166.5 102.7 160.7 104.2 157.2C105.6 153.7 109.9 148.1 113.2 147C116.6 145.9 126.6 150 126.6 150Z"/><path class="wash-safran" d="M126.6 150C126.6 150 134.2 143.3 137.8 143.5C141.3 143.7 147.8 148.3 150.2 151.4C152.6 154.6 154.1 160.3 153.7 164.3C153.2 168.2 150.1 174.5 147.5 177.7C144.9 180.9 139 183.3 136.5 185.7C134.1 188.1 131.2 193.7 131.2 193.7C131.2 193.7 127.4 188.4 124.5 186.6C121.6 184.8 114.9 184.4 111.7 182C108.6 179.5 104.7 173.9 103.6 170.2C102.5 166.5 102.7 160.7 104.2 157.2C105.6 153.7 109.9 148.1 113.2 147C116.6 145.9 126.6 150 126.6 150Z"/><path class="ink-soft" d="M126.6 150C126.6 150 134.2 143.3 137.8 143.5C141.3 143.7 147.8 148.3 150.2 151.4C152.6 154.6 154.1 160.3 153.7 164.3C153.2 168.2 150.1 174.5 147.5 177.7C144.9 180.9 139 183.3 136.5 185.7C134.1 188.1 131.2 193.7 131.2 193.7C131.2 193.7 127.4 188.4 124.5 186.6C121.6 184.8 114.9 184.4 111.7 182C108.6 179.5 104.7 173.9 103.6 170.2C102.5 166.5 102.7 160.7 104.2 157.2C105.6 153.7 109.9 148.1 113.2 147C116.6 145.9 126.6 150 126.6 150Z" stroke-width="0.8"/><path class="ink-faint" d="M126 146L132.3 190.4M127.9 159.3l15.5 6.7M127.9 159.3l-13 10.7M129.5 170.4l15.5 6.7M129.5 170.4l-13 10.7M130.9 180.6l15.5 6.7M130.9 180.6l-13 10.7" stroke-width="0.5"/><path class="ink-soft" d="M126 146l-1.7 -11.9" stroke-width="0.7"/><path class="paper" d="M57.4 71.4C57.4 71.4 49.8 71.9 47.8 70.2C45.8 68.5 43.9 62.8 43.9 59.9C43.9 56.9 45.6 52.8 47.6 50.6C49.6 48.4 54.3 46.1 57.3 45.3C60.3 44.5 65 45.8 67.5 45.4C70.1 45.1 74.3 43 74.3 43C74.3 43 74.2 47.9 75.1 50.3C76.1 52.6 79.9 55.9 80.7 58.8C81.5 61.7 81.3 66.8 80.3 69.5C79.3 72.3 76.6 75.6 74.1 77.1C71.7 78.5 66.6 80 64.1 79.1C61.6 78.3 57.4 71.4 57.4 71.4Z"/><path class="wash-sienne" d="M57.4 71.4C57.4 71.4 49.8 71.9 47.8 70.2C45.8 68.5 43.9 62.8 43.9 59.9C43.9 56.9 45.6 52.8 47.6 50.6C49.6 48.4 54.3 46.1 57.3 45.3C60.3 44.5 65 45.8 67.5 45.4C70.1 45.1 74.3 43 74.3 43C74.3 43 74.2 47.9 75.1 50.3C76.1 52.6 79.9 55.9 80.7 58.8C81.5 61.7 81.3 66.8 80.3 69.5C79.3 72.3 76.6 75.6 74.1 77.1C71.7 78.5 66.6 80 64.1 79.1C61.6 78.3 57.4 71.4 57.4 71.4Z"/><path class="ink-soft" d="M57.4 71.4C57.4 71.4 49.8 71.9 47.8 70.2C45.8 68.5 43.9 62.8 43.9 59.9C43.9 56.9 45.6 52.8 47.6 50.6C49.6 48.4 54.3 46.1 57.3 45.3C60.3 44.5 65 45.8 67.5 45.4C70.1 45.1 74.3 43 74.3 43C74.3 43 74.2 47.9 75.1 50.3C76.1 52.6 79.9 55.9 80.7 58.8C81.5 61.7 81.3 66.8 80.3 69.5C79.3 72.3 76.6 75.6 74.1 77.1C71.7 78.5 66.6 80 64.1 79.1C61.6 78.3 57.4 71.4 57.4 71.4Z" stroke-width="0.8"/><path class="ink-faint" d="M56 74L72.1 44.5M60.8 65.2l-6.3 -11M60.8 65.2l12.6 -0.6M64.9 57.8l-6.3 -11M64.9 57.8l12.6 -0.6M68.6 51l-6.3 -11M68.6 51l12.6 -0.6" stroke-width="0.5"/><path class="ink-soft" d="M56 74l-4.3 7.9" stroke-width="0.7"/><path class="ink-soft" d="M214 84Q218 124 212 154" stroke-width="0.8"/><path class="ink-soft" d="M210 83q4 6 8 0" stroke-width="0.8"/><path class="paper" d="M191.6 139.5L235.3 144.7L245.8 158.1L232.3 269.3L164.8 261.1L178.2 149.9Z"/><path class="rehaut" d="M191.6 139.5L235.3 144.7L245.8 158.1L232.3 269.3L164.8 261.1L178.2 149.9Z"/><path class="hatch" d="M236.4 152.1L245.8 158.1L232.3 269.3L222.4 268.1Z"/><path class="wash-sienne" d="M199.5 158a12 12 0 1 0 24 0a12 12 0 1 0 -24 0Z"/><path class="ink-soft" d="M199.5 158a12 12 0 1 0 24 0a12 12 0 1 0 -24 0Z" stroke-width="0.6"/><path class="ink" d="M207.1 158a4.4 4.4 0 1 0 8.8 0a4.4 4.4 0 1 0 -8.8 0Z" fill="currentColor" stroke-width="0.5"/><path class="ink-faint" d="M182.9 194.8L226.6 200.1M180.5 214.7L224.2 219.9M178.1 234.5L221.8 239.8" stroke-width="0.5" stroke-dasharray="1 2"/><path class="ink" d="M191.6 139.5L235.3 144.7L245.8 158.1L232.3 269.3L164.8 261.1L178.2 149.9Z" stroke-width="0.9"/></svg></div><div class="imprint imprint-ink"><svg class="emblem emblem-ink" viewBox="0 0 40 40" width="8.2mm" height="8.2mm" aria-hidden="true">
+  <path d="M20 1.5 38.5 20 20 38.5 1.5 20Z" fill="none" stroke="currentColor" stroke-width="1.1"/>
+  <path d="M20 4.6 35.4 20 20 35.4 4.6 20Z" fill="none" stroke="currentColor" stroke-width="0.45"/>
+  <text x="20" y="24.2" text-anchor="middle" class="emblem-cm">cm</text>
+  <path d="M15.2 28.2h9.6" stroke="currentColor" stroke-width="0.45"/>
+</svg><span class="imprint-name">CM Publishing</span></div></div></section>
+</body></html>

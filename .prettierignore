@@ -20,5 +20,6 @@ content/**/*.md
 # Assets
 static/
 art/
+assets/
 **/*.svg
 apps/game/dist-demo/
