@@ -65,7 +65,7 @@ describe('cyrb53 et hashAnswer', () => {
       expect(variants.family.map((v) => hashAnswer(SALT, slot, 'family', v))).toEqual(
         answer.family,
       );
-      expect(hashAnswer(SALT, slot, 'portrait', sol.portrait!)).toBe(answer.portrait);
+      expect([hashAnswer(SALT, slot, 'portrait', sol.portrait!)]).toEqual(answer.portrait);
       expect(hashAnswer(SALT, slot, 'occupation', sol.occupation!)).toBe(answer.occupation);
     }
   });

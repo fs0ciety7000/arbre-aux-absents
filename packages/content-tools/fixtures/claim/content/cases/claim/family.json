@@ -1,0 +1,142 @@
+{
+  "persons": [
+    {
+      "id": "ancel-morvan",
+      "given": ["Ancel"],
+      "family": ["Morvan"],
+      "occupation": "horloger",
+      "portrait": "portrait-a",
+      "born": "1860",
+      "unions": ["ida-brask"],
+      "bibleNotes": "SECRET-BIBLE Ancel a caché la montre dans la malle."
+    },
+    {
+      "id": "ida-brask",
+      "given": ["Ida"],
+      "family": ["Brask", "Morvan"],
+      "occupation": "brodeuse",
+      "portrait": "portrait-b",
+      "born": "1864",
+      "unions": ["ancel-morvan"]
+    },
+    {
+      "id": "tomas-morvan",
+      "given": ["Tomas", "Thomas"],
+      "family": ["Morvan"],
+      "occupation": "passeur",
+      "portrait": "portrait-c",
+      "born": "1888",
+      "parents": ["ancel-morvan", "ida-brask"],
+      "unions": ["lena-solvig"],
+      "altPortraits": ["portrait-h"]
+    },
+    {
+      "id": "lena-solvig",
+      "given": ["Léna"],
+      "family": ["Solvig"],
+      "occupation": "institutrice",
+      "portrait": "portrait-d",
+      "born": "1890",
+      "unions": ["tomas-morvan"]
+    },
+    {
+      "id": "maren-morvan",
+      "given": ["Maren"],
+      "family": ["Morvan"],
+      "occupation": "relieuse",
+      "portrait": "portrait-e",
+      "born": "1912",
+      "parents": ["tomas-morvan", "lena-solvig"]
+    },
+    {
+      "id": "oskar-morvan",
+      "given": ["Oskar"],
+      "family": ["Morvan"],
+      "occupation": "meunier",
+      "portrait": "portrait-f",
+      "born": "1915",
+      "parents": ["tomas-morvan", "lena-solvig"]
+    },
+    {
+      "id": "edda-brask",
+      "given": ["Edda"],
+      "family": ["Brask"],
+      "occupation": "vannier",
+      "portrait": "portrait-g",
+      "born": "1866",
+      "bibleNotes": "Leurre : sœur d'Ida."
+    }
+  ],
+  "occupations": [
+    {
+      "id": "horloger",
+      "label": "Horloger"
+    },
+    {
+      "id": "brodeuse",
+      "label": "Brodeuse"
+    },
+    {
+      "id": "passeur",
+      "label": "Passeur du bac"
+    },
+    {
+      "id": "institutrice",
+      "label": "Institutrice"
+    },
+    {
+      "id": "relieuse",
+      "label": "Relieuse"
+    },
+    {
+      "id": "meunier",
+      "label": "Meunier"
+    },
+    {
+      "id": "vannier",
+      "label": "Vannier"
+    }
+  ],
+  "portraits": [
+    {
+      "id": "portrait-a",
+      "file": "portraits/portrait-a.svg",
+      "alt": "Homme moustachu au col cassé"
+    },
+    {
+      "id": "portrait-b",
+      "file": "portraits/portrait-b.svg",
+      "alt": "Femme aux cheveux tressés"
+    },
+    {
+      "id": "portrait-c",
+      "file": "portraits/portrait-c.svg",
+      "alt": "Jeune homme en casquette"
+    },
+    {
+      "id": "portrait-d",
+      "file": "portraits/portrait-d.svg",
+      "alt": "Femme à lunettes rondes"
+    },
+    {
+      "id": "portrait-e",
+      "file": "portraits/portrait-e.svg",
+      "alt": "Jeune femme au chignon"
+    },
+    {
+      "id": "portrait-f",
+      "file": "portraits/portrait-f.svg",
+      "alt": "Garçon au visage rond"
+    },
+    {
+      "id": "portrait-g",
+      "file": "portraits/portrait-g.svg",
+      "alt": "Femme au fichu"
+    },
+    {
+      "id": "portrait-h",
+      "file": "portraits/portrait-h.svg",
+      "alt": "Homme mûr en casquette"
+    }
+  ]
+}

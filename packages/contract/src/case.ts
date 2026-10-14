@@ -13,6 +13,8 @@ export interface CaseMeta {
   epilogue?: DocumentId;
   timedTargetsMs?: number[];
   credits?: string[];
+  /** Rang d'affichage (menu, succès) ; tri (order ?? ∞, id). */
+  order?: number;
 }
 
 export const CaseMetaSchema = z.strictObject({
@@ -24,4 +26,5 @@ export const CaseMetaSchema = z.strictObject({
   epilogue: IdSchema.optional(),
   timedTargetsMs: z.array(z.number().int().positive()).min(1).optional(),
   credits: z.array(TextSchema).optional(),
+  order: z.number().int().positive().optional(),
 });

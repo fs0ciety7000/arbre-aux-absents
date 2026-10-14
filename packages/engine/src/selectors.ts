@@ -12,6 +12,7 @@ import type {
   PortraitId,
   ReportQuestion,
   SaveState,
+  SlotGuess,
   SlotId,
 } from '@arbre/contract';
 import { holds, own } from './conditions';
@@ -86,14 +87,56 @@ export function exhaustedKeywords(s: SaveState, c: CompiledCase): KeywordId[] {
   );
 }
 
-function prefilledGuesses(c: CompiledCase) {
-  return Object.values(c.slots).flatMap((x) => (x.prefilledGuess ? [x.prefilledGuess] : []));
+/**
+ * Valeurs posées par le contenu : cases pré-remplies et cases revendiquées. Elles sont
+ * disponibles d'emblée et le restent même retirées de leur case (on peut reposer une valeur
+ * déclarée ailleurs).
+ */
+function seededGuesses(c: CompiledCase): SlotGuess[] {
+  return Object.values(c.slots).flatMap((x) => [
+    ...(x.prefilledGuess ? [x.prefilledGuess] : []),
+    ...(x.claimedGuess ? [x.claimedGuess] : []),
+  ]);
+}
+
+export type SlotStatus = 'locked' | 'claimed' | 'filled' | 'empty';
+
+const GUESS_FIELDS = ['given', 'family', 'portrait', 'occupation'] as const;
+
+/**
+ * Champs d'une case revendiquée encore égaux à la déclaration (AFFAIRE-2 §1.2 : l'état
+ * « déclaré » se déduit, il n'est pas mémorisé). Vide si la case n'est pas revendiquée,
+ * est verrouillée, ou si la déclaration ne porte pas sur ce champ (valeur vide).
+ */
+export function claimedFields(slot: SlotId, s: SaveState, c: CompiledCase): (keyof SlotGuess)[] {
+  const claim = own(c.slots, slot)?.claimedGuess;
+  if (!claim || own(s.locked, slot) !== undefined) return [];
+  const g = own(s.tree, slot);
+  if (!g) return [];
+  return GUESS_FIELDS.filter((f) => {
+    const v = claim[f];
+    return v !== null && v !== '' && g[f] === v;
+  });
+}
+
+/**
+ * État d'affichage d'une case : `locked` (établie), `claimed` (revendiquée, non verrouillée et
+ * identique champ à champ à la déclaration), `filled` (au moins un champ rempli), `empty`.
+ */
+export function slotStatus(slot: SlotId, s: SaveState, c: CompiledCase): SlotStatus {
+  if (own(s.locked, slot) !== undefined) return 'locked';
+  const g = own(s.tree, slot);
+  const claim = own(c.slots, slot)?.claimedGuess;
+  if (g && claim && GUESS_FIELDS.every((f) => g[f] === claim[f])) return 'claimed';
+  if (g && (g.given !== '' || g.family !== '' || g.portrait !== null || g.occupation !== null))
+    return 'filled';
+  return 'empty';
 }
 
 /** Galerie des visages : portraits révélés par les documents lus (ordre de découverte). */
 export function availablePortraits(s: SaveState, c: CompiledCase): PortraitId[] {
   const out = new Set<PortraitId>();
-  for (const g of prefilledGuesses(c))
+  for (const g of seededGuesses(c))
     if (g.portrait && own(c.portraits, g.portrait)) out.add(g.portrait);
   for (const docId of readDocuments(s, c)) {
     for (const p of c.documents[docId]?.reveals?.portraits ?? [])
@@ -105,7 +148,7 @@ export function availablePortraits(s: SaveState, c: CompiledCase): PortraitId[] 
 /** Métiers découverts : révélés par les documents lus, ou débloqués par condition. */
 export function availableOccupations(s: SaveState, c: CompiledCase): OccupationId[] {
   const out = new Set<OccupationId>();
-  for (const g of prefilledGuesses(c)) {
+  for (const g of seededGuesses(c)) {
     if (g.occupation && own(c.occupations, g.occupation)) out.add(g.occupation);
   }
   for (const docId of readDocuments(s, c)) {
@@ -160,12 +203,12 @@ function collectNames(
 
 /**
  * Candidats prénom et nom : ceux de `candidates` lus (mots entiers, accents et casse
- * ignorés) dans au moins un document lu, plus ceux des cases pré-remplies. Triés par
+ * ignorés) dans au moins un document lu, plus ceux des cases pré-remplies et revendiquées. Triés par
  * ordre de découverte.
  */
 export function availableNames(s: SaveState, c: CompiledCase): AvailableNames {
   const docs = readDocuments(s, c);
-  const pre = prefilledGuesses(c);
+  const pre = seededGuesses(c);
   return {
     given: collectNames(
       c.candidates.given,

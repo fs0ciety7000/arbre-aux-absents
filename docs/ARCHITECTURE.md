@@ -92,6 +92,7 @@ export type OutcomeCondition = Condition | { not: OutcomeCondition }
 export interface CaseMeta {
   id: CaseId; title: string; subtitle?: string; version: string; // semver
   intro: DocumentId; epilogue?: DocumentId; timedTargetsMs?: number[]; credits?: string[];
+  order?: number; // rang d'affichage (menu, succès) ; tri (order ?? ∞, id)
 }
 // family.json (scenariste : vérité de la bible)
 export interface Person {
@@ -100,6 +101,7 @@ export interface Person {
   family: string[];  // nom de naissance, d'usage, graphies
   nicknames?: string[];
   occupation: OccupationId; portrait: PortraitId;
+  altPortraits?: PortraitId[]; // autres âges du même visage, acceptés dans sa case
   born?: PartialDate; died?: PartialDate;
   parents?: [PersonId | null, PersonId | null]; unions?: PersonId[];
   bibleNotes?: string; // retiré au build
@@ -109,9 +111,13 @@ export interface Portrait { id: PortraitId; file: string /* portraits/<id>.svg *
 export interface Family { persons: Person[]; occupations: Occupation[]; portraits: Portrait[] }
 
 // tree.json (level-designer)
+// Identité déclarée d'une case revendiquée : fausse sur au moins un champ, jamais verrouillée.
+export interface SlotClaim { given?: string; family?: string; portrait?: PortraitId; occupation?: OccupationId }
 export interface TreeSlot {
   id: SlotId; person: PersonId; generation: number; column: number;
-  prefilled?: boolean;      // connue d'emblée (tutoriel)
+  prefilled?: boolean;      // connue d'emblée et établie (tutoriel), exclue des groupes
+  claim?: SlotClaim;        // case revendiquée : pré-remplie, contestable, dans un groupe ;
+                            // exclusive de prefilled et de revealedBy
   revealedBy?: Condition;   // branche cachée
 }
 export interface ValidationGroup { id: GroupId; label: string; slots: SlotId[]; threshold: number /* ≥ 3 */ }
@@ -176,7 +182,7 @@ export interface WorldMap { aspect: number; layers: ('base' | 'relief' | 'water'
 ### 3.3 Contenu compilé (seule donnée lue par le jeu)
 
 ```ts
-export interface SlotAnswer { given: string[]; family: string[]; portrait: string; occupation: string } // hachages cyrb53(salt|slot|champ|normalize(v))
+export interface SlotAnswer { given: string[]; family: string[]; portrait: string[] /* canonique puis altPortraits */; occupation: string } // hachages cyrb53(salt|slot|champ|normalize(v))
 export interface CompiledDocument extends DocumentFrontmatter { id: DocumentId; body: Block[]; keywords: KeywordId[] }
 export interface CompiledCase {
   format: 1; id: CaseId; edition: 'full' | 'demo'; contentHash: string /* 8 hex */; salt: string;
@@ -184,7 +190,10 @@ export interface CompiledCase {
   documents: Record<DocumentId, CompiledDocument>;
   searchIndex: Record<string /* terme normalisé */, KeywordId>;
   keywords: Record<KeywordId, Omit<Keyword, 'terms'>>;
-  slots: Record<SlotId, Omit<TreeSlot, 'person'> & { prefilledGuess?: SlotGuess; answer: SlotAnswer; parents: SlotId[]; unions: SlotId[] }>;
+  slots: Record<SlotId, Omit<TreeSlot, 'person' | 'claim'> & {
+    prefilledGuess?: SlotGuess; // avec prefilled : posée et verrouillée par newGame
+    claimedGuess?: SlotGuess;   // avec claim : posée par newGame, jamais verrouillée ni reposée
+    answer: SlotAnswer; parents: SlotId[]; unions: SlotId[] }>;
   groups: ValidationGroup[]; portraits: Record<PortraitId, Portrait & { svg: string }>; occupations: Record<OccupationId, Occupation>;
   places: Record<PlaceId, Place & Omit<CasePlace, 'place'>>;
   progression: Pick<Progression, 'start' | 'unlocks' | 'occupationsUnlock' | 'secrets'>;
@@ -281,8 +290,20 @@ parseSave(raw, c): { ok: true; state; dropped: string[] } | { ok: false; error }
 summarize(s, c): SaveSlotSummary
 // sélecteurs
 knownKeywords, availablePortraits, availableOccupations, availableNames, visiblePlaces, visibleSlots, progress, endingFor,
-reportQuestions /* questions posées + options disponibles + réponse */, endingSections /* sections visibles d'une fin */
+reportQuestions /* questions posées + options disponibles + réponse */, endingSections /* sections visibles d'une fin */,
+slotStatus(slot, s, c): 'locked' | 'claimed' | 'filled' | 'empty',
+claimedFields(slot, s, c): (keyof SlotGuess)[]            // champs encore égaux à la déclaration
 ```
+
+**Case revendiquée** (détail : `docs/game/AFFAIRE-2.md` §1) : `newGame` pose
+`tree[id] = claimedGuess` **sans verrou** ; la case se joue ensuite comme une autre (`setSlot`,
+`clearSlot` permis) et entre dans son groupe comme toute case complète. Ses valeurs (nom, visage,
+métier) sont disponibles d'emblée et le restent après retrait, comme celles des cases pré-remplies.
+Aucun drapeau n'est sauvegardé : `slotStatus` rend `claimed` quand la case, non verrouillée, est
+identique champ à champ à `claimedGuess` (`filled` si au moins un champ est rempli, `empty` sinon,
+`locked` si établie) ; `claimedFields` liste les champs encore déclarés (guillemets à l'écran).
+`parseSave` ne repose jamais une déclaration effacée (contrairement aux cases pré-remplies).
+Un visage est juste s'il figure dans `answer.portrait` (canonique puis `altPortraits`).
 
 **Validation par groupes** (détail : `docs/game/GAME_DESIGN.md`) : pour chaque groupe, on compte les
 cases non verrouillées dont les quatre champs sont justes ; si ce nombre atteint
@@ -322,8 +343,14 @@ Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, 
 ### 3.7 Règles de `npm run content:check`
 
 1. **Schémas** zod stricts, clés inconnues refusées, id = nom de fichier, kebab-case, unicité.
-2. **Références** toutes résolues (documents, mots-clés, lieux, portraits, métiers, cases, groupes, secrets, fins, assets).
-3. **Arbre** : personnes uniques par case ; groupes = partition des cases non pré-remplies ; seuil ≥ 3 ;
+   **Entre affaires** : ids de succès, ids et fichiers de portraits, `order` uniques sur tout le contenu.
+2. **Références** toutes résolues (documents, mots-clés, lieux, portraits dont `altPortraits`, métiers,
+   cases, groupes, secrets, fins, assets) ; `claim.portrait` et `claim.occupation` connus,
+   `claim.given` / `claim.family` variantes (normalisées) d'au moins une `Person`.
+3. **Arbre** : personnes uniques par case ; groupes = partition des cases non pré-remplies (cases
+   revendiquées comprises, `prefilled` exclues) ; seuil ≥ 3 ; `claim` exclusif de `prefilled` et de
+   `revealedBy` ; une déclaration est **fausse sur au moins un champ** (juste sur ses 4 champs, autre
+   âge et graphie comprises = erreur) ;
    liens familiaux cohérents (pas de cycle, ≤ 2 parents, parent né avant l'enfant).
 4. **Conditions** : `not` interdit hors fins et succès ; pas d'auto-dépendance.
 5. **Mots-clés** : termes uniques après normalisation ; au moins un résultat ; chaque mot-clé non
@@ -331,7 +358,11 @@ Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, 
 6. **Solvabilité** (solveur) : tout document non `optional`, toute case, tout secret et toute fin
    atteignables ; pour chaque case hors tutoriel, le nom figure dans **au moins deux** documents
    atteignables avant son verrouillage, portrait et métier débloqués ; une fin au moins est vraie à
-   100 %. Rapport : `npm run content:solve -- --report`.
+   100 %. Une case revendiquée part **vide** (la déclaration ne prouve rien), mais visages et métiers
+   déclarés sont disponibles d'emblée, comme dans le moteur ; un visage vaut pour une case s'il est
+   l'un de ceux de la personne (`portrait` ou `altPortraits`). Avertissements : visage juste d'une case
+   accessible **seulement** par une déclaration ; nom déclaré lu dans aucune pièce de départ.
+   Rapport : `npm run content:solve -- --report`.
 7. **Markdown** : syntaxe admise seulement, images existantes, `alt` non vide, aucune URL externe.
 8. **SVG** : interdits `<script>`, `on*`, `<foreignObject>`, `href` externes, couleurs en dur, `style=` ;
    seules les classes de `ART_CLASSES`, `none`, `currentColor`, `url(#…)` ; ids préfixés par fichier (couche `places` : aussi `place-<placeId>`, lu par le renderer) ;
@@ -339,7 +370,11 @@ Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, 
 9. **Budgets gzip** après svgo : portrait ≤ 25 Ko, illustration ≤ 60 Ko, couche `base` ≤ 60 Ko, couches
    de carte ≤ 300 Ko au total, affaire compilée (texte) ≤ 600 Ko, DOM de la carte ≤ 6 000 nœuds.
 10. **Démo** : solvable jusqu'à `demo.end`, aucun texte hors démo dans le bundle démo (canaris).
-11. **Fuite** : aucun `bibleNotes` ni réponse en clair dans le compilé.
+11. **Fuite** : aucun `bibleNotes` ni réponse en clair dans le compilé (la déclaration `claimedGuess`
+    est en clair par nature) ; aucun portrait, autres âges compris, ne nomme sa personne ; autant de
+    hachages de visage que de visages de la personne.
+
+`content:build` écrit les affaires triées par `(meta.order ?? ∞, id)`.
 
 ## 4. Plateforme
 

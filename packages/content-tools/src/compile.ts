@@ -21,6 +21,8 @@ import type {
   Place,
   Person,
   ReportQuestion,
+  SlotClaim,
+  SlotGuess,
 } from '@arbre/contract';
 import { COMMON_SECTION } from './sections';
 import { conditionRefs, simplify, type AtomRef } from './conditions';
@@ -101,6 +103,21 @@ export function documentAssets(doc: {
   };
   walk(doc.body);
   return [...out];
+}
+
+/** Visages acceptés pour une personne : canonique puis autres âges. */
+export function personPortraits(p: Pick<Person, 'portrait' | 'altPortraits'>): string[] {
+  return [p.portrait, ...(p.altPortraits ?? []).filter((x) => x !== p.portrait)];
+}
+
+/** Déclaration d'une case revendiquée en `SlotGuess` (champs absents : vides ou nuls). */
+export function claimedGuess(claim: SlotClaim): SlotGuess {
+  return {
+    given: claim.given ?? '',
+    family: claim.family ?? '',
+    portrait: claim.portrait ?? null,
+    occupation: claim.occupation ?? null,
+  };
 }
 
 function sortFr(values: Iterable<string>): string[] {
@@ -261,7 +278,7 @@ export function compileCase(
       answer: {
         given: p.given.map((v) => hashAnswer(salt, s.id, 'given', v)),
         family: p.family.map((v) => hashAnswer(salt, s.id, 'family', v)),
-        portrait: hashAnswer(salt, s.id, 'portrait', p.portrait),
+        portrait: personPortraits(p).map((v) => hashAnswer(salt, s.id, 'portrait', v)),
         occupation: hashAnswer(salt, s.id, 'occupation', p.occupation),
       },
       parents: (p.parents ?? [])
@@ -281,6 +298,7 @@ export function compileCase(
         occupation: p.occupation,
       };
     }
+    if (s.claim) slot.claimedGuess = claimedGuess(s.claim);
     if (revealedBy !== undefined && revealedBy !== true) slot.revealedBy = revealedBy;
     slots[s.id] = slot;
   }
@@ -302,9 +320,9 @@ export function compileCase(
       fm.reveals?.occupations?.forEach((x) => occupationIds.add(x));
     }
     for (const s of Object.values(slots)) {
-      if (s.prefilledGuess) {
-        if (s.prefilledGuess.portrait) portraitIds.add(s.prefilledGuess.portrait);
-        if (s.prefilledGuess.occupation) occupationIds.add(s.prefilledGuess.occupation);
+      for (const g of [s.prefilledGuess, s.claimedGuess]) {
+        if (g?.portrait) portraitIds.add(g.portrait);
+        if (g?.occupation) occupationIds.add(g.occupation);
       }
     }
   } else {
@@ -408,6 +426,11 @@ export function compileCase(
     for (const v of p.given) if (norms.some((n) => mentions(n, [v]))) given.push(v);
     for (const v of p.family) if (norms.some((n) => mentions(n, [v]))) family.push(v);
   }
+  // Valeurs déclarées : proposables d'emblée (re-sélection après retrait).
+  for (const s of Object.values(slots)) {
+    if (s.claimedGuess?.given) given.push(s.claimedGuess.given);
+    if (s.claimedGuess?.family) family.push(s.claimedGuess.family);
+  }
 
   const meta = { ...src.meta };
   if (meta.epilogue && !docIds.has(meta.epilogue)) delete meta.epilogue;
@@ -454,12 +477,20 @@ export function solverModelFor(compiled: CompiledCase, prep: PreparedCase): Solv
     slots.set(s.id, {
       id: s.id,
       prefilled: !!s.prefilled,
+      claimed: !!s.claimedGuess,
       ...(s.revealedBy ? { revealedBy: s.revealedBy } : {}),
       given: p.given.map(normalize),
       family: p.family.map(normalize),
-      portrait: p.portrait,
+      portraits: personPortraits(p),
       occupation: p.occupation,
     });
+  }
+  // Valeurs déclarées : disponibles d'emblée dans les sélecteurs, comme dans le moteur.
+  const claimedPortraits = new Set<string>();
+  const claimedOccupations = new Set<string>();
+  for (const s of Object.values(compiled.slots)) {
+    if (s.claimedGuess?.portrait) claimedPortraits.add(s.claimedGuess.portrait);
+    if (s.claimedGuess?.occupation) claimedOccupations.add(s.claimedGuess.occupation);
   }
   const optionalDocs = new Set(
     [...prep.documents.values()].filter((d) => d.frontmatter.optional).map((d) => d.id),
@@ -497,6 +528,8 @@ export function solverModelFor(compiled: CompiledCase, prep: PreparedCase): Solv
       ]),
     ),
     slots,
+    claimedPortraits,
+    claimedOccupations,
     groups: new Map(compiled.groups.map((g) => [g.id, { slots: g.slots, threshold: g.threshold }])),
     occupationsUnlock: compiled.progression.occupationsUnlock ?? {},
     secrets: new Map(compiled.progression.secrets.map((s) => [s.id, s.discoveredBy])),

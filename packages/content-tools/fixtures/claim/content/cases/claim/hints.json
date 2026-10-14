@@ -1,0 +1,24 @@
+[
+  {
+    "id": "h-ida-1",
+    "target": {
+      "slot": "s-ida"
+    },
+    "level": 1,
+    "text": "Un acte officiel cite son nom de naissance.",
+    "availableWhen": {
+      "read": "acte-mariage"
+    }
+  },
+  {
+    "id": "h-cadets-1",
+    "target": {
+      "group": "cadets"
+    },
+    "level": 1,
+    "text": "Le registre du village liste les naissances.",
+    "availableWhen": {
+      "groupLocked": "aines"
+    }
+  }
+]

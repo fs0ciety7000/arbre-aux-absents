@@ -110,6 +110,11 @@ describe('case.json', () => {
     rejects(CaseMetaSchema, { ...fx.caseMeta, title: '   ' });
     rejects(CaseMetaSchema, { ...fx.caseMeta, timedTargetsMs: [] });
   });
+  it('accepte un rang entier positif, refuse zéro ou un décimal', () => {
+    expect(CaseMetaSchema.parse({ ...fx.caseMeta, order: 2 }).order).toBe(2);
+    rejects(CaseMetaSchema, { ...fx.caseMeta, order: 0 });
+    rejects(CaseMetaSchema, { ...fx.caseMeta, order: 1.5 });
+  });
 });
 
 describe('family.json', () => {
@@ -128,6 +133,14 @@ describe('family.json', () => {
       portraits: [{ ...f.portraits[0], file: '../portraits/aldo.svg' }],
     });
   });
+  it("accepte des visages à d'autres âges, refuse une liste vide", () => {
+    const f = fx.clone(fx.family);
+    const aged = { ...f.persons[0], altPortraits: ['aldo-vieux'] };
+    expect(FamilySchema.parse({ ...f, persons: [aged] }).persons[0]?.altPortraits).toEqual([
+      'aldo-vieux',
+    ]);
+    rejects(FamilySchema, { ...f, persons: [{ ...f.persons[0], altPortraits: [] }] });
+  });
 });
 
 describe('tree.json', () => {
@@ -142,6 +155,17 @@ describe('tree.json', () => {
       ...t,
       slots: [{ ...t.slots[0], revealedBy: { not: { read: 'a' } } }],
     });
+  });
+  it('accepte une case revendiquée, refuse vide, avec prefilled ou cachée', () => {
+    const t = fx.clone(fx.tree);
+    const { prefilled: _p, revealedBy: _r, ...base } = t.slots[0]!;
+    const claim = { given: 'Bastien', portrait: 'requerant' };
+    expect(TreeSpecSchema.parse({ ...t, slots: [{ ...base, claim }] }).slots[0]?.claim).toEqual(
+      claim,
+    );
+    rejects(TreeSpecSchema, { ...t, slots: [{ ...base, claim: {} }] });
+    rejects(TreeSpecSchema, { ...t, slots: [{ ...base, claim, prefilled: true }] });
+    rejects(TreeSpecSchema, { ...t, slots: [{ ...base, claim, revealedBy: { read: 'a' } }] });
   });
 });
 

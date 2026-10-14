@@ -29,6 +29,28 @@
           "prefilled": {
             "type": "boolean"
           },
+          "claim": {
+            "type": "object",
+            "properties": {
+              "given": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "family": {
+                "type": "string",
+                "pattern": "\\S"
+              },
+              "portrait": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "occupation": {
+                "type": "string",
+                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              }
+            },
+            "additionalProperties": false
+          },
           "revealedBy": {
             "$ref": "#/$defs/__schema0"
           }

@@ -6,5 +6,6 @@
   "intro": "of-01",
   "epilogue": "ep-01",
   "timedTargetsMs": [14400000, 21600000, 36000000],
-  "credits": ["CM Creative Lab (écriture)", "CM Interactive"]
+  "credits": ["CM Creative Lab (écriture)", "CM Interactive"],
+  "order": 1
 }

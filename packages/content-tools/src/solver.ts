@@ -6,7 +6,10 @@
  * le seuil des groupes.
  *
  * Hypothèses (documentées dans le rapport) : les mots-clés `hiddenTerm` sont supposés déduits dès
- * le début ; les cases pré-remplies sont établies d'emblée ; `timedUnderMs` est ignoré.
+ * le début ; les cases pré-remplies sont établies d'emblée ; une case revendiquée part vide (sa
+ * déclaration ne prouve rien : elle s'établit par les pièces, comme une autre), mais les visages et
+ * métiers déclarés sont disponibles dès le départ, comme dans le moteur ; un visage vaut pour une
+ * case s'il est l'un de ceux de la personne (canonique ou autre âge) ; `timedUnderMs` est ignoré.
  */
 import type { Condition, OutcomeCondition } from '@arbre/contract';
 import { evaluate, negatedAtoms, type AtomRef, type EvalState } from './conditions';
@@ -25,13 +28,19 @@ export interface SolverDocument {
 export interface SolverSlot {
   id: string;
   prefilled: boolean;
+  /** Case revendiquée : part vide, jamais établie d'office. */
+  claimed?: boolean;
   revealedBy?: Condition;
   /** Noms normalisés (variantes). */
   given: readonly string[];
   family: readonly string[];
-  portrait: string;
+  /** Visages acceptés : canonique puis autres âges. */
+  portraits: readonly string[];
   occupation: string;
 }
+
+/** Source d'un visage ou d'un métier disponible d'emblée par une déclaration. */
+export const CLAIM_SOURCE = '(revendication)';
 
 export interface SolverModel {
   documents: ReadonlyMap<string, SolverDocument>;
@@ -46,6 +55,10 @@ export interface SolverModel {
     { revealedBy?: Condition; documents: readonly { id: string; requires?: Condition }[] }
   >;
   slots: ReadonlyMap<string, SolverSlot>;
+  /** Visages déclarés par les cases revendiquées : disponibles d'emblée. */
+  claimedPortraits?: ReadonlySet<string>;
+  /** Métiers déclarés par les cases revendiquées : disponibles d'emblée. */
+  claimedOccupations?: ReadonlySet<string>;
   groups: ReadonlyMap<string, { slots: readonly string[]; threshold: number }>;
   occupationsUnlock: Readonly<Record<string, Condition>>;
   secrets: ReadonlyMap<string, Condition>;
@@ -204,13 +217,15 @@ function slotEvidence(
   const givenDocs = docsMentioning(m, s, slot.given);
   const familyDocs = docsMentioning(m, s, slot.family);
   const portraitDocs = [...s.read].filter((d) =>
-    m.documents.get(d)?.portraits.includes(slot.portrait),
+    m.documents.get(d)?.portraits.some((p) => slot.portraits.includes(p)),
   );
+  if (slot.portraits.some((p) => m.claimedPortraits?.has(p))) portraitDocs.push(CLAIM_SOURCE);
   const occupationFrom = [...s.read].filter((d) =>
     m.documents.get(d)?.occupations.includes(slot.occupation),
   );
   const unlockCond = m.occupationsUnlock[slot.occupation];
   if (unlockCond && evaluate(unlockCond, s)) occupationFrom.push('(occupationsUnlock)');
+  if (m.claimedOccupations?.has(slot.occupation)) occupationFrom.push(CLAIM_SOURCE);
   const missing: string[] = [];
   if (!s.revealedSlots.has(slot.id)) missing.push('case jamais révélée');
   if (givenDocs.length < 2) missing.push(`prénom lu dans ${givenDocs.length} document(s) (< 2)`);

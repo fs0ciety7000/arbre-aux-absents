@@ -1,8 +1,19 @@
 import { z } from 'zod';
 import type { Condition } from './condition';
 import { ConditionSchema } from './condition';
-import type { GroupId, PersonId, SlotId } from './ids';
+import type { GroupId, OccupationId, PersonId, PortraitId, SlotId } from './ids';
 import { IdSchema, TextSchema } from './ids';
+
+/**
+ * Identité déclarée posée d'emblée sur une case revendiquée : fausse sur au moins un champ
+ * (vérifié par `content:check`), jamais verrouillée.
+ */
+export interface SlotClaim {
+  given?: string;
+  family?: string;
+  portrait?: PortraitId;
+  occupation?: OccupationId;
+}
 
 /** Case de l'arbre (`tree.json`, level-designer). */
 export interface TreeSlot {
@@ -10,8 +21,10 @@ export interface TreeSlot {
   person: PersonId;
   generation: number;
   column: number;
-  /** Connue d'emblée (tutoriel). */
+  /** Connue d'emblée et établie (tutoriel). Exclue des groupes. */
   prefilled?: boolean;
+  /** Case revendiquée : pré-remplie, contestable, dans un groupe. Exclusive de `prefilled` et `revealedBy`. */
+  claim?: SlotClaim;
   /** Branche cachée. */
   revealedBy?: Condition;
 }
@@ -31,14 +44,33 @@ export interface TreeSpec {
 
 export const MIN_GROUP_THRESHOLD = 3;
 
-export const TreeSlotSchema = z.strictObject({
-  id: IdSchema,
-  person: IdSchema,
-  generation: z.number().int().nonnegative(),
-  column: z.number().int().nonnegative(),
-  prefilled: z.boolean().optional(),
-  revealedBy: ConditionSchema.optional(),
-});
+export const SlotClaimSchema = z
+  .strictObject({
+    given: TextSchema.optional(),
+    family: TextSchema.optional(),
+    portrait: IdSchema.optional(),
+    occupation: IdSchema.optional(),
+  })
+  .refine((c) => Object.keys(c).length > 0, { error: 'Revendication vide' });
+
+export const TreeSlotSchema = z
+  .strictObject({
+    id: IdSchema,
+    person: IdSchema,
+    generation: z.number().int().nonnegative(),
+    column: z.number().int().nonnegative(),
+    prefilled: z.boolean().optional(),
+    claim: SlotClaimSchema.optional(),
+    revealedBy: ConditionSchema.optional(),
+  })
+  .refine((s) => !(s.prefilled && s.claim), {
+    error: 'claim et prefilled sont exclusifs',
+    path: ['claim'],
+  })
+  .refine((s) => !(s.claim && s.revealedBy), {
+    error: "Une case revendiquée est visible d'emblée",
+    path: ['claim'],
+  });
 
 export const ValidationGroupSchema = z.strictObject({
   id: IdSchema,

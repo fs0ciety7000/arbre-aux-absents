@@ -1,0 +1,66 @@
+{
+  "slots": [
+    {
+      "id": "s-ancel",
+      "person": "ancel-morvan",
+      "generation": 0,
+      "column": 0
+    },
+    {
+      "id": "s-ida",
+      "person": "ida-brask",
+      "generation": 0,
+      "column": 1
+    },
+    {
+      "id": "s-tomas",
+      "person": "tomas-morvan",
+      "generation": 1,
+      "column": 0,
+      "claim": {
+        "given": "Tomas",
+        "family": "Morvan",
+        "portrait": "portrait-f",
+        "occupation": "meunier"
+      }
+    },
+    {
+      "id": "s-lena",
+      "person": "lena-solvig",
+      "generation": 1,
+      "column": 1
+    },
+    {
+      "id": "s-maren",
+      "person": "maren-morvan",
+      "generation": 2,
+      "column": 0,
+      "revealedBy": {
+        "groupLocked": "aines"
+      }
+    },
+    {
+      "id": "s-oskar",
+      "person": "oskar-morvan",
+      "generation": 2,
+      "column": 1,
+      "revealedBy": {
+        "groupLocked": "aines"
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "aines",
+      "label": "Les aînés",
+      "slots": ["s-ancel", "s-ida", "s-tomas"],
+      "threshold": 3
+    },
+    {
+      "id": "cadets",
+      "label": "Les cadets",
+      "slots": ["s-lena", "s-maren", "s-oskar"],
+      "threshold": 3
+    }
+  ]
+}

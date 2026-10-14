@@ -51,6 +51,7 @@ export {
   availableNames,
   availableOccupations,
   availablePortraits,
+  claimedFields,
   endingFor,
   endingSections,
   exhaustedKeywords,
@@ -68,6 +69,7 @@ export {
   pruneReport,
   readDocuments,
   reportQuestions,
+  slotStatus,
   unreadDocuments,
   visiblePlaces,
   visibleSlots,
@@ -81,6 +83,7 @@ export {
   type PlaceState,
   type Progress,
   type ReportQuestionView,
+  type SlotStatus,
   type VisiblePlace,
   type WhereToLook,
 } from './selectors';
