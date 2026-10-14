@@ -322,6 +322,9 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
 | Studio Orlhac | 1890, Hautcorvin | photographie de portrait, de mariage et d'entreprise (affaire 2) |
 | Compagnie des guides de Vernezac | 1898, Vernezac | guides de montagne, insignes numérotés (affaire 2) |
 | Verrerie de Brénica | Brenzac (Thalberie) | verre gravé (affaire 2) |
+| Maison Corbeval | — | poêles émaillés ; exposante en 1889, galerie des Arts du feu (affaire 2, PR-01) |
+| Faïences de Saint-Ormel | Saint-Ormel | faïence ; exposantes en 1889 (affaire 2, PR-01) |
+| Garage de la Vèze | Vernezac | essence, pétrole, réparations (affaire 2, LT-09) |
 
 ## 9. Culture
 
@@ -355,5 +358,7 @@ marquant chaque ajout « affaire 2 » : les arrêtés de 1916 et de 1938 et l'ar
 (§2) ; trois lieux (`vernezac`, `pas-de-l-ourse`, `dalvezac`) et deux toponymes secondaires (la
 Combe-aux-Sables, la Vèze) (§3) ; les règles thalbères précisées (§4) ; ses prix (§5) ; *La Sentinelle
 des Corvins* (§6) ; douanes, lieutenance de la Garde, Musée des Arts du feu (§7) ; L'Égide, Studio
-Orlhac, Compagnie des guides, Verrerie de Brénica (§8). Rien de l'affaire 1 n'a été modifié, hormis la
+Orlhac, Compagnie des guides, Verrerie de Brénica, maison Corbeval, faïences de Saint-Ormel, Garage
+de la Vèze (§8) ; à la Grande Exposition de 1889, la **galerie des Arts du feu** (verre, céramique),
+où fut montrée la lentille de Tennok (PR-01, PH-01). Rien de l'affaire 1 n'a été modifié, hormis la
 précision « (affaire 1) » sur la ligne « Temps du jeu ». Référence de travail : `08-lieux.md`.

@@ -23,9 +23,9 @@ Il renonçait à son nom et à celui de sa mère. Le registre porta, en marge : 
 ## [s1] Le feu de 1937
 
 À la première question, le rapport répondait : Aimé Brossal, fondé de pouvoir des Verreries, mort
-en 1958. Il citait le rapport d'incendie, qui plaçait le départ du feu loin des fours, et la main
+en 1958. Il citait le rapport de l'expert de L'Égide, qui plaçait le départ du feu loin des fours, et la main
 courante de Toussaint Mallet, gardien de nuit, dont la page arrachée avait laissé sur la suivante, en creux,
-« 23 h 10 — M. B. au magasin ».
+« 23 h 10 — M. B. au magasin des emballages ».
 
 Colombe Brossal n'avait pas comparu, en février, à l'ouverture de son pli. Elle vint à l'audience.
 Le président lut l'inventaire du pli de 1958 : l'avenant n° 3 de la police L'Égide, deux bons de
@@ -51,16 +51,16 @@ l'habitude de regarder ailleurs ; il regarda ailleurs.
 
 Le pli scellé du testament était adressé « à celui de mes enfants qui n'a pas porté mon nom ». Le
 rapport établissait qu'Andrin Dalvarin était le fils d'Honoré ; mais Andrin Dalvarin, depuis le
-matin, n'était inscrit nulle part. Me Escande relut la suscription trois fois. Il n'y avait, devant
-lui, qu'un seul enfant vivant d'Honoré Tessonnal, et c'était un homme rayé des registres de 1938 à
-1976, qui n'avait donc pas porté son nom. Il lui remit le pli au titre de Bastien.
+matin, n'était inscrit nulle part. Me Escande relut la suscription trois fois. Des deux enfants
+d'Honoré Tessonnal inscrits au registre, un seul n'avait pas porté son nom pendant des années : un
+homme rayé des registres de 1938 à 1976. Il lui remit le pli au titre de Bastien.
 
 Le requérant l'ouvrit sur le banc du couloir. La lettre tenait sur une page.
 
 > Andrin,
 >
 > Si Me Escande te remet ceci, l'Office a parlé, et j'aurai eu tort de me taire jusqu'au bout. Je
-> n'ai jamais su te dire « mon fils » autrement qu'en verre. Je l'ai dit par les commandes de
+> n'ai jamais su te dire « mon fils » autrement qu'en verre. Je l'ai dit en florins, au livre de paie de
 > l'atelier, de 1912 à 1938, et ta mère a eu la bonté de faire semblant de ne pas comprendre.
 >
 > Léonce a porté ce que je n'ai pas porté. Il a été ton parrain, il a laissé dire, et il est mort
@@ -90,7 +90,7 @@ gardien de salle lui demanda s'il était de la famille. Il dit qu'il était le f
 ## [s1-non-prouve] Le nom d'un incendiaire
 
 Le rapport ne disait rien de la nuit du 27 au 28 novembre 1937. La liste de radiation n° 9 continuait
-donc de dire ce qu'elle disait depuis 1938 : incendie volontaire de la halle des fours de Vernezac.
+donc de dire ce qu'elle disait depuis 1938 : « incendie criminel des Verreries de Hautcorvin ».
 Les faits étaient prescrits ; ils ne seraient jamais jugés, donc jamais lavés. En signant, le
 requérant avait pris le nom avec ce qui était écrit dessus.
 

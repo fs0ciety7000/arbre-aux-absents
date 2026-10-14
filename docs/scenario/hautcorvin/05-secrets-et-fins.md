@@ -95,19 +95,30 @@ provisoires. Fichiers proposés : `endings/f1-…f4-….md`, format de l'affaire
 
 | Prio | Fin | Condition | Résumé |
 |---|---|---|---|
-| 1 | **F1 — Chacun son nom** | décision « Rétablir chacun » | La Commission réinscrit Bastien Tessonnal à titre posthume (« mort à Kessaar le 9 mars 1944, innocent » si S1), reconnaît Agnès comme sa fille et héritière de sa part, et rend à Andrin son nom. Me Escande ouvre le pli scellé ; s'il est adressé à un enfant **établi** (S3), il est remis à Andrin : la lettre commence par « Andrin, ». Andrin et Agnès montent ensemble au refuge. |
+| 1 | **F1 — Chacun son nom** | décision « Rétablir chacun » | La Commission réinscrit Bastien Tessonnal à titre posthume (« mort à Kessaar le 9 mars 1944, innocent » si S1), reconnaît Agnès comme sa fille et héritière de sa part, et rend à Andrin son nom. Me Escande ouvre le pli scellé ; s'il est adressé à un enfant **établi** (S3), il est remis à Andrin : la lettre commence par « Andrin, ». Andrin et Agnès montent ensemble au refuge le samedi 10 juillet (jour d'EP-02). |
 | 2 | **F2 — Le revenant** | décision « Laisser vivre » | « Bastien Tessonnal, vivant » est réinscrit et reconnaît Agnès. Paragraphe variable **S1** : prouvé, le rapport lave le nom qu'il porte ; non prouvé, il porte l'incendie. Paragraphe **S3** : le pli scellé, « à celui de mes enfants qui n'a pas porté mon nom », est remis au requérant au titre de Bastien ; il l'ouvre ; la lettre commence par « Andrin, ». Il apprend, trop tard, qu'il était un fils. Le rapporteur garde dans un tiroir le rapport qu'il n'a pas remis. |
-| 3 | **F3 — L'imposteur, la fille reconnue** | « Dénoncer » + S5 | Le requérant est convaincu d'usurpation (emprisonnement avec sursis, au regard des « circonstances »). Bastien est réinscrit à titre posthume ; Agnès est établie sa fille et hérite de sa part. Elle va attendre Andrin à la sortie du tribunal d'Aubrelieu. |
-| 4 | **F4 — L'imposteur** | « Dénoncer » sans S5 | Requête rejetée, le requérant condamné avec sursis ; Bastien réinscrit à titre posthume ; la requête 74-0962 reste « non établie ». Colombe est seule héritière. Andrin repart par le col. Une semaine plus tard, Agnès reçoit un verre gravé : le Pas de l'Ourse, sans date. |
+| 3 | **F3 — L'imposteur, la fille reconnue** | « Dénoncer » + S5 | Le requérant est convaincu d'usurpation (jugement correctionnel d'Aubrelieu du lundi 26 avril 1976 : six mois d'emprisonnement avec sursis, « au regard des circonstances »). Bastien est réinscrit à titre posthume ; Agnès est établie sa fille et hérite de sa part. Elle va attendre Andrin à la sortie du tribunal d'Aubrelieu. |
+| 4 | **F4 — L'imposteur** | « Dénoncer » sans S5 | Requête rejetée, le requérant condamné le 26 avril 1976 à six mois avec sursis ; Bastien réinscrit à titre posthume ; la requête 74-0962 reste « non établie ». Colombe est seule héritière. Andrin repart par le col. Une semaine plus tard, Agnès reçoit un verre gravé : le Pas de l'Ourse, sans date. |
 
 Paragraphes modulaires (ajoutés si le secret est juste, dans toutes les fins) :
 - **S1** : le rapport nomme Aimé Brossal ; Colombe se lève à l'audience, remet elle-même le pli de 1958
   et dit : « Mon frère n'a pas mis le feu. Je le sais depuis dix-huit ans. » Le nom de Toussaint Mallet
   est cité au rapport.
 - **S2** : une plaque de verre gravé est posée au refuge de l'Ourse : « Par ce pas, de 1938 à 1952,
-  Lucie et Jules Neviot ont fait passer cent quarante-deux absents. » Victorin la fixe lui-même.
-- **S3** : le pli d'Honoré est lu (texte de la lettre, une page : il n'a jamais su dire « mon fils »
-  autrement qu'en verre ; « Léonce a porté ce que je n'ai pas porté »).
+  Lucie et Jules Neviot ont fait passer cent quarante-deux absents. » Victorin la fixe lui-même, avec
+  quatre vis de laiton. Qui l'a gravée dépend de la fin : **F1** Andrin, à Brénica, en trois soirs ;
+  **F2** une main « trop sûre pour un souffleur », que Victorin remarque et tait ; **F3** commandée par
+  Hugues à l'atelier des Verreries, payée par Colombe, chacun sans le dire à l'autre ; **F4** arrivée
+  de Brénica par la poste, sans lettre.
+- **S3** : le pli d'Honoré est lu. Texte fixé (identique dans les quatre fins, seul le cadre change) :
+  « Andrin, / Si Me Escande te remet ceci, l'Office a parlé, et j'aurai eu tort de me taire jusqu'au
+  bout. Je n'ai jamais su te dire « mon fils » autrement qu'en verre. Je l'ai dit en florins, au livre
+  de paie de l'atelier, de 1912 à 1938, et ta mère a eu la bonté de faire semblant de ne pas
+  comprendre. / Léonce a porté ce que je n'ai pas porté. Il a été ton parrain, il a laissé dire, et il
+  est mort sans s'en plaindre une seule fois. / En 1952, c'est par toi que j'ai appris la mort de
+  Bastien. Tu ne savais pas à qui tu l'annonçais. Je n'ai pas répondu. J'ai écrit « à mes enfants
+  vivants », et c'est à toi que je pensais ; je n'ai pas su écrire ton nom ailleurs qu'ici. / Honoré
+  Tessonnal ». Le livre de paie, c'est le « supplément » de RG-17.
 - **S4** : la Coupe du Régent sort du fonds des pièces à conviction et entre au Musée des Arts du feu
   avec un nouveau cartel : « Andrin Dalvarin, 1941. Dans le laurier : B · T · 38. »
 
@@ -126,8 +137,10 @@ Arbre complet + cinq secrets ; **indépendant de la décision** (game design §3
 la rappelle. **EP-01** — « Note de clôture, dossier 76-0012 » (Rosine Ferrandot, mars 1976) : le
 rapporteur classe le dossier ; au Lecteur, une recherche « Bastien Tessonnal » rend désormais deux
 lignes, et l'une est datée de 1976. **EP-02** — photographie, 10 juillet 1976, devant le refuge de
-l'Ourse : Agnès, Andrin, Victorin, Pierre, Gilles, Brigitte, Hugues ; Colombe, venue en voiture
-jusqu'au col, est un peu à l'écart, le seul manteau noir dans la neige d'été. Au dos, de la main
+l'Ourse : Agnès, Andrin, Victorin, Pierre, Gilles, Brigitte, Hugues ; Colombe, montée à pied, à son pas
+(sept heures, arrêtée au dernier lacet ; aucune route ne monte au refuge), est assise un peu en
+contrebas sur une pierre du sentier, une canne en travers des genoux, le seul manteau noir dans la
+neige d'été. Au dos, de la main
 d'Agnès : « Tous les vivants. »
 
 ## 5. Rejouabilité

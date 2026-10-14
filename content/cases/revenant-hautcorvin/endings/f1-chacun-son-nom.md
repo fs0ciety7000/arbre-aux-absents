@@ -25,11 +25,11 @@ n'a rien pris à personne.
 
 ## [s1] Le feu de 1937
 
-À la première question, le rapport répondait par un nom que personne n'avait prononcé à voix haute
-depuis trente-neuf ans : Aimé Brossal, fondé de pouvoir des Verreries, mort en 1958. Il citait
-le rapport d'incendie, qui plaçait le départ du feu loin des fours, et la main courante de
+À la première question, le rapport répondait par un nom, et cette fois avec des pièces : Aimé
+Brossal, fondé de pouvoir des Verreries, mort en 1958. Il citait le rapport de l'expert de L'Égide,
+qui plaçait le départ du feu loin des fours, et la main courante de
 Toussaint Mallet, gardien de nuit, dont la page arrachée avait laissé sur la suivante, en creux,
-« 23 h 10 — M. B. au magasin ».
+« 23 h 10 — M. B. au magasin des emballages ».
 
 Colombe Brossal n'avait pas comparu, en février, à l'ouverture de son pli ; elle avait fait dire
 qu'elle ne s'opposait à rien. Elle vint à l'audience. Le président lut l'inventaire du pli de 1958 :
@@ -60,7 +60,7 @@ et le remit à Andrin, qui le lut debout.
 > Andrin,
 >
 > Si Me Escande te remet ceci, l'Office a parlé, et j'aurai eu tort de me taire jusqu'au bout. Je
-> n'ai jamais su te dire « mon fils » autrement qu'en verre. Je l'ai dit par les commandes de
+> n'ai jamais su te dire « mon fils » autrement qu'en verre. Je l'ai dit en florins, au livre de paie de
 > l'atelier, de 1912 à 1938, et ta mère a eu la bonté de faire semblant de ne pas comprendre.
 >
 > Léonce a porté ce que je n'ai pas porté. Il a été ton parrain, il a laissé dire, et il est mort
@@ -87,7 +87,7 @@ loupe sur la vitrine, à hauteur d'enfant :
 Au registre, trois mentions : « Réinscrit à titre posthume, 1976 » ; « Rétabli sous son nom,
 1976 » ; « Filiation établie, 1976 ». Elles tiennent chacune sur une ligne.
 
-Le premier dimanche de juillet, Andrin et Agnès montèrent ensemble au refuge de l'Ourse, par le
+Le samedi 10 juillet, Andrin et Agnès montèrent ensemble au refuge de l'Ourse, par le
 sentier qu'il connaissait pierre par pierre sans l'avoir jamais pris avec celui qui le lui avait
 décrit. Elle marchait devant. Au dernier lacet, elle se retourna pour lui dire qu'il pouvait
 souffler. Il dit que non, qu'il avait l'habitude, et s'assit quand même.

@@ -26,6 +26,12 @@
       seulement ; Honoré est « maître verrier » partout (AN-01 le dit « président », jamais « directeur ») ;
       Bastien « chef de nuit » = grade (leurre), « souffleur » = qualité.
 - [x] Les surnoms, le nom de religion et les matricules ne sont jamais la réponse (02-arbre §2).
+- [x] **Démonstration d'écriture lisible sans pièce restreinte** (v0.3) : OF-02 (le requérant
+      « s'y reprend à deux fois pour le T ») ; LT-04 (1937) et RP-04 (1938, signature du prévenu) : T
+      barré d'un trait droit, détaché ; RG-15 (1953, « Tout ») et TG-02 (1976, « STOP ») : T à boucle ;
+      LT-08 (Danela : les « T bouclés » de l'école de Dalvica) ; EX-02 fait la synthèse (A contre B–E) et
+      renvoie, à la main, à RP-04. PH-09 (R) double la signature de 1938 ; PH-10 (R) n'a pas de T.
+      Aucune pièce ne donne un T à boucle à Bastien ni un T droit à Andrin.
 - [x] La déclaration de C15 est fausse sur **deux** champs (portrait et métier `chef-de-nuit` ; nom
       juste, décision validée) et ses valeurs sont découvertes par une pièce de départ (OF-02) :
       conforme au contrôle prévu (« fausse sur ≥ 1 champ », `docs/game/AFFAIRE-2.md` §6).
@@ -156,7 +162,7 @@ Victorin aussi par RP-04 (« V. Sarrade ») et PV-06.
 | Le requérant a fui un jugement pour sabotage | RP-06 (R), PV-01 | RP-06 elle-même (« Sans objet. Décédé le 9.3.44 ») |
 | Le requérant a échangé les plaques à l'infirmerie, la nuit | PV-01 (« personne ne regardait ») | PV-05 (le gardien de service : « Personne n'a échangé ces deux-là »), RG-13 (constat du médecin) |
 | Bastien était « chef de nuit » (métier) | OF-02 (déclaration), RP-01, PR-04 | RG-11, RG-17, RP-04, PH-18 : souffleur ; chef de nuit est un grade |
-| Taille : 1,74 m en 1938, 1,71 m en 1976 | RP-04, OF-02 | **Non concluant** : EX-01 l'écarte explicitement (tassement possible). |
+| Taille : 1,74 m en 1938, 1,71 m en 1976 | RP-04, PH-09 (R) ; OF-02, EX-01 | **Non concluant** : EX-01 l'écarte explicitement (tassement, cyphose). L'écart est **voulu** et tenu : Bastien 1,74 m (RP-04, PH-09) ; Andrin **1,72 m** en 1941 (PH-10) et en 1953 (RG-15), **1,71 m** en 1976 (OF-02, EX-01). Ne pas « harmoniser ». |
 
 ## 4. Âges sur les photographies (pour le `cartographe`)
 
@@ -215,6 +221,12 @@ Victorin aussi par RP-04 (« V. Sarrade ») et PV-06.
 | Teodor Haask, « trente-quatre ans » le 11 mai 1946 (affaire 1, `content/…/rg-19.md`) | Né entre le 12 mai 1911 et le 11 mai 1912 ; « 63 ans » le 18 févr. 1976 impose le 19 févr. 1912 au plus tôt. **Date fixée : 3 avril 1912.** Vérifié (v0.2) : aucune autre date ni aucun âge de Teodor dans `docs/scenario/` (affaire 1 : 03 « 1912– », 04) ni dans `content/cases/succession-varenque/` (RG-14 1943, LT-10 « le fils Haask » 1942, RG-19, F5 : fonctions seulement). Son père Jorre est gardien adjoint de Tennok de 1905 à 1912 (AN-04) : compatible. ✔ |
 | *Le Héraut* : 40 sous d'ordre en oct. 1941 (affaire 1) | PR-05, 9 sept. 1941 : 40 sous. ✔ |
 | Prix 1966–1974 (*Courrier*, *Gazette* 0,35–0,40 Fn) | *La Sentinelle* (hebdo régional) : 0,30 Fn en 1966, 0,40 Fn en 1975–1976. ✔ |
+| Bureau des Registres (affaire 1, PR-08 : inauguré en mai 1938) et BRR (créé le 2 févr. 1938) | Deux administrations distinctes : le **Bureau des Registres de la province de l'Orvelle** (état civil, RG-12, RP-05 en en-tête « pour le BRR ») et le **Bureau du Recensement et des Radiations** (radiations, fiches, fonds restreint : EX-02, EX-03, RG-11). OF-06 parle de « l'Office » (ORC) pour ses propres connaissances. ✔ (v0.3) |
+| Florin d'ordre (1938) | Avant 1938, florins ; le pli d'Honoré dit « en florins, au livre de paie de l'atelier, de 1912 à 1938 ». ✔ |
+| Avion postal (affaire 1) : tombé le dim. 9 janv. 1966, retrouvé le mar. 11 à 2 200 m, versant nord, sous le col de Corvenne ; quatre sacs distribués par les guides | PR-08 concorde (dates, altitude, versant, sacs) ; la liaison existe dès 1962 (PB-01). Aucun nom de l'affaire 1. ✔ (v0.3) |
+| Vedette | **Vedette de Kessaar** (bagne ↔ Port-Sénane : RP-06, RG-14, PR-10), distincte de la vedette côtière de Port-Sénane de l'affaire 1. ✔ (v0.3) |
+| Ferrandot | « Chef du service des Filiations » (au masculin, comme l'affaire 1), dans OF-01 (signature et `author`), EP-01. ✔ (v0.3) |
+| Noms déjà pris par l'affaire 1 | « J. Lhoste » (OF-06) remplacé par **J. Ramade**. Brissac, Haask, Daubry, Sauge : caméos voulus. ✔ (v0.3) |
 | Aucun train | Andrin repart « par le col » (route) ; vedette de Kessaar à Port-Sénane (TG-01) ; avion postal (PR-08). ✔ |
 | Thalbère : noms en *-in*, *-ko*, *-ela* | Dranko, Danela, Andrin, Dalvarin, Jadela Rovin. Brénica / Brenzac ; **Dalvica / Dalvezac** et **Vernica / Vernezac** suivent la même règle *-ica* → *-zac* (proposée, `08-lieux.md`). |
 
@@ -254,5 +266,50 @@ transparaître**. Dans l'affaire 2 il est un témoin neutre, crédible sans l'af
 7. **Art. 12 de la loi de 1973** : validé et reporté dans `docs/monde/00-monde.md` (§2 et §11).
 8. **Isaure journaliste, fille de la partie opposante** : PR-10 doit rester neutre ; en relecture,
    vérifier qu'elle ne prend pas parti.
-9. Date de naissance de Julien Escande (4 janv. 1928) et de Sabine (9 févr. 1936) : fixées ici pour
-   les âges ; aucune pièce ne les donne en entier (mentions marginales seulement).
+9. ~~Dates de naissance de Julien Escande et de Sabine~~ **Réglé** : RG-07 les donne en mention
+   marginale (Julien né à Hautcorvin le 4 janv. 1928 ; Sabine le 9 févr. 1936).
+
+## 8. Passe de cohérence v0.3 (documents et fins)
+
+Relecture complète des 98 pièces et des 4 fins contre la bible, l'affaire 1 et `docs/monde/00-monde.md`.
+
+**Tranché (gardé tel quel).**
+- **OF-02, carte de réinscription de 1953** : pièce jointe déclarée par le requérant, cohérente avec sa
+  version (il dit avoir vécu sous le nom d'Andrin) ; OF-03 la cite aussi. Elle donne le mot-clé
+  « Andrin Dalvarin » au départ, comme prévu par le graphe (RG-15 au niveau A). Indice voulu.
+- **Taille** : écart voulu, voir §3.
+- **Âge d'Honoré** : 92 ans révolus au testament (20 juin 1973), « dans sa quatre-vingt-treizième
+  année » (OF-03) ; mort à 95 ans, « dans sa 96e année » (OF-01, PR-09, RG-16).
+- **PV-05 (Haask)** : conforme à la règle du caméo (§6).
+- Jours de la semaine : toutes les dates des pièces vérifiées par script.
+
+**Corrigé dans les pièces.**
+- Ferrandot « chef » (OF-01, EP-01) ; « chef d'atelier » (RG-17, CT-01).
+- Administrations : BRR et Bureau des Registres distingués (OF-06, EX-03, RP-05, RG-11, RG-12) ;
+  RP-01 copie au parquet d'Aubrelieu ; vedette de Kessaar (RP-06, RG-14) ; LT-05 « île de Kessaar,
+  par Port-Sénane » ; PR-10 « bagne de Kessaar », « Office de Réinscription civile ».
+- Chronologie : Victorin né à Hautcorvin le 14 janv. 1915 (RG-10, PV-06) ; expulsion des 20–22 avril
+  1916 et supplément « mis en réserve » (RG-17) ; LT-08 « n'avait pas quarante ans » ; PV-04 « quinze
+  jours avant de mourir » ; LT-11 produite le 11 févr. 1976 ; CP-01 sans allusion à une grossesse ;
+  baisse des salaires « d'un huitième » (PV-01, PR-03 : 12 %) ; Me Hilaire Escande (RG-02, AN-02).
+- Incendie : seule la moitié est de la halle brûle (PR-04, PV-04) ; Andrin à la chaîne des seaux
+  (PV-01) ; citation exacte du foulage dans les fins.
+- Objets : OB-02 est un gobelet (EX-04, PV-04) ; boîte de Lucie fermée d'une ficelle (PV-06).
+- Lieux : « galerie des Arts du feu » à la Grande Exposition (PR-01, PH-01 ; « galerie des Machines »
+  évoquait une exposition réelle) ; la lentille va par la route jusqu'à Port-Sénane, puis par bateau.
+- Démonstration d'écriture (§0) : LT-04, RP-04, PH-09, EX-02.
+- Fins : F1 le samedi 10 juillet ; F2 nomme les deux enfants inscrits ; F3 « ces derniers mots » ;
+  Aimé Brossal nommé « cette fois avec des pièces » (le requérant l'avait dit en PV-01) ; « rapport
+  de l'expert de L'Égide ».
+- EP-02 : Colombe montée à pied (aucune route ne monte au refuge : Vernezac → refuge, 5 h ; à son pas, 7 h).
+- Tics d'écriture « ce n'est pas X, c'est Y » retirés (OF-01, OF-07, EX-02, EX-04, DV-01).
+
+**Reste à vérifier.**
+- Champs `archive` de PH-06 et PH-14 : parenthèses imbriquées (frontmatter, non modifié).
+- RG-03 (1904) : Léonce témoin de mariage à 18 ans, mineur ; à confirmer ou à remplacer.
+- Illustrations de LT-04, PH-09 (barre du T) et EP-02 (Colombe assise sur le sentier, piolet) : à
+  aligner par le `cartographe`.
+- PV-04 : le requérant « redescendu à la nuit » le 10 janvier est monté **vers** le refuge, pas jusqu'au
+  refuge (5 h) ; garder cette lecture.
+- `docs/game/AFFAIRE-2.md` (hors périmètre du scénariste) : reprendre l'âge d'Honoré, OB-02 gobelet et
+  la montée de Colombe si le document les cite.

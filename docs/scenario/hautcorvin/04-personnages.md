@@ -153,7 +153,7 @@
 
 ### C18 — Victorin Sarrade (1915– ) · douanier
 **Caractère.** Lent, droit, rongé par une nuit de mai.
-**Background.** Préposé (1936), brigadier (1950), retraité en 1970 ; présent à l'arrestation de Bastien (1938) ; épouse Lucie en 1947 ; père de Pierre.
+**Background.** Né à Hautcorvin le 14 janvier 1915 (RG-10 : 32 ans à son mariage, « fils majeur d'Auguste »). Préposé (1936), brigadier (1950), retraité en 1970 ; présent à l'arrestation de Bastien (1938) ; épouse Lucie en 1947 ; père de Pierre.
 **Secrets.** A reconnu Lucie le 21 mai 1938 et ne l'a jamais dit ; a couvert ses passages après 1944 ; a reconnu « le Thalbère » en 1953 et en 1976.
 **Portrait de case : 32 ans** (PH-11). Très grand, **oreilles décollées**, **moustache courte**, **képi de douanier** sous le bras, uniforme. À 59 ans (PH-16) : en civil, mêmes oreilles, canne.
 **Apparitions.** PH-11, PH-16.
@@ -260,3 +260,26 @@
 
 Six **leurres de visage** dessinés (Mallet, Lavergne, Fauvel, Léon Escande, Jadela Rovin, et l'abbé
 Pradeil sur PH-02) + le demi-frère ressemblant, qui sert de leurre à l'autre (`docs/game/AFFAIRE-2.md` §1.6).
+
+### Noms secondaires des pièces (sans case, à ne pas réemployer ailleurs)
+
+Fixés par la passe de cohérence v0.3. Ils ne portent aucune preuve et n'ont pas de visage.
+
+| Nom | Rôle | Pièces |
+|---|---|---|
+| **J. Ramade** | Rédacteur au service des Filiations, instructeur du 74-0962 (2 déc. 1975). Remplace « J. Lhoste », nom déjà pris dans l'affaire 1. | OF-06 |
+| **Hippolyte Rascol** | Garde d'Ordre, surveillance du sentier du refuge (janv. 1938). | RP-03 |
+| **Tarko Senavin** | Traducteur juré près le tribunal de Brénica (6 févr. 1976). | LT-08 |
+| **Ernest Lavergne**, **Marius Bonnafous** | Témoins de la réinscription d'Andrin (3 juin 1953) : l'ancien contremaître (66 ans) et un souffleur (42 ans). Bonnafous est aussi le nom d'une quincaillerie de Hautcorvin (AN-01) : homonymie voulue, sans lien établi. | RG-15, AN-01 |
+| **Germain Ardouin**, **Céleste Mazet** | Parents de Philomène, aubergistes des Guides. | RG-06 |
+| **Me Hilaire Escande** | Notaire à Hautcorvin en 1878, grand-père de Julien (« étude Escande depuis trois générations »). | RG-02, AN-02 |
+| **Abbé G. Lacoste** | Curé de Saint-Éloi, Hautcorvin (baptêmes de 1906 et 1910). | RG-04 |
+| **Gustave Ravenel** | Chapelier à Aubrelieu, frère d'Eugénie (fils d'Aristide Ravenel et de Joséphine Pélissier) ; parrain de Colombe (1906), témoin à son mariage (1928). | RG-04, RG-07 |
+| **Raoul Brossal** | Avocat à Aubrelieu, frère d'Aimé ; témoin à son mariage (1928). | RG-07 |
+| **Clément Bousquet** | Directeur de l'école de Vernezac (1934). | RG-09 |
+| **Tesela Korin**, **Bralko Senin** | Graveuse et apprenti de la Verrerie de Brénica (catalogue de 1974). | CT-02 |
+| **Maison Corbeval**, **faïences de Saint-Ormel** | Exposants voisins de la lentille à la Grande Exposition de 1889 (galerie des Arts du feu). | PR-01 |
+| **Garage de la Vèze** | Garage de Vernezac ; reçu d'essence et de pétrole du 26 nov. 1937. | LT-09, fins F2, F3 |
+
+Les autres noms des listes de radiation n° 9 et n° 40 (RG-11, RG-12), des ouvriers de PH-07 et des
+élèves de PH-12 sont des figurants : ils ne reviennent dans aucune autre pièce de l'affaire 2.

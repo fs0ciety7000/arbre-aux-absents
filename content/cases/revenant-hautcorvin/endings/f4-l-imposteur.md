@@ -23,11 +23,11 @@ Il fut condamné à six mois d'emprisonnement avec sursis, « au regard des circ
 
 ## [s1] Le feu de 1937
 
-À la première question, le rapport répondait par un nom que personne n'avait prononcé à voix haute
-depuis trente-neuf ans : Aimé Brossal, fondé de pouvoir des Verreries, mort en 1958. Il citait le
-rapport d'incendie, qui plaçait le départ du feu loin des fours, et la main courante de Toussaint
+À la première question, le rapport répondait par un nom, et cette fois avec des pièces : Aimé
+Brossal, fondé de pouvoir des Verreries, mort en 1958. Il citait le rapport de l'expert de L'Égide,
+qui plaçait le départ du feu loin des fours, et la main courante de Toussaint
 Mallet, gardien de nuit, dont la page arrachée avait laissé sur la suivante, en creux,
-« 23 h 10 — M. B. au magasin ».
+« 23 h 10 — M. B. au magasin des emballages ».
 
 Colombe Brossal n'avait pas comparu, en février, à l'ouverture de son pli. Elle vint à l'audience.
 Le président lut l'inventaire du pli de 1958 : l'avenant n° 3 de la police L'Égide, deux bons de
@@ -57,7 +57,7 @@ copie, faite à la demande du destinataire :
 > Andrin,
 >
 > Si Me Escande te remet ceci, l'Office a parlé, et j'aurai eu tort de me taire jusqu'au bout. Je
-> n'ai jamais su te dire « mon fils » autrement qu'en verre. Je l'ai dit par les commandes de
+> n'ai jamais su te dire « mon fils » autrement qu'en verre. Je l'ai dit en florins, au livre de paie de
 > l'atelier, de 1912 à 1938, et ta mère a eu la bonté de faire semblant de ne pas comprendre.
 >
 > Léonce a porté ce que je n'ai pas porté. Il a été ton parrain, il a laissé dire, et il est mort
@@ -90,4 +90,4 @@ costume trop large. Il ne passa pas par Vernezac.
 
 Une semaine plus tard, Agnès Neviot reçut à l'hospice un paquet posté de Brénica, sans nom
 d'expéditeur. Dedans, un verre gravé à la roue : le Pas de l'Ourse, trois lacets, une ourse
-couchée sous le col. Celui de 1959 portait une date. Celui-là n'en portait aucune.
+couchée sous la brèche. Celui de 1959 portait une date. Celui-là n'en portait aucune.

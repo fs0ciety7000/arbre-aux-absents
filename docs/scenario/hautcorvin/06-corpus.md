@@ -55,8 +55,8 @@ Prouve : C15 N (déclaré, juste), M (déclaré, **faux** : chef de nuit) ; C17 
 
 **OF-03** · `letter` · 22 janv. 1976 · `hautcorvin` · ORC, 76-0012, pièce 3 — **Opposition de Colombe
 Brossal, née Tessonnal**, par Me Gérard Vallin, avocat. « Cet homme n'est pas mon frère. Mon frère avait
-les yeux de notre mère. » « Mon père n'a eu que deux enfants. » Conteste le testament (« écrit à
-quatre-vingt-treize ans »), parle au nom « de mes enfants, M. Hugues Brossal, ingénieur aux Verreries, et
+les yeux de notre mère. » « Mon père n'a eu que deux enfants. » Conteste le testament (« rédigé dans sa
+quatre-vingt-treizième année », soit à 92 ans révolus), parle au nom « de mes enfants, M. Hugues Brossal, ingénieur aux Verreries, et
 Mme Isaure Escande », et de « feu mon mari, Aimé Brossal, fondé de pouvoir de la maison pendant
 trente-deux ans ». **Départ.**
 Mots-clés : Colombe Brossal, Colombe Tessonnal, Vallin, Hugues Brossal, Isaure Escande, Aimé Brossal,
@@ -183,12 +183,15 @@ Prouve : C17 V (signalement) ; contre C15 V. (Planche : schéma des deux mains.)
 
 **EX-02** · `report` · 16 févr. 1976 · `aubrelieu` · Archives nationales, atelier de conservation, pour
 l'ORC — **Examen comparatif des écritures et des supports**, signé **L. Daubry**, restauratrice.
-Pièces comparées : billet de 1937 (LT-04, Bastien), signature de la fiche 38-0377 si communiquée,
-requête de 1976 (OF-02), signatures des PV, réinscription de 1953 (RG-15), télégramme de 1976 (TG-02),
-billet de 1944 (LT-06) si communiqué. Planche comparative : le **T majuscule à boucle** des écoles
-thalbères (1976, 1953) contre le T à barre droite des écoles de Hautcorvin (1937, 1944). « Le scripteur
-de 1976 est celui de 1953. Celui de 1937 est celui de 1944. Je ne conclus pas sur les noms. » Elle note
-le papier des billets (bon de cantine du bagne pour 1944).
+Pièces comparées (texte fixé v0.3) : A, billet de 1937 (LT-04, Bastien) ; B, requête de 1976 (OF-02) ;
+C, signatures des PV n° 1 et 2 ; D, réinscription de 1953 (RG-15, mention « Tout ce qui précède est
+exact ») ; E, télégramme de 1976 (TG-02, les « STOP »). Elle précise qu'**aucune pièce signée de 1938**
+(douanes, fonds restreint du BRR) ne lui a été communiquée, et n'examine pas le billet de 1944.
+Observations : le **T majuscule à boucle** des écoles thalbères (B à E) contre le T à barre droite des
+écoles de la haute vallée (A) ; le T de la signature B tracé deux fois (amorce droite recouverte).
+« Le scripteur de 1976 est celui de 1953. Celui de 1937 n'est pas celui de 1976. Les noms sont
+l'affaire de l'Office. » Note manuscrite : regarder d'abord le T du procès-verbal des douanes de mai 1938
+(RP-04), quand il sera communiqué.
 Mots-clés : L. Daubry, expertise d'écriture, T thalbère, Andrin Dalvarin, Bastien Tessonnal, atelier de conservation.
 Prouve : C17 N (scripteur) ; contre C15.
 
@@ -202,7 +205,7 @@ Prouve : C17 V ; C15 V.
 
 **EX-04** · `report` · 24 févr. 1976 · `aubrelieu` · Musée des Arts du feu, pour l'ORC — **Expertise de
 verres gravés** (Mathias Orvane, conservateur). Pièces : la Coupe du Régent (1941, OB-01), le verre
-« À la fille du souffleur » (1959, OB-02), un gobelet du catalogue de Brénica (1974, CT-02), une coupe
+« À la fille du souffleur » (1959, OB-02, un gobelet), un gobelet du catalogue de Brénica (1974, CT-02), une coupe
 de Danela Dalvarin (1925, CT-01). « Même main en 1941, 1959 et 1974 : la façon de finir les feuilles de
 laurier d'un coup de pointe, à gauche. Cette main a appris chez Danela Dalvarin. » Il signale dans le
 laurier de la Coupe les signes **B · T · 38**.
@@ -682,7 +685,7 @@ Mots-clés : Coupe du Régent, scellé, laurier, B. T. 38, Verreries de Hautcorv
 Prouve : (S4, pièce clé.)
 
 **OB-02** · `object` · 14 févr. 1959 · `vernezac` · Prêt d'Agnès Neviot à l'ORC (PV-04) — **Verre gravé
-« À la fille du souffleur — 14.II.1959 »** : le Pas de l'Ourse, une ourse et son petit ; reçu sans nom,
+« À la fille du souffleur — 14.II.1959 »** (un gobelet) : le Pas de l'Ourse, une ourse et son petit ; reçu sans nom,
 emballage postal de Brénica.
 Mots-clés : verre gravé, À la fille du souffleur, Agnès Neviot, Pas de l'Ourse, Brénica.
 Prouve : C17 M (avec EX-04) ; (S5, appui).
