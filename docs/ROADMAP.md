@@ -59,10 +59,15 @@ Fait :
       macOS universel (dmg), Android (APK debug) — commit « [tauri] » sur la branche de travail
 - [x] Page itch.io prête (`docs/ITCH.md`) et script butler (`scripts/itch-push.sh`) ; rien publié
 
-## Backlog
+## Session 0 sexies — 13 oct. 2026 (publication itch.io)
 
-- Avant publication itch.io : prix exact, version ≠ 0.0.0 + tag `v*`, keystore Android (4 secrets),
-  signature macOS/Windows ou avertissement, couverture 630 × 500, captures de la vraie affaire.
+- [x] Clé Android `arbre-upload-v2` (hors repo, dossier partagé du projet) ; APK signé en CI (4 secrets)
+- [x] Jeu web jouable sur `/jouer/` du site
+- [x] Page itch.io publiée, gratuite : web, Windows, macOS, Linux, Android en 1.0.1
+- [x] Envoi automatique : tag `v*` ou commit `[itch]` → builds natifs → butler (`tauri.yml`, job `itch`)
+- [x] Dépôt passé en public (Actions gratuites) ; kit de publication retiré du dépôt
+
+## Backlog
 
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
   en mode scindé et fond transparent, lecture « à la visibilité » des entrées sans hydratation,
@@ -75,12 +80,11 @@ Fait :
 - e2e : tuer les serveurs restés ouverts avant de relancer (`reuseExistingServer` reprend un build périmé).
 
 - Tests sur appareils réels (Windows, macOS, Linux/Steam Deck, Android téléphone et tablette).
-- Signature macOS (Developer ID) et Windows avant la vente ; keystore Android hors repo.
-- Page itch.io et `itch.yml` (butler).
+- Signature macOS (Developer ID) et Windows : seulement si le jeu devient payant.
+- itch.io : l'APK passé par butler est livré dans un .zip (envoi manuel de l'APK pour un téléchargement direct).
 - Site en ligne (https://arbre.fs0ciety.org) : ajout aux catalogues mons-corp et occ-studios ; basculer
   l'app Coolify sur `main` après fusion (DEPLOYMENT §1).
 - Affaires supplémentaires (contenu seul).
-- Builds natifs Tauri (Windows, macOS, Linux, Android) : à lancer en CI (`tauri.yml`), jamais testés ici.
 - Musique et ambiances (le moteur audio est prêt, `playMusic` ne joue rien).
 - Tutoriel en bulles (le choix « J'ai déjà joué » est seulement mémorisé) ; tiroir à deux crans sur tablette portrait.
 - `Dialog` : prop `initialFocus` (design-lead) pour retirer l'action `initial-focus.ts` du jeu.
