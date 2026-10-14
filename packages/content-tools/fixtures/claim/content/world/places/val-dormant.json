@@ -1,0 +1,10 @@
+{
+  "id": "val-dormant",
+  "name": "Val-Dormant",
+  "kind": "village",
+  "position": {
+    "x": 0.42,
+    "y": 0.58
+  },
+  "description": "Village du bac, au bord de la Lisse."
+}

@@ -173,6 +173,27 @@ def toponyms():
                                  ('l’Orvelle', 0.252, 0.476, 12, 17), ('estuaire', 0.070, 0.500, 10, 0)):
         x, y = P(nx, ny)
         o.append(text('label-water', x, y, s, size=size, rot=rot))
+    # la Vèze (affaire 2)
+    vx, vy, vrot, vsize = world.VEZE_LABEL
+    x, y = P(vx, vy)
+    o.append(text('label-water', x, y, 'la Vèze', size=vsize, rot=vrot))
+    # toponymes sans lieu du jeu : petite marque gravée + nom (la Combe-aux-Sables)
+    for tid, t in world.TOPONYMS.items():
+        x, y = P(*t['pos'])
+        dx, dy, anchor, size, lines = t['label']
+        if tid == 'combe-aux-sables':
+            # entaille blanche de la carrière dans la pente : lèvre hachurée, front de taille, déblais
+            o.append(path('paper', f'M{f(x - 6)} {f(y + 2)}l3-6 7-1.6 3.4 5.4-4 2.6z'))
+            o.append(path('hatch', f'M{f(x - 6)} {f(y + 2)}l3-6 2 1-2.4 5.6z'))
+            o.append(path('ink-soft', f'M{f(x - 6)} {f(y + 2)}l3-6 7-1.6 3.4 5.4M{f(x - 3)} {f(y - 4)}l.4 5.2', stroke_width='0.6'))
+            o.append(path('ink-faint', f'M{f(x - 7)} {f(y + 3.6)}h12', stroke_width='0.5', stroke_dasharray='1 1'))
+        a = f'<text class="label" x="{f(x + dx)}" y="{f(y + dy)}"'
+        if anchor != 'start':
+            a += f' text-anchor="{anchor}"'
+        a += f' font-size="{f(size)}">'
+        for i, line in enumerate(lines):
+            a += f'<tspan x="{f(x + dx)}"' + (f' dy="{f(size * 1.12)}"' if i else '') + f'>{esc(line)}</tspan>'
+        o.append(a + '</text>')
     # notes du graveur
     tx, ty = world.place_xy('tennok')
     for s, x, y, size in (('les Dents de Tennok', tx + 6, ty - 44, 9.5),

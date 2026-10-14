@@ -12,6 +12,8 @@ export interface Person {
   nicknames?: string[];
   occupation: OccupationId;
   portrait: PortraitId;
+  /** Autres âges du même visage, acceptés dans sa case. */
+  altPortraits?: PortraitId[];
   born?: PartialDate;
   died?: PartialDate;
   parents?: [PersonId | null, PersonId | null];
@@ -48,6 +50,7 @@ export const PersonSchema = z.strictObject({
   nicknames: z.array(TextSchema).optional(),
   occupation: IdSchema,
   portrait: IdSchema,
+  altPortraits: z.array(IdSchema).min(1).optional(),
   born: PartialDateSchema.optional(),
   died: PartialDateSchema.optional(),
   parents: z.tuple([IdSchema.nullable(), IdSchema.nullable()]).optional(),

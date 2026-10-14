@@ -65,6 +65,8 @@ def build():
         dd += d_poly(offset(list(rd), 1.25)) + d_poly(offset(list(rd), -1.25))
     land.append(path('ink-soft', dd, stroke_width='0.55'))
     land.append(path('ink-faint', ''.join(d_poly(list(rd)) for rd in minor), stroke_width='0.8', stroke_dasharray='3 1.8'))
+    # sentiers de montagne : pointillé fin, plus serré que les chemins
+    land.append(path('ink-soft', ''.join(d_poly(list(t)) for t in world.trails()), stroke_width='0.6', stroke_dasharray='0.9 1.9'))
     land.append('</g>')
     o += land
     # trait de côte

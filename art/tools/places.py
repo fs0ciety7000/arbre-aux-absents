@@ -460,6 +460,84 @@ def v_orvelle():
     return o
 
 
+def _local_line(pid, line):
+    """Polyligne absolue → repère local de la vignette (translate puis scale)."""
+    x0, y0 = world.place_xy(pid)
+    sc = world.VSCALE.get(pid, 1.0)
+    return [((x - x0) / sc, (y - y0) / sc) for x, y in line]
+
+
+def v_vernezac():
+    o = [ground(22, 16, 'vz', dy=-3)]
+    # la Vèze traverse le village (redessinée sur la clairière, d'est en ouest)
+    vz = [p for p in _local_line('vernezac', world.streams()[world.VEZE_INDEX][0]) if abs(p[0]) < 22.5 and abs(p[1]) < 16]
+    if len(vz) > 2:
+        o.append(path('water', d_poly(ribbon(vz, [1.6] * len(vz)), True), stroke='currentColor', stroke_width='0.45'))
+    # halle des fours : long toit d'ardoise, grande cheminée trapue, fumée
+    o.append(rect('paper', -15, -12, 22, 8))
+    o.append(wash('ardoise', 'M-16.4 -12l3-4.4h18.8l3 4.4z', stroke_width='0.5'))
+    o.append(path('ink', R(-15, -12, 22, 8) + 'M-16.4 -12l3-4.4h18.8l3 4.4', stroke_width='0.7'))
+    o.append(path('ink-soft', ''.join(f'M{f(-13 + i * 4.2)} -9.4a1.1 1.1 0 0 1 2.2 0v3.2h-2.2z' for i in range(5)), fill='currentColor', stroke_width='0.2'))
+    o.append(wash('sienne', 'M-1.6 -16.4l.8-6.6h5.6l.8 6.6z', stroke_width='0.5'))
+    o.append(path('ink', 'M-1.6 -16.4l.8-6.6h5.6l.8 6.6M-1.4 -23h6.4', stroke_width='0.75'))
+    o.append(smoke(2, -24, 1.0))
+    # église, maisons (rive sud), pont de pierre
+    o.append(rect('paper', 12, -10, 5, 7))
+    o.append(wash('ardoise', 'M12 -10l2.5-6.4 2.5 6.4z', stroke_width='0.4'))
+    o.append(path('ink', R(12, -10, 5, 7) + 'M12 -10l2.5-6.4 2.5 6.4M14.5 -16.4v-2', stroke_width='0.6'))
+    o.append(house(-12, 10, 5, 3.6, 'carmin', roof_h=3))
+    o.append(house(-4, 11, 5, 3.4, 'safran', roof_h=3))
+    o.append(house(10, 9, 5, 3.4, 'carmin', roof_h=3))
+    if len(vz) > 2:
+        by = min(vz, key=lambda p: abs(p[0] - 6.6))[1]
+        o.append(path('ink', f'M4 {f(by - 2.2)}q2.6-2 5.2 0M4 {f(by + 2.6)}q2.6-2 5.2 0', stroke_width='0.7'))
+    o.append(label('vernezac'))
+    return o
+
+
+def v_pas_de_l_ourse():
+    o = []
+    # la brèche : deux dents de rocher de part et d'autre du col, neige sur les arêtes
+    left = [(-14, 4), (-11, -6), (-7, -13), (-4, -9), (-2.2, -2), (-1, 4)]
+    right = [(1.2, 4), (2.4, -3), (5, -11), (8, -15), (11, -8), (14, 4)]
+    for pts, sh in ((left, [(-7, -13), (-4, -9), (-2.2, -2), (-1, 4), (-6, 4)]),
+                    (right, [(8, -15), (11, -8), (14, 4), (9, 4)])):
+        o.append(poly('paper', pts))
+        o.append(path('hatch', d_poly(sh, True)))
+        o.append(wash('ardoise', d_poly(pts, True), stroke_width='0.3', fill_opacity='0.6'))
+        o.append(path('ink', d_poly(pts), stroke_width='0.75'))
+    o.append(path('ink-faint', 'M-9 -9l2-4 1.6 2.2M6 -12l2-3 1.6 2.6', stroke_width='0.5'))
+    # borne-frontière dans la brèche et croix de fer au lacet
+    o.append(path('paper', 'M-.9 4v-4.4q.9-1 1.8 0V4z'))
+    o.append(path('ink', 'M-.9 4v-4.4q.9-1 1.8 0V4z', stroke_width='0.55'))
+    o.append(path('ink', 'M-6 13v-7.4M-8 8h4', stroke_width='0.75'))
+    o.append(path('ink-faint', 'M-14 10q4 3 8 1t8 1', stroke_width='0.5', stroke_dasharray='0.9 1.4'))
+    # refuge de l'Ourse, un peu en contrebas côté velmarchois
+    rx, ry = _local_line('pas-de-l-ourse', [P(*world.REFUGE)])[0]
+    o.append(house(rx, ry + 2, 6, 3.6, 'sienne', roof_h=2.8))
+    o.append(path('ink-soft', f'M{f(rx + 1.6)} {f(ry - 3.6)}v-1.6h1.2v.8', stroke_width='0.5'))
+    o.append(label('pas-de-l-ourse'))
+    return o
+
+
+def v_dalvezac():
+    o = [ground(19, 13, 'dv', dy=-2)]
+    # trois maisons de bois (toits de planches) et une meule de charbonnier fumante
+    for x, y, w in ((-11, -3, 6), (-3, -6, 5.4), (5, -2, 6)):
+        o.append(rect('paper', x - w / 2, y - 3.4, w, 3.4))
+        o.append(wash('sienne', d_poly([(x - w / 2 - 1, y - 3.4), (x, y - 7.4), (x + w / 2 + 1, y - 3.4)], True), stroke_width='0.5'))
+        o.append(path('ink', R(x - w / 2, y - 3.4, w, 3.4) + d_poly([(x - w / 2 - 1, y - 3.4), (x, y - 7.4), (x + w / 2 + 1, y - 3.4)]), stroke_width='0.6'))
+        o.append(path('ink-faint', ''.join(f'M{f(x - w / 2 + 0.2)} {f(y - 3.4 + k * 1.1)}h{f(w - 0.4)}' for k in (1, 2)), stroke_width='0.45'))
+    o.append(path('paper', 'M6 8q6-8 12 0z'))
+    o.append(path('hatch-dense', 'M6 8q6-8 12 0z'))
+    o.append(path('ink', 'M6 8q6-8 12 0zM9.4 5.2l1.2-.6M12.6 4.8l1.4.4', stroke_width='0.65'))
+    o.append(smoke(12, 3.6, 0.8))
+    o.append(pine(-15, 7, 2.4))
+    o.append(pine(-9, 9, 2.0))
+    o.append(label('dalvezac'))
+    return o
+
+
 DRAW = {
     'aubrelieu': v_aubrelieu, 'moulinvert': v_moulinvert, 'foret-de-sorbe': v_foret_de_sorbe,
     'lac-d-aulne': v_lac_d_aulne, 'saint-ormel': v_saint_ormel, 'port-senane': v_port_senane,
@@ -467,12 +545,14 @@ DRAW = {
     'monts-corvins': v_monts_corvins, 'brenzac': v_brenzac, 'grisenoue': v_grisenoue,
     'landes-d-ostrie': v_landes, 'tennok': v_tennok, 'vellaak': v_vellaak, 'kessaar': v_kessaar,
     'mer-grise': v_mer_grise, 'golfe-d-ambre': v_golfe_d_ambre, 'orvelle': v_orvelle,
+    'vernezac': v_vernezac, 'pas-de-l-ourse': v_pas_de_l_ourse, 'dalvezac': v_dalvezac,
 }
 
 # Ordre de dessin : mers et régions d'abord (sous les villes), puis du nord au sud.
 ORDER = ['mer-grise', 'golfe-d-ambre', 'monts-corvins', 'landes-d-ostrie', 'orvelle', 'kessaar', 'tennok',
          'vellaak', 'grisenoue', 'port-senane', 'saint-ormel', 'aubrelieu', 'brenzac', 'foret-de-sorbe',
-         'moulinvert', 'col-de-corvenne', 'bains-de-merande', 'hautcorvin', 'lac-d-aulne']
+         'moulinvert', 'col-de-corvenne', 'bains-de-merande', 'hautcorvin', 'lac-d-aulne',
+         'dalvezac', 'pas-de-l-ourse', 'vernezac']
 
 
 def build():

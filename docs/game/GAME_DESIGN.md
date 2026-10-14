@@ -536,6 +536,7 @@ Débloquée après l'épilogue à 100 %. Même affaire, avec :
 Une affaire = un dossier de données (documents, termes, arbre, groupes, lieux, secrets, fins,
 succès propres). Le moteur charge la liste des affaires disponibles. Succès « génériques » communs
 + succès propres par affaire. Carte : une affaire peut ajouter des lieux sur la carte du monde.
+Affaire 2 (case revendiquée, entrée, choix final, succès) : `docs/game/AFFAIRE-2.md`.
 
 ---
 

@@ -1,0 +1,221 @@
+{
+  "start": ["intro"],
+  "unlocks": {
+    "photo-couple": {
+      "read": "acte-mariage"
+    },
+    "photo-bac": {
+      "read": "carte-postale"
+    },
+    "lettre-maren": {
+      "groupLocked": "aines"
+    },
+    "photo-fratrie": {
+      "lockedCount": {
+        "gte": 3
+      }
+    }
+  },
+  "keywords": [
+    {
+      "id": "ancel-morvan",
+      "label": "Ancel Morvan",
+      "kind": "person",
+      "terms": ["Ancel Morvan"],
+      "results": [
+        {
+          "documents": ["lettre-ancel"]
+        }
+      ]
+    },
+    {
+      "id": "ida-brask",
+      "label": "Ida Brask",
+      "kind": "person",
+      "terms": ["Ida Brask"],
+      "results": [
+        {
+          "documents": ["acte-mariage"]
+        }
+      ]
+    },
+    {
+      "id": "edda-brask",
+      "label": "Edda Brask",
+      "kind": "person",
+      "terms": ["Edda Brask"],
+      "results": [
+        {
+          "documents": ["lettre-edda"]
+        }
+      ]
+    },
+    {
+      "id": "val-dormant",
+      "label": "Val-Dormant",
+      "kind": "place",
+      "terms": ["Val-Dormant"],
+      "results": [
+        {
+          "documents": ["carte-postale"]
+        }
+      ]
+    },
+    {
+      "id": "ecole-du-bac",
+      "label": "École du Bac",
+      "kind": "organization",
+      "terms": ["école du Bac"],
+      "results": [
+        {
+          "documents": ["bulletin-ecole"]
+        }
+      ]
+    },
+    {
+      "id": "moulin-solvig",
+      "label": "Moulin Solvig",
+      "kind": "place",
+      "terms": ["moulin Solvig"],
+      "results": [
+        {
+          "documents": ["annonce-moulin"]
+        }
+      ]
+    }
+  ],
+  "places": [
+    {
+      "place": "val-dormant",
+      "documents": [
+        {
+          "id": "registre-val-dormant"
+        }
+      ]
+    }
+  ],
+  "secrets": [
+    {
+      "id": "lettres-edda",
+      "title": "La correspondance d'Edda",
+      "discoveredBy": {
+        "read": "lettre-edda"
+      }
+    }
+  ],
+  "endings": [
+    {
+      "id": "fin-arbre",
+      "file": "endings/fin-arbre.md",
+      "when": {
+        "all": [
+          {
+            "groupLocked": "cadets"
+          },
+          {
+            "any": [
+              {
+                "not": {
+                  "secret": "lettres-edda"
+                }
+              },
+              {
+                "answered": {
+                  "question": "lettres",
+                  "option": "bruler"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "priority": 1
+    },
+    {
+      "id": "fin-edda",
+      "file": "endings/fin-edda.md",
+      "when": {
+        "all": [
+          {
+            "groupLocked": "cadets"
+          },
+          {
+            "secret": "lettres-edda"
+          },
+          {
+            "answered": {
+              "question": "lettres",
+              "option": "garder"
+            }
+          }
+        ]
+      },
+      "priority": 2,
+      "sections": {
+        "maren": {
+          "answered": {
+            "question": "heritier",
+            "option": "maren"
+          }
+        },
+        "oskar": {
+          "answered": {
+            "question": "heritier",
+            "option": "oskar"
+          }
+        }
+      }
+    }
+  ],
+  "demo": {
+    "documents": [
+      "intro",
+      "lettre-ancel",
+      "acte-mariage",
+      "photo-couple",
+      "carte-postale",
+      "photo-bac",
+      "registre-val-dormant"
+    ],
+    "slots": ["s-ancel", "s-ida", "s-tomas"],
+    "end": "registre-val-dormant"
+  },
+  "report": [
+    {
+      "id": "heritier",
+      "prompt": "À qui revient la malle ?",
+      "kind": "question",
+      "options": [
+        {
+          "id": "maren",
+          "label": "Maren Morvan"
+        },
+        {
+          "id": "oskar",
+          "label": "Oskar Morvan"
+        }
+      ]
+    },
+    {
+      "id": "lettres",
+      "prompt": "Que faire des lettres d'Edda ?",
+      "kind": "choice",
+      "askedWhen": {
+        "secret": "lettres-edda"
+      },
+      "options": [
+        {
+          "id": "bruler",
+          "label": "Les brûler"
+        },
+        {
+          "id": "garder",
+          "label": "Les garder",
+          "availableWhen": {
+            "read": "lettre-edda"
+          }
+        }
+      ]
+    }
+  ]
+}

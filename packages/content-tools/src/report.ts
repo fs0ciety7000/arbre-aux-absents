@@ -88,8 +88,10 @@ export function solveReport(r: CheckResult): string {
   const out: string[] = ['# Rapport du solveur', ''];
   out.push(
     'Hypothèses : joueur méthodique (lit tout, visite tout, cherche tout mot-clé lu) ; mots-clés',
-    '`hiddenTerm` supposés déduits dès le départ ; cases pré-remplies établies d’emblée ; une case',
-    's’établit quand prénom et nom figurent chacun dans ≥ 2 documents lus, portrait et métier débloqués.',
+    '`hiddenTerm` supposés déduits dès le départ ; cases pré-remplies établies d’emblée ; cases',
+    'revendiquées parties vides (leur déclaration ne prouve rien), visages et métiers déclarés',
+    'disponibles d’emblée (`(revendication)`) ; une case s’établit quand prénom et nom figurent chacun',
+    'dans ≥ 2 documents lus, un de ses visages (tout âge) et son métier débloqués.',
     '',
   );
   const errors = r.issues.errors;

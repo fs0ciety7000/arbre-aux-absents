@@ -10,12 +10,13 @@
  *   visible gagne ; aucun : note posée en bas de l'écran).
  */
 import type { CompiledCase, SaveState, SlotGuess, SlotId } from '@arbre/contract';
-import { isComplete } from '@arbre/engine';
+import { isComplete, normalize, reportQuestions } from '@arbre/engine';
 import type { Device } from '@arbre/ui';
 import type { DeskUi, PanelId } from '../lib/game/types';
 import { messages } from '../messages.fr';
 
-export const TUTORIAL_STEPS = [
+/** Les 10 notes de base (cran « Complètes »). */
+export const BASE_STEPS = [
   'welcome',
   'reader',
   'catalogue',
@@ -27,7 +28,21 @@ export const TUTORIAL_STEPS = [
   'map',
   'help',
 ] as const;
+/**
+ * Nouveautés (AFFAIRE-2 §2.4) : montrées seulement quand l'affaire a la mécanique, déduite des
+ * données (case revendiquée, pièce d'audition, décision au rapport), jamais d'un id d'affaire.
+ */
+export const NEWS_STEPS = ['claim', 'hearing', 'decision'] as const;
+/** Nouveautés qui se montrent au Bureau (la décision attend le rapport final). */
+const DESK_NEWS: readonly NewsStepId[] = ['claim', 'hearing'];
+/** Accueil « titulaire » du cran « Nouveautés seulement » (remplace `welcome`). */
+export const RETURNING_STEP = 'returning';
+export const TUTORIAL_STEPS = [RETURNING_STEP, ...BASE_STEPS, ...NEWS_STEPS] as const;
 export type TutorialStepId = (typeof TUTORIAL_STEPS)[number];
+export type NewsStepId = (typeof NEWS_STEPS)[number];
+
+/** Écran où vit la note : le Bureau, ou le rapport final. */
+export type TutorialScreen = 'desk' | 'report';
 
 /** Ce que la partie était à l'ouverture du Bureau (cases pré-remplies, partie reprise). */
 export interface TutorialBaseline {
@@ -43,10 +58,14 @@ export interface TutorialContext {
   modalOpen: boolean;
   base: TutorialBaseline;
   seen: (id: TutorialStepId) => boolean;
+  /** Écran affiché (déf. le Bureau). */
+  screen?: TutorialScreen;
 }
 
 export interface TutorialStep {
   id: TutorialStepId;
+  /** Écran de la note (déf. le Bureau). */
+  screen?: TutorialScreen;
   when: (c: TutorialContext) => boolean;
   done: (c: TutorialContext) => boolean;
   anchors: (c: TutorialContext) => string[];
@@ -84,6 +103,47 @@ const openFaces = (c: TutorialContext) => {
   return id && shown(c, 'reader') ? (c.content.documents[id]?.reveals?.portraits?.length ?? 0) : 0;
 };
 
+/** Cases revendiquées (déclaration du contenu) pas encore établies. */
+function openClaims(c: TutorialContext): SlotId[] {
+  return Object.entries(c.content.slots)
+    .filter(([id, x]) => x.claimedGuess !== undefined && c.state.locked[id] === undefined)
+    .map(([id]) => id);
+}
+
+/** Une case revendiquée a été contestée (un champ n'est plus celui de la déclaration) ou établie. */
+function claimTouched(c: TutorialContext): boolean {
+  return Object.entries(c.content.slots).some(([id, x]) => {
+    if (!x.claimedGuess) return false;
+    if (c.state.locked[id] !== undefined) return true;
+    return JSON.stringify(c.state.tree[id] ?? null) !== JSON.stringify(x.claimedGuess);
+  });
+}
+
+/**
+ * Pièce d'audition : déclencheur générique lu dans les données (procès-verbal = pièce de type
+ * `report` dont le titre parle d'audition), sans id d'affaire.
+ */
+export function isHearing(doc: { kind: string; title: string } | undefined): boolean {
+  return doc?.kind === 'report' && /\baudition\b/.test(normalize(doc.title));
+}
+
+/** Une nouveauté s'applique-t-elle à cette affaire (mécanique présente dans les données) ? */
+export function newsApplies(id: NewsStepId, content: CompiledCase): boolean {
+  switch (id) {
+    case 'claim':
+      return Object.values(content.slots).some((x) => x.claimedGuess !== undefined);
+    case 'hearing':
+      return Object.values(content.documents).some(isHearing);
+    case 'decision':
+      return (content.report ?? []).some((q) => q.kind === 'choice');
+  }
+}
+
+/** Notes qu'il faut avoir vues pour que le tutoriel soit terminé dans cette affaire. */
+export function requiredSteps(content: CompiledCase): TutorialStepId[] {
+  return [...BASE_STEPS, ...NEWS_STEPS.filter((id) => newsApplies(id, content))];
+}
+
 // Les ids de case sont en kebab-case (contrat) : rien à échapper.
 const slotSel = (id: SlotId) => `[data-tree-view] [data-slot="${id}"]`;
 const tabSel = (p: PanelId) => [`#desk-rail-tab-${p}`, `#desk-side-tab-${p}`, `#desk-bar-tab-${p}`];
@@ -91,6 +151,17 @@ const tabSel = (p: PanelId) => [`#desk-rail-tab-${p}`, `#desk-side-tab-${p}`, `#
 const t = messages.tutorial.steps;
 
 export const STEPS: readonly TutorialStep[] = [
+  {
+    // Cran « Nouveautés seulement » : les notes de base sont déjà comptées vues.
+    id: 'returning',
+    // Seulement s'il reste une nouveauté du Bureau à signaler dans cette affaire.
+    when: (c) =>
+      BASE_STEPS.every((id) => c.seen(id)) &&
+      DESK_NEWS.some((id) => !c.seen(id) && newsApplies(id, c.content)),
+    done: (c) => readCount(c) > 0,
+    anchors: () => ['[data-tour="archives-list"] > li:first-child', ...tabSel('archives')],
+    text: () => t.returning(),
+  },
   {
     id: 'welcome',
     when: () => true,
@@ -184,6 +255,34 @@ export const STEPS: readonly TutorialStep[] = [
     anchors: () => ['[data-tour="help"]', ...tabSel('help')],
     text: () => t.help(),
   },
+  {
+    id: 'claim',
+    when: (c) => c.seen('tree') && shown(c, 'tree') && openClaims(c).length > 0,
+    done: (c) => claimTouched(c),
+    anchors: (c) => {
+      const id = openClaims(c)[0];
+      return [...(id ? [slotSel(id)] : []), ...tabSel('tree')];
+    },
+    text: () => t.claim(),
+  },
+  {
+    id: 'hearing',
+    when: (c) => {
+      const id = c.ui.openDocument;
+      return id !== null && shown(c, 'reader') && isHearing(c.content.documents[id]);
+    },
+    done: () => false,
+    anchors: () => ['#reader-title'],
+    text: () => t.hearing(),
+  },
+  {
+    id: 'decision',
+    screen: 'report',
+    when: (c) => reportQuestions(c.state, c.content).some((q) => q.kind === 'choice'),
+    done: () => false,
+    anchors: () => ['[data-report-choice]', '#report-title'],
+    text: () => t.decision(),
+  },
 ];
 
 export interface NextStep {
@@ -199,8 +298,9 @@ export interface NextStep {
  */
 export function nextStep(c: TutorialContext, replay: boolean): NextStep {
   const silent: TutorialStepId[] = [];
+  const screen = c.screen ?? 'desk';
   for (const s of STEPS) {
-    if (c.seen(s.id)) continue;
+    if (c.seen(s.id) || (s.screen ?? 'desk') !== screen) continue;
     if (!replay && s.done(c)) {
       silent.push(s.id);
       continue;

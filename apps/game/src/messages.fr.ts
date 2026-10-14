@@ -61,6 +61,8 @@ export const messages = {
     kicker: 'Charger une partie',
     slotName: (slot: string) =>
       slot === 'auto' ? 'Secours automatique' : `Emplacement ${slot.replace('slot-', '')}`,
+    /** Secours d'une affaire (un par affaire, AFFAIRE-2 §2.3). */
+    backupName: (caseTitle: string) => `Secours · ${caseTitle}`,
     empty: 'Emplacement libre',
     progress: (pct: number) => `${pct} % de l'arbre`,
     playTime: (t: string) => `Temps de jeu : ${t}`,
@@ -90,7 +92,7 @@ export const messages = {
   newGame: {
     title: 'Nouvelle partie',
     kicker: 'Ouvrir un dossier',
-    caseLabel: 'Affaire',
+    caseLabel: 'Choisir une affaire',
     modeLabel: 'Mode',
     modeStandard: 'Normal',
     modeStandardHint: 'Sans limite de temps.',
@@ -99,9 +101,17 @@ export const messages = {
     modeTimedLocked: 'Chronométré (après un premier dénouement)',
     hintsLabel: "Niveau d'aide",
     hintsHint: 'Modifiable à tout moment dans les options, sans pénalité.',
-    skipTutorial: "J'ai déjà joué",
-    skipTutorialHint:
-      'Passe les bulles du tutoriel ; tout reste expliqué dans Aide › Comment jouer.',
+    tutorialLabel: 'Notes de service',
+    tutorialModes: {
+      full: 'Complètes',
+      news: 'Nouveautés seulement',
+      none: 'Aucune',
+    } as Record<'full' | 'news' | 'none', string>,
+    tutorialHints: {
+      full: 'Une collègue vous guide pas à pas, du premier document au premier coup de tampon.',
+      news: 'Seulement ce qui change dans cette affaire ; le reste est connu.',
+      none: 'Aucune bulle ; tout reste expliqué dans Aide › Comment jouer.',
+    } as Record<'full' | 'news' | 'none', string>,
     slotLabel: 'Emplacement',
     slotFree: (name: string) => `${name} (libre)`,
     slotUsed: (name: string, title: string) => `${name} (occupé : ${title})`,
@@ -113,6 +123,9 @@ export const messages = {
     devFixture: 'Affaire de test du moteur (développement)',
     devFixtureHint: 'Affichée seulement en développement, quand aucune affaire n’est compilée.',
     edition: (e: string) => (e === 'demo' ? 'Démo' : 'Version complète'),
+    statusNew: 'Non ouvert',
+    statusOngoing: (pct: number) => `En cours, ${pct} %`,
+    statusDone: (n: number, t: number) => `Rapport remis · fins vues ${n} / ${t}`,
   },
 
   hintPresets: {
@@ -224,6 +237,7 @@ export const messages = {
     obtainedOn: (d: string) => `Obtenu le ${d}`,
     count: (n: number, t: number) => `${n} / ${t} obtenus`,
     none: 'Aucune affaire chargée : les succès apparaîtront ici.',
+    noneForCase: 'Aucun succès pour cette affaire.',
     unlockedToast: 'Succès obtenu',
   },
 
@@ -301,6 +315,15 @@ export const messages = {
         'Les lieux cités se posent sur la Carte. Chacun a ses propres fonds d’archives : allez-y fouiller.',
       help: () =>
         'Un doute ? Aide › Comment jouer reprend tout, et « Où chercher ? » vous remet sur une piste. Bon courage !',
+      // Cran « Nouveautés seulement » et nouveautés (AFFAIRE-2 §2.4), ≤ 25 mots chacune.
+      returning: () =>
+        'Content de vous revoir, rapporteur titulaire. Le dossier attend dans les Archives ; je ne vous signalerai que ce qui change.',
+      claim: () =>
+        'Le requérant a rempli cette case lui-même. Rien n’y est établi : retirez ou remplacez ce qui ne tient pas.',
+      hearing: () =>
+        'Un procès-verbal d’audition : ce qu’on déclare devant l’Office est une pièce comme une autre. Recoupez-la avec le dossier.',
+      decision: () =>
+        'Ce rapport se conclut par une décision de l’Office. Un tampon grisé signale une piste encore ouverte au dossier.',
     },
   },
 
@@ -409,6 +432,15 @@ export const messages = {
     confirm: 'Remettre',
     cancel: 'Relire',
     noOption: 'Aucune réponse disponible',
+    /** Décision (question `choice`) : tampon posé sur la fiche choisie. */
+    decisionStamp: 'Visé',
+    unavailable: 'Indisponible : ',
+    backToFile: 'Revenir au dossier',
+    confirmDecisionTitle: 'Apposer ce tampon ?',
+    // AFFAIRE-2 §3.2 prévoit « Vous pourrez remettre un autre rapport après le dénouement. » :
+    // à reprendre quand le moteur permettra un nouveau rapport après `finish` (pas encore le cas).
+    confirmDecisionText:
+      'Votre décision et vos réponses seront classées, puis le dénouement s’affichera.',
   },
 
   timed: {
@@ -436,6 +468,18 @@ export const messages = {
       `${n} ${plural(n, 'case correcte', 'cases correctes')} en jeu dans ce groupe.`,
     endingReached: 'L’arbre est complet.',
     unknownSlot: 'Case',
+    // Case revendiquée (AFFAIRE-2 §1.8)
+    claimOnOpen: (n: number) =>
+      n > 1
+        ? `${n} cases de l’arbre sont revendiquées : leur identité est déclarée, pas établie.`
+        : 'Une case de l’arbre est revendiquée : son identité est déclarée, pas établie.',
+    claimFieldRemoved: (field: string) =>
+      `${field} déclaré retiré. Rétablir la déclaration : menu de la case.`,
+    claimFieldReplaced: (field: string, value: string, n: number, t: number) =>
+      `${field} : ${value}, posé. ${n} ${plural(n, 'champ déclaré', 'champs déclarés')} sur ${t}.`,
+    claimRemoved: (n: number) =>
+      `Déclaration retirée : ${n} ${plural(n, 'champ vidé', 'champs vidés')}.`,
+    claimRestored: 'Déclaration rétablie.',
   },
 
   toasts: {

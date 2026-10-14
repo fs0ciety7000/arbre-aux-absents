@@ -9,7 +9,13 @@
   /** E09 : CARDOR Media · CM Interactive · CM Creative Lab (DESIGN §11, monochrome). */
   const app = getApp();
   const m = messages.creditsScreen;
-  const content = $derived(app.game?.content ?? app.cases.find((c) => !c.fixture)?.content);
+  /** Crédits de chaque affaire (ordre des affaires), hors affaire de test. */
+  const credited = $derived.by(() => {
+    const all = app.cases.filter((c) => !c.fixture).map((c) => c.content);
+    const g = app.game?.content;
+    if (g && !all.some((c) => c.id === g.id)) all.unshift(g);
+    return all.filter((c) => (c.meta.credits?.length ?? 0) > 0);
+  });
 </script>
 
 <ScreenFrame title={m.title} onback={() => app.goto('title')}>
@@ -28,14 +34,14 @@
         <span>{m.writing}</span>
       </li>
     </ul>
-    {#if content?.meta.credits?.length}
-      <section aria-labelledby="case-credits">
-        <h2 id="case-credits">{m.caseCredits} : {content.meta.title}</h2>
+    {#each credited as content (content.id)}
+      <section aria-labelledby="case-credits-{content.id}" data-case={content.id}>
+        <h2 id="case-credits-{content.id}">{m.caseCredits} : {content.meta.title}</h2>
         <ul class="lines">
-          {#each content.meta.credits as line, i (i)}<li>{line}</li>{/each}
+          {#each content.meta.credits ?? [] as line, i (i)}<li>{line}</li>{/each}
         </ul>
       </section>
-    {/if}
+    {/each}
     <p class="muted">{m.fonts}</p>
   </div>
 </ScreenFrame>

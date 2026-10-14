@@ -5,6 +5,7 @@
 -->
 <script lang="ts">
   import type { Snippet } from 'svelte';
+  import ClaimTag from './ClaimTag.svelte';
 
   interface Props {
     title?: string;
@@ -15,6 +16,13 @@
     tilt?: number;
     /** Rang de distribution : la fiche arrive en cascade à l'apparition. */
     deal?: number;
+    /**
+     * Case revendiquée (§6.9) : bord en tirets et cartouche « Déclaré » agrafé en tête.
+     * Les valeurs déclarées du contenu portent la classe `.claim-value`.
+     */
+    claimed?: boolean;
+    /** Texte du cartouche (déf. « Déclaré »). */
+    claimLabel?: string;
     children?: Snippet;
     class?: string;
   }
@@ -24,6 +32,8 @@
     cote,
     tilt = 0,
     deal,
+    claimed = false,
+    claimLabel,
     children,
     class: className = '',
   }: Props = $props();
@@ -33,11 +43,13 @@
 <div
   class="mat-card index-card {className}"
   class:mv-deal={deal !== undefined}
+  class:claim-frame={claimed}
   data-surface="paper"
   style:--tilt="{angle}deg"
   style:--i={deal}
   style:transform="rotate({angle}deg)"
 >
+  <ClaimTag shown={claimed} straddle label={claimLabel} />
   {#if title || cote}
     <div class="head">
       {#if title}<svelte:element this={`h${headingLevel}`} class="title">{title}</svelte:element

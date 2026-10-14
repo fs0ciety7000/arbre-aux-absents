@@ -156,7 +156,9 @@ test.describe('axe (WCAG 2.2 AA)', () => {
     await page.getByRole('button', { name: 'Nouvelle partie' }).click();
     expect(await axe(page), 'nouvelle partie').toEqual([]);
     // Tutoriel passé : la note de service a son propre audit (tutorial.spec.ts).
-    await page.getByRole('switch', { name: "J'ai déjà joué" }).click();
+    await page
+      .getByRole('combobox', { name: 'Notes de service' })
+      .selectOption({ label: 'Aucune' });
     await page.getByRole('button', { name: 'Commencer' }).click();
     await expect(desk(page)).toBeVisible();
     expect(await axe(page), 'Bureau').toEqual([]);

@@ -57,7 +57,15 @@ describe('web : IndexedDB', () => {
     await p.saves.save('slot-1', makeSave('slot-1'));
     expect(calls).toBe(1);
     expect(await p.saves.list()).toEqual([
-      { slot: 'slot-1', caseTitle: 'T', updatedAt: 1, elapsedMs: 2, mode: 'timed', progress: 0.25 },
+      {
+        slot: 'slot-1',
+        caseTitle: 'T',
+        updatedAt: 1,
+        elapsedMs: 2,
+        mode: 'timed',
+        progress: 0.25,
+        caseId: null,
+      },
     ]);
     expect(calls).toBe(1); // le résumé stocké suffit
   });

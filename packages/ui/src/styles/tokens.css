@@ -85,6 +85,10 @@
   --raw-ink-ribbon: oklch(0.26 0.012 260); /* ruban de machine à écrire */
   --raw-rule-blue: oklch(0.76 0.07 236); /* réglure des fiches bristol */
   --raw-steel: oklch(0.8 0.012 250); /* trombone, punaise */
+  /* Formulaire de requête (case revendiquée, §6.9) : papier vert d'eau, encre bleu canard */
+  --raw-form-100: oklch(0.945 0.03 196);
+  --raw-form-700: oklch(0.42 0.065 212);
+  --raw-form-300: oklch(0.82 0.07 200); /* encre du formulaire lue sur le bureau sombre */
 
   /* ── 2. Sémantique : contexte « lampe » (défaut, bureau sombre) ───── */
   --canvas: var(--raw-night-950);
@@ -140,6 +144,16 @@
   --card: var(--raw-paper-new); /* fiche bristol */
   --card-rule: var(--raw-rule-blue);
   --card-margin: var(--raw-vermilion-500); /* ligne de tête rouge des fiches */
+  /* Case revendiquée (§6.9) : déclaration agrafée, bord en tirets, valeurs tapées entre « » */
+  --claim-paper: var(--raw-form-100); /* fond du cartouche « Déclaré » */
+  --claim-ink: var(--raw-form-700); /* texte du cartouche, valeurs déclarées */
+  --claim-edge: var(--raw-form-700); /* tirets du bord, filet du cartouche */
+  /* Variante bureau sombre : valeur déclarée posée hors papier (fiche de case, sélecteur) */
+  --claim-ink-desk: var(--raw-form-300);
+  --claim-border: 2px;
+  --claim-dash: 6px;
+  --claim-gap: 4px;
+  --claim-tag-h: 20px;
   --tape: oklch(0.93 0.045 95 / 0.78); /* ruban adhésif mat, translucide */
   --tape-edge: oklch(0.8 0.05 90 / 0.6);
   --label-tape: oklch(0.36 0.12 257); /* étiqueteuse à relief (bande bleue) */
@@ -365,6 +379,8 @@
   --dur-spread: 900ms; /* l'encre du tampon s'étale */
   --dur-celebrate: 1800ms; /* branche révélée */
   --dur-rustle: 360ms; /* froissement */
+  --dur-unclaim: 200ms; /* valeur déclarée retirée, cartouche dégrafé (0 en mouvement réduit) */
+  --unclaim-shift: 14px; /* glissement de la valeur hors de la fiche */
   --stagger: 120ms;
   --stagger-deal: 55ms; /* entre deux fiches distribuées (≤ 12 fiches animées) */
   --dur-loop: 1000ms; /* boucles : spinner, plume du Loader */
@@ -548,6 +564,10 @@
   --card: oklch(1 0 0);
   --card-rule: oklch(0.55 0 0);
   --card-margin: oklch(0.45 0.16 29);
+  --claim-paper: oklch(1 0 0);
+  --claim-ink: oklch(0.25 0.035 212);
+  --claim-edge: oklch(0.25 0.035 212);
+  --claim-ink-desk: oklch(0.93 0.035 200);
   --tape: oklch(0.9 0 0 / 0.9);
   --tape-edge: oklch(0.13 0 0);
   --label-tape: oklch(0.1 0 0);
@@ -891,6 +911,8 @@
     --dur-spread: 0.01ms;
     --dur-celebrate: 0.01ms;
     --dur-rustle: 0.01ms;
+    --dur-unclaim: 0.01ms;
+    --unclaim-shift: 0px;
     --stagger: 0ms;
     --stagger-deal: 0ms;
     --dur-fade-fast: 100ms;
@@ -922,6 +944,8 @@
   --dur-spread: 0.01ms;
   --dur-celebrate: 0.01ms;
   --dur-rustle: 0.01ms;
+  --dur-unclaim: 0.01ms;
+  --unclaim-shift: 0px;
   --stagger: 0ms;
   --stagger-deal: 0ms;
   --dur-fade-fast: 100ms;

@@ -91,6 +91,22 @@ Fait :
 - [x] Icône de l'appli = sceau du kit presse (desktop, Android adaptative, favicon du jeu) ; image de
       partage du site = bannière « bureau »
 
+## Session 1 — 14 oct. 2026 (affaire 2.0 « Le Revenant de Hautcorvin », branche `claude/affaire-2`)
+
+- [x] Spécification `docs/game/AFFAIRE-2.md` : case revendiquée (déclaration fausse à contester), visages à
+      plusieurs âges, décision finale à tampons, choix de l'affaire (écran E04), notes de tutoriel à trois crans
+- [x] Contrat : `TreeSlot.claim`, `CompiledSlot.claimedGuess`, `Person.altPortraits`, `CaseMeta.order`,
+      `ReportOption.unavailableReason` ; moteur (`slotStatus`, `claimedFields`) ; content-tools (règles et
+      solveur de la case revendiquée, `checkAcrossCases`)
+- [x] UI : `ClaimTag`, `CaseFolder(Group)`, `DecisionCard(Group)`, encre `--claim-ink-desk`, journal
+      « Déclaration contestée », son `unstaple`, projet e2e `game-cases`
+- [x] Contenu : bible `docs/scenario/hautcorvin/`, level design `docs/level/hautcorvin.md`, 28 cases en
+      8 groupes, 98 documents, 4 fins, 36 portraits, 53 illustrations, Vernezac, Pas de l'Ourse et Dalvezac
+      sur la carte ; durée estimée 4 h 50 à 7 h 25 ; `content:check` vert (2 affaires)
+- [x] QA : les 4 fins jouées dans le build web ; démo itch sans trace de l'affaire 2 ; LCP 124 ms / 680 ms
+- [x] Correctifs QA : étiquette Dalvezac sous les contrôles de la carte du site (axe `target-size`), focus de
+      la confirmation « Rétablir la déclaration », portrait déclaré lisible dans la fiche, secours par affaire
+
 ## Backlog
 
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
@@ -109,6 +125,16 @@ Fait :
 - Site en ligne (https://arbre.fs0ciety.org) : ajout au catalogue occ-studios (mons-corp fait : PR #8) ; basculer
   l'app Coolify sur `main` après fusion (DEPLOYMENT §1).
 - Affaires supplémentaires (contenu seul).
+- Affaire 2 (écarts à `AFFAIRE-2.md`) : `reopenReport` (refaire le rapport après le dénouement) ; durée,
+      cote, mention « Se joue seule » et tampon de la dernière décision sur les chemises E04 ; sélection par
+      défaut « l'affaire jamais commencée la plus ancienne » ; mention marginale et entrée de journal
+      « Décision » après la fin ; journal sauvegardé ; déclencheur `hearing` sans dépendre du titre
+      « audition » ; démo des tampons sur `/design` ; fiche d'aide « Cases revendiquées ».
+- Emplacements manuels 1 à 3 par affaire (aujourd'hui partagés, E04 prévient) ; vue « comparer » et action
+      « Déplacer vers… ».
+- Perf L9 : découper le chunk de contenu par affaire avant l'affaire 3 (E04 ≈ 2,9 s en Slow 4G CPU ×4
+      avec deux affaires).
+- Test fragile sous charge : `content.test.ts` « budgets : portrait trop lourd » (délai 5 s).
 - Retour Android : fermer le tiroir tablette avant de revenir à l'Arbre ou d'ouvrir Pause. Mettre à jour `docs/game/GAME_DESIGN.md` §15 et `ECRANS.md` §5 (tutoriel) ; montrer `Coachmark` sur `/design`.
 - `Dialog` : prop `initialFocus` (design-lead) pour retirer l'action `initial-focus.ts` du jeu.
 - Contrat : remappage des touches dans `Settings`, emplacement dédié au mode chronométré, fractionnés sauvegardés.
@@ -145,3 +171,7 @@ Fait :
 | 13/10 | Site : CSS inline hachée en CSP, carte et portraits en SVG autonomes | LCP mobile 2,5 s → 1,3 s sans `'unsafe-inline'` pour `<style>`. |
 | 13/10 | Jeu : splash HTML et chargement à la demande (affaire, illustrations, carte) | LCP Slow 4G 11,5 s → 0,7 s ; format de content-tools inchangé. |
 | 13/10 | Site déployé depuis la branche de travail `claude/project-thread-kdwfab` (auto-deploy) tant que `main` n'est pas fusionnée | Mise en ligne demandée ; `main` ne contient que le commit initial et ne bouge pas sans accord. |
+| 14/10 | Affaire 2 : **« Le Revenant de Hautcorvin »** (choix C), livrée en PR depuis `claude/affaire-2` | Choix du propriétaire sur la carte de décision ; fusion quand il le voudra. |
+| 14/10 | La case revendiquée a deux champs faux (visage, métier) et un nom juste | Le joueur conteste sans tout jeter ; une déclaration juste sur 4 champs est une erreur de contenu. |
+| 14/10 | Option de décision indisponible affichée grisée avec sa raison (`unavailableReason`) | Le joueur voit ce qu'il lui manque au lieu d'une option qui disparaît. |
+| 14/10 | La démo n'inclut pas l'affaire 2 ; emplacements manuels partagés, secours par affaire | Démo inchangée ; une partie d'une affaire n'écrase jamais le secours de l'autre. |

@@ -89,7 +89,9 @@ en JS, enveloppe percussive, fin forcée à zéro) puis rejoués avec une source
 
 Les crochets existants du moteur (`audio.play(nom)`) restent synthétisés : `paper` (frottement
 qui descend), `page` (souffle qui monte puis claque), `stamp` (corps grave, claque du caoutchouc),
-`type`, `nothing`, `pin`, `tap`, `open`, `close`. `chord` (case établie) et `reveal` sont
+`type`, `nothing`, `pin`, `tap`, `open`, `close`, `unstaple` (agrafe ôtée, AFFAIRE-2 §1.7 :
+pattes qui raclent le papier, tintement métallique, feuille relâchée ; au retrait d'un champ déclaré
+d'une case revendiquée, bus effets, donc muet quand le son ou les effets sont coupés). `chord` (case établie) et `reveal` sont
 **transposés dans la tonalité de la musique en cours** (majeure relative) pour ne jamais sonner
 faux par-dessus.
 

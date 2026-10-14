@@ -11,7 +11,10 @@
     Badge,
     Button,
     Card,
+    CaseFolder,
+    CaseFolderGroup,
     Celebrate,
+    ClaimTag,
     Combobox,
     Dialog,
     DymoLabel,
@@ -52,6 +55,7 @@
     sheetPull,
     stampIn,
     tilt,
+    unclaim,
   } from '@arbre/ui/motion';
   import HeroArt from '#lib/components/HeroArt.svelte';
   import { onDestroy } from 'svelte';
@@ -99,6 +103,11 @@
     if (typeof document === 'undefined') return;
     for (const name of Object.keys(settings)) document.documentElement.removeAttribute(name);
   });
+
+  // ── Case revendiquée et chemises d'affaire (DESIGN §6.9, §6.10) ─────
+  let declared = $state({ given: true, family: true, occupation: true });
+  const anyDeclared = $derived(declared.given || declared.family || declared.occupation);
+  let caseChoice = $state('hautcorvin');
 
   // ── Couleurs ──────────────────────────────────────────────────────
   const semantic = [
@@ -619,6 +628,83 @@
       <Tape length="7rem" />
       <Tape length="5rem" rotate={8} />
     </div>
+  </section>
+
+  <!-- 5 quater. Case revendiquée, chemises d'affaire -->
+  <section aria-labelledby="d-claim" class="demo">
+    <h2 id="d-claim">Case revendiquée et chemises d’affaire (§6.9, §6.10)</h2>
+    <p class="hint">
+      Ordinaire, revendiquée (cartouche agrafé, bord en tirets, valeurs « » tapées), établie.
+      Retirer une valeur la fait glisser hors de la fiche (0 ms en mouvement réduit).
+    </p>
+    <div class="desk-demo desk-surface">
+      <div class="claim-cards">
+        <IndexCard title="Fiche ordinaire" cote="III">
+          <span class="field">Prénom : Augustin</span>
+          <span class="field">Métier : relieur</span>
+        </IndexCard>
+        <IndexCard title="Case revendiquée" cote="III" claimed={anyDeclared}>
+          {#each [['given', 'Prénom', 'Bastien', 'Andrin'], ['family', 'Nom', 'Tessonnal', 'Dalvarin'], ['occupation', 'Métier', 'graveur', 'fondeur']] as const as [key, label, claim, posed] (key)}
+            <span class="field"
+              >{label} :
+              <span class="claim-stack"
+                >{#if declared[key]}<span class="claim-value" transition:unclaim>{claim}</span
+                  >{:else}<span>{posed}</span>{/if}</span
+              ></span
+            >
+          {/each}
+        </IndexCard>
+        <div class="established-demo">
+          <IndexCard title="Case établie" cote="III">
+            <span class="field">Prénom : Agnès</span>
+            <span class="field">Nom : Neviot</span>
+          </IndexCard>
+          <span class="established-stamp"><Stamp size="s" rotate={-8} /></span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <Button
+        variant="secondary"
+        onclick={() => (declared = { ...declared, given: !declared.given })}
+        >{declared.given ? 'Retirer' : 'Rétablir'} le prénom déclaré</Button
+      >
+      <Button
+        variant="ghost"
+        onclick={() =>
+          (declared = anyDeclared
+            ? { given: false, family: false, occupation: false }
+            : { given: true, family: true, occupation: true })}
+        >{anyDeclared ? 'Retirer' : 'Rétablir'} la déclaration</Button
+      >
+      <ClaimTag />
+    </div>
+    <CaseFolderGroup legend="Choisir une affaire">
+      <CaseFolder
+        name="demo-case"
+        value="varenque"
+        checked={caseChoice === 'varenque'}
+        onselect={(v) => (caseChoice = v)}
+        title="La Succession Varenque"
+        cote="ORC 74-118"
+        duration="3 h – 5 h"
+        status="Rapport remis · fins vues 2 / 5"
+        decision="Inscrit"
+      />
+      <CaseFolder
+        name="demo-case"
+        value="hautcorvin"
+        checked={caseChoice === 'hautcorvin'}
+        onselect={(v) => (caseChoice = v)}
+        title="Le Revenant de Hautcorvin"
+        cote="ORC 76-031"
+        duration="4 h 30 – 7 h"
+        status="Non ouvert"
+      >
+        {#snippet note()}Se joue seule. Conseillé après <em>Succession Varenque</em> : quelques visages
+          y reviennent, sans rien en dévoiler.{/snippet}
+      </CaseFolder>
+    </CaseFolderGroup>
   </section>
 
   <!-- 6. Fiches -->
@@ -1346,6 +1432,28 @@
     block-size: var(--space-8);
     border-radius: var(--radius-s);
     box-shadow: inset 0 0 0 var(--border) var(--line-strong);
+  }
+  .claim-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    gap: var(--space-8) var(--space-5);
+    padding: var(--space-8) var(--space-5) var(--space-6);
+  }
+  .claim-cards .field {
+    display: block;
+  }
+  .established-demo {
+    position: relative;
+  }
+  .established-demo :global(.mat-card) {
+    box-shadow:
+      0 0 0 var(--border-strong) var(--established),
+      var(--shadow-paper);
+  }
+  .established-stamp {
+    position: absolute;
+    inset-block-end: calc(var(--space-2) * -1);
+    inset-inline-end: calc(var(--space-2) * -1);
   }
   .state-row,
   .row {

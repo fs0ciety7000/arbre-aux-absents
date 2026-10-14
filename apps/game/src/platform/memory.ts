@@ -3,13 +3,13 @@
  * (navigation privée stricte, quota nul…). Les parties ne survivent pas à la fermeture :
  * `storageWarning` le dit à l'interface.
  */
-import type { SaveStore } from '@arbre/contract';
 import {
   BackRegistry,
   fallbackSummarize,
   listenEscape,
   type FileIo,
   type GamePlatform,
+  type GameSaveStore,
   type Summarizer,
 } from './common';
 import { createKvSaveStore, type KvBackend } from './kv-store';
@@ -42,6 +42,7 @@ export function createMemoryKv(): MemoryKv {
     deleteMany: async (keys) => {
       for (const k of keys) entries.delete(k);
     },
+    keys: async (prefix) => [...entries.keys()].filter((k) => k.startsWith(prefix)),
   };
 }
 
@@ -54,7 +55,7 @@ export interface MemoryStoreOptions {
 export function createMemorySaveStore(
   opts: MemoryStoreOptions = {},
   kv: MemoryKv = createMemoryKv(),
-): SaveStore {
+): GameSaveStore {
   return createKvSaveStore(kv, opts.summarize ?? (() => fallbackSummarize), opts.io ?? NO_FILE_IO);
 }
 

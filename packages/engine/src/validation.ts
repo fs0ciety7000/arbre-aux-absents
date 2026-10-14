@@ -91,7 +91,10 @@ export function isComplete(g: SlotGuess | undefined): g is CompleteGuess {
   );
 }
 
-/** Case correcte : complète et chaque champ égal (par empreinte) à la solution. */
+/**
+ * Case correcte : complète et chaque champ égal (par empreinte) à la solution ; le visage
+ * est juste s'il est l'un de ceux de la personne (canonique ou autre âge).
+ */
 export function isSlotCorrect(slot: SlotId, s: SaveState, c: CompiledCase): boolean {
   const def = own(c.slots, slot);
   const g = own(s.tree, slot);
@@ -100,7 +103,7 @@ export function isSlotCorrect(slot: SlotId, s: SaveState, c: CompiledCase): bool
   return (
     a.given.includes(hashAnswer(c.salt, slot, 'given', g.given)) &&
     a.family.includes(hashAnswer(c.salt, slot, 'family', g.family)) &&
-    a.portrait === hashAnswer(c.salt, slot, 'portrait', g.portrait) &&
+    a.portrait.includes(hashAnswer(c.salt, slot, 'portrait', g.portrait)) &&
     a.occupation === hashAnswer(c.salt, slot, 'occupation', g.occupation)
   );
 }

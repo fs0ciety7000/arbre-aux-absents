@@ -1,0 +1,597 @@
+[
+  {
+    "id": "hc-deux-pieces-pour-un-vivant",
+    "title": "Deux pièces pour un vivant",
+    "description": "Établir une première série de cases dans le dossier 76-0012.",
+    "hidden": false,
+    "when": {
+      "lockedCount": {
+        "gte": 4
+      }
+    }
+  },
+  {
+    "id": "hc-fin-du-prologue",
+    "title": "La requête est recevable",
+    "description": "Établir le groupe du prologue.",
+    "hidden": false,
+    "when": {
+      "groupLocked": "g-prologue"
+    }
+  },
+  {
+    "id": "hc-a-mi-chemin",
+    "title": "À mi-pente",
+    "description": "Établir 14 cases.",
+    "hidden": false,
+    "when": {
+      "lockedCount": {
+        "gte": 14
+      }
+    }
+  },
+  {
+    "id": "hc-l-arbre-de-hautcorvin",
+    "title": "L'arbre de Hautcorvin",
+    "description": "Établir les 28 cases.",
+    "hidden": false,
+    "when": {
+      "lockedCount": {
+        "gte": 28
+      }
+    }
+  },
+  {
+    "id": "hc-le-revenant",
+    "title": "Le revenant",
+    "description": "Établir la case revendiquée.",
+    "hidden": false,
+    "when": {
+      "locked": "c15"
+    }
+  },
+  {
+    "id": "hc-l-homme-du-couloir",
+    "title": "L'homme du couloir",
+    "description": "Établir la case marquée « ? ».",
+    "hidden": true,
+    "when": {
+      "locked": "c17"
+    }
+  },
+  {
+    "id": "hc-les-maitres-verriers",
+    "title": "Les maîtres verriers",
+    "description": "Établir le groupe des maîtres verriers.",
+    "hidden": true,
+    "when": {
+      "groupLocked": "g-verriers"
+    }
+  },
+  {
+    "id": "hc-les-guides-de-vernezac",
+    "title": "Les guides de Vernezac",
+    "description": "Établir le groupe des guides de Vernezac.",
+    "hidden": true,
+    "when": {
+      "groupLocked": "g-vernezac"
+    }
+  },
+  {
+    "id": "hc-sous-la-neige",
+    "title": "Ce que la neige recouvre",
+    "description": "Découvrir un premier secret.",
+    "hidden": false,
+    "when": {
+      "any": [
+        {
+          "secret": "s1-le-feu-de-1937"
+        },
+        {
+          "secret": "s2-le-pas-de-l-ourse"
+        },
+        {
+          "secret": "s3-le-fils-de-la-thalbere"
+        },
+        {
+          "secret": "s4-la-coupe-du-regent"
+        },
+        {
+          "secret": "s5-la-fille-du-souffleur"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hc-le-feu-de-1937",
+    "title": "Le feu de 1937",
+    "description": "Découvrir qui a mis le feu à la halle des fours.",
+    "hidden": true,
+    "when": {
+      "secret": "s1-le-feu-de-1937"
+    }
+  },
+  {
+    "id": "hc-le-pas-de-l-ourse",
+    "title": "Le Pas de l'Ourse",
+    "description": "Découvrir le passage des radiés.",
+    "hidden": true,
+    "when": {
+      "secret": "s2-le-pas-de-l-ourse"
+    }
+  },
+  {
+    "id": "hc-tous-les-secrets",
+    "title": "Plus rien sous la neige",
+    "description": "Découvrir tous les secrets de l'affaire.",
+    "hidden": false,
+    "when": {
+      "allSecrets": true
+    }
+  },
+  {
+    "id": "hc-imposture",
+    "title": "Usurpation",
+    "description": "Remettre un rapport qui dénonce le requérant.",
+    "hidden": true,
+    "when": {
+      "any": [
+        {
+          "endingReached": "f3-l-imposteur-la-fille-reconnue"
+        },
+        {
+          "endingReached": "f4-l-imposteur"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hc-chacun-son-nom",
+    "title": "Chacun son nom",
+    "description": "Voir la fin « Chacun son nom ».",
+    "hidden": true,
+    "when": {
+      "endingReached": "f1-chacun-son-nom"
+    }
+  },
+  {
+    "id": "hc-laisser-vivre",
+    "title": "Le mensonge vivant",
+    "description": "Inscrire le requérant sous le nom de Bastien Tessonnal.",
+    "hidden": true,
+    "when": {
+      "endingReached": "f2-le-revenant"
+    }
+  },
+  {
+    "id": "hc-trois-tampons",
+    "title": "Trois tampons",
+    "description": "Voir une fin de chacune des trois décisions.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "endingReached": "f1-chacun-son-nom"
+        },
+        {
+          "endingReached": "f2-le-revenant"
+        },
+        {
+          "any": [
+            {
+              "endingReached": "f3-l-imposteur-la-fille-reconnue"
+            },
+            {
+              "endingReached": "f4-l-imposteur"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "hc-epilogue",
+    "title": "Dégel",
+    "description": "Atteindre l'épilogue de l'affaire.",
+    "hidden": false,
+    "when": {
+      "read": "ep-01"
+    }
+  },
+  {
+    "id": "hc-tout-lu",
+    "title": "Tout le dossier",
+    "description": "Lire toutes les pièces de l'affaire.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "read": "of-01"
+        },
+        {
+          "read": "of-02"
+        },
+        {
+          "read": "of-03"
+        },
+        {
+          "read": "of-04"
+        },
+        {
+          "read": "of-05"
+        },
+        {
+          "read": "of-06"
+        },
+        {
+          "read": "of-07"
+        },
+        {
+          "read": "of-08"
+        },
+        {
+          "read": "pv-01"
+        },
+        {
+          "read": "pv-02"
+        },
+        {
+          "read": "pv-03"
+        },
+        {
+          "read": "pv-04"
+        },
+        {
+          "read": "pv-05"
+        },
+        {
+          "read": "pv-06"
+        },
+        {
+          "read": "pv-07"
+        },
+        {
+          "read": "ex-01"
+        },
+        {
+          "read": "ex-02"
+        },
+        {
+          "read": "ex-03"
+        },
+        {
+          "read": "ex-04"
+        },
+        {
+          "read": "rp-01"
+        },
+        {
+          "read": "rp-02"
+        },
+        {
+          "read": "rp-03"
+        },
+        {
+          "read": "rp-04"
+        },
+        {
+          "read": "rp-05"
+        },
+        {
+          "read": "rp-06"
+        },
+        {
+          "read": "rg-01"
+        },
+        {
+          "read": "rg-02"
+        },
+        {
+          "read": "rg-03"
+        },
+        {
+          "read": "rg-04"
+        },
+        {
+          "read": "rg-05"
+        },
+        {
+          "read": "rg-06"
+        },
+        {
+          "read": "rg-07"
+        },
+        {
+          "read": "rg-08"
+        },
+        {
+          "read": "rg-09"
+        },
+        {
+          "read": "rg-10"
+        },
+        {
+          "read": "rg-11"
+        },
+        {
+          "read": "rg-12"
+        },
+        {
+          "read": "rg-13"
+        },
+        {
+          "read": "rg-14"
+        },
+        {
+          "read": "rg-15"
+        },
+        {
+          "read": "rg-16"
+        },
+        {
+          "read": "rg-17"
+        },
+        {
+          "read": "rg-18"
+        },
+        {
+          "read": "ph-01"
+        },
+        {
+          "read": "ph-02"
+        },
+        {
+          "read": "ph-03"
+        },
+        {
+          "read": "ph-04"
+        },
+        {
+          "read": "ph-05"
+        },
+        {
+          "read": "ph-06"
+        },
+        {
+          "read": "ph-07"
+        },
+        {
+          "read": "ph-08"
+        },
+        {
+          "read": "ph-09"
+        },
+        {
+          "read": "ph-10"
+        },
+        {
+          "read": "ph-11"
+        },
+        {
+          "read": "ph-12"
+        },
+        {
+          "read": "ph-13"
+        },
+        {
+          "read": "ph-14"
+        },
+        {
+          "read": "ph-15"
+        },
+        {
+          "read": "ph-16"
+        },
+        {
+          "read": "ph-17"
+        },
+        {
+          "read": "ph-18"
+        },
+        {
+          "read": "lt-01"
+        },
+        {
+          "read": "lt-02"
+        },
+        {
+          "read": "lt-03"
+        },
+        {
+          "read": "lt-04"
+        },
+        {
+          "read": "lt-05"
+        },
+        {
+          "read": "lt-06"
+        },
+        {
+          "read": "lt-07"
+        },
+        {
+          "read": "lt-08"
+        },
+        {
+          "read": "lt-09"
+        },
+        {
+          "read": "lt-10"
+        },
+        {
+          "read": "lt-11"
+        },
+        {
+          "read": "pr-01"
+        },
+        {
+          "read": "pr-02"
+        },
+        {
+          "read": "pr-03"
+        },
+        {
+          "read": "pr-04"
+        },
+        {
+          "read": "pr-05"
+        },
+        {
+          "read": "pr-06"
+        },
+        {
+          "read": "pr-07"
+        },
+        {
+          "read": "pr-08"
+        },
+        {
+          "read": "pr-09"
+        },
+        {
+          "read": "pr-10"
+        },
+        {
+          "read": "cp-01"
+        },
+        {
+          "read": "cp-02"
+        },
+        {
+          "read": "ob-01"
+        },
+        {
+          "read": "ob-02"
+        },
+        {
+          "read": "ob-03"
+        },
+        {
+          "read": "ct-01"
+        },
+        {
+          "read": "ct-02"
+        },
+        {
+          "read": "an-01"
+        },
+        {
+          "read": "an-02"
+        },
+        {
+          "read": "pb-01"
+        },
+        {
+          "read": "dv-01"
+        },
+        {
+          "read": "dv-02"
+        },
+        {
+          "read": "tg-01"
+        },
+        {
+          "read": "tg-02"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hc-la-haute-vallee",
+    "title": "La haute vallée",
+    "description": "Ouvrir Hautcorvin, Vernezac, le Pas de l'Ourse et Dalvezac sur la carte.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "visited": "hautcorvin"
+        },
+        {
+          "visited": "vernezac"
+        },
+        {
+          "visited": "pas-de-l-ourse"
+        },
+        {
+          "visited": "dalvezac"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hc-trop-juste",
+    "title": "Il répond trop juste",
+    "description": "Lire tous les procès-verbaux d'audition.",
+    "hidden": true,
+    "when": {
+      "all": [
+        {
+          "read": "pv-01"
+        },
+        {
+          "read": "pv-02"
+        },
+        {
+          "read": "pv-03"
+        },
+        {
+          "read": "pv-04"
+        },
+        {
+          "read": "pv-05"
+        },
+        {
+          "read": "pv-06"
+        },
+        {
+          "read": "pv-07"
+        }
+      ]
+    }
+  },
+  {
+    "id": "hc-matricule",
+    "title": "Matricule",
+    "description": "Chercher au Lecteur le vrai matricule de Kessaar du requérant.",
+    "hidden": true,
+    "when": {
+      "searched": "matricule-1171"
+    }
+  },
+  {
+    "id": "hc-un-visage-ment-moins",
+    "title": "Un visage ment moins qu'un registre",
+    "description": "Établir la case « ? » sans avoir lu l'expertise d'écriture.",
+    "hidden": true,
+    "when": {
+      "all": [
+        {
+          "locked": "c17"
+        },
+        {
+          "not": {
+            "read": "ex-02"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "id": "hc-contre-la-montre",
+    "title": "Contre la montre",
+    "description": "Remettre le rapport en moins de 2 h 30 (partie chronométrée).",
+    "hidden": false,
+    "when": {
+      "timedUnderMs": 9000000
+    }
+  },
+  {
+    "id": "hc-archiviste-eclair",
+    "title": "Verrier éclair",
+    "description": "Remettre le rapport en moins de 75 minutes (partie chronométrée).",
+    "hidden": false,
+    "when": {
+      "timedUnderMs": 4500000
+    }
+  }
+]

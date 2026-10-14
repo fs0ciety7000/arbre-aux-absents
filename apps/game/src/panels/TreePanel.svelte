@@ -8,7 +8,18 @@
 <script lang="ts">
   import type { SlotGuess, SlotId } from '@arbre/contract';
   import { progress, visibleSlots } from '@arbre/engine';
-  import { Badge, Button, Celebrate, Icon, IconButton, Panel, Stamp, Tabs } from '@arbre/ui';
+  import {
+    Badge,
+    Button,
+    Celebrate,
+    ClaimTag,
+    Icon,
+    IconButton,
+    Panel,
+    Stamp,
+    Tabs,
+    unclaim,
+  } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
   import { portraitSvg } from './lib/assets.svelte';
   import { onMount, tick } from 'svelte';
@@ -24,7 +35,7 @@
     type TreeDirection,
     type TreeNodeInput,
   } from './lib/tree-layout';
-  import { fieldValueLabel, guessOf, slotName } from './lib/view';
+  import { claimView, fieldValueLabel, guessOf, slotName } from './lib/view';
   import { FIELD_LABELS, pm } from './messages';
   import SlotSheet from './tree/SlotSheet.svelte';
 
@@ -193,7 +204,14 @@
       if (view === 'graph' && cmd === 'zoom.in') setZoom(zoom + 0.25);
       else if (view === 'graph' && cmd === 'zoom.out') setZoom(zoom - 0.25);
       else if (view === 'graph' && cmd === 'zoom.fit') fit();
-      else if (cmd === 'clear') {
+      else if (cmd === 'context') {
+        // Menu de la case (clic droit, appui long, Menu / Maj+F10, X) : sa fiche, qui porte
+        // les actions (retirer / rétablir la déclaration, voir la requête).
+        const id = current;
+        if (!id) return false;
+        select(id);
+        sheetSlot = id;
+      } else if (cmd === 'clear') {
         const id = game.ui.selectedSlot;
         if (!id || isLocked(id) || !game.state.tree[id]) return false;
         sheetSlot = id;
@@ -248,6 +266,13 @@
       layout.generations[Math.min(n - 1, Math.max(0, generation + (dx < 0 ? 1 : -1)))] ?? null;
   }
 
+  /** Clic droit, appui long (tactile), touche Menu : la fiche de la case. */
+  function onContextMenu(e: MouseEvent, id: SlotId) {
+    e.preventDefault();
+    select(id);
+    sheetSlot = id;
+  }
+
   function onDragOver(e: DragEvent, id: SlotId) {
     if (isLocked(id) || !e.dataTransfer?.types.includes(DRAG_MIME)) return;
     e.preventDefault();
@@ -266,6 +291,21 @@
   function summary(id: SlotId): string {
     const name = slotName(game.state, game.content, id) ?? pm.tree.unknownPerson;
     const g = guessOf(game.state, game.content, id);
+    const claim = claimView(game.state, game.content, id);
+    if (claim.claimed) {
+      // AFFAIRE-2 §1.8 : « Génération 3, case revendiquée, non établie. Prénom : Bastien,
+      // déclaré. … Métier : graveur, posé par vous. »
+      const fields = (['given', 'family', 'portrait', 'occupation'] as const)
+        .map((f) => {
+          const v = fieldValueLabel(game.content, f, g);
+          if (!v) return pm.tree.fieldBlank(FIELD_LABELS[f]);
+          return claim.declared.has(f)
+            ? pm.tree.fieldDeclared(FIELD_LABELS[f], v)
+            : pm.tree.fieldPosed(FIELD_LABELS[f], v);
+        })
+        .join(' ');
+      return pm.tree.claimedSummary(genLabel(game.content.slots[id]?.generation ?? 0), fields);
+    }
     const occ = fieldValueLabel(game.content, 'occupation', g);
     const state = isLocked(id) ? pm.tree.lockedLabel : g ? pm.tree.open : pm.tree.empty;
     return pm.tree.slotLabel([name, occ].filter(Boolean).join(', '), state);
@@ -295,6 +335,7 @@
   {@const droppable = carry.item !== null && !locked}
   {@const fresh = justLocked.has(id)}
   {@const rank = [...justLocked].indexOf(id)}
+  {@const claim = claimView(game.state, game.content, id)}
   <!-- Fiche bristol (IndexCard, §13.3) : le bouton est la fiche (un hN n'irait pas dans un bouton). -->
   <button
     type="button"
@@ -303,6 +344,8 @@
     class:empty={!g}
     class:selected={game.ui.selectedSlot === id}
     class:droppable
+    class:claimed={claim.claimed}
+    class:claim-frame={claim.claimed}
     class:mv-thud={fresh}
     data-surface="paper"
     data-slot={id}
@@ -315,13 +358,26 @@
     onclick={() => activate(id)}
     onfocus={() => (focusId = id)}
     onkeydown={(e) => onCardKey(e, id)}
+    oncontextmenu={(e) => onContextMenu(e, id)}
     ondragover={(e) => onDragOver(e, id)}
     ondrop={(e) => onDrop(e, id)}
   >
+    <!-- Case revendiquée (§6.9) : cartouche agrafé ; le nom accessible dit déjà « revendiquée ». -->
+    <ClaimTag shown={claim.claimed} straddle decorative label={pm.tree.claimTag} />
     <span class="head" aria-hidden="true">
       <span class="name">
-        <span class:unknown={!g?.given}>{g?.given || pm.tree.unknown}</span>
-        <span class:unknown={!g?.family}>{g?.family || (g?.given ? pm.tree.unknown : '')}</span>
+        <span class="claim-stack">
+          {#if claim.declared.has('given')}<span class="claim-value" transition:unclaim
+              >{g?.given}</span
+            >{:else}<span class:unknown={!g?.given}>{g?.given || pm.tree.unknown}</span>{/if}
+        </span>
+        <span class="claim-stack">
+          {#if claim.declared.has('family')}<span class="claim-value" transition:unclaim
+              >{g?.family}</span
+            >{:else}<span class:unknown={!g?.family}
+              >{g?.family || (g?.given ? pm.tree.unknown : '')}</span
+            >{/if}
+        </span>
       </span>
       <span class="gen num">{genCote(id)}</span>
     </span>
@@ -344,12 +400,22 @@
           {/if}
         </span>
         {@const occText = occ ?? FIELD_LABELS.occupation + ' ?'}
-        <span
-          class="occ"
-          class:unknown={!occ}
-          lang="fr"
-          style:--occ-chars={longestUnbreakable(occText)}>{occText}</span
-        >
+        {#if claim.declared.has('occupation')}
+          <!-- guillemets « » : 4 caractères de plus sur la ligne (réduction du corps) -->
+          <span
+            class="occ claim-value"
+            lang="fr"
+            transition:unclaim
+            style:--occ-chars={longestUnbreakable(occText) + 4}>{occText}</span
+          >
+        {:else}
+          <span
+            class="occ"
+            class:unknown={!occ}
+            lang="fr"
+            style:--occ-chars={longestUnbreakable(occText)}>{occText}</span
+          >
+        {/if}
       {/if}
     </span>
     {#if locked}
@@ -501,7 +567,13 @@
                     .sort((a, b) => a.column - b.column) as n (n.id)}
                     {@const g = guessOf(game.state, game.content, n.id)}
                     {@const s = game.content.slots[n.id]!}
-                    <li class="list-slot" class:locked={isLocked(n.id)} data-surface="paper">
+                    {@const listClaim = claimView(game.state, game.content, n.id)}
+                    <li
+                      class="list-slot"
+                      class:locked={isLocked(n.id)}
+                      class:claim-frame={listClaim.claimed}
+                      data-surface="paper"
+                    >
                       <button
                         type="button"
                         class="list-open"
@@ -511,15 +583,28 @@
                         onclick={() => activate(n.id)}
                         onfocus={() => (focusId = n.id)}
                         onkeydown={(e) => onCardKey(e, n.id)}
+                        oncontextmenu={(e) => onContextMenu(e, n.id)}
                       >
                         {#if isLocked(n.id)}<Icon name="lock" />{/if}
+                        {#if listClaim.claimed}<ClaimTag decorative label={pm.tree.claimTag} />{/if}
                         <span>{summary(n.id)}</span>
                       </button>
                       <dl>
                         {#each ['given', 'family', 'portrait', 'occupation'] as const as f (f)}
                           <div>
                             <dt>{FIELD_LABELS[f]}</dt>
-                            <dd>{fieldValueLabel(game.content, f, g) ?? pm.tree.fieldEmpty}</dd>
+                            <dd>
+                              {#if listClaim.declared.has(f) && f === 'portrait'}{fieldValueLabel(
+                                  game.content,
+                                  f,
+                                  g,
+                                )}<span class="visually-hidden">, {pm.tree.declaredMark}</span
+                                >{:else if listClaim.declared.has(f)}<span class="claim-value"
+                                  >{fieldValueLabel(game.content, f, g)}</span
+                                ><span class="visually-hidden">, {pm.tree.declaredMark}</span
+                                >{:else}{fieldValueLabel(game.content, f, g) ??
+                                  pm.tree.fieldEmpty}{/if}
+                            </dd>
                           </div>
                         {/each}
                         {#if s.parents.length > 0}
@@ -668,6 +753,34 @@
   }
   .slot.empty {
     opacity: 0.9;
+  }
+  /* Case revendiquée : le cartouche à cheval sur le bord haut mord de 10 px dans la fiche ; la
+     tête descend d'autant (sans dépasser sa hauteur : interligne resserré). */
+  .slot.claimed .head {
+    padding-block-start: calc(var(--claim-tag-h) / 2 + var(--space-1) / 2);
+  }
+  .slot.claimed .name {
+    line-height: 1.15;
+  }
+  /* Valeur déclarée (§6.9) : formulaire tapé, romain, sans les capitales grasses du joueur.
+     Sur la fiche de l'arbre, le nom se passe des guillemets « » : ils mangeaient la largeur
+     (« « Tessonn… »). La case porte déjà le cartouche et le bord en tirets, et le romain tapé
+     se distingue des capitales grasses du joueur : la marque reste lisible sans eux. */
+  .slot .name .claim-value {
+    text-transform: none;
+    letter-spacing: normal;
+  }
+  .slot .name .claim-value::before,
+  .slot .name .claim-value::after {
+    content: none;
+  }
+  .claim-stack {
+    overflow: hidden;
+  }
+  .claim-stack > span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .slot .head {
     display: flex;
@@ -860,7 +973,9 @@
   .gen-list {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-4);
+    /* le cartouche « Déclaré » déborde de 10 px au-dessus de la fiche (§6.9) */
+    gap: calc(var(--space-4) + var(--claim-tag-h) / 2) var(--space-4);
+    padding-block-start: calc(var(--claim-tag-h) / 2);
     justify-content: center;
     touch-action: pan-y;
   }
@@ -893,6 +1008,7 @@
     gap: var(--space-2);
   }
   .list-slot {
+    position: relative;
     padding: var(--space-2) var(--space-3);
     border: 0;
     border-block-start: 2px solid var(--card-margin);

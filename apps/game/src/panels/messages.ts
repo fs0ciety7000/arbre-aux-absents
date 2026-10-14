@@ -21,6 +21,14 @@ export const KIND_LABELS: Record<DocumentKind, string> = {
   advert: 'Réclame',
 };
 
+/**
+ * Retire le point final d'une valeur (texte de remplacement d'un portrait : « …trop grand. »)
+ * avant d'y accoler une mention (« , déclaré. ») : pas de double ponctuation à l'écoute.
+ */
+export function withoutFinalPeriod(value: string): string {
+  return value.replace(/\s*\.+\s*$/, '');
+}
+
 export const FIELD_LABELS: Record<SlotField, string> = {
   given: 'Prénom',
   family: 'Nom',
@@ -129,6 +137,24 @@ export const pm = {
     },
     listCaption: 'L’arbre, génération par génération',
     swipeHint: 'Balayez ou choisissez une génération.',
+    // Case revendiquée (AFFAIRE-2 §1)
+    claimTag: 'Déclaré',
+    claimedSummary: (gen: string, fields: string) =>
+      `${gen}, case revendiquée, non établie. ${fields}`,
+    fieldDeclared: (label: string, value: string) =>
+      `${label} : ${withoutFinalPeriod(value)}, déclaré.`,
+    fieldPosed: (label: string, value: string) =>
+      `${label} : ${withoutFinalPeriod(value)}, posé par vous.`,
+    fieldBlank: (label: string) => `${label} : à remplir.`,
+    declaredMark: 'déclaré',
+    claimNotice: 'Identité déclarée par le requérant : à vérifier.',
+    claimNoticeCleared: 'Déclaration du requérant retirée : la case se remplit comme une autre.',
+    claimActions: 'Déclaration du requérant',
+    claimRemove: 'Retirer la déclaration',
+    claimRestore: 'Rétablir la déclaration',
+    claimSource: 'Voir la requête',
+    claimConfirmRestore: (n: number) =>
+      `Remplacer ${n} ${n > 1 ? 'champs posés' : 'champ posé'} par la déclaration ?`,
   },
   picker: {
     title: (field: string) => `Choisir : ${field}`,
@@ -139,6 +165,8 @@ export const pm = {
     gallery: 'Visages collectés',
     current: 'choix actuel',
     listLabel: 'Candidats découverts',
+    declared: 'Déclaré :',
+    declaredSource: '(requête)',
   },
   archives: {
     title: 'Archives',
@@ -293,6 +321,8 @@ export const pm = {
     locked: (names: string) => `Établi : ${names}`,
     secret: (t: string) => `Secret découvert : ${t}`,
     ending: (t: string) => `Dénouement : ${t}`,
+    /** Case revendiquée : premier champ retiré d'une déclaration intacte (AFFAIRE-2 §1.7). */
+    claimContested: (fields: string) => `Déclaration contestée : ${fields.toLowerCase()}`,
     replay: 'Relire le dénouement',
     started: 'Début de l’enquête',
   },

@@ -59,5 +59,7 @@ export {
   firstView,
   focusOn,
   needsReveal,
+  reserveCorner,
   reveal,
+  type CornerReserve,
 } from './views';

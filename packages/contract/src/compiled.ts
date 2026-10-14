@@ -28,7 +28,8 @@ import type { Place } from './world';
 export interface SlotAnswer {
   given: string[];
   family: string[];
-  portrait: string;
+  /** Visage canonique puis autres âges (`Person.altPortraits`). */
+  portrait: string[];
   occupation: string;
 }
 
@@ -40,8 +41,11 @@ export interface CompiledDocument extends DocumentFrontmatter {
 
 export type CompiledKeyword = Omit<Keyword, 'terms'>;
 
-export type CompiledSlot = Omit<TreeSlot, 'person'> & {
+export type CompiledSlot = Omit<TreeSlot, 'person' | 'claim'> & {
+  /** Uniquement avec `prefilled` : posée et verrouillée par `newGame`. */
   prefilledGuess?: SlotGuess;
+  /** Case revendiquée : posée par `newGame`, jamais verrouillée, jamais reposée. */
+  claimedGuess?: SlotGuess;
   answer: SlotAnswer;
   parents: SlotId[];
   unions: SlotId[];

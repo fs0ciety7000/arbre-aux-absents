@@ -1,54 +1,89 @@
 <script lang="ts">
-  import type { SaveSlotId, SaveSlotSummary } from '@arbre/contract';
+  import type { SaveSlotId } from '@arbre/contract';
   import { Badge, Button, Card, Dialog, Select, pushToast } from '@arbre/ui';
   import { getApp } from '../lib/game/context';
   import { formatDateTime, formatDuration } from '../lib/game/format';
+  import type { GameSlotSummary } from '../platform/index';
   import { messages } from '../messages.fr';
   import ScreenFrame from './ScreenFrame.svelte';
 
-  /** E03 : 3 emplacements + secours ; Charger, Effacer (confirmation), Exporter, Importer. */
+  /**
+   * E03 : 3 emplacements (communs) + un secours par affaire (AFFAIRE-2 §2.3) ; Charger, Effacer
+   * (confirmation), Exporter, Importer.
+   */
   const app = getApp();
   const m = messages.slots;
-  const SLOTS: SaveSlotId[] = ['slot-1', 'slot-2', 'slot-3', 'auto'];
+  const MANUAL: SaveSlotId[] = ['slot-1', 'slot-2', 'slot-3'];
 
-  let errors = $state<Partial<Record<SaveSlotId, string>>>({});
-  let corrupt = $state<Partial<Record<SaveSlotId, boolean>>>({});
-  let busy = $state<SaveSlotId | null>(null);
-  let removing = $state<SaveSlotId | null>(null);
+  /** Une carte : emplacement manuel, ou secours d'une affaire (`caseId`). */
+  interface Row {
+    key: string;
+    slot: SaveSlotId;
+    caseId: string | null;
+    title: string;
+    save: GameSlotSummary | undefined;
+  }
+
+  let errors = $state<Record<string, string>>({});
+  let corrupt = $state<Record<string, boolean>>({});
+  let busy = $state<string | null>(null);
+  let removing = $state<Row | null>(null);
   let importTarget = $state<string>('slot-1');
   let importError = $state<string | null>(null);
 
-  const bySlot = $derived(
-    Object.fromEntries(app.saves.map((s) => [s.slot, s])) as Partial<
-      Record<SaveSlotId, SaveSlotSummary>
-    >,
-  );
+  const backups = $derived(app.saves.filter((s) => s.slot === 'auto' && s.caseId !== null));
+  const rows = $derived<Row[]>([
+    ...MANUAL.map((slot) => ({
+      key: slot,
+      slot,
+      caseId: null,
+      title: m.slotName(slot),
+      save: app.saves.find((s) => s.slot === slot),
+    })),
+    ...(backups.length > 0
+      ? backups.map((s) => ({
+          key: `auto:${s.caseId}`,
+          slot: 'auto' as const,
+          caseId: s.caseId,
+          title: m.backupName(s.caseTitle),
+          save: s,
+        }))
+      : [
+          {
+            key: 'auto',
+            slot: 'auto' as const,
+            caseId: null,
+            title: m.slotName('auto'),
+            save: undefined,
+          },
+        ]),
+  ]);
 
-  async function load(slot: SaveSlotId) {
-    busy = slot;
-    const res = await app.loadSlot(slot);
+  async function load(row: Pick<Row, 'key' | 'slot' | 'caseId'>) {
+    busy = row.key;
+    const res = await app.loadSlot(row.slot, row.caseId ?? undefined);
     busy = null;
     if (!res.ok) {
-      errors = { ...errors, [slot]: res.error };
-      corrupt = { ...corrupt, [slot]: res.corrupt };
+      errors = { ...errors, [row.key]: res.error };
+      corrupt = { ...corrupt, [row.key]: res.corrupt };
     }
   }
 
   async function confirmRemove() {
-    const slot = removing;
+    const row = removing;
     removing = null;
-    if (!slot) return;
+    if (!row) return;
     try {
-      await app.removeSlot(slot);
+      await app.removeSlot(row.slot, row.caseId ?? undefined);
       pushToast({ tone: 'info', title: m.removed });
     } catch (err) {
       pushToast({ tone: 'danger', title: err instanceof Error ? err.message : m.corrupt });
     }
   }
 
-  async function exportSlot(slot: SaveSlotId) {
+  async function exportSlot(row: Row) {
     try {
-      await app.exportSlot(slot);
+      await app.exportSlot(row.slot, row.caseId ?? undefined);
       pushToast({ tone: 'success', title: m.exported });
     } catch (err) {
       pushToast({ tone: 'danger', title: err instanceof Error ? err.message : m.corrupt });
@@ -62,7 +97,7 @@
     else if (res.error) importError = res.error;
   }
 
-  const slotOptions = SLOTS.filter((s) => s !== 'auto').map((s) => ({
+  const slotOptions = MANUAL.map((s) => ({
     value: s,
     label: m.slotName(s),
   }));
@@ -71,12 +106,12 @@
 <ScreenFrame title={m.title} kicker={m.kicker} onback={() => app.goto('title')}>
   <div class="stack">
     <ul class="slots" aria-label={m.listLabel}>
-      {#each SLOTS as slot, i (slot)}
-        {@const s = bySlot[slot]}
+      {#each rows as row, i (row.key)}
+        {@const s = row.save}
         <li class:vacant={!s}>
           <Card
             variant="index"
-            title={m.slotName(slot)}
+            title={row.title}
             kicker={s ? s.caseTitle : undefined}
             deal={i}
             tilt={i % 2 ? 0.4 : -0.5}
@@ -93,22 +128,24 @@
             {:else}
               <p class="meta">{m.empty}</p>
             {/if}
-            {#if errors[slot]}
-              <p class="error" role="alert">{errors[slot]}</p>
-              {#if corrupt[slot] && slot !== 'auto' && bySlot.auto}
-                <Button size="m" onclick={() => load('auto')}>{m.useBackup}</Button>
+            {#if errors[row.key]}
+              <p class="error" role="alert">{errors[row.key]}</p>
+              {#if corrupt[row.key] && row.slot !== 'auto' && backups.length > 0}
+                <!-- Affaire de l'emplacement illisible inconnue : le secours le plus récent. -->
+                <Button size="m" onclick={() => load({ key: row.key, slot: 'auto', caseId: null })}
+                  >{m.useBackup}</Button
+                >
               {/if}
             {/if}
             {#snippet footer()}
               {#if s}
                 <div class="actions">
-                  <Button variant="primary" loading={busy === slot} onclick={() => load(slot)}
+                  <Button variant="primary" loading={busy === row.key} onclick={() => load(row)}
                     >{m.load}</Button
                   >
-                  <Button iconName="external" onclick={() => exportSlot(slot)}
-                    >{m.exportFile}</Button
+                  <Button iconName="external" onclick={() => exportSlot(row)}>{m.exportFile}</Button
                   >
-                  <Button variant="danger" iconName="trash" onclick={() => (removing = slot)}
+                  <Button variant="danger" iconName="trash" onclick={() => (removing = row)}
                     >{m.remove}</Button
                   >
                 </div>

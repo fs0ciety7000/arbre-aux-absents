@@ -6,6 +6,11 @@
 > la main, ornements, curseurs à la plume, **langage de mouvement complet** (catalogue, scène
 > titre animée, transitions d'écran, micro-interactions, révélations au défilement).
 > Toute UI du jeu et du site s'y conforme. Migration v1 → v2 : §15.
+> **v2.2 — 14 oct. 2026 — affaire 2** : case revendiquée (§6.9 : `--claim-*`, `.claim-frame`,
+> `.claim-value`, `ClaimTag`, `IndexCard claimed`, transition `unclaim`, icône `staple`) et chemises
+> d'affaire de l'écran Nouvelle partie (§6.10 : `CaseFolder`, `CaseFolderGroup`).
+> **v2.3 — 14 oct. 2026 — rapport de l'affaire 2** : tampons de décision (§6.11 : `DecisionCard`,
+> `DecisionGroup`) et variante bureau sombre de l'encre déclarée (`--claim-ink-desk`, §6.9).
 >
 > | Quoi | Où |
 > |---|---|
@@ -130,6 +135,7 @@ de l'illustration.
 | Céladon | `--raw-celadon-300/400/700` | `0.86 0.07 172` · `0.79 0.09 172` · `0.45 0.075 178` | Fougère, ornements, célébration |
 | Kraft | `--raw-kraft-200/400/500/700` | manille `0.89 0.055 88` · kraft `0.76 0.08 72` · ombré `0.68 0.09 66` · tranche `0.47 0.075 58` | Chemises |
 | Tampon | `--raw-stamp-300/700` | `0.77 0.13 300`, `0.46 0.16 300` | « Établi » |
+| Formulaire (v2.2) | `--raw-form-100/300/700` | `0.945 0.03 196` vert d'eau, `0.82 0.07 200` canard clair (v2.3, bureau sombre), `0.42 0.065 212` bleu canard | Case revendiquée (§6.9) |
 | États | `--raw-red/green/orange/blue-300/700` | inchangés depuis v1 | Erreur, succès, avertissement, info |
 | Papiers, encres | `--raw-paper*`, `--raw-ink-*`, `--raw-rule-blue`, `--raw-steel` | papier neuf `0.978 0.012 92` … encre ferro-gallique `0.27 0.05 262`, réglure `0.76 0.07 236`, acier `0.8 0.012 250` | Documents, fiches, trombones |
 | Bois, crépuscule | `--raw-wood-700/500`, `--raw-velvet`, `--raw-dusk-rose/lilac/peach` | bois ombre `0.36 0.05 40`, bois éclairé `0.59 0.065 46`, velours `0.49 0.05 358`, rose `0.85 0.05 0`, lilas `0.84 0.045 291`, pêche `0.86 0.06 55` | **Décor seulement** (jamais un texte) |
@@ -160,7 +166,9 @@ de l'illustration.
 | `--selection`, `--keyword` | safran | Sélection, mots-clés |
 
 **Matières** (globales, §6) : `--kraft` `--kraft-shade` `--kraft-edge` `--manila` `--kraft-ink`
-· `--card` `--card-rule` `--card-margin` (vermillon-500) · `--tape` `--tape-edge` · `--label-tape`
+· `--card` `--card-rule` `--card-margin` (vermillon-500) · **v2.2** `--claim-paper` `--claim-ink`
+`--claim-edge` `--claim-border` `--claim-dash` `--claim-gap` `--claim-tag-h` (case revendiquée, §6.9)
+· **v2.3** `--claim-ink-desk` (variante bureau sombre de `--claim-ink`, `--raw-form-300`) · `--tape` `--tape-edge` · `--label-tape`
 (bleu `oklch(0.36 0.12 257)`) `--label-tape-red` `--label-tape-text` `--label-sheen` `--label-emboss`
 · `--string` `--pin-head` `--metal` `--metal-shade` · `--wood` `--wood-lit` `--velvet` · `--dusk-rose`
 `--dusk-lilac` `--dusk-peach` `--dusk-sky` (dégradé du ciel de la fenêtre) · images
@@ -218,7 +226,7 @@ grain, de liseré, de halo ni de lumière de lampe (`--lamp-pool: transparent`),
 ### 3.8 Contrastes calculés (résumé)
 
 Méthode : OKLCH → OKLab → sRGB linéaire → luminance WCAG ; translucides composés en sRGB sur leur
-fond. **714 paires, toutes conformes** (contextes lampe, papier, HC, carte, carte de nuit,
+fond. **720 paires, toutes conformes** (contextes lampe, papier, HC, carte, carte de nuit,
 **matières**, **matières HC**, **kraft**, **kraft HC**, et les douze contextes de vision des
 couleurs), plus 12 contrôles d'écart entre tons d'état. Détail : annexe §17.
 
@@ -232,6 +240,9 @@ couleurs), plus 12 contrôles d'écart entre tons d'état. Détail : annexe §17
 | `--brand-contrast` sur `--brand-fill` | 5,45 | 4,5 |
 | `--brand` sur `--canvas` (« aux » du titre) | 6,84 | 4,5 |
 | `--card-margin` sur `--card` (ligne de tête) | 3,75 | 3 |
+| `--claim-ink` sur `--claim-paper` (cartouche « Déclaré ») | 7,09 (HC 15,85) | 4,5 (HC 7) |
+| `--claim-ink` sur `--paper-aged` (valeur déclarée, pire cas) | 6,61 | 4,5 |
+| `--claim-ink-desk` sur `--surface-3` (valeur déclarée sur le bureau, pire cas) | 7,75 (HC 14,59) | 4,5 (HC 7) |
 | `--text-muted` sur `--scrim-art` posé sur papier neuf (art clé, pire cas) | 9,92 | 4,5 |
 | `--brand` sur `--scrim-art` posé sur papier neuf | 6,11 | 4,5 |
 
@@ -566,6 +577,158 @@ couleurs forcées : absent.
 `.kicker` (surtitre Oswald avec tiret vermillon), `.display` (Fraunces titrage), `.display-italic`,
 `.brand-ink` (texte `--brand`).
 
+### 6.9 La case revendiquée : la déclaration agrafée (v2.2, affaire 2)
+
+Métaphore : le requérant a rempli **son propre formulaire** et l'a **agrafé** sur la fiche de
+l'arbre. Tant qu'il en reste un champ, la fiche porte le papier vert d'eau du formulaire, son
+encre bleu canard, et un bord en pointillés de « à compléter ». Rien de l'Office : ni violet, ni
+cadenas, ni tampon (ceux-là restent la vérité établie, §3.3). Spécification : `docs/game/AFFAIRE-2.md` §1.3.
+
+| Signe (cumulatif, chacun suffit seul) | Rendu | Outil |
+|---|---|---|
+| 1. Cartouche « Déclaré » | bout de formulaire `--claim-paper`, filet 1 px `--claim-edge`, **agrafe** 16 px (`Icon name="staple" clean`) + « DÉCLARÉ » en Oswald capitales `--step--1` `--claim-ink`, hauteur `--claim-tag-h` (20 px, grandit avec le texte), pivoté de −1,5°, **à cheval sur le bord haut** de la fiche (`straddle`) | `ClaimTag` |
+| 2. Bord en tirets | 2 px (`--claim-border`), tiret 6 / espace 4 (`--claim-dash`, `--claim-gap`), `--claim-edge`, tracé dans la fiche (`::before`, quatre dégradés répétés : longueur exacte, rien d'animé) | `.claim-frame` |
+| 3. Valeur déclarée | Courier Prime **romain** (le formulaire tapé ; le joueur écrit en gras capitales sur la fiche ordinaire), `--claim-ink`, entre **guillemets « »** à espace fine insécable (`::before`/`::after`, texte de remplacement vide : jamais lus) | `.claim-value` |
+| 4. Pas de cadenas ni de tampon | — | — |
+
+- **Bureau sombre (v2.3)** : hors papier (fiche de case en feuille basse, sélecteur P10), la
+  valeur déclarée prend `--claim-ink-desk` (canard clair, ≥ 7,75:1 sur toute surface du bureau,
+  HC `oklch(0.93 0.035 200)` ≥ 14,59:1). `.claim-value` choisit seule : `--claim-ink-desk` par
+  défaut, `--claim-ink` sous `[data-surface='paper']`, `[data-surface='kraft']` et `.mat-card`.
+  Aucun forçage `color: var(--text)` chez l'hôte. Le cartouche garde `--claim-ink` (il porte son
+  propre papier).
+- **Champ posé** dans une case revendiquée : rendu ordinaire de la fiche (sans `.claim-value`) :
+  on lit d'un coup d'œil ce qui vient de la requête et ce qui vient du joueur.
+- **Établie** : l'hôte retire `claim-frame`, `ClaimTag` et `.claim-value` (état calculé, §1.2 de la
+  spec) ; tampon + cadenas + liseré violet comme toute case.
+- **Couleur jamais seule** : forme (cartouche, tirets, guillemets, romain vs gras capitales).
+  Contrastes : texte du cartouche 7,09:1, valeur déclarée ≥ 6,61:1 sur tout papier, tirets 7,74:1
+  sur la fiche ; HC : encre `oklch(0.25 0.035 212)` sur blanc, 15,85:1. Couleurs forcées : tirets
+  `CanvasText` (`border: dashed`), cartouche `Canvas`/`CanvasText`.
+- **Mouvement** : retirer une valeur déclarée la fait **glisser vers la marge** (`--unclaim-shift`
+  14 px, pivot 4°, fondu) en `--dur-unclaim` (200 ms) ; le cartouche se dégrafe de la même façon
+  quand le dernier champ déclaré part, et se ré-agrafe à l'envers (« Rétablir la déclaration »).
+  Transition Svelte `unclaim` (§8.6) ou classe `.mv-unclaim` (§8.3). **Mouvement réduit : 0 ms**
+  (ni glissé ni fondu). La valeur sortante et l'entrante se superposent dans un `.claim-stack`
+  (`inline-grid`, une seule case) : aucun saut de mise en page, rien de bloquant.
+- **API** :
+  - `ClaimTag` : `label` (déf. « Déclaré ») · `straddle` (à cheval sur le bord haut, hôte
+    positionné) · `shown` (pose / dégrafe avec `unclaim`) · `decorative` (`aria-hidden` quand le
+    nom accessible de l'hôte dit déjà « case revendiquée », cas de la case de l'arbre) · `class`.
+  - `IndexCard` : `claimed` (ajoute `.claim-frame` + `ClaimTag straddle`) · `claimLabel`.
+  - Classes (`materials.css`) : `.claim-frame` (sur un `.mat-card` ou tout hôte positionné ; ne
+    prend que `::before`, `::after` reste à l'hôte), `.claim-value`, `.claim-stack`.
+- **Case de l'arbre** (bouton `.slot.mat-card` de `TreePanel`, recette §13.3). Faute de largeur, le
+  prénom et le nom déclarés s'y passent des guillemets (cartouche, tirets et romain suffisent) ; le
+  métier les garde. Dans la fiche, le portrait déclaré n'est pas en `.claim-value` : vignette et
+  texte limité à deux lignes, texte complet en `visually-hidden`.
+
+```svelte
+<button class="slot mat-card mv-liftable" class:claim-frame={claimed} …>
+  <ClaimTag shown={claimed} straddle decorative />
+  <span class="name">
+    <span class="claim-stack">
+      {#if declared.given}<span class="claim-value" transition:unclaim>{g.given}</span>
+      {:else}<span>{g?.given || pm.tree.unknown}</span>{/if}
+    </span>
+    …
+```
+
+  `claimed` = au moins un champ déclaré et case non établie ; `declared.<champ>` = valeur égale à
+  celle de la déclaration. Le cartouche déborde de 10 px au-dessus de la fiche : prévoir cet
+  espace entre générations (ou `--space-2` de plus en tête de fiche). Le portrait déclaré garde son
+  cadre ; sa marque est le cartouche et le nom accessible (« Portrait : visage 12, déclaré »).
+
+### 6.10 Les chemises d'affaire (`CaseFolder`, `CaseFolderGroup`) — v2.2, écran E04
+
+Nouvelle partie : une **chemise kraft par affaire** posée sur le bureau (AFFAIRE-2 §2.1). Même
+matière que `Folder` (fibres, onglet `--radius-tab`, coin corné, contexte `kraft`) mais c'est un
+**choix** : chaque chemise est un **bouton radio natif** (invisible, couvrant toute la chemise)
+dans une étiquette ; `CaseFolderGroup` est le `<fieldset>` qui les range.
+
+- **Contenu** : onglet = cote à l'étiqueteuse rouge (`.mat-label.red`) ; titre Fraunces
+  `--step-1` ; ligne Courier Prime `--text-muted` : durée (`clock`) · état (« Non ouvert », « En
+  cours, 42 % », « Rapport remis · fins vues 2 / 4 ») ; **mention** facultative (snippet `note`)
+  sur une bande de manille (`--surface-1`, icône `info`, Instrument Sans, titre d'affaire en
+  `<em>` rendu en Literata italique) : « Se joue seule. Conseillé après *Succession Varenque*… »,
+  jamais un verrou ; **tampon de la dernière décision** (`decision`) : `Stamp tone="ink" size="s"`
+  en bas à droite, dans le flux (ne couvre jamais le titre), encre neutre : aucune décision n'est
+  « la bonne ».
+- **Choisie** : soulevée de 2 × `--lift`, liseré intérieur `--border-strong` `--accent` (laiton
+  bruni du kraft, ≥ 3:1), ombre `--shadow-lifted`, **coche** dans l'onglet (forme, pas seulement
+  couleur). Survol : soulevée de `--lift`. Focus : anneau 3 px `--focus` tracé dans le carton (décalé
+  de −6 px : mesuré sur le kraft, pas sur le bureau sombre ; `:has(:focus-visible)`). Mouvement réduit : `--lift` = 0 (liseré et coche restent).
+- **Disposition** : cible entière ≥ 72 px de haut ; `CaseFolderGroup` empile sous 600 px
+  (37,5 rem), côte à côte au-delà (colonnes égales). Distribution à l'apparition : `deal={rang}`.
+- **Accessibilité** : groupe radio natif (Tab entre une fois, flèches changent l'affaire) ; nom =
+  titre (`aria-labelledby`), description = durée et état, mention, « Dernière décision : … »
+  (`aria-describedby`, le tampon lui-même est `aria-hidden`). Légende du `fieldset` visible
+  (`.kicker`) ou masquée (`legendHidden`). Couleurs forcées : cadre `CanvasText`, choisie
+  `Highlight`.
+- **Contrastes** : paires existantes du contexte kraft (`--text` sur kraft et manille,
+  `--text-muted`, `--accent` non-texte, étiqueteuse rouge) : aucun nouveau token.
+- **API** : `CaseFolder` : `name` · `value` · `checked` · `onselect(value)` · `title` · `cote` ·
+  `duration` · `status` · `note` (snippet) · `decision` · `decisionLabel` (déf. « Dernière
+  décision : ») · `tone: kraft|manila` · `deal` · `disabled` · `id` · `class`.
+  `CaseFolderGroup` : `legend` · `legendHidden` · `class` · enfants.
+
+```svelte
+<CaseFolderGroup legend="Choisir une affaire">
+  {#each cases as c, i (c.id)}
+    <CaseFolder name="case" value={c.id} checked={choice === c.id} onselect={(v) => (choice = v)}
+      title={c.title} cote={c.cote} duration={c.duration} status={statusOf(c)}
+      decision={lastDecisionStamp(c)} deal={i}>
+      {#snippet note()}Se joue seule. Conseillé après <em>Succession Varenque</em> : …{/snippet}
+    </CaseFolder>
+  {/each}
+</CaseFolderGroup>
+```
+
+Les trois **tampons de décision** du rapport final : §6.11.
+
+### 6.11 Les tampons de décision (`DecisionCard`, `DecisionGroup`) — v2.3, rapport final
+
+Dernière étape du rapport quand une question est de type `choice` (AFFAIRE-2 §3.2) : une **fiche
+bristol par décision**, même motif que `CaseFolder` (radio natif invisible couvrant la fiche, dans
+une étiquette) ; `DecisionGroup` est le `<fieldset>` qui les range.
+
+- **Contenu** : case à cocher dessinée (carré `--ink-muted`, coche quand choisie), **effet
+  administratif** en Courier Prime (`--font-type`), jamais l'issue narrative. Choisie : gras,
+  liseré intérieur `--border-strong` `--accent`, soulevée de 2 × `--lift`, `--shadow-lifted`, et
+  **tampon** `Stamp tone="ink" size="s"` (« Visé ») qui frappe (`animate`), encre neutre : aucune
+  décision n'est « la bonne ».
+- **Indisponible** (`reason`, donnée par le contenu : `unavailableReason`, ARCHITECTURE §3.2) :
+  fiche sans réglure ni ombre, bord en tirets 1 px `--ink-muted`, case en tirets, libellé
+  `--ink-muted` ; la **raison** reste à l'encre pleine (`--ink`, icône `info`, préfixe gras
+  « Indisponible : ») : lisible au contraste AA, jamais par opacité. Radio `disabled` (exposé
+  indisponible, sauté par les flèches), raison en `aria-describedby`. Action facultative
+  (`action`, ex. « Revenir au dossier ») sous la fiche, **hors** de l'étiquette.
+- **Disposition** : cible ≥ 72 px ; `DecisionGroup` empile sous 600 px (37,5 rem), en ligne
+  au-delà (colonnes égales). Distribution `deal={rang}`. Mouvement réduit : `--lift` = 0, le
+  tampon se pose en fondu (§9.15).
+- **Accessibilité** : groupe radio natif (Tab entre une fois, flèches) ; nom = libellé ; légende
+  du `fieldset` = la question (« Décision de l'Office »), visible ou `legendHidden`. Confirmation
+  « Apposer ce tampon ? », focus initial sur « Relire ». Couleurs forcées : cadre `CanvasText`,
+  choisie `Highlight`, indisponible `GrayText` en tirets.
+- **Contrastes** : paires existantes du contexte papier (`--ink`, `--ink-muted` sur `--card`,
+  `--accent` non-texte) : aucun nouveau token.
+- **API** : `DecisionCard` : `name` · `value` · `checked` · `onselect(value)` · `label` · `stamp`
+  (déf. « Visé ») · `reason` · `reasonLabel` (déf. « Indisponible : ») · `action` (snippet) ·
+  `deal` · `id` · `class`. `DecisionGroup` : `legend` · `legendHidden` · `class` · enfants.
+
+```svelte
+<DecisionGroup legend={q.prompt} legendHidden>
+  {#each q.options as o, i (o.id)}
+    <DecisionCard name="report-{q.id}" value={o.id} label={o.label} reason={o.unavailableReason}
+      checked={answer === o.id} onselect={choose} deal={i} />
+  {/each}
+</DecisionGroup>
+<!-- une option grisée : un seul « Revenir au dossier » sous le groupe (fiches d'égale hauteur) -->
+```
+
+Rapport final : fiches d'**égale hauteur** en ligne ; le « Revenir au dossier » est posé **une fois
+sous le groupe** (le snippet `action` d'une fiche grandirait toute la rangée).
+
 ---
 
 ## 7. Mouvement : le langage
@@ -673,6 +836,7 @@ en plus de la lumière.
 | `--dur-spread` | 900 ms | 0,01 ms | **v2** L'encre du tampon s'étale |
 | `--dur-celebrate` | 1800 ms | 0,01 ms | **v2** Branche révélée |
 | `--dur-rustle` | 360 ms | 0,01 ms | **v2** Froissement |
+| `--dur-unclaim` / `--unclaim-shift` | 200 ms / 14 px | 0,01 ms / 0 | **v2.2** Valeur déclarée retirée, cartouche dégrafé (§6.9) |
 | `--dur-loop` | 1000 ms | figé | Spinner, plume du `Loader` |
 | `--dur-flicker` / `--dur-sway` / `--dur-dust` / `--dur-breathe` | 6,4 / 7 / 16 / 5,2 s | figé | **v2** Boucles d'ambiance |
 | `--dur-fade-fast` / `--dur-fade` | 140 / 220 ms | **100 / 150 ms** | Fondus |
@@ -701,6 +865,7 @@ de `Dialog`). Index de cascade : `style="--i: n"`.
 | `.mv-lock` | case verrouillée | `--dur-slow`, `--ease-snap` | le cadenas tombe et claque | fondu |
 | `.mv-ripple` | dépôt réussi | `--dur-slow` | onde concentrique qui pâlit | absent |
 | `.mv-rustle` | nouvel indice, page tournée (`use:rustle`) | `--dur-rustle` | froissement (micro-rotations) | absent |
+| `.mv-unclaim` | valeur déclarée retirée (§6.9) | `--dur-unclaim`, `--ease-out`, `forwards` | glisse de `--unclaim-shift` vers la marge, pivote de 4°, s'efface | instantané |
 | `.mv-pop` | compteur qui change | `--dur-base`, `--ease-snap` | `scale` 1,25 → 1 | absent |
 | `.mv-tab` | onglets au montage | `--dur-base`, `--ease-snap`, 40 ms / rang | sortent de la chemise | instantané |
 | `.mv-screen-in` / `-out` | changement d'écran | `--dur-screen` / `--dur-base` | §7.3 | fondu 150 ms |
@@ -765,6 +930,7 @@ Sans dépendance ; lisent les tokens au moment de jouer (réglages et mouvement 
 | `screenIn` / `screenOut` | transition | `delay` | changement d'écran | fondu |
 | `stampIn` | transition | `index`, `delay` | coup de tampon | fondu |
 | `inkIn` | transition | `index`, `delay` | encre qui sèche | fondu |
+| `unclaim` | transition (in et out) | `index`, `delay` | **v2.2** valeur déclarée qui glisse hors de la fiche, cartouche dégrafé / ré-agrafé (§6.9) | **0 ms** |
 | `reveal` | action | `threshold`, `once` | `data-reveal` pending → in (IntersectionObserver) | `in` d'emblée |
 | `tilt` | action | `max` (déf. 4°) | `--tilt-x/--tilt-y` au pointeur souris | inactif |
 | `rustle` | action | `key` | rejoue `.mv-rustle` | neutralisé |
@@ -818,12 +984,12 @@ revoir seulement pour une scène défilée complexe (artbook interactif).
   `npm run icons:ink -w @arbre/ui`.
 - `Icon` : `name`, `size`, `weight` (déf. 1,75), `wash` (tache d'aquarelle derrière : `true` =
   safran, ou une couleur token), `clean` (géométrie nette, pour 16 px et moins).
-- **60 icônes** (`ICON_NAMES`) : panneaux `tree archives reader catalog notebook map pinboard
+- **61 icônes** (`ICON_NAMES`) : panneaux `tree archives reader catalog notebook map pinboard
   journal faces help` · navigation `menu pause back forward chevron-down chevron-up close plus minus
   external grip list layers settings sound` · verbes `look search take write pin use highlight note`
   · lecteur `flip transcript zoom-in zoom-out fit` · états `lock check stamp face unknown-person
   star clock info warning danger trash save quill` · **v2** `lamp fern folder envelope photo compass
-  typewriter clip sparkle`.
+  typewriter clip sparkle` · **v2.2** `staple` (agrafe de la case revendiquée).
 - Une icône = un sens partout. Toujours `aria-hidden` ; le nom est porté par le contrôle.
 - **Curseurs** v2 : flèche taillée à l'encre de nuit (`#182039`) à liseré vélin (`#f7efdc`), trait de
   safran (`#f2b33d`) sur le fût ; pastille du verbe dessinée à la plume. 32 px, point chaud (3, 2),
@@ -863,18 +1029,21 @@ Svelte 5 runes, tokens sémantiques seulement, focus `outline 3px --focus` déca
 | 9.16–9.20 | `KeyHint`, `FocusRing`, `VisuallyHidden`, `SkipLink`, `Loader`, `Icon`, `ArtDefs` | inchangées | `Icon` encrée (§9.0) | |
 | 9.22 | `Folder` | §6.2 | chemise kraft/manille | vrai titre `hN` |
 | 9.23 | `PaperSheet` | §6.1 | feuille | `as` sémantique |
-| 9.24 | `IndexCard` | §6.3 | fiche bristol | vrai titre `hN` |
+| 9.24 | `IndexCard` | §6.3 · `claimed`, `claimLabel` (§6.9) | fiche bristol ; revendiquée : tirets + cartouche | vrai titre `hN` |
 | 9.25 | `Tape`, `DymoLabel` | §6.5, §6.6 | | décor `aria-hidden` (Tape) / texte réel (Dymo) |
 | 9.26 | `Ornament` | `name` · `size` · `weight` · `flip: x\|y\|xy` · `rotate` | §10.11 | `aria-hidden` |
 | 9.27 | `LampLight` | §6.7 | | `aria-hidden` |
 | 9.28 | `Wordmark` | §4.3 | | `aria-label` |
 | 9.29 | `KeyArt` | `svg` · `animate` · `fade: none\|edges\|right\|bottom` · `fit: cover\|contain` · `anchor: start\|center\|end` · `label` | §8.5 | décor (`aria-hidden`) ou `role="img"` + `label` |
 | 9.30 | `InkReveal`, `Celebrate`, `FlipCard` | §8.4 | | `inert` sur la face cachée |
+| 9.32 | `ClaimTag` | §6.9 | cartouche agrafé, transition `unclaim` | texte réel, ou `decorative` (`aria-hidden`) |
+| 9.33 | `CaseFolder`, `CaseFolderGroup` | §6.10 | chemise kraft qui se soulève ; `deal` | radio natif dans un `fieldset` |
+| 9.34 | `DecisionCard`, `DecisionGroup` | §6.11 | fiche de décision, tampon `ink` qui frappe ; grisée avec sa raison | radio natif dans un `fieldset`, indisponible `disabled` + description |
 | 9.31 | `Coachmark` | `anchor` (fonction) · `kicker` · `text` · `actionLabel`/`onaction` · `skipLabel`/`onskip` · `placement` · `bottomInset` · `id` · snippet | **Note de service** : bande de papier (contexte papier) à liseré safran, posée près de sa cible avec une flèche, liseré pointillé autour de la cible ; se pose comme une feuille (`--dur-open`, `--ease-paper`) | `<aside>` nommé par son surtitre, décrit par son texte ; jamais de focus pris ; §9.31 |
 
 Utilitaires CSS : base.css (`.reading`, `.ink-type`, `.ink-hand`, `.num`, `.caps`, `.grain`,
 `.kw[data-state]`, `.hl-1…5`, `.visually-hidden`, `.skip-link`, `[data-verb]`, `.logo-mono`),
-materials.css (§6), motion.css (§8.3).
+materials.css (§6, dont `.claim-frame`, `.claim-value`, `.claim-stack`), motion.css (§8.3).
 
 ### 9.3 bis Onglets compacts (`line` et `folder`)
 
@@ -1017,6 +1186,10 @@ Un `font-size` en attribut est respecté.
   `ink-faint`, aiguille `ink` (moitié nord `fill="currentColor"`). **Échelle fantaisie** dans une
   unité du monde. **Cadre** : double filet comme le cartouche.
 - Lieux de fiction dans la fiction (rumeurs, lieux disparus) : étiquette `font-style="italic"`.
+- **Boutons de zoom** (bas droite) : en vue d'ensemble, la caméra cadre la carte hors de leur colonne
+  ou de leur bande (celle qui réduit le moins la carte), mesurée sur les boutons eux-mêmes
+  (`reserveCorner`) : aucun lieu ne démarre sous eux. Rien n'est réservé quand la carte part zoomée
+  (téléphone en portrait) ou ne touche pas le coin.
 
 ### 10.7 Portraits (galerie des visages, cases de l'arbre)
 
@@ -1147,6 +1320,9 @@ ornements, curseurs `data-cursors="ink"`, catalogue de mouvement rejouable (§8.
 `motion.ts`, `Tabs variant="folder"`, `Folder`, `PaperSheet`, `IndexCard`, `Card variant="index"`,
 `FlipCard`, `Celebrate`, `KeyArt` (16:9 et 4:5, `ArtDefs`), sélecteurs mouvement / contraste /
 vision des couleurs.
+v2.2 (fait) : section « Case revendiquée et chemises d'affaire » (fiche ordinaire, revendiquée
+avec retrait / rétablissement animé, établie ; `ClaimTag` seul ; `CaseFolderGroup` de deux chemises,
+mention et tampon de décision).
 
 **Aperçu autonome** du design system (non versionné, `packages/ui/.gitignore`) :
 `npx vite --config packages/ui/.preview/vite.config.mjs` → `http://localhost:5199/` (système),
@@ -1212,6 +1388,8 @@ Le site vitrine, lui, garde le zoom.
   se place à droite du portrait ;
 - case **établie** : `Stamp text="Établi" size="s"` en bas à droite, débordant de la fiche ;
 - case **ouverte** : titre « ? », aide « Déposer une pièce » + `Icon unknown-person`, opacité 0,88 ;
+- case **revendiquée** (affaire 2) : `.claim-frame` + `ClaimTag straddle decorative` + `.claim-value`
+  sur chaque champ déclaré, sans cadenas ni tampon ; retrait en `unclaim` (§6.9) ;
 - cible de dépôt : lavis `--accent-tint` + anneau ; objet saisi : `mv-held` ;
 - générations reliées par le **fil rouge** (`--string`, 2 px : barre horizontale + attache) ;
 - verrouillage : `stampIn` → `mv-thud` → `mv-lock` → `Celebrate` sur la branche.
@@ -1251,6 +1429,7 @@ lavis qui prend au survol (`opacity`) ; épingles et fil rouge en surimpression.
 ### 13.7 Rapport final et fin
 
 Rapport = **chemise manille** (`Folder tone="manila"`) contenant des `IndexCard` par conclusion ;
+une question `choice` (décision) se pose en tampons de décision (§6.11) ;
 validation : `Stamp` « Établi » ou « Contredit » en cascade (`--stagger`) ; écran de fin : art clé
 `fade="edges"` + `Wordmark size="title"` + `Celebrate` une fois ; crédits avec logos (§11).
 
@@ -1328,7 +1507,7 @@ Tokens et styles
 - [x] Composants ne lisant que la sémantique et les matières (jamais `--raw-*`)
 - [x] Aucune variable CSS utilisée sans définition (vérifié par script lors de la v2)
 - [x] Contextes papier et kraft : tout composant posé dedans reste conforme
-- [x] `contrast:check --strict` (714 paires : matières, kraft, art clé compris) dans `npm run check`
+- [x] `contrast:check --strict` (720 paires : matières, kraft, art clé compris) dans `npm run check`
 - [ ] SVG d'art : seulement `ART_CLASSES`, `none`, `currentColor`, `url(#…)` (`content:check`)
 
 Accessibilité
@@ -1424,6 +1603,10 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--accent` | `--surface-3` | **7,95** ✓ | 4,5 | pastille douce accent |
 | `--canvas` | `--text` | **16,17** ✓ | 4,5 | info-bulle (inversée) |
 | `--text` | `--selection sur --surface-1` | **8,16** ✓ | 4,5 | sélection de texte |
+| `--claim-ink-desk` | `--canvas` | **10,68** ✓ | 4,5 | valeur déclarée sur le bureau |
+| `--claim-ink-desk` | `--surface-1` | **9,57** ✓ | 4,5 | valeur déclarée (fiche de case, sélecteur) |
+| `--claim-ink-desk` | `--surface-2` | **8,46** ✓ | 4,5 | valeur déclarée (survol) |
+| `--claim-ink-desk` | `--surface-3` | **7,75** ✓ | 4,5 | valeur déclarée (ligne active) |
 
 #### Contexte papier
 
@@ -1525,6 +1708,10 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--accent` | `--surface-3` | **13,13** ✓ | 4,5 | pastille douce accent |
 | `--canvas` | `--text` | **20,59** ✓ | 4,5 | info-bulle (inversée) |
 | `--text` | `--selection sur --surface-1` | **9,58** ✓ | 4,5 | sélection de texte |
+| `--claim-ink-desk` | `--canvas` | **16,96** ✓ | 7 | valeur déclarée sur le bureau |
+| `--claim-ink-desk` | `--surface-1` | **16,57** ✓ | 7 | valeur déclarée (fiche de case, sélecteur) |
+| `--claim-ink-desk` | `--surface-2` | **15,75** ✓ | 7 | valeur déclarée (survol) |
+| `--claim-ink-desk` | `--surface-3` | **14,59** ✓ | 7 | valeur déclarée (ligne active) |
 
 #### Contexte papier HC
 
@@ -1672,6 +1859,13 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--kraft-edge` | `--kraft` | **3,22** ✓ | 3 | tranche du carton (contour, non-texte) |
 | `--ink` | `--card` | **14,19** ✓ | 4,5 | texte sur fiche bristol |
 | `--card-margin` | `--card` | **3,75** ✓ | 3 | ligne de tête rouge (non-texte) |
+| `--claim-ink` | `--claim-paper` | **7,09** ✓ | 4,5 | cartouche « Déclaré » : texte et agrafe |
+| `--claim-ink` | `--card` | **7,74** ✓ | 4,5 | valeur déclarée sur fiche bristol |
+| `--claim-ink` | `--paper` | **7,23** ✓ | 4,5 | valeur déclarée (liste hiérarchique, papier) |
+| `--claim-ink` | `--paper-aged` | **6,61** ✓ | 4,5 | valeur déclarée sur papier vieilli (survol) |
+| `--claim-edge` | `--card` | **7,74** ✓ | 3 | bord en tirets de la case revendiquée (non-texte) |
+| `--claim-edge` | `--claim-paper` | **7,09** ✓ | 3 | filet du cartouche (non-texte) |
+| `--claim-paper` | `--canvas` | **15,62** ✓ | 3 | cartouche à cheval sur le bord, côté bureau (non-texte) |
 | `--ink` | `--tape sur --paper` | **12,53** ✓ | 4,5 | texte sous ruban adhésif |
 | `--label-tape-text` | `--label-tape` | **10,09** ✓ | 4,5 | étiqueteuse : lettres en relief (bleu) |
 | `--label-tape-text` | `--label-tape-red` | **5,33** ✓ | 4,5 | étiqueteuse : lettres en relief (rouge) |
@@ -1694,6 +1888,13 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--kraft-edge` | `--kraft` | **18,45** ✓ | 3 | tranche du carton (contour, non-texte) |
 | `--ink` | `--card` | **20,12** ✓ | 7 | texte sur fiche bristol |
 | `--card-margin` | `--card` | **8,07** ✓ | 3 | ligne de tête rouge (non-texte) |
+| `--claim-ink` | `--claim-paper` | **15,85** ✓ | 7 | cartouche « Déclaré » : texte et agrafe |
+| `--claim-ink` | `--card` | **15,85** ✓ | 7 | valeur déclarée sur fiche bristol |
+| `--claim-ink` | `--paper` | **15,85** ✓ | 7 | valeur déclarée (liste hiérarchique, papier) |
+| `--claim-ink` | `--paper-aged` | **14,53** ✓ | 7 | valeur déclarée sur papier vieilli (survol) |
+| `--claim-edge` | `--card` | **15,85** ✓ | 3 | bord en tirets de la case revendiquée (non-texte) |
+| `--claim-edge` | `--claim-paper` | **15,85** ✓ | 3 | filet du cartouche (non-texte) |
+| `--claim-paper` | `--canvas` | **20,59** ✓ | 3 | cartouche à cheval sur le bord, côté bureau (non-texte) |
 | `--ink` | `--tape sur --paper` | **15,41** ✓ | 7 | texte sous ruban adhésif |
 | `--label-tape-text` | `--label-tape` | **20,59** ✓ | 7 | étiqueteuse : lettres en relief (bleu) |
 | `--label-tape-text` | `--label-tape-red` | **20,59** ✓ | 7 | étiqueteuse : lettres en relief (rouge) |
@@ -2203,6 +2404,3 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--info` | `--surface-3` | **7,16** ✓ | 4,5 | pastille douce information (vision simulée) |
 | `--established` | `--surface-3` | **12,19** ✓ | 4,5 | pastille douce établi |
 | `--established` | `--surface-3` | **11,91** ✓ | 4,5 | pastille douce établi (vision simulée) |
-
-Toutes les paires passent.
-

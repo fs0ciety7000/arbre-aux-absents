@@ -4,7 +4,15 @@ import * as api from '../index';
 import { boundsFromWorldMap, overview } from './bounds';
 import { clamp, mapSizePx, toScreen } from './camera';
 import type { CameraBounds, Viewport } from './types';
-import { comfortMargin, defaultFocusZoom, firstView, focusOn, needsReveal, reveal } from './views';
+import {
+  comfortMargin,
+  defaultFocusZoom,
+  firstView,
+  focusOn,
+  needsReveal,
+  reserveCorner,
+  reveal,
+} from './views';
 
 const MAP: WorldMap = {
   aspect: 1.25,
@@ -100,6 +108,36 @@ describe('needsReveal / reveal', () => {
   });
   it('does nothing on an empty viewport', () => {
     expect(needsReveal({ x: 0.9, y: 0.9 }, c, { width: 0, height: 0 }, B)).toBe(false);
+  });
+});
+
+describe('reserveCorner', () => {
+  const R = { width: 68, height: 172 };
+  it('keeps the whole viewport when the centred map already clears the corner', () => {
+    expect(reserveCorner(DESKTOP, R, B)).toEqual(DESKTOP);
+  });
+  it('frame of the same aspect as the map: takes a right lane, the cheaper cut', () => {
+    const v = { width: 830, height: 664 };
+    const r = reserveCorner(v, R, B);
+    expect(r).toEqual({ width: 762, height: 664 });
+    // Vue d'ensemble : le coin bas droit de la carte reste hors des contrôles.
+    const corner = toScreen({ x: 1, y: 1 }, overview(B), r, B);
+    expect(corner.x).toBeLessThanOrEqual(v.width - R.width);
+  });
+  it('tall frame: takes a bottom band, the cheaper cut', () => {
+    expect(reserveCorner({ width: 600, height: 620 }, R, B)).toEqual({ width: 600, height: 448 });
+  });
+  it('portrait phone: the first view already covers the screen, nothing is reserved', () => {
+    expect(reserveCorner(PHONE, R, B)).toEqual(PHONE);
+    expect(reserveCorner({ width: 390, height: 500 }, R, B)).toEqual({ width: 390, height: 500 });
+  });
+  it('is total: empty viewport, no reserve, oversized reserve', () => {
+    expect(reserveCorner({ width: 0, height: 0 }, R, B)).toEqual({ width: 0, height: 0 });
+    expect(reserveCorner(PHONE, { width: 0, height: 0 }, B)).toEqual(PHONE);
+    expect(reserveCorner({ width: 50, height: 50 }, { width: 99, height: 99 }, B)).toEqual({
+      width: 50,
+      height: 50,
+    });
   });
 });
 

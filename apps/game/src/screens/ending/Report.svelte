@@ -1,13 +1,25 @@
 <script lang="ts">
-  import { Button, Dialog, Folder, Icon, LampLight, Ornament } from '@arbre/ui';
+  import {
+    Button,
+    DecisionCard,
+    DecisionGroup,
+    Dialog,
+    Folder,
+    Icon,
+    LampLight,
+    Ornament,
+  } from '@arbre/ui';
   import { getApp } from '../../lib/game/context';
   import { askedQuestions } from '../../lib/game/report';
   import type { GameStoreImpl } from '../../lib/game/store.svelte';
   import { messages } from '../../messages.fr';
+  import TutorialLayer from '../../tutorial/TutorialLayer.svelte';
 
   /**
    * Rapport final : questions posées une à une (groupe radio natif, flèches au clavier,
    * croix à la manette), réponses modifiables jusqu'à la confirmation, puis `finish`.
+   * Une question `choice` (décision, AFFAIRE-2 §3.2) est rendue en tampons de décision :
+   * fiches côte à côte, option indisponible grisée avec sa raison (`unavailableReason`).
    */
   interface Props {
     game: GameStoreImpl;
@@ -33,6 +45,8 @@
   const current = $derived(q?.answer ?? undefined);
   const last = $derived(index >= questions.length - 1);
   const complete = $derived(questions.every((x) => answers[x.id] !== undefined));
+  /** Le rapport se conclut par une décision : la confirmation parle de tampon. */
+  const decides = $derived(questions.some((x) => x.kind === 'choice'));
 
   function choose(option: string) {
     if (!q) return;
@@ -82,34 +96,77 @@
       {#if q}
         <form class="question" onsubmit={(e) => e.preventDefault()}>
           {#key q.id}
-            <fieldset class="card mat-card mv-deal" data-surface="paper">
-              <legend>
-                <span class="progress num">{m.progress(index + 1, questions.length)}</span>
+            {#if q.kind === 'choice'}
+              <div class="choice" data-report-choice>
+                <p class="progress num">{m.progress(index + 1, questions.length)}</p>
                 <span class="prompt" tabindex="-1" bind:this={heading}>{q.prompt}</span>
-              </legend>
-              {#if options.length === 0}
-                <p class="muted">{m.noOption}</p>
-              {/if}
-              <div class="options">
-                {#each options as o (o.id)}
-                  <label class="option" class:checked={current === o.id}>
-                    <input
-                      type="radio"
+                <DecisionGroup legend={q.prompt} legendHidden>
+                  {#each options as o, i (o.id)}
+                    <DecisionCard
                       name="report-{q.id}"
                       value={o.id}
+                      label={o.label}
+                      stamp={m.decisionStamp}
+                      reason={o.unavailableReason}
+                      reasonLabel={m.unavailable}
                       checked={current === o.id}
-                      onchange={() => choose(o.id)}
+                      onselect={choose}
+                      deal={i}
                     />
-                    <span class="label">{o.label}</span>
-                    {#if current === o.id}
-                      <span class="mark mv-stamp" aria-hidden="true"
-                        ><Icon name="check" size="1.1rem" /></span
-                      >
-                    {/if}
-                  </label>
-                {/each}
+                  {/each}
+                </DecisionGroup>
+                {#if options.some((o) => o.unavailableReason !== undefined)}
+                  <!-- Une piste reste ouverte (P3) : retour au dossier, rien n'est perdu. -->
+                  <div class="reopen">
+                    <Button variant="ghost" iconName="back" onclick={() => app.leaveReport()}
+                      >{m.backToFile}</Button
+                    >
+                  </div>
+                {/if}
               </div>
-            </fieldset>
+            {:else}
+              <fieldset class="card mat-card mv-deal" data-surface="paper">
+                <legend>
+                  <span class="progress num">{m.progress(index + 1, questions.length)}</span>
+                  <span class="prompt" tabindex="-1" bind:this={heading}>{q.prompt}</span>
+                </legend>
+                {#if options.length === 0}
+                  <p class="muted">{m.noOption}</p>
+                {/if}
+                <div class="options">
+                  {#each options as o (o.id)}
+                    <label
+                      class="option"
+                      class:checked={current === o.id}
+                      class:disabled={o.unavailableReason !== undefined}
+                    >
+                      <input
+                        type="radio"
+                        name="report-{q.id}"
+                        value={o.id}
+                        checked={current === o.id}
+                        disabled={o.unavailableReason !== undefined}
+                        aria-describedby={o.unavailableReason
+                          ? `report-${q.id}-${o.id}-why`
+                          : undefined}
+                        onchange={() => choose(o.id)}
+                      />
+                      <span class="label"
+                        >{o.label}{#if o.unavailableReason}<span
+                            class="why"
+                            id="report-{q.id}-{o.id}-why">{m.unavailable}{o.unavailableReason}</span
+                          >{/if}</span
+                      >
+                      {#if current === o.id}
+                        <span class="mark mv-stamp" aria-hidden="true"
+                          ><Icon name="check" size="1.1rem" /></span
+                        >
+                      {/if}
+                    </label>
+                  {/each}
+                </div>
+              </fieldset>
+            {/if}
           {/key}
           {#if current === undefined}
             <p class="muted" role="status">{m.unanswered}</p>
@@ -141,7 +198,16 @@
   <Button variant="ghost" iconName="back" onclick={() => app.leaveReport()}>{m.later}</Button>
 </main>
 
-<Dialog bind:open={confirmOpen} title={m.confirmTitle} description={m.confirmText} size="s">
+{#if app.overlay === null}
+  <TutorialLayer {app} {game} screen="report" />
+{/if}
+
+<Dialog
+  bind:open={confirmOpen}
+  title={decides ? m.confirmDecisionTitle : m.confirmTitle}
+  description={decides ? m.confirmDecisionText : m.confirmText}
+  size="s"
+>
   <h3 class="summary-title">{m.summary}</h3>
   <dl class="summary">
     {#each questions as x, i (x.id)}
@@ -161,7 +227,7 @@
     {/each}
   </dl>
   {#snippet actions()}
-    <Button onclick={() => (confirmOpen = false)}>{m.cancel}</Button>
+    <Button autofocus onclick={() => (confirmOpen = false)}>{m.cancel}</Button>
     <Button variant="primary" loading={finishing} onclick={finish}>{m.confirm}</Button>
   {/snippet}
 </Dialog>
@@ -217,6 +283,20 @@
   }
   .muted {
     color: var(--text-muted);
+  }
+  .choice {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .choice .progress {
+    margin: 0;
+    color: var(--text-muted);
+  }
+  .reopen {
+    justify-self: end;
+  }
+  .choice .prompt {
+    color: var(--text);
   }
   /* Pastilles des questions : cochées quand la réponse est classée. */
   .filed {
@@ -309,6 +389,20 @@
   .option:hover {
     background: var(--accent-tint);
     transform: translateX(var(--space-1));
+  }
+  .option.disabled {
+    cursor: not-allowed;
+    color: var(--ink-muted);
+  }
+  .option.disabled:hover {
+    background: none;
+    transform: none;
+  }
+  .why {
+    display: block;
+    font-family: var(--font-ui);
+    font-size: var(--step--1);
+    color: var(--ink);
   }
   .option.checked {
     background: var(--accent-tint);

@@ -64,11 +64,17 @@ export interface EndingSpec {
   sections?: Record<string, OutcomeCondition>;
 }
 
-/** Option d'une question du rapport final ; visible quand `availableWhen` est vraie. */
+/**
+ * Option d'une question du rapport final ; disponible quand `availableWhen` est vraie.
+ * Indisponible, elle est masquée, sauf si `unavailableReason` est donnée : elle est alors
+ * montrée grisée avec cette raison (jamais choisissable).
+ */
 export interface ReportOption {
   id: string;
   label: string;
   availableWhen?: Condition;
+  /** Raison affichée quand l'option est indisponible (exige `availableWhen`), ≤ 140 caractères. */
+  unavailableReason?: string;
 }
 /** Question (ou choix moral) du rapport final, posée au dénouement avant `finish`. */
 export interface ReportQuestion {
@@ -167,6 +173,7 @@ export const ReportOptionSchema = z.strictObject({
   id: IdSchema,
   label: TextSchema,
   availableWhen: ConditionSchema.optional(),
+  unavailableReason: TextSchema.max(140).optional(),
 });
 
 export const ReportQuestionSchema = z.strictObject({

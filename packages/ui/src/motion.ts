@@ -161,6 +161,26 @@ export function stampIn(_node: Element, p: MotionParams = {}): TransitionConfig 
   };
 }
 
+/**
+ * Case revendiquée (DESIGN §6.9) : une valeur déclarée glisse hors de la fiche quand on la
+ * retire (`out:`), le cartouche « Déclaré » se dégrafe ; en entrée (`in:`, « Rétablir la
+ * déclaration »), le même geste à l'envers. 200 ms (`--dur-unclaim`), glissement
+ * `--unclaim-shift` vers la marge et léger pivot. Mouvement réduit : **0 ms** (ni glissé ni
+ * fondu : la valeur disparaît, AFFAIRE-2 §1.7). Poser l'élément dans un `.claim-stack` pour que
+ * la valeur sortante et l'entrante se superposent.
+ */
+export function unclaim(_node: Element, p: MotionParams = {}): TransitionConfig {
+  if (prefersReducedMotion()) return { delay: 0, duration: 0 };
+  const shift = tokenMs('--unclaim-shift', 14);
+  return {
+    delay: stagger(p),
+    duration: tokenMs('--dur-unclaim', 200),
+    easing: EASE.out,
+    css: (t, u) =>
+      `opacity: ${t}; transform: translate(${u * shift}px, ${-u * shift * 0.35}px) rotate(${u * 4}deg)`,
+  };
+}
+
 /** Encre qui apparaît : flou qui sèche et léger glissé. */
 export function inkIn(_node: Element, p: MotionParams = {}): TransitionConfig {
   if (prefersReducedMotion()) return reducedFade();

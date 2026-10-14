@@ -32,6 +32,21 @@ PLACES = {
     'mer-grise': dict(name='Mer Grise', kind='sea', pos=(0.640, 0.036), focus=1.5, hit=60),
     'golfe-d-ambre': dict(name="Golfe d'Ambre", kind='sea', pos=(0.066, 0.600), focus=1.5, hit=60),
     'orvelle': dict(name="L'Orvelle et la Clairette", kind='river', pos=(0.420, 0.548), focus=2.2, hit=30),
+    # affaire 2 (docs/scenario/hautcorvin/08-lieux.md §1)
+    'vernezac': dict(name='Vernezac', kind='village', pos=(0.842, 0.814), focus=3.4, hit=24),
+    'pas-de-l-ourse': dict(name="Le Pas de l'Ourse", kind='landmark', pos=(0.902, 0.772), focus=3.6, hit=20),
+    'dalvezac': dict(name='Dalvezac', kind='village', pos=(0.945, 0.722), focus=3.4, hit=22),
+}
+# Lieux ajoutés après la première gravure : ils n'entrent pas dans les masques historiques
+# (base_mask, full_mask), pour que le relief et la végétation déjà gravés restent identiques à
+# l'octet ; ils passent par overlay_mask(), qui efface localement ce qui les recouvre.
+OVERLAY_PLACES = ('vernezac', 'pas-de-l-ourse', 'dalvezac')
+
+# Toponymes sans lieu du jeu (pas de PlaceId) : gravés dans labels.svg avec une petite marque.
+# (texte, x, y, dx, dy, ancre, taille, lignes)
+TOPONYMS = {
+    # carrière de sable blanc, rive gauche de l'Orvelle, en face de Hautcorvin
+    'combe-aux-sables': dict(pos=(0.796, 0.846), label=(-9, 3, 'end', 10.5, ['La Combe-', 'aux-Sables'])),
 }
 
 # Hameaux ostriens (noms de lieux de la bible §4 : Orrvik, Draavik, Kessvel, Haask) : simples
@@ -105,7 +120,7 @@ STREAMS = [
     ([(0.482, 0.300), (0.474, 0.360), (0.462, 0.420), (0.448, 0.480), (0.440, 0.548)], 0.8, 2.0),  # la noue de Grisenoue
     ([(0.300, 0.690), (0.316, 0.630), (0.330, 0.570), (0.344, 0.512)], 0.6, 1.6),
     ([(0.282, 0.840), (0.240, 0.818), (0.200, 0.806), (0.152, 0.795)], 0.6, 1.8),
-    ([(0.930, 0.800), (0.890, 0.808), (0.850, 0.812), (0.818, 0.814)], 0.6, 1.4),
+    ([(0.930, 0.800), (0.890, 0.808), (0.850, 0.812), (0.818, 0.814)], 0.6, 1.4),  # la Vèze (voir VEZE)
     ([(0.360, 0.290), (0.346, 0.230), (0.338, 0.172)], 0.6, 1.4),
     ([(0.610, 0.270), (0.618, 0.200), (0.618, 0.132)], 0.6, 1.4),
     ([(0.860, 0.260), (0.856, 0.180), (0.850, 0.104)], 0.6, 1.4),
@@ -115,6 +130,12 @@ STREAMS = [
     ([(0.620, 0.520), (0.600, 0.560), (0.588, 0.600)], 0.5, 1.2),
     ([(0.200, 0.600), (0.170, 0.560), (0.150, 0.520), (0.140, 0.472)], 0.5, 1.3),
 ]
+
+# La Vèze (affaire 2) : descend du Pas de l'Ourse (source sous la brèche, côté velmarchois) par
+# Vernezac jusqu'à l'Orvelle. Remplace au dessin le ruisseau STREAMS[3], dont l'ancien tracé (source en
+# Thalberie) reste dans le masque historique.
+VEZE_INDEX = 3
+VEZE = ([(0.900, 0.786), (0.884, 0.800), (0.862, 0.810), (0.842, 0.814), (0.818, 0.814)], 0.5, 1.5)
 
 LAKES = [
     # (x, y, rx, ry, rot) — le lac d'Aulne est le premier
@@ -159,6 +180,21 @@ ROADS_MINOR = [
     [(0.330, 0.235), (0.360, 0.262)],
     [(0.330, 0.235), (0.392, 0.160)],
 ]
+# Ajouts de l'affaire 2 (08-lieux.md §1) : routes mineures (tirets, comme ROADS_MINOR) et sentiers
+# de montagne (pointillé fin). Le sentier du Pas ne rejoint pas la route du col.
+ROADS_MINOR_2 = [
+    [(0.800, 0.785), (0.822, 0.800), (0.842, 0.814)],                    # Hautcorvin → Vernezac (route de la Vèze)
+    [(0.945, 0.722), (0.941, 0.692), (0.926, 0.654)],                    # Dalvezac → route du col (vallée de la Dalva)
+]
+TRAILS = [
+    [(0.842, 0.814), (0.860, 0.806), (0.876, 0.792), (0.890, 0.783), (0.902, 0.772)],  # Vernezac → refuge → Pas
+    [(0.902, 0.772), (0.914, 0.758), (0.925, 0.745), (0.936, 0.732), (0.945, 0.722)],  # Pas → Dalvezac
+]
+# Libellé « la Vèze » (label-water) : (x, y, rotation, taille).
+VEZE_LABEL = (0.874, 0.823, -14, 10)
+# Refuge de l'Ourse (sous le Pas, côté velmarchois), dessiné dans la vignette du Pas.
+REFUGE = (0.876, 0.792)
+
 # Lignes maritimes (pointillés) : Compagnie des Paquebots de l'Orvelle, vedette de Kessaar.
 SEA_ROUTES = [
     [(0.080, 0.478), (0.040, 0.470), (0.004, 0.452)],
@@ -368,19 +404,29 @@ def river_widths(pts, table):
 
 
 @lru_cache(maxsize=None)
-def streams():
+def streams(legacy=False):
+    """Ruisseaux dessinés ; `legacy=True` : tracés de la première gravure (masques historiques)."""
     out = []
     for k, (pts, w0, w1) in enumerate(STREAMS):
+        if k == VEZE_INDEX and not legacy:
+            pts, w0, w1 = VEZE
         line = wiggle(catmull(PP(pts), 6), 2.2, f'stream{k}', step=4, freq=0.05)
         out.append((tuple(line), w0, w1))
     return tuple(out)
 
 
 @lru_cache(maxsize=None)
-def roads():
+def roads(legacy=False):
+    """(grandes routes, chemins) ; `legacy=True` : sans les ajouts de l'affaire 2."""
     major = [tuple(wiggle(catmull(PP(r), 6), 2.5, f'rM{i}', step=5, freq=0.03)) for i, r in enumerate(ROADS_MAJOR)]
-    minor = [tuple(wiggle(catmull(PP(r), 6), 2.5, f'rm{i}', step=5, freq=0.035)) for i, r in enumerate(ROADS_MINOR)]
+    minor_src = ROADS_MINOR if legacy else ROADS_MINOR + ROADS_MINOR_2
+    minor = [tuple(wiggle(catmull(PP(r), 6), 2.5, f'rm{i}', step=5, freq=0.035)) for i, r in enumerate(minor_src)]
     return tuple(major), tuple(minor)
+
+
+@lru_cache(maxsize=None)
+def trails():
+    return tuple(tuple(wiggle(catmull(PP(t), 6), 1.6, f'tr{i}', step=4, freq=0.06)) for i, t in enumerate(TRAILS))
 
 
 @lru_cache(maxsize=None)
@@ -408,14 +454,14 @@ def lakes():
 def base_mask():
     """Ce qui ne doit pas recevoir de relief ni d'arbres : routes, eaux, ornements, lieux."""
     m = Mask(3.0)
-    major, minor = roads()
+    major, minor = roads(legacy=True)
     for r in major:
         m.polyline(r, 4.5)
     for r in minor:
         m.polyline(r, 3.0)
     m.polyline(list(orvelle_line()), 7)
     m.polyline(list(clairette_line()), 5)
-    for line, _, _ in streams():
+    for line, _, _ in streams(legacy=True):
         m.polyline(list(line), 3.5)
     for lk in lakes():
         xs = [p[0] for p in lk]
@@ -435,6 +481,7 @@ PLACE_CLEAR = {
     'port-senane': 30, 'bains-de-merande': 26, 'hautcorvin': 24, 'col-de-corvenne': 16,
     'monts-corvins': 20, 'brenzac': 24, 'grisenoue': 22, 'landes-d-ostrie': 14, 'tennok': 18,
     'vellaak': 20, 'kessaar': 0, 'mer-grise': 0, 'golfe-d-ambre': 0, 'orvelle': 14,
+    'vernezac': 18, 'pas-de-l-ourse': 15, 'dalvezac': 16,
 }
 
 # Échelle de chaque vignette (le toponyme n'est pas mis à l'échelle).
@@ -442,6 +489,7 @@ VSCALE = {pid: 1.3 for pid in (
     'moulinvert', 'foret-de-sorbe', 'lac-d-aulne', 'saint-ormel', 'port-senane', 'bains-de-merande',
     'hautcorvin', 'col-de-corvenne', 'brenzac', 'grisenoue', 'landes-d-ostrie', 'tennok', 'vellaak',
     'kessaar', 'golfe-d-ambre', 'mer-grise', 'orvelle', 'monts-corvins')}
+VSCALE.update({'vernezac': 1.3, 'pas-de-l-ourse': 1.3, 'dalvezac': 1.3})
 VSCALE['aubrelieu'] = 1.4
 VSCALE['lac-d-aulne'] = 1.0
 VSCALE['monts-corvins'] = 1.6
@@ -467,6 +515,9 @@ PLACE_LABELS = {
     'mer-grise': (0, 10, 'middle', 'label-region', 26, 0, ['Mer Grise']),
     'golfe-d-ambre': (-42, 40, 'middle', 'label-region', 19, -90, ['Golfe d’Ambre']),
     'orvelle': (0, -12, 'middle', 'label-water', 15, 19, ['l’Orvelle']),
+    'vernezac': (14, 30, 'start', 'label', 13, 0, ['Vernezac']),
+    'pas-de-l-ourse': (15, -2, 'start', 'label', 11, 0, ['Pas', 'de l’Ourse']),
+    'dalvezac': (14, 33, 'middle', 'label', 12, 0, ['Dalvezac']),
 }
 
 
@@ -494,11 +545,45 @@ def full_mask():
     m2 = Mask(m.c)
     m2.g[:] = m.g
     for pid, rad in PLACE_CLEAR.items():
+        if pid in OVERLAY_PLACES:
+            continue
         if rad:
             m2.circle(*place_xy(pid), rad * VSCALE.get(pid, 1.0))
         if PLACES[pid]['kind'] not in ('sea', 'region', 'mountain', 'river'):
             m2.rect(*label_box(pid))
     return m2
+
+
+@lru_cache(maxsize=None)
+def overlay_mask():
+    """Ce que les ajouts de l'affaire 2 occupent (lieux, toponymes, routes, sentiers, la Vèze) : le
+    relief y est effacé après coup, sans changer le tirage du reste de la carte."""
+    m = Mask(3.0)
+    _, minor = roads()
+    for r in minor[len(ROADS_MINOR):]:
+        m.polyline(r, 2.4)
+    for t in trails():
+        m.polyline(list(t), 1.6)
+    m.polyline(list(streams()[VEZE_INDEX][0]), 3.5)
+    for pid in OVERLAY_PLACES:
+        m.circle(*place_xy(pid), PLACE_CLEAR[pid] * VSCALE.get(pid, 1.0))
+        m.rect(*label_box(pid))
+    m.circle(*P(*REFUGE), 6)
+    vx, vy = P(VEZE_LABEL[0], VEZE_LABEL[1])
+    m.rect(vx - 22, vy - 10, vx + 22, vy + 4)
+    for t in TOPONYMS.values():
+        m.rect(*toponym_box(t))
+        m.circle(*P(*t['pos']), 7)
+    return m
+
+
+def toponym_box(t, pad=3.0):
+    dx, dy, anchor, size, lines = t['label']
+    x, y = P(*t['pos'])
+    wmax = max(len(s) * size * 0.9 for s in lines)
+    h = size * 1.15 * len(lines)
+    x0 = x + dx - (wmax / 2 if anchor == 'middle' else (wmax if anchor == 'end' else 0))
+    return (x0 - pad, y + dy - size - pad, x0 + wmax + pad, y + dy - size + h + pad)
 
 
 def _snap_orvelle():

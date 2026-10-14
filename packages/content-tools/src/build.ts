@@ -21,6 +21,17 @@ export interface Bundle {
   assets: Record<string, Record<string, string>>;
 }
 
+/** Ordre des affaires (menu, succès) : `(meta.order ?? ∞, id)`. */
+export function compareCases(
+  a: { id: string; meta?: { order?: number } },
+  b: { id: string; meta?: { order?: number } },
+): number {
+  const oa = a.meta?.order ?? Number.POSITIVE_INFINITY;
+  const ob = b.meta?.order ?? Number.POSITIVE_INFINITY;
+  if (oa !== ob) return oa < ob ? -1 : 1;
+  return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+}
+
 export function bundleFor(r: CheckResult, edition: Edition): Bundle {
   const cases: CompiledCase[] = [];
   const assets: Bundle['assets'] = {};
@@ -30,6 +41,7 @@ export function bundleFor(r: CheckResult, edition: Edition): Bundle {
     cases.push(out.compiled);
     assets[out.compiled.id] = out.illustrations;
   }
+  cases.sort(compareCases);
   return { cases, assets };
 }
 

@@ -136,6 +136,13 @@
     transform: scale(1);
   }
 }
+/* Valeur déclarée retirée, cartouche dégrafé (case revendiquée, §6.9) : glisse vers la marge */
+@keyframes m-unclaim {
+  to {
+    opacity: 0;
+    transform: translate(var(--unclaim-shift), calc(var(--unclaim-shift) * -0.35)) rotate(4deg);
+  }
+}
 /* Froissement : petite oscillation amortie */
 @keyframes m-rustle {
   0% {
@@ -347,6 +354,10 @@
   pointer-events: none;
   animation: m-ripple var(--dur-slow) var(--ease-out) both;
   animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+.mv-unclaim {
+  pointer-events: none;
+  animation: m-unclaim var(--dur-unclaim) var(--ease-out) forwards;
 }
 .mv-rustle {
   animation: m-rustle var(--dur-rustle) var(--ease-out);

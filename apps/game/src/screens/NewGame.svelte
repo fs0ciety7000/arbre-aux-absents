@@ -1,13 +1,22 @@
 <script lang="ts">
   import type { GameMode, SaveSlotId } from '@arbre/contract';
-  import { Badge, Button, Dialog, Select, Toggle } from '@arbre/ui';
+  import { Badge, Button, CaseFolder, CaseFolderGroup, Dialog, Select } from '@arbre/ui';
   import { getApp } from '../lib/game/context';
   import { messages } from '../messages.fr';
   import ScreenFrame from './ScreenFrame.svelte';
   import Spot from '../shell/Spot.svelte';
-  import { prepareTutorial } from '../tutorial/tutorial.svelte';
+  import {
+    defaultTutorialMode,
+    prepareTutorial,
+    TUTORIAL_MODES,
+    type TutorialMode,
+  } from '../tutorial/tutorial.svelte';
+  import { caseStatus, defaultCaseId } from '../lib/game/case-folders';
 
-  /** E04 : affaire, mode, préréglage d'aide, « J'ai déjà joué », emplacement. */
+  /**
+   * E04 : affaire (une chemise par affaire, AFFAIRE-2 §2.1), mode, préréglage d'aide, notes de
+   * service (tutoriel à trois crans, §2.4), emplacement.
+   */
   const app = getApp();
   const m = messages.newGame;
   const SLOTS: SaveSlotId[] = ['slot-1', 'slot-2', 'slot-3'];
@@ -15,10 +24,11 @@
   const firstFree = SLOTS.find((s) => !app.saves.some((x) => x.slot === s)) ?? 'slot-1';
   const initialPreset = app.settings.hints.preset;
 
-  let caseId = $state(app.cases[0]?.content.id ?? '');
+  // Affaires déjà triées (`order`, content-tools) ; par défaut la dernière jouée, sinon la première.
+  let caseId = $state(defaultCaseId(app.cases, app.saves));
   let mode = $state<string>('standard');
   let preset = $state(String(initialPreset === 'custom' ? 1 : initialPreset));
-  let skipTutorial = $state(false);
+  let tutorialMode = $state<string>(defaultTutorialMode(app.profile));
   let slot = $state<string>(firstFree);
   let confirmOpen = $state(false);
   let starting = $state(false);
@@ -27,16 +37,11 @@
   const timedOk = $derived(entry ? app.timedUnlocked(entry.content.id) : false);
   const occupied = $derived(app.saves.find((s) => s.slot === slot));
 
-  const caseOptions = $derived(
-    app.cases.map((c) => ({
-      value: c.content.id,
-      label: c.fixture ? m.devFixture : `${c.content.meta.title} · ${m.edition(c.content.edition)}`,
-    })),
-  );
   const modeOptions = $derived([
     { value: 'standard', label: m.modeStandard },
     { value: 'timed', label: timedOk ? m.modeTimed : m.modeTimedLocked, disabled: !timedOk },
   ]);
+  const tutorialOptions = TUTORIAL_MODES.map((v) => ({ value: v, label: m.tutorialModes[v] }));
   const presetOptions = [0, 1, 2, 3].map((p) => ({
     value: String(p),
     label: messages.hintPresets[String(p)] ?? String(p),
@@ -57,16 +62,18 @@
   }
 
   async function start() {
+    if (!entry) return;
     confirmOpen = false;
     starting = true;
-    // « J'ai déjà joué » : aucune bulle ; sinon le tutoriel commence (ou reprend) au Bureau.
-    prepareTutorial(app, skipTutorial);
+    // Le cran choisi s'écrit dans le profil ; les bulles suivent au Bureau.
+    const tutorial = tutorialMode as TutorialMode;
+    prepareTutorial(app, tutorial, entry.content);
     await app.startNewGame({
       caseId,
       mode: timedOk ? (mode as GameMode) : 'standard',
       slot: slot as SaveSlotId,
       hintPreset: Number(preset) as 0 | 1 | 2 | 3,
-      skipTutorial,
+      skipTutorial: tutorial === 'none',
     });
     starting = false;
   }
@@ -82,7 +89,21 @@
     </div>
   {:else}
     <form class="form" onsubmit={submit}>
-      <Select label={m.caseLabel} options={caseOptions} bind:value={caseId} />
+      <CaseFolderGroup legend={m.caseLabel}>
+        {#each app.cases as c, i (c.content.id)}
+          <CaseFolder
+            name="case"
+            id="case-{c.content.id}"
+            value={c.content.id}
+            checked={caseId === c.content.id}
+            onselect={(v) => (caseId = v)}
+            title={c.fixture ? m.devFixture : c.content.meta.title}
+            cote={c.content.edition === 'demo' ? m.edition('demo') : undefined}
+            status={caseStatus(c.content, app.saves, app.profile)}
+            deal={i}
+          />
+        {/each}
+      </CaseFolderGroup>
       {#if entry?.fixture}
         <p class="note">
           <Badge tone="warning" variant="outline">{messages.menu.devBadge}</Badge>
@@ -105,7 +126,12 @@
           hint={m.hintsHint}
         />
       {/if}
-      <Toggle label={m.skipTutorial} description={m.skipTutorialHint} bind:checked={skipTutorial} />
+      <Select
+        label={m.tutorialLabel}
+        options={tutorialOptions}
+        bind:value={tutorialMode}
+        hint={m.tutorialHints[tutorialMode as TutorialMode]}
+      />
       <Select label={m.slotLabel} options={slotOptions} bind:value={slot} />
       <div class="submit">
         <Button type="submit" variant="primary" size="l" iconName="forward" loading={starting}

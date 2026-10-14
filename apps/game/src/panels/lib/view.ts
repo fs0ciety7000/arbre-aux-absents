@@ -8,7 +8,7 @@ import type {
   SlotGuess,
   SlotId,
 } from '@arbre/contract';
-import { availableNames, matchName, readDocuments } from '@arbre/engine';
+import { availableNames, claimedFields, matchName, readDocuments } from '@arbre/engine';
 import type { SlotField } from '../../lib/game/types';
 import { KIND_LABELS, pm } from '../messages';
 import type { CarryItem } from './carry.svelte';
@@ -51,9 +51,63 @@ export function documentTitle(c: CompiledCase, id: DocumentId): string {
   return c.documents[id]?.title ?? id;
 }
 
-/** Proposition courante d'une case : saisie du joueur, sinon pré-remplissage. */
+/**
+ * Proposition courante d'une case : saisie du joueur, sinon pré-remplissage (cases `prefilled`
+ * seulement). Jamais de repli sur `claimedGuess` : une déclaration retirée ne doit pas
+ * réapparaître à l'écran (elle n'est posée qu'une fois, par `newGame`).
+ */
 export function guessOf(s: SaveState, c: CompiledCase, slot: SlotId): SlotGuess | null {
-  return s.tree[slot] ?? c.slots[slot]?.prefilledGuess ?? null;
+  const own = Object.hasOwn(s.tree, slot) ? s.tree[slot] : undefined;
+  if (own) return own;
+  const def = Object.hasOwn(c.slots, slot) ? c.slots[slot] : undefined;
+  return def?.prefilledGuess ?? null;
+}
+
+/** La case porte une déclaration dans le contenu (case revendiquée, AFFAIRE-2 §1). */
+export function hasClaim(c: CompiledCase, slot: SlotId): boolean {
+  return Object.hasOwn(c.slots, slot) && c.slots[slot]?.claimedGuess !== undefined;
+}
+
+export interface ClaimView {
+  /** Marque « revendiquée » : au moins un champ déclaré et case non établie (§1.2). */
+  claimed: boolean;
+  /** Champs encore égaux à la déclaration. */
+  declared: ReadonlySet<SlotField>;
+  /** La case a une déclaration et n'est pas établie : « Rétablir » reste proposé. */
+  open: boolean;
+}
+
+const NO_FIELDS: ReadonlySet<SlotField> = new Set();
+
+/** État d'affichage d'une case revendiquée (déduit, jamais mémorisé). */
+export function claimView(s: SaveState, c: CompiledCase, slot: SlotId): ClaimView {
+  if (!hasClaim(c, slot) || s.locked[slot] !== undefined)
+    return { claimed: false, declared: NO_FIELDS, open: false };
+  const declared = new Set<SlotField>(claimedFields(slot, s, c));
+  return { claimed: declared.size > 0, declared, open: true };
+}
+
+/** Champs que la déclaration remplit (valeur non vide). */
+export function claimFields(c: CompiledCase, slot: SlotId): SlotField[] {
+  const g = hasClaim(c, slot) ? c.slots[slot]!.claimedGuess! : null;
+  if (!g) return [];
+  return (['given', 'family', 'portrait', 'occupation'] as const).filter(
+    (f) => g[f] !== null && g[f] !== '',
+  );
+}
+
+/**
+ * Pièce de la requête (« Voir la requête ») : les valeurs déclarées sont découvertes dès la
+ * première pièce (AFFAIRE-2 §1.4), donc une pièce de départ : celle qui montre le visage déclaré,
+ * sinon la première. `null` sans déclaration.
+ */
+export function claimDocument(c: CompiledCase, slot: SlotId): DocumentId | null {
+  const g = hasClaim(c, slot) ? c.slots[slot]!.claimedGuess! : null;
+  if (!g) return null;
+  const start = c.progression.start.filter((d) => c.documents[d]);
+  const shows = (d: DocumentId) =>
+    g.portrait !== null && (c.documents[d]?.reveals?.portraits?.includes(g.portrait) ?? false);
+  return start.find(shows) ?? start[0] ?? null;
 }
 
 /** « Prénom Nom » d'une case, ou `null` si rien n'est saisi. */

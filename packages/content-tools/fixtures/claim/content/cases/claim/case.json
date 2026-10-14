@@ -1,0 +1,9 @@
+{
+  "id": "claim",
+  "title": "La requête du passeur",
+  "subtitle": "Affaire d'essai",
+  "version": "0.1.0",
+  "intro": "intro",
+  "credits": ["Fixture de test"],
+  "order": 2
+}

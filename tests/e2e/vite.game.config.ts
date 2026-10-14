@@ -2,6 +2,7 @@
  * Build du jeu pour les tests e2e : même configuration que `apps/game/vite.config.ts`, mais le
  * contenu compilé (`src/generated/*`) est remplacé par celui de la fixture `mini` du
  * content-tools, compilé dans `node_modules/.cache/arbre-e2e/` (voir `servers/game.mjs`).
+ * Autres affaires (`servers/game.mjs`) : E2E_GENERATED et E2E_OUT_DIR.
  * Le dépôt n'est jamais modifié : `apps/game/src/generated/` reste celui de l'affaire réelle.
  */
 import { resolve } from 'node:path';
@@ -29,7 +30,7 @@ export default defineConfig({
   },
   preview: { port: Number(process.env.E2E_GAME_PORT ?? 4319), strictPort: true },
   build: {
-    outDir: resolve(E2E_CACHE, 'game-dist'),
+    outDir: process.env.E2E_OUT_DIR ?? resolve(E2E_CACHE, 'game-dist'),
     emptyOutDir: true,
     target: 'es2022',
     chunkSizeWarningLimit: 10_000,

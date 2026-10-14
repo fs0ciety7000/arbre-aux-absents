@@ -15,6 +15,7 @@ import type {
 import { hintPreset } from '@arbre/contract';
 import {
   applyAction,
+  claimedFields,
   emptyGuard,
   evaluateAchievements,
   groupCorrectCount,
@@ -31,6 +32,8 @@ import { messages } from '../../messages.fr';
 import { announcer } from './announcer.svelte';
 import { generationNumber } from './generations';
 import { askedQuestions } from './report';
+import { FIELD_LABELS, pm } from '../../panels/messages';
+import { claimFields, fieldValueLabel } from '../../panels/lib/view';
 import type {
   DeskUi,
   DistributiveOmit,
@@ -116,6 +119,8 @@ export class GameStoreImpl implements GameStore {
   #state = $state.raw<SaveState>(null as unknown as SaveState);
   modals = $state<DeskModal[]>([]);
   reveals = $state<RevealRecord[]>([]);
+  /** Déclarations contestées de la session (AFFAIRE-2 §1.7), pour le Journal. */
+  contested = $state<RevealRecord[]>([]);
   splits = $state<Split[]>([]);
   /** Dernier mot-clé ciblé par `navigate` (Carnet). */
   focusKeyword = $state<string | null>(null);
@@ -278,7 +283,10 @@ export class GameStoreImpl implements GameStore {
     }
     if (a.type === 'setSlot' || a.type === 'clearSlot') {
       const accepted = !t.events.some((e) => e.type === 'rejected') && t.state !== before;
-      if (accepted) this.#scheduleGroup(a.slot);
+      if (accepted) {
+        this.#announceClaim(a.slot, before, t.state);
+        this.#scheduleGroup(a.slot);
+      }
     }
     if (a.type === 'search' && t.events.length > 0) {
       const res = t.events.find((e) => e.type === 'searchResult');
@@ -295,6 +303,50 @@ export class GameStoreImpl implements GameStore {
 
   updateSettings(patch: Partial<Settings>): void {
     this.#host.updateSettings(patch);
+  }
+
+  /**
+   * Case revendiquée (AFFAIRE-2 §1.8) : annonce ce qui change dans la déclaration (champ retiré
+   * ou remplacé, déclaration retirée ou rétablie). Aucun retour de justesse.
+   */
+  #announceClaim(slot: SlotId, before: SaveState, after: SaveState): void {
+    const c = this.content;
+    const all = claimFields(c, slot);
+    if (all.length === 0 || after.locked[slot] !== undefined) return;
+    const was = claimedFields(slot, before, c);
+    const now = claimedFields(slot, after, c);
+    const m = messages.announce;
+    if (now.length > was.length) {
+      if (now.length === all.length) announcer.say(m.claimRestored);
+      return;
+    }
+    const gone = was.filter((f) => !now.includes(f));
+    if (gone.length === 0) return;
+    // Agrafe ôtée (effets, coupée avec le son) ; pas de vibration (§1.7).
+    audio.play('unstaple');
+    // Première contestation d'une déclaration intacte : constat d'action au Journal, sans verdict.
+    if (was.length === all.length) {
+      this.contested = [
+        ...this.contested,
+        {
+          at: Date.now(),
+          title: pm.journal.claimContested(gone.map((f) => FIELD_LABELS[f]).join(', ')),
+          lines: [],
+        },
+      ];
+    }
+    const g = after.tree[slot];
+    if (gone.length > 1) {
+      announcer.say(m.claimRemoved(gone.length));
+      return;
+    }
+    const f = gone[0]!;
+    const value = fieldValueLabel(c, f, g ?? null);
+    announcer.say(
+      value
+        ? m.claimFieldReplaced(FIELD_LABELS[f], value, now.length, all.length)
+        : m.claimFieldRemoved(FIELD_LABELS[f]),
+    );
   }
 
   /** R1 : (ré)arme l'évaluation du groupe de la case, 800 ms après la dernière modification. */
@@ -732,6 +784,7 @@ export class GameStoreImpl implements GameStore {
     try {
       await saves.save(state.slot, state);
       if (state.slot !== 'auto' && this.#backup && now() - this.#backup.at >= BACKUP_AGE_MS) {
+        // Un secours par affaire : la plateforme le range sous `caseId` (AFFAIRE-2 §2.3).
         await saves.save('auto', { ...this.#backup.state, slot: 'auto' });
         this.#backup = { state, at: now() };
       }

@@ -199,6 +199,13 @@ const common = (min) => [
   ['--canvas', ['--text'], T, 'info-bulle (inversée)'],
   ['--text', ['--selection', '--surface-1'], T, 'sélection de texte'],
 ];
+// Bureau sombre seulement (hors papier) : valeur déclarée d'une case revendiquée (§6.9)
+const deskOnly = (min) => [
+  ['--claim-ink-desk', ['--canvas'], min, 'valeur déclarée sur le bureau'],
+  ['--claim-ink-desk', ['--surface-1'], min, 'valeur déclarée (fiche de case, sélecteur)'],
+  ['--claim-ink-desk', ['--surface-2'], min, 'valeur déclarée (survol)'],
+  ['--claim-ink-desk', ['--surface-3'], min, 'valeur déclarée (ligne active)'],
+];
 const paperOnly = (min) => [
   ['--text', ['--hl-1', '--surface-1'], min, 'surlignage 1'],
   ['--text', ['--hl-2', '--surface-1'], min, 'surlignage 2'],
@@ -234,6 +241,14 @@ const materials = (min) => [
   ['--kraft-edge', ['--kraft'], NT, 'tranche du carton (contour, non-texte)'],
   ['--ink', ['--card'], min, 'texte sur fiche bristol'],
   ['--card-margin', ['--card'], NT, 'ligne de tête rouge (non-texte)'],
+  // Case revendiquée (§6.9) : cartouche « Déclaré », valeurs déclarées, bord en tirets
+  ['--claim-ink', ['--claim-paper'], min, 'cartouche « Déclaré » : texte et agrafe'],
+  ['--claim-ink', ['--card'], min, 'valeur déclarée sur fiche bristol'],
+  ['--claim-ink', ['--paper'], min, 'valeur déclarée (liste hiérarchique, papier)'],
+  ['--claim-ink', ['--paper-aged'], min, 'valeur déclarée sur papier vieilli (survol)'],
+  ['--claim-edge', ['--card'], NT, 'bord en tirets de la case revendiquée (non-texte)'],
+  ['--claim-edge', ['--claim-paper'], NT, 'filet du cartouche (non-texte)'],
+  ['--claim-paper', ['--canvas'], NT, 'cartouche à cheval sur le bord, côté bureau (non-texte)'],
   ['--ink', ['--tape', '--paper'], min, 'texte sous ruban adhésif'],
   ['--label-tape-text', ['--label-tape'], min, 'étiqueteuse : lettres en relief (bleu)'],
   ['--label-tape-text', ['--label-tape-red'], min, 'étiqueteuse : lettres en relief (rouge)'],
@@ -280,9 +295,9 @@ const pairs = {
   'carte HC': art(AAA),
   'carte nuit': night(T),
   'carte nuit HC': night(AAA),
-  lampe: common(T),
+  lampe: [...common(T), ...deskOnly(T)],
   papier: [...common(T), ...paperOnly(T)],
-  'lampe HC': common(AAA),
+  'lampe HC': [...common(AAA), ...deskOnly(AAA)],
   'papier HC': [...common(AAA), ...paperOnly(AAA)],
   matières: materials(T),
   'matières HC': materials(AAA),

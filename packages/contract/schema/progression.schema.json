@@ -249,6 +249,11 @@
                 },
                 "availableWhen": {
                   "$ref": "#/$defs/__schema0"
+                },
+                "unavailableReason": {
+                  "type": "string",
+                  "maxLength": 140,
+                  "pattern": "\\S"
                 }
               },
               "required": [

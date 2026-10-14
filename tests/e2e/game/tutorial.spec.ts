@@ -8,11 +8,14 @@ import { desk, expect, gotoTitle, openDocument, reader, showPanel, test } from '
 
 const note = (page: Page) => page.getByRole('complementary', { name: 'Note de service' });
 
-/** Titre → Nouvelle partie (« J'ai déjà joué » au choix) → Bureau. */
+/** Titre → Nouvelle partie (notes « Aucune » au choix) → Bureau. */
 async function newGame(page: Page, alreadyPlayed = false): Promise<void> {
   await gotoTitle(page);
   await page.getByRole('button', { name: 'Nouvelle partie' }).click();
-  if (alreadyPlayed) await page.getByRole('switch', { name: "J'ai déjà joué" }).click();
+  if (alreadyPlayed)
+    await page
+      .getByRole('combobox', { name: 'Notes de service' })
+      .selectOption({ label: 'Aucune' });
   await page.getByRole('button', { name: 'Commencer' }).click();
   await expect(desk(page)).toBeVisible();
 }
@@ -70,7 +73,7 @@ test.describe('tutoriel en bulles', () => {
     await expect(note(page)).toHaveCount(0);
   });
 
-  test('« J’ai déjà joué » : aucune note', async ({ page }) => {
+  test('Notes de service « Aucune » : aucune note', async ({ page }) => {
     await newGame(page, true);
     await showPanel(page, /^Archives/);
     await openDocument(page, 'Note du notaire');

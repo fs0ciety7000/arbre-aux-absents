@@ -73,7 +73,10 @@ export function toMs(value: unknown, fallback: number): number {
     : fallback;
 }
 
-/** Partie neuve : documents de départ débloqués, cases pré-remplies établies, point fixe. */
+/**
+ * Partie neuve : documents de départ débloqués, cases pré-remplies établies, cases
+ * revendiquées posées sans verrou, point fixe.
+ */
 export function newGame(c: CompiledCase, options: NewGameOptions): SaveState {
   const at = toMs(options.at, 0);
   const unlocked: Record<string, number> = {};
@@ -86,6 +89,9 @@ export function newGame(c: CompiledCase, options: NewGameOptions): SaveState {
     if (slot.prefilled && slot.prefilledGuess) {
       tree[id] = { ...slot.prefilledGuess };
       locked[id] = at;
+    } else if (slot.claimedGuess) {
+      // Case revendiquée : posée sans verrou, contestable comme une case ordinaire.
+      tree[id] = { ...slot.claimedGuess };
     }
   }
   const state: SaveState = {

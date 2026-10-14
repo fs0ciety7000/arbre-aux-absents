@@ -8,7 +8,7 @@ import { newGame } from '@arbre/engine';
 import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import { SOLUTION, fixtureCase } from '../../../../../../packages/engine/test/fixtures/case';
 import { createMemorySaveStore } from '../../../platform/memory';
-import { GameStoreImpl, type StoreHost } from '../store.svelte';
+import { BACKUP_AGE_MS, GameStoreImpl, type StoreHost } from '../store.svelte';
 
 const c = fixtureCase;
 const ELDERS = ['g0-elna', 'g1-tam', 'g1-lisbe'] as const;
@@ -192,5 +192,23 @@ describe('cartes de révélation', () => {
     expect(g.reveals.map((r) => r.title)).toContain('Génération 1 complète');
     expect(g.reveals.map((r) => r.title)).not.toContain('Génération 2 complète');
     g.destroy();
+  });
+});
+
+describe('secours automatique (AFFAIRE-2 §2.3)', () => {
+  it('après 10 min, le secours va sous l’affaire jouée et laisse celui d’une autre affaire', async () => {
+    const h = host();
+    const other = { ...base(), caseId: 'autre-affaire', slot: 'auto' as const, elapsedMs: 42 };
+    await h.saveStore.save('auto', other);
+    let t = 1_000_000;
+    const spy = vi.spyOn(Date, 'now').mockImplementation(() => t);
+    onTestFinished(() => spy.mockRestore());
+    const g = new GameStoreImpl(c, base(), h);
+    t += BACKUP_AGE_MS;
+    expect(await g.flush(true)).toBe(true);
+    g.destroy();
+    expect(await h.saveStore.load('auto', 'autre-affaire')).toEqual(other);
+    expect(await h.saveStore.load('auto', c.id)).toMatchObject({ caseId: c.id, slot: 'auto' });
+    expect((await h.saveStore.list()).filter((s) => s.slot === 'auto')).toHaveLength(2);
   });
 });

@@ -74,3 +74,41 @@ export function reveal(p: NormPoint, c: Camera, v: Viewport, b: CameraBounds): C
   if (!needsReveal(p, c, v, b)) return null;
   return fitTo({ x: clampNum(p.x, 0, 1), y: clampNum(p.y, 0, 1) }, c.zoom, v, b);
 }
+
+/** Encombrement d'un groupe de contrôles posé dans le coin bas droit du viewport (px CSS). */
+export interface CornerReserve {
+  /** Largeur à laisser libre à droite (contrôles + leur marge, et autant de dégagement). */
+  width: number;
+  /** Hauteur à laisser libre en bas. */
+  height: number;
+}
+
+/**
+ * Viewport de la caméra quand des contrôles occupent le coin bas droit : la vue d'ensemble ne
+ * doit poser aucun lieu dessous. Le viewport reste entier si la carte « contain » centrée évite
+ * déjà le coin, ou si la première vue part plus près (`firstView`, écran très allongé : la carte
+ * couvre tout et se parcourt au doigt) ; sinon on lui retire une colonne à droite ou une bande en
+ * bas, celle qui réduit le moins la carte. L'origine reste le coin haut gauche (les gestes n'ont
+ * aucun décalage).
+ */
+export function reserveCorner(v: Viewport, r: CornerReserve, b: CameraBounds): Viewport {
+  const w = Math.max(0, finite(v.width, 0));
+  const h = Math.max(0, finite(v.height, 0));
+  const rw = Math.max(0, finite(r.width, 0));
+  const rh = Math.max(0, finite(r.height, 0));
+  const full = { width: w, height: h };
+  if (!(w > 0) || !(h > 0) || (!(rw > 0) && !(rh > 0))) return full;
+  const { aspect } = safeBounds(b);
+  const s = Math.min(w / aspect, h);
+  // Carte centrée : ses bords droit et bas.
+  const right = (w + s * aspect) / 2;
+  const bottom = (h + s) / 2;
+  if (right <= w - rw || bottom <= h - rh) return full;
+  if (firstView(full, b).zoom > overview(b).zoom) return full;
+  const lane = { width: w - rw, height: h };
+  const band = { width: w, height: h - rh };
+  const scale = (x: Viewport) =>
+    x.width > 0 && x.height > 0 ? Math.min(x.width / aspect, x.height) : -1;
+  const best = scale(lane) >= scale(band) ? lane : band;
+  return scale(best) > 0 ? best : full;
+}

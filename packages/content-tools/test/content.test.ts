@@ -8,6 +8,9 @@ import type { RuleId } from '../src/issues';
 import { isComplete } from '../src/load';
 import { solveReport } from '../src/report';
 import { hashAnswer } from '../src/shared';
+import { bundleFor, compareCases } from '../src/build';
+import { claimedGuess, personPortraits } from '../src/compile';
+import { CLAIM_SOURCE, solve, type SolverModel } from '../src/solver';
 
 const FIXTURE = resolve(import.meta.dirname, '../fixtures/mini');
 const CASE = 'content/cases/mini';
@@ -82,7 +85,7 @@ describe('fixture mini', () => {
       hashAnswer(full.salt, 's-ida', 'family', 'Brask'),
       hashAnswer(full.salt, 's-ida', 'family', 'morvan'),
     ]);
-    expect(ida.portrait).toBe(hashAnswer(full.salt, 's-ida', 'portrait', 'portrait-b'));
+    expect(ida.portrait).toEqual([hashAnswer(full.salt, 's-ida', 'portrait', 'portrait-b')]);
     // Portraits inlinés, nettoyés, ids préfixés.
     const svg = full.portraits['portrait-a']!.svg;
     expect(svg).toMatch(/^<svg class="art"/);
@@ -203,7 +206,8 @@ describe('fixture mini', () => {
     expect(s.locked.size).toBe(6);
     expect([...s.endings.keys()].sort()).toEqual(['fin-arbre', 'fin-edda']);
     expect(s.endingsAtEnd).toEqual(['fin-arbre', 'fin-edda']);
-    expect(s.reportCombinations).toBe(4);
+    // heritier (2) × lettres (bruler, garder, remettre) = 6
+    expect(s.reportCombinations).toBe(6);
     expect(s.endingAnswers.get('fin-edda')).toMatchObject({ lettres: 'garder' });
     expect(s.endingAnswers.get('fin-arbre')).toMatchObject({ lettres: 'bruler' });
     expect(solveReport(base)).toContain('`fin-edda` : `heritier` → `maren`, `lettres` → `garder`');
@@ -447,6 +451,16 @@ describe('rapport final et sections (règles)', () => {
     );
   });
 
+  it('2 · unavailableReason sans availableWhen', async () => {
+    const r = await checkWith((root) =>
+      editJson(root, 'progression.json', (j) => {
+        delete j.report[0].options[0].availableWhen;
+        j.report[0].options[0].unavailableReason = 'Pas encore établi.';
+      }),
+    );
+    expect(errorsOf(r, 2).join('\n')).toMatch(/a une unavailableReason sans availableWhen/);
+  });
+
   it('6 · fin inatteignable quelle que soit la combinaison de réponses', async () => {
     const r = await checkWith((root) =>
       editJson(root, 'progression.json', (j) => {
@@ -454,5 +468,317 @@ describe('rapport final et sections (règles)', () => {
       }),
     );
     expect(errorsOf(r, 6).join('\n')).toMatch(/fin « fin-edda » inatteignable/);
+  });
+});
+
+// ---------------------------------------------------------------- cases revendiquées (affaire 2)
+
+const CLAIM_FIXTURE = resolve(import.meta.dirname, '../fixtures/claim');
+const CLAIM_CASE = 'content/cases/claim';
+
+/** Copie la fixture `claim`, applique une modification, contrôle. */
+async function checkClaimWith(
+  mutate: (
+    edit: (file: string, fn: (j: Json) => void) => Promise<void>,
+    root: string,
+  ) => Promise<void>,
+): Promise<CheckResult> {
+  const root = await mkdtemp(join(tmpdir(), 'arbre-ct-claim-'));
+  temps.push(root);
+  await cp(CLAIM_FIXTURE, root, { recursive: true });
+  const edit = async (file: string, fn: (j: Json) => void) => {
+    const path = join(root, CLAIM_CASE, file);
+    const data = JSON.parse(await readFile(path, 'utf8'));
+    fn(data);
+    await writeFile(path, JSON.stringify(data));
+  };
+  await mutate(edit, root);
+  return checkContentRoot(root);
+}
+
+async function editClaimText(root: string, file: string, fn: (s: string) => string) {
+  const path = join(root, CLAIM_CASE, file);
+  await writeFile(path, fn(await readFile(path, 'utf8')));
+}
+
+function warningsOf(r: CheckResult, rule: RuleId): string[] {
+  return r.issues.warnings.filter((i) => i.rule === rule).map((i) => `${i.file} ${i.message}`);
+}
+
+const slotClaim = (j: Json, id: string) => j.slots.find((s: Json) => s.id === id);
+
+describe('case revendiquée (fixture claim)', () => {
+  let claimBase: CheckResult;
+  beforeAll(async () => {
+    claimBase = await checkContentRoot(CLAIM_FIXTURE);
+  });
+
+  it('passe les 11 règles sans erreur ni avertissement', () => {
+    expect(claimBase.issues.items).toEqual([]);
+  });
+
+  it('compile claimedGuess, distinct de prefilledGuess, et les visages en liste', () => {
+    const full = claimBase.cases[0]!.full!.compiled;
+    const tomas = full.slots['s-tomas']!;
+    expect(tomas.claimedGuess).toEqual({
+      given: 'Tomas',
+      family: 'Morvan',
+      portrait: 'portrait-f',
+      occupation: 'meunier',
+    });
+    expect(tomas.prefilled).toBeUndefined();
+    expect(tomas.prefilledGuess).toBeUndefined();
+    expect('claim' in tomas).toBe(false);
+    expect(tomas.answer.portrait).toEqual([
+      hashAnswer(full.salt, 's-tomas', 'portrait', 'portrait-c'),
+      hashAnswer(full.salt, 's-tomas', 'portrait', 'portrait-h'),
+    ]);
+    expect(full.slots['s-ida']!.claimedGuess).toBeUndefined();
+    expect(full.candidates.given).toContain('Tomas');
+    expect(full.candidates.family).toContain('Morvan');
+  });
+
+  it('champs absents de la déclaration : vides ou nuls', () => {
+    expect(claimedGuess({ family: 'Morvan' })).toEqual({
+      given: '',
+      family: 'Morvan',
+      portrait: null,
+      occupation: null,
+    });
+    expect(personPortraits({ portrait: 'a', altPortraits: ['b', 'a'] })).toEqual(['a', 'b']);
+  });
+
+  it('démo : visage et métier déclarés embarqués, même hors pièces de la démo', () => {
+    const demo = claimBase.cases[0]!.demo!.compiled;
+    expect(demo.slots['s-tomas']!.claimedGuess?.portrait).toBe('portrait-f');
+    expect(Object.keys(demo.portraits)).toContain('portrait-f');
+    expect(Object.keys(demo.occupations)).toContain('meunier');
+    expect(Object.keys(demo.portraits)).not.toContain('portrait-e');
+  });
+
+  it('solveur : la case revendiquée part vide et s’établit par les pièces', () => {
+    const s = claimBase.cases[0]!.solve!;
+    expect(s.locked.size).toBe(6);
+    const ev = s.evidence.get('s-tomas')!;
+    expect(ev.step).toBeGreaterThan(0);
+    expect(ev.portraitDocs).toEqual(['photo-bac']);
+    // Le métier déclaré (meunier) est disponible d'emblée pour la case qui le porte vraiment.
+    expect(s.evidence.get('s-oskar')!.occupationFrom).toContain(CLAIM_SOURCE);
+    expect(solveReport(claimBase)).toContain('disponibles d’emblée (`(revendication)`)');
+  });
+
+  it('solveur : une déclaration ne prouve pas les noms (case bloquée sans pièces)', () => {
+    const model: SolverModel = {
+      documents: new Map([
+        [
+          'a',
+          {
+            id: 'a',
+            optional: false,
+            keywords: [],
+            norm: ' tomas morvan ',
+            portraits: [],
+            occupations: [],
+          },
+        ],
+      ]),
+      start: ['a'],
+      unlocks: {},
+      keywords: new Map(),
+      places: new Map(),
+      slots: new Map([
+        [
+          's',
+          {
+            id: 's',
+            prefilled: false,
+            claimed: true,
+            given: ['tomas'],
+            family: ['morvan'],
+            portraits: ['p', 'p-vieux'],
+            occupation: 'o',
+          },
+        ],
+      ]),
+      claimedPortraits: new Set(['p-vieux']),
+      claimedOccupations: new Set(['o']),
+      groups: new Map([['g', { slots: ['s'], threshold: 3 }]]),
+      occupationsUnlock: {},
+      secrets: new Map(),
+      endings: new Map(),
+      report: [],
+    };
+    const blocked = solve(model);
+    expect(blocked.locked.size).toBe(0);
+    expect(blocked.blockedSlots.get('s')).toEqual([
+      'prénom lu dans 1 document(s) (< 2)',
+      'nom lu dans 1 document(s) (< 2)',
+    ]);
+    const docs = new Map(model.documents);
+    docs.set('b', { ...docs.get('a')!, id: 'b' });
+    const ok = solve({ ...model, documents: docs, start: ['a', 'b'] });
+    expect(ok.locked.has('s')).toBe(true);
+    // Visage d'un autre âge, disponible par la déclaration seulement.
+    expect(ok.evidence.get('s')!.portraitDocs).toEqual([CLAIM_SOURCE]);
+  });
+});
+
+describe('règles des cases revendiquées', () => {
+  it('3 · déclaration juste sur ses 4 champs', async () => {
+    const r = await checkClaimWith((edit) =>
+      edit('tree.json', (j) => {
+        // Graphie variante et autre âge : toujours juste.
+        slotClaim(j, 's-tomas').claim = {
+          given: 'THOMAS',
+          family: 'Morvan',
+          portrait: 'portrait-h',
+          occupation: 'passeur',
+        };
+      }),
+    );
+    expect(errorsOf(r, 3).join('\n')).toMatch(/juste sur ses 4 champs/);
+  });
+
+  it('3 · déclaration incomplète mais juste sur ses champs : acceptée', async () => {
+    const r = await checkClaimWith((edit) =>
+      edit('tree.json', (j) => {
+        slotClaim(j, 's-tomas').claim = {
+          given: 'Tomas',
+          family: 'Morvan',
+          portrait: 'portrait-c',
+        };
+      }),
+    );
+    expect(r.issues.errors).toEqual([]);
+  });
+
+  it('3 · revendication sur une case cachée ou pré-remplie', async () => {
+    const r = await checkClaimWith((edit) =>
+      edit('tree.json', (j) => {
+        slotClaim(j, 's-maren').claim = { given: 'Ida' };
+        slotClaim(j, 's-ancel').prefilled = true;
+        slotClaim(j, 's-ancel').claim = { given: 'Ida' };
+      }),
+    );
+    const e = r.issues.errors.map((i) => i.message).join('\n');
+    expect(e).toMatch(/visible d'emblée/);
+    expect(e).toMatch(/exclusifs/);
+  });
+
+  it('3 · une case revendiquée doit être dans un groupe ; pré-remplie toujours exclue', async () => {
+    const r = await checkClaimWith((edit) =>
+      edit('tree.json', (j) => {
+        j.groups[0].slots = j.groups[0].slots.filter((s: string) => s !== 's-tomas');
+      }),
+    );
+    expect(errorsOf(r, 3).join('\n')).toMatch(/« s-tomas » dans 0 groupe/);
+  });
+
+  it('2 · visage ou métier déclaré inconnu, nom variante d’aucune personne', async () => {
+    const r = await checkClaimWith((edit) =>
+      edit('tree.json', (j) => {
+        slotClaim(j, 's-tomas').claim = {
+          given: 'Gaspard',
+          family: 'Inconnu',
+          portrait: 'portrait-z',
+          occupation: 'cordier',
+        };
+      }),
+    );
+    const e = errorsOf(r, 2).join('\n');
+    expect(e).toMatch(/visage déclaré de la case s-tomas inconnu\(e\) : « portrait-z »/);
+    expect(e).toMatch(/métier déclaré de la case s-tomas inconnu\(e\) : « cordier »/);
+    expect(e).toMatch(/prénom déclaré « Gaspard » : variante d'aucune personne/);
+    expect(e).toMatch(/nom déclaré « Inconnu » : variante d'aucune personne/);
+  });
+
+  it('6 · avertissement : visage juste accessible seulement par une déclaration', async () => {
+    const r = await checkClaimWith(async (edit, root) => {
+      await edit('tree.json', (j) => (slotClaim(j, 's-tomas').claim.portrait = 'portrait-c'));
+      await editClaimText(root, 'documents/photo-bac.md', (s) =>
+        s.replace('[portrait-c, portrait-d]', '[portrait-d]'),
+      );
+      await editClaimText(root, 'documents/photo-fratrie.md', (s) =>
+        s.replace(', portrait-h]', ']'),
+      );
+    });
+    expect(r.issues.errors).toEqual([]);
+    expect(warningsOf(r, 6).join('\n')).toMatch(
+      /case « s-tomas » : son visage juste n'est accessible que par une déclaration/,
+    );
+    expect(r.cases[0]!.solve!.evidence.get('s-tomas')!.portraitDocs).toEqual([CLAIM_SOURCE]);
+  });
+
+  it('6 · avertissement : valeur déclarée lue dans aucune pièce de départ', async () => {
+    const r = await checkClaimWith((edit) =>
+      edit('tree.json', (j) => (slotClaim(j, 's-tomas').claim.family = 'Brask')),
+    );
+    expect(warningsOf(r, 6).join('\n')).toMatch(/« Brask » lue dans aucune pièce de départ/);
+  });
+
+  it('2 · altPortraits : référence inconnue ; 11 · un autre âge ne nomme pas la personne', async () => {
+    const unknown = await checkClaimWith((edit) =>
+      edit('family.json', (j) => j.persons[2].altPortraits.push('portrait-z')),
+    );
+    expect(errorsOf(unknown, 2).join('\n')).toMatch(/autre visage de tomas-morvan.*« portrait-z »/);
+    const named = await checkClaimWith((edit) =>
+      edit('family.json', (j) => (j.portraits[7].alt = 'Tomas Morvan, vers 1930')),
+    );
+    expect(errorsOf(named, 11).join('\n')).toMatch(
+      /portrait « portrait-h » : .*révèle le nom de « tomas-morvan »/,
+    );
+  });
+});
+
+describe('contrôles entre affaires et ordre', () => {
+  /** Racine avec les deux fixtures (`mini` et `claim`). */
+  async function bothWith(
+    mutate: (root: string) => Promise<void> = async () => {},
+  ): Promise<CheckResult> {
+    const root = await mkdtemp(join(tmpdir(), 'arbre-ct-multi-'));
+    temps.push(root);
+    await cp(FIXTURE, root, { recursive: true });
+    await cp(join(CLAIM_FIXTURE, CLAIM_CASE), join(root, CLAIM_CASE), { recursive: true });
+    await mutate(root);
+    return checkContentRoot(root);
+  }
+  const editIn = async (root: string, caseDir: string, file: string, fn: (j: Json) => void) => {
+    const path = join(root, caseDir, file);
+    const data = JSON.parse(await readFile(path, 'utf8'));
+    fn(data);
+    await writeFile(path, JSON.stringify(data));
+  };
+
+  it('1 · portraits (id et fichier), succès et order dupliqués entre affaires', async () => {
+    const r = await bothWith(async (root) => {
+      await editIn(root, CLAIM_CASE, 'achievements.json', (j) => (j[0].id = 'tout-trouve'));
+      await editIn(root, CASE, 'case.json', (j) => (j.order = 2));
+    });
+    const e = errorsOf(r, 1).join('\n');
+    expect(e).toMatch(
+      /content\/cases\/claim\/family.json:? portrait « portrait-a » déjà utilisé par content\/cases\/mini/,
+    );
+    expect(e).toMatch(/fichier de portrait « portraits\/portrait-a\.svg » déjà utilisé/);
+    expect(e).toMatch(/succès « tout-trouve » déjà utilisé par content\/cases\/mini/);
+    expect(e).toMatch(/succès « tout-trouve » déjà utilisé par content\/cases\/claim/);
+    expect(e).toMatch(/rang \(order\) « 2 » déjà utilisé/);
+    expect(e).not.toMatch(/discretion/);
+  });
+
+  it('build : affaires triées par (order ?? ∞, id)', async () => {
+    // claim (order 2) avant mini (sans order), bien que « claim » < « mini » de toute façon :
+    // on donne à mini un order 1 pour vérifier que order prime sur l'id.
+    const withOrder = await bothWith((root) =>
+      editIn(root, CASE, 'case.json', (j) => (j.order = 1)),
+    );
+    expect(bundleFor(withOrder, 'full').cases.map((c) => c.id)).toEqual(['mini', 'claim']);
+    expect(bundleFor(withOrder, 'demo').cases.map((c) => c.id)).toEqual(['mini', 'claim']);
+    const sorted = [
+      { id: 'b' },
+      { id: 'z', meta: { order: 2 } },
+      { id: 'a' },
+      { id: 'y', meta: { order: 1 } },
+    ].sort(compareCases);
+    expect(sorted.map((c) => c.id)).toEqual(['y', 'z', 'a', 'b']);
   });
 });

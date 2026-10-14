@@ -136,7 +136,8 @@ function dropUnknown(s: SaveState, c: CompiledCase, dropped: string[]): SaveStat
       dropped.push(`locked:${id}`);
     }
   }
-  // Cases pré-remplies ajoutées par une mise à jour du contenu.
+  // Cases pré-remplies ajoutées par une mise à jour du contenu. Une case revendiquée
+  // (`claimedGuess`) n'est jamais reposée : le joueur a pu effacer la déclaration.
   for (const [id, def] of Object.entries(c.slots)) {
     if (def.prefilled && def.prefilledGuess && own(locked, id) === undefined) {
       tree[id] = { ...def.prefilledGuess };

@@ -2,15 +2,21 @@
  * `content:check` (ARCHITECTURE §3.7) : les 11 règles, solveur compris. Ne fait aucune écriture.
  */
 import { gzipSync } from 'node:zlib';
-import type { CompiledCase, MapLayer, Place, WorldMap } from '@arbre/contract';
+import type { CompiledCase, MapLayer, Person, Place, SlotClaim, WorldMap } from '@arbre/contract';
 import { collectRefs } from './autolink';
-import { compileCase, documentAssets, solverModelFor, type CompileOutput } from './compile';
+import {
+  compileCase,
+  documentAssets,
+  personPortraits,
+  solverModelFor,
+  type CompileOutput,
+} from './compile';
 import { conditionRefs, type AnyCondition, type AtomRef } from './conditions';
 import { IssueList } from './issues';
 import { isComplete, loadContent, type ContentSource, type SourceWorld } from './load';
 import { blockTexts } from './markdown';
 import { COMMON_SECTION, splitSections } from './sections';
-import { prepareCase, type CompleteCase, type PreparedCase } from './prepare';
+import { mentions, prepareCase, type CompleteCase, type PreparedCase } from './prepare';
 import { normalize } from './shared';
 import { solve, type SolverResult } from './solver';
 import { checkSvg, countElements, optimizeSvg } from './svg';
@@ -79,7 +85,61 @@ export async function checkContentRoot(root: string): Promise<CheckResult> {
     }
     checkCase(c, source.world, issues, cc);
   }
+  checkAcrossCases(source, issues);
   return { source, issues, cases, world };
+}
+
+/**
+ * Règle 1 entre affaires : ids de succès (profil commun), ids et fichiers de portraits (chunks du
+ * jeu) et rangs `order` uniques sur l'ensemble des affaires.
+ */
+function checkAcrossCases(source: ContentSource, issues: IssueList): void {
+  const across = (what: string, entries: { caseDir: string; file: string; key: string }[]) => {
+    const owners = new Map<string, string[]>();
+    for (const e of entries) owners.set(e.key, [...(owners.get(e.key) ?? []), e.caseDir]);
+    for (const e of entries) {
+      const dirs = [...new Set(owners.get(e.key) ?? [])];
+      if (dirs.length > 1) {
+        const others = dirs.filter((d) => d !== e.caseDir);
+        issues.error(
+          1,
+          `${e.caseDir}/${e.file}`,
+          `${what} « ${e.key} » déjà utilisé par ${others.join(', ')}`,
+        );
+      }
+    }
+  };
+  across(
+    'succès',
+    source.cases.flatMap((c) =>
+      c.achievements.map((a) => ({ caseDir: c.dir, file: 'achievements.json', key: a.id })),
+    ),
+  );
+  across(
+    'portrait',
+    source.cases.flatMap((c) =>
+      (c.family?.portraits ?? []).map((p) => ({
+        caseDir: c.dir,
+        file: 'family.json',
+        key: p.id,
+      })),
+    ),
+  );
+  // Fichiers présents sur disque (déclarés ou non) : même nom = même chunk dans le jeu.
+  across(
+    'fichier de portrait',
+    source.cases.flatMap((c) =>
+      [...c.portraits.keys()].map((file) => ({ caseDir: c.dir, file, key: file })),
+    ),
+  );
+  across(
+    'rang (order)',
+    source.cases.flatMap((c) =>
+      c.meta?.order === undefined
+        ? []
+        : [{ caseDir: c.dir, file: 'case.json', key: String(c.meta.order) }],
+    ),
+  );
 }
 
 // ---------------------------------------------------------------- monde
@@ -278,6 +338,12 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
   for (const p of c.family.persons) {
     ref('family.json', `métier de ${p.id}`, p.occupation, occupations);
     ref('family.json', `portrait de ${p.id}`, p.portrait, portraits);
+    for (const x of p.altPortraits ?? [])
+      ref('family.json', `autre visage de ${p.id}`, x, portraits);
+    if ((p.altPortraits ?? []).includes(p.portrait))
+      issues.warn(2, f('family.json'), `${p.id} : altPortraits répète le portrait canonique`);
+    for (const d of duplicates(p.altPortraits ?? []))
+      issues.error(1, f('family.json'), `${p.id} : autre visage « ${d} » en double`);
     for (const x of p.parents ?? [])
       if (x !== null) ref('family.json', `parent de ${p.id}`, x, persons);
     for (const x of p.unions ?? []) ref('family.json', `union de ${p.id}`, x, persons);
@@ -291,9 +357,30 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
     if (!declaredPortraitFiles.has(file))
       issues.warn(2, f(file), 'portrait non déclaré dans family.json');
   }
+  const givenVariants = new Set(c.family.persons.flatMap((p) => p.given.map(normalize)));
+  const familyVariants = new Set(c.family.persons.flatMap((p) => p.family.map(normalize)));
   for (const s of c.tree.slots) {
     ref('tree.json', `personne de la case ${s.id}`, s.person, persons);
     condRefs('tree.json', s.revealedBy);
+    if (!s.claim) continue;
+    const cl = s.claim;
+    if (cl.portrait) ref('tree.json', `visage déclaré de la case ${s.id}`, cl.portrait, portraits);
+    if (cl.occupation)
+      ref('tree.json', `métier déclaré de la case ${s.id}`, cl.occupation, occupations);
+    if (cl.given !== undefined && !givenVariants.has(normalize(cl.given))) {
+      issues.error(
+        2,
+        f('tree.json'),
+        `case « ${s.id} » : prénom déclaré « ${cl.given} » : variante d'aucune personne`,
+      );
+    }
+    if (cl.family !== undefined && !familyVariants.has(normalize(cl.family))) {
+      issues.error(
+        2,
+        f('tree.json'),
+        `case « ${s.id} » : nom déclaré « ${cl.family} » : variante d'aucune personne`,
+      );
+    }
   }
   for (const g of c.tree.groups)
     for (const s of g.slots) ref('tree.json', `case du groupe ${g.id}`, s, slots);
@@ -327,7 +414,15 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
   }
   for (const q of prog.report ?? []) {
     condRefs('progression.json', q.askedWhen);
-    for (const o of q.options) condRefs('progression.json', o.availableWhen);
+    for (const o of q.options) {
+      condRefs('progression.json', o.availableWhen);
+      if (o.unavailableReason !== undefined && o.availableWhen === undefined)
+        issues.error(
+          2,
+          'progression.json',
+          `rapport « ${q.id} » : l'option « ${o.id} » a une unavailableReason sans availableWhen`,
+        );
+    }
   }
   // Sections des fins : étiquettes du fichier ↔ clés de `sections`.
   for (const e of prog.endings) {
@@ -416,6 +511,23 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
   }
   for (const s of c.tree.slots) {
     const gs = inGroup.get(s.id) ?? [];
+    if (s.claim && s.prefilled) {
+      issues.error(3, f('tree.json'), `case « ${s.id} » : claim et prefilled sont exclusifs`);
+    }
+    if (s.claim && s.revealedBy) {
+      issues.error(
+        3,
+        f('tree.json'),
+        `case revendiquée « ${s.id} » cachée (revealedBy) : une déclaration est visible d'emblée`,
+      );
+    }
+    if (s.claim && claimIsRight(s.claim, persons.get(s.person))) {
+      issues.error(
+        3,
+        f('tree.json'),
+        `case revendiquée « ${s.id} » : déclaration juste sur ses 4 champs (elle doit être fausse sur au moins un)`,
+      );
+    }
     if (s.prefilled && gs.length > 0) {
       issues.error(
         3,
@@ -426,7 +538,7 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
       issues.error(
         3,
         f('tree.json'),
-        `case « ${s.id} » dans ${gs.length} groupe(s) : les groupes doivent partitionner les cases non pré-remplies`,
+        `case « ${s.id} » dans ${gs.length} groupe(s) : les groupes doivent partitionner les cases non pré-remplies (revendiquées comprises)`,
       );
     }
   }
@@ -612,6 +724,7 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
   if (result.endingsAtEnd.length === 0) {
     issues.error(6, f('progression.json'), 'aucune fin vraie à 100 %');
   }
+  checkClaimAccess(c, prep, full.compiled, result, issues);
 
   // ---- Règle 9 : budgets
   for (const p of Object.values(full.compiled.portraits)) {
@@ -689,6 +802,69 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
   for (const m of findLeaks(demo.compiled, c)) issues.error(11, c.dir, `[démo] ${m}`);
 }
 
+/** Vrai si la déclaration est complète et juste sur ses 4 champs (normalisation du moteur). */
+export function claimIsRight(claim: SlotClaim, p: Person | undefined): boolean {
+  if (!p) return false;
+  if (!claim.given || !claim.family || !claim.portrait || !claim.occupation) return false;
+  return (
+    p.given.some((v) => normalize(v) === normalize(claim.given!)) &&
+    p.family.some((v) => normalize(v) === normalize(claim.family!)) &&
+    personPortraits(p).includes(claim.portrait) &&
+    p.occupation === claim.occupation
+  );
+}
+
+/**
+ * Règle 6 (avertissements) : une déclaration ne doit pas être le seul accès au visage juste d'une
+ * case, et ses noms doivent être lus dans une pièce de départ (re-sélection après retrait).
+ */
+function checkClaimAccess(
+  c: CompleteCase,
+  prep: PreparedCase,
+  compiled: CompiledCase,
+  result: SolverResult,
+  issues: IssueList,
+): void {
+  const f = (name: string) => `${c.dir}/${name}`;
+  const claimed = c.tree.slots.filter((s) => s.claim);
+  if (claimed.length === 0) return;
+  const claimedPortraits = new Set(
+    claimed.flatMap((s) => (s.claim?.portrait ? [s.claim.portrait] : [])),
+  );
+  const persons = new Map(c.family.persons.map((p) => [p.id, p]));
+  const revealedByDocs = new Set(
+    [...result.read].flatMap((d) => compiled.documents[d]?.reveals?.portraits ?? []),
+  );
+  for (const s of c.tree.slots) {
+    const p = persons.get(s.person);
+    if (!p || s.prefilled) continue;
+    const faces = personPortraits(p);
+    if (faces.some((x) => revealedByDocs.has(x))) continue;
+    if (faces.some((x) => claimedPortraits.has(x))) {
+      issues.warn(
+        6,
+        f('tree.json'),
+        `case « ${s.id} » : son visage juste n'est accessible que par une déclaration (aucune pièce atteignable ne le révèle)`,
+      );
+    }
+  }
+  const startDocs = [c.meta.intro, ...c.progression.start]
+    .map((d) => prep.documents.get(d))
+    .filter((d): d is NonNullable<typeof d> => d !== undefined);
+  for (const s of claimed) {
+    for (const v of [s.claim?.given, s.claim?.family]) {
+      if (!v) continue;
+      if (!startDocs.some((d) => mentions(d.norm, [v]))) {
+        issues.warn(
+          6,
+          f('tree.json'),
+          `case revendiquée « ${s.id} » : valeur déclarée « ${v} » lue dans aucune pièce de départ`,
+        );
+      }
+    }
+  }
+}
+
 function relDoc(_c: CompleteCase, file: string): string {
   // Les fichiers de documents sont déjà relatifs à la racine ; `ref` préfixe par le dossier.
   return file.split('/').slice(-2).join('/');
@@ -733,21 +909,29 @@ export function findLeaks(compiled: CompiledCase, c: CompleteCase): string[] {
   }
   // Un portrait ne doit pas nommer la personne qu'il représente (id, texte alternatif, légende).
   for (const person of c.family.persons) {
-    const p = compiled.portraits[person.portrait];
-    if (!p) continue;
-    const fields = ` ${normalize(`${p.id} ${p.alt} ${p.caption ?? ''}`)} `;
-    const named = [...person.given, ...person.family].some((n) => {
-      const t = normalize(n);
-      return t.length > 0 && fields.includes(` ${t} `);
-    });
-    if (named)
-      out.push(`portrait « ${p.id} » : id, alt ou légende révèle le nom de « ${person.id} »`);
+    for (const face of personPortraits(person)) {
+      const p = compiled.portraits[face];
+      if (!p) continue;
+      const fields = ` ${normalize(`${p.id} ${p.alt} ${p.caption ?? ''}`)} `;
+      const named = [...person.given, ...person.family].some((n) => {
+        const t = normalize(n);
+        return t.length > 0 && fields.includes(` ${t} `);
+      });
+      if (named)
+        out.push(`portrait « ${p.id} » : id, alt ou légende révèle le nom de « ${person.id} »`);
+    }
   }
   const HEX = /^[0-9a-f]{14}$/;
   for (const s of Object.values(compiled.slots)) {
     const a = s.answer;
-    const all = [...a.given, ...a.family, a.portrait, a.occupation];
+    const all = [...a.given, ...a.family, ...a.portrait, a.occupation];
     if (!all.every((h) => HEX.test(h))) out.push(`case « ${s.id} » : réponse non hachée`);
+    const person = c.tree.slots.find((t) => t.id === s.id)?.person;
+    const p = c.family.persons.find((x) => x.id === person);
+    if (p && a.portrait.length !== personPortraits(p).length)
+      out.push(
+        `case « ${s.id} » : ${a.portrait.length} visage(s) haché(s) au lieu de ${personPortraits(p).length}`,
+      );
   }
   return out;
 }
