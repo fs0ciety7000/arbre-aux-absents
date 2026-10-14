@@ -63,7 +63,9 @@ async function expectLongWordShrinks(page: Page): Promise<void> {
     .first()
     .evaluate((el: HTMLElement) => {
       const before = parseFloat(getComputedStyle(el).fontSize);
-      const word = 'Anticonstitutionnellement';
+      // Plus long que tout métier de l'affaire, mais lisible : au-delà (~25 lettres), le corps
+      // tomberait sous la taille minimale de police du navigateur (6 px) et déborderait.
+      const word = 'Contremaîtresse';
       el.textContent = word;
       el.style.setProperty('--occ-chars', String(word.length));
       const after = parseFloat(getComputedStyle(el).fontSize);
