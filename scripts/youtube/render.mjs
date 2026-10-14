@@ -243,6 +243,110 @@ ${box(507, 508, 1546, 423, '#ff6b4a', 'Mobile = zone sûre (texte, logos) : 1546
   );
 }
 
+// ── Bannière de la chaîne du studio CM Interactive (2560 × 1440) ─────────────
+
+/**
+ * Couleurs officielles des logos (`apps/site/static/brand/*.svg`, valeurs par défaut des
+ * `--logo-t*`) : citron #C6FF3D et olive #5B7A00 (CM Interactive), or #D4A84B, vélin #EDE8DF et
+ * vermillon #FF3B1F (CARDOR Media). Le fond est un graphite teinté d'olive.
+ */
+const STUDIO = {
+  lime: '#C6FF3D',
+  olive: '#5B7A00',
+  gold: '#D4A84B',
+  cream: '#EDE8DF',
+  ground: 'oklch(0.16 0.022 125)',
+  groundDeep: 'oklch(0.11 0.016 125)',
+};
+
+/** Champ de facettes triangulaires (décor, graine fixe) qui fait écho au logo sans le copier. */
+function facets(w, h, step = 128) {
+  let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const cols = Math.ceil(w / step) + 2;
+  const rows = Math.ceil(h / step) + 2;
+  const pts = [];
+  for (let r = 0; r < rows; r++)
+    for (let c = 0; c < cols; c++)
+      pts.push([
+        (c - 0.5) * step + (rnd() - 0.5) * step * 0.7,
+        (r - 0.5) * step + (rnd() - 0.5) * step * 0.7,
+      ]);
+  const at = (r, c) => pts[r * cols + c];
+  const tris = [];
+  for (let r = 0; r < rows - 1; r++)
+    for (let c = 0; c < cols - 1; c++) {
+      const [a, b, d, e] = [at(r, c), at(r, c + 1), at(r + 1, c), at(r + 1, c + 1)];
+      for (const t of rnd() < 0.5
+        ? [
+            [a, b, e],
+            [a, e, d],
+          ]
+        : [
+            [a, b, d],
+            [b, e, d],
+          ]) {
+        const o = (rnd() * 0.09).toFixed(3);
+        tris.push(
+          `<path d="M${t.map((p) => p.map((v) => v.toFixed(1)).join(' ')).join('L')}Z" fill="${STUDIO.lime}" fill-opacity="${o}"/>`,
+        );
+      }
+    }
+  return `<svg viewBox="0 0 ${w} ${h}" aria-hidden="true"><g stroke="${STUDIO.lime}" stroke-opacity="0.07" stroke-width="1.5">${tris.join('')}</g></svg>`;
+}
+
+/** Bannière du studio ; `showcase` ajoute la vitrine discrète « À l'affiche ». */
+function studioBanner(showcase) {
+  const keyart = artSvg('art/keyart/keyart-desk.svg', {
+    viewBox: '300 140 1060 596',
+    preserveAspectRatio: 'xMidYMid slice',
+  });
+  const css = `
+.frame { width: 2560px; height: 1440px;
+  background: radial-gradient(ellipse 60% 55% at 50% 50%, ${STUDIO.ground} 0%, ${STUDIO.groundDeep} 100%); }
+.facets { -webkit-mask-image: radial-gradient(ellipse 58% 50% at 50% 50%, #000 0%, #000 35%, transparent 100%);
+  mask-image: radial-gradient(ellipse 58% 50% at 50% 50%, #000 0%, #000 35%, transparent 100%); }
+.glow { background: radial-gradient(ellipse 22% 26% at ${showcase ? '32%' : '38%'} 50%, oklch(0.93 0.21 125 / 0.16) 0%, transparent 100%); }
+.safe { position: absolute; left: 507px; top: 508px; width: 1546px; height: 423px; box-sizing: border-box;
+  padding: 0 28px; display: flex; align-items: center; justify-content: ${showcase ? 'space-between' : 'center'};
+  gap: ${showcase ? 48 : 72}px; color: ${STUDIO.cream}; }
+.brand { display: flex; align-items: center; gap: ${showcase ? 44 : 56}px; }
+.brand .logo { width: ${showcase ? 330 : 440}px; height: ${showcase ? 268 : 357}px; }
+.words { display: flex; flex-direction: column; gap: 22px; }
+.name { margin: 0; font-family: var(--font-label); font-weight: 600; text-transform: uppercase;
+  font-size: ${showcase ? 118 : 150}px; line-height: 0.92; letter-spacing: 0.01em; }
+.name span { display: block; }
+.name .accent { color: ${STUDIO.lime}; }
+.sig { display: flex; align-items: center; gap: 18px; margin: 0; font-family: var(--font-label);
+  text-transform: uppercase; letter-spacing: 0.12em; font-size: ${showcase ? 30 : 34}px; font-weight: 500;
+  color: ${STUDIO.cream}; }
+.sig .logo { width: 52px; height: 52px; flex: none; }
+.sig b { color: ${STUDIO.gold}; font-weight: 600; }
+.show { box-sizing: border-box; flex: none; width: 400px; display: flex; flex-direction: column; gap: 16px; padding-left: 48px;
+  border-left: 2px solid oklch(0.93 0.02 85 / 0.28); }
+.show .kick { margin: 0; font-family: var(--font-label); text-transform: uppercase; letter-spacing: 0.14em;
+  font-size: 26px; color: ${STUDIO.lime}; }
+.show .pic { position: relative; width: 336px; height: 189px; overflow: hidden; border-radius: 6px;
+  box-shadow: 0 16px 40px oklch(0 0 0 / 0.55); outline: 2px solid oklch(0.93 0.02 85 / 0.2); }
+.show .pic > svg { display: block; width: 100%; height: 100%; }
+.show .title { margin: 0; font-family: var(--font-display); font-variation-settings: var(--display-settings);
+  font-weight: var(--weight-display-black); font-size: 44px; line-height: 1; letter-spacing: var(--tracking-display); }
+.show .title i { font-weight: var(--weight-display); color: oklch(0.72 0.17 36); padding-right: 0.06em; }
+`;
+  const show = showcase
+    ? `<aside class="show"><p class="kick">À l’affiche</p><div class="pic">${keyart}</div>
+<p class="title">L’Arbre <i>aux</i> absents</p></aside>`
+    : '';
+  return doc(
+    `<main class="frame"><div class="fill facets">${facets(2560, 1440)}</div><div class="fill glow"></div>
+<div class="safe"><div class="brand"><div class="logo">${logo('interactive')}</div>
+<div class="words"><p class="name"><span>CM</span><span class="accent">Interactive</span></p>
+<p class="sig"><span class="logo">${logo('cardor-monogram')}</span><span>Une division de <b>CARDOR Media</b></span></p></div></div>
+${show}</div></main>`,
+    css,
+  );
+}
+
 // ── Filigrane (150 × 150, transparent) ───────────────────────────────────────
 
 function watermark(tone) {
@@ -259,6 +363,25 @@ function watermark(tone) {
 // ── Rendu ────────────────────────────────────────────────────────────────────
 
 const JOBS = [
+  {
+    name: 'banniere-chaine-cm-interactive-2560x1440.jpg',
+    w: 2560,
+    h: 1440,
+    html: () => studioBanner(true),
+  },
+  {
+    name: 'banniere-chaine-cm-interactive-sans-jeu-2560x1440.jpg',
+    w: 2560,
+    h: 1440,
+    html: () => studioBanner(false),
+  },
+  {
+    name: 'banniere-cm-interactive-zones.png',
+    w: 2560,
+    h: 1440,
+    html: () =>
+      bannerZones(pathToFileURL(join(OUT, 'banniere-chaine-cm-interactive-2560x1440.jpg')).href),
+  },
   { name: 'miniature-trailer-a-lampe-1280x720.jpg', w: 1280, h: 720, html: thumbLamp },
   { name: 'miniature-trailer-b-visage-1280x720.jpg', w: 1280, h: 720, html: thumbFace },
   { name: 'avatar-cm-interactive-sombre-800.png', w: 800, h: 800, html: () => avatar('sombre') },
