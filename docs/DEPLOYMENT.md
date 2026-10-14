@@ -46,7 +46,9 @@ Deux livrables, deux chaînes :
   `style-src-attr 'unsafe-inline'` reste pour les attributs `style` du HTML prérendu (variables CSS
   posées par les composants : une empreinte ne les couvrirait qu'avec `'unsafe-hashes'`) ;
   `img-src 'self' data:` (fond de la carte d'accueil embarqué en `data:`) ; `object-src 'none'` ;
-  `frame-ancestors 'none'` ; `base-uri`/`form-action 'self'`. Plus `nosniff`, `X-Frame-Options`,
+  `frame-src https://itch.io https://www.youtube-nocookie.com` (widget itch.io ; lecteur de la
+  bande-annonce, chargé seulement au clic sur la façade de l'accueil, script en ligne haché comme
+  les autres) ; `frame-ancestors 'none'` ; `base-uri`/`form-action 'self'`. Plus `nosniff`, `X-Frame-Options`,
   `Referrer-Policy`, `Permissions-Policy`, COOP/CORP, HSTS.
 - **Cache** : `/_app/immutable/**` et `/art/<nom>.<empreinte>.svg` 1 an `immutable` ; HTML et `version.json` `no-cache` ;
   `/healthz` `no-store` ; autres fichiers statiques 1 jour.

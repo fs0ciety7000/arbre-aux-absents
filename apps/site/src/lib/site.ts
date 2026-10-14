@@ -20,3 +20,25 @@ export const OG_IMAGE_WIDTH = 1200;
 export const OG_IMAGE_HEIGHT = 630;
 export const OG_IMAGE_ALT =
   'Le bureau de l’enquêteur sous la lampe, la nuit : dossiers, photographies et un arbre généalogique à compléter, à côté du titre L’Arbre aux absents.';
+/**
+ * Bande-annonce (YouTube). Accueil : façade cliquable (affiche locale, aucun cookie ni requête
+ * vers YouTube avant le clic), puis lecteur `youtube-nocookie.com` (CSP `frame-src`). Sans JS, la
+ * façade est un simple lien vers YouTube.
+ */
+export const TRAILER_YOUTUBE_ID = 'rHGYNDYgdhg';
+export const TRAILER_WATCH_URL = `https://www.youtube.com/watch?v=${TRAILER_YOUTUBE_ID}`;
+export const TRAILER_EMBED_URL = `https://www.youtube-nocookie.com/embed/${TRAILER_YOUTUBE_ID}`;
+export const TRAILER_TITLE = 'L’Arbre aux absents · Bande-annonce';
+export const TRAILER_DESCRIPTION =
+  'Une minute dans le bureau de l’enquêteur : le catalogue, les archives, les photographies et l’arbre qui se remplit, sur la musique du jeu.';
+/** Affiche (assets/trailer/trailer-poster.jpg, 16:9) : WebP 640 / 1280 et JPEG 1280 de repli. */
+export const TRAILER_POSTER = {
+  webp640: '/trailer/bande-annonce-640.webp',
+  webp1280: '/trailer/bande-annonce-1280.webp',
+  jpg: '/trailer/bande-annonce-1280.jpg',
+  width: 1280,
+  height: 720,
+} as const;
+/** Durée ISO 8601 (assets/trailer/README.md : 60,2 s) ; date de mise en ligne à confirmer sur YouTube. */
+export const TRAILER_DURATION = 'PT1M0S';
+export const TRAILER_UPLOAD_DATE = '2026-10-14';
