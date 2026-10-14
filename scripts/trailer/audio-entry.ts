@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 /**
  * Rendu hors ligne de la musique du jeu pour la bande-annonce (exécuté dans Chromium, empaqueté
  * par esbuild depuis `audio.ts`). Mêmes modules que le jeu (`apps/game/src/audio/`) : lecteur

@@ -1,3 +1,4 @@
+/// <reference lib="dom" />
 /**
  * Tournage des plans de jeu de la bande-annonce : le vrai jeu (build web), une vraie partie
  * (`save.ts`), piloté par Playwright à un rythme humain, filmé au ralenti (voir lib.ts).
