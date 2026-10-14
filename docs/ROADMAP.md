@@ -76,7 +76,7 @@ Fait :
 - [x] Écran fixe sur téléphone (plus de zoom ni de glissement), portrait sur téléphone Android
 - [x] Kit presse sur `/presse/` (logos, 3 affiches A3, 8 bannières, artbook 19 p., fiche presse, ZIP),
       généré par `npm run presskit` ; images du thème itch.io dans `static/itch/`
-- [x] Couverture du roman (CM Publishing), direction A « Fenêtre » validée ; hors dépôt, dossier partagé
+- [x] Couverture du roman (CM Publishing), direction A « Fenêtre » validée ; copie aussi dans le dossier partagé
       `arbre-aux-absents/roman/` ; ISBN et largeur de tranche à venir
 - [x] Dans le dépôt : couvertures du roman et leurs sources dans `assets/roman/` (hors image Docker) ; tous les
       visuels itch.io (couvertures, captures 1440/1920, GIF/WebM, promo, thème) dans `apps/site/static/itch/`
