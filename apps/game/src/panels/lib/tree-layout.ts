@@ -164,3 +164,17 @@ function nearestInGeneration(
   );
   return row[0]?.id ?? null;
 }
+
+/**
+ * Longueur (en caractères) du plus long segment insécable d'un libellé : les retours à la ligne
+ * ne se font qu'entre les mots ou après un trait d'union déjà présent (« Peintre-affichiste »).
+ * La fiche réduit le corps du métier pour que ce segment tienne sur une ligne (police à chasse
+ * fixe) au lieu de couper un mot n'importe où.
+ */
+export function longestUnbreakable(label: string): number {
+  let max = 0;
+  for (const word of label.split(/\s+/)) {
+    for (const part of word.split(/(?<=[-‐])/)) max = Math.max(max, [...part].length);
+  }
+  return max;
+}

@@ -29,6 +29,7 @@ import { pushToast } from '@arbre/ui';
 import { audio } from '../../audio/engine';
 import { messages } from '../../messages.fr';
 import { announcer } from './announcer.svelte';
+import { generationNumber } from './generations';
 import { askedQuestions } from './report';
 import type {
   DeskUi,
@@ -210,22 +211,30 @@ export class GameStoreImpl implements GameStore {
   // ── Cycle de vie ───────────────────────────────────────────────────
 
   /**
-   * Démarre la partie : réévalue les groupes (une évaluation automatique a pu être perdue si
-   * la partie a été fermée moins de 800 ms après la dernière modification), puis le chrono et
-   * l'écoute de la mise en arrière-plan.
+   * Démarre la partie : chrono et écoute de la mise en arrière-plan. **Aucune évaluation au
+   * chargement** : un groupe ne s'établit que par son déclencheur normal (R1 : une case devient
+   * complète ou change, 800 ms plus tard ; ou « Soumettre la branche » en validation manuelle).
+   * Une évaluation encore en attente à la fermeture est faite avant la dernière sauvegarde
+   * (`prepareClose`, `destroy`, `pagehide`) : rien ne reste « à évaluer » dans une sauvegarde.
    */
   start(): void {
-    this.#revalidate();
     if (typeof window === 'undefined') return;
     this.#lastTick = performance.now();
     this.#tickTimer = setInterval(() => this.#tick(), 1000);
     const onVisibility = () => {
       if (document.hidden) {
         this.#tick();
+        // Mise en arrière-plan (téléphone : l'application peut être tuée sans `pagehide`).
+        this.#runPendingGroups();
         void this.flush();
       } else this.#lastTick = performance.now();
     };
-    const onPageHide = () => void this.flush();
+    // Fermeture de l'onglet ou de l'application : l'évaluation déclenchée (R1) mais pas encore
+    // faite est faite maintenant, pour être sauvegardée avec le reste.
+    const onPageHide = () => {
+      this.#runPendingGroups();
+      void this.flush();
+    };
     document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('pagehide', onPageHide);
     this.#cleanup.push(
@@ -317,20 +326,16 @@ export class GameStoreImpl implements GameStore {
    */
   prepareClose(): void {
     this.#closing = true;
+    this.#runPendingGroups();
+  }
+
+  /** Fait tout de suite les évaluations programmées (R1) et annule leurs minuteries. */
+  #runPendingGroups(): void {
     if (this.#destroyed) return;
     const groups = this.pendingGroups;
     for (const t of this.#groupTimers.values()) clearTimeout(t);
     this.#groupTimers.clear();
     for (const g of groups) this.#validateGroup(g);
-  }
-
-  /** Réévaluation au chargement (validation auto) : verrouille, ou rien (échec silencieux). */
-  #revalidate(): void {
-    if (this.#host.settings.validation !== 'auto') return;
-    const s = this.#state;
-    const at = Math.max(now(), s.updatedAt);
-    const result = validate(s, this.content, { at });
-    if (result.lock.length > 0) this.#applyLocks(result.lock, result.groups, at);
   }
 
   /** Évaluation d'un seul groupe (R7), avec le garde-fou anti-balayage. */
@@ -497,7 +502,7 @@ export class GameStoreImpl implements GameStore {
       const names = slots.map(([id]) => this.slotName(id)).join(', ');
       cards.push({
         at: now(),
-        title: messages.reveal.generationDone(gen + 1),
+        title: messages.reveal.generationDone(generationNumber(c, gen)),
         lines: [messages.reveal.established(names)],
       });
     }

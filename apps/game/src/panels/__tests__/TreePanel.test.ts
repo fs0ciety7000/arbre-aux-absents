@@ -1,4 +1,4 @@
-import type { SaveStore } from '@arbre/contract';
+import type { CompiledCase, SaveStore } from '@arbre/contract';
 import { defaultProfile, defaultSettings } from '@arbre/contract';
 import { newGame } from '@arbre/engine';
 import { ICONS } from '@arbre/ui';
@@ -8,7 +8,7 @@ import { fixtureCase } from '../../../../../packages/engine/test/fixtures/case';
 import { GameStoreImpl, type StoreHost } from '../../lib/game/store.svelte';
 import TreeHarness from './TreeHarness.svelte';
 
-function store(): GameStoreImpl {
+function store(content: CompiledCase = fixtureCase): GameStoreImpl {
   const host: StoreHost = {
     settings: defaultSettings(),
     profile: defaultProfile(),
@@ -20,12 +20,12 @@ function store(): GameStoreImpl {
     saveStatus: () => {},
     overlayOpen: false,
   };
-  const state = newGame(fixtureCase, { slot: 'slot-1', mode: 'standard', at: 1 });
-  return new GameStoreImpl(fixtureCase, state, host);
+  const state = newGame(content, { slot: 'slot-1', mode: 'standard', at: 1 });
+  return new GameStoreImpl(content, state, host);
 }
 
-const html = () =>
-  render(TreeHarness, { props: { game: store() } })
+const html = (content?: CompiledCase) =>
+  render(TreeHarness, { props: { game: store(content) } })
     .body.replace(/<!--[^]*?-->/g, '')
     .replace(/ svelte-[a-z0-9]+/g, '');
 
@@ -60,5 +60,27 @@ describe('TreePanel', () => {
 
   it('le groupe de zoom a son propre nom (pas celui des onglets)', () => {
     expect(html()).toMatch(/class="zoom" role="group" aria-label="Zoom de l’arbre"/);
+  });
+
+  it('cote de génération : rang dans toute l’affaire, pas indice de rangée visible', () => {
+    // Générations numérotées à partir de 1 dans le contenu, et un aïeul encore caché tout en haut :
+    // la première rangée visible est la génération II, et le reste après sa révélation.
+    const shifted = structuredClone(fixtureCase) as CompiledCase;
+    for (const slot of Object.values(shifted.slots)) slot.generation += 1;
+    shifted.slots['g0-aieul'] = {
+      ...shifted.slots['g0-elna']!,
+      id: 'g0-aieul',
+      generation: 0,
+      column: 5,
+      unions: [],
+      revealedBy: { read: 'telegramme-juno' },
+    };
+    const cote = (out: string, slot: string) =>
+      out.match(new RegExp(`data-slot="${slot}"[^]*?class="gen num">([IVX]+)<`))?.[1];
+    const out = html(shifted);
+    expect(out).not.toContain('data-slot="g0-aieul"');
+    expect(cote(out, 'g0-elna')).toBe('II');
+    expect(cote(out, 'g1-tam')).toBe('III');
+    expect(cote(out, 'g2-cael')).toBe('IV');
   });
 });

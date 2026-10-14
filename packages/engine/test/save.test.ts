@@ -245,3 +245,41 @@ describe('parseSave après une vraie partie', () => {
     expect(next.state.read['registre-marrel']).toBe(3000);
   });
 });
+
+describe('parseSave : jamais d’établissement au chargement (GAME_DESIGN §7.4, R1)', () => {
+  const ELDERS = ['g0-elna', 'g1-tam', 'g1-lisbe'];
+  // Groupe rempli en validation manuelle (ou évaluation perdue) : juste, mais jamais évalué.
+  const filled = () =>
+    play(
+      researched(),
+      ELDERS.map((id, i) => fill(id, 12000 + i)),
+      { validation: 'manual' },
+    ).state;
+
+  it('un groupe complet et juste reste non établi après chargement', () => {
+    const s = filled();
+    expect(s.locked).not.toHaveProperty('g0-elna');
+    const r = parseSave(JSON.stringify(s), C);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    for (const id of ELDERS) expect(r.state.locked).not.toHaveProperty(id);
+    expect(r.state.locked).toEqual(s.locked);
+  });
+
+  it('ni un groupe faux ou partiel ; seule la validation normale établit', () => {
+    const s = filled();
+    const wrong = { ...s, tree: { ...s.tree, 'g1-tam': { ...s.tree['g1-tam']!, given: 'Ivo' } } };
+    const partial = {
+      ...s,
+      tree: { ...s.tree, 'g1-lisbe': { ...s.tree['g1-lisbe']!, given: '' } },
+    };
+    for (const state of [wrong, partial]) {
+      const r = parseSave(JSON.stringify(state), C);
+      expect(r.ok && Object.keys(r.state.locked)).toEqual(Object.keys(s.locked));
+    }
+    const loaded = parseSave(JSON.stringify(s), C);
+    if (!loaded.ok) throw new Error(loaded.error);
+    const after = play(loaded.state, [{ type: 'validate', at: 13000 }]).state;
+    for (const id of ELDERS) expect(after.locked[id]).toBe(13000);
+  });
+});

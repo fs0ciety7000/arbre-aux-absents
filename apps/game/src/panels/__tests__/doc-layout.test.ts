@@ -4,6 +4,7 @@ import {
   containerAt,
   inlineText,
   layoutInlines,
+  leadIllustration,
   passageText,
   rangesByPath,
   segmentText,
@@ -89,5 +90,23 @@ describe('doc-layout', () => {
 
   it('sépare recto (figures) et verso', () => {
     expect(splitFaces(blocks)).toEqual({ front: [4], back: [0, 1, 2, 3, 5] });
+  });
+});
+
+describe('leadIllustration', () => {
+  const art = { file: 'illustrations/ph-01.svg', alt: 'Un bac' };
+  const p: Block = { t: 'p', c: [{ t: 'text', v: 'Au dos.' }] };
+
+  it('illustration du frontmatter montrée en tête du document', () => {
+    expect(leadIllustration({ illustration: art, body: [p] })).toEqual(art);
+    expect(leadIllustration({ body: [p] })).toBeNull();
+  });
+
+  it('pas de doublon si le corps contient déjà la même figure (même dans une citation)', () => {
+    const same: Block = { t: 'figure', asset: art.file, alt: 'Un bac' };
+    expect(leadIllustration({ illustration: art, body: [same, p] })).toBeNull();
+    expect(leadIllustration({ illustration: art, body: [{ t: 'quote', c: [same] }] })).toBeNull();
+    const other: Block = { t: 'figure', asset: 'illustrations/autre.svg', alt: 'Autre' };
+    expect(leadIllustration({ illustration: art, body: [other, p] })).toEqual(art);
   });
 });

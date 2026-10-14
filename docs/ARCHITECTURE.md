@@ -287,7 +287,10 @@ reportQuestions /* questions posées + options disponibles + réponse */, ending
 **Validation par groupes** (détail : `docs/game/GAME_DESIGN.md`) : pour chaque groupe, on compte les
 cases non verrouillées dont les quatre champs sont justes ; si ce nombre atteint
 `min(threshold, cases restantes du groupe)`, ces cases se verrouillent ; sinon `validationFailed`,
-sans détail. Une case n'est vérifiée que si ses quatre champs sont remplis.
+sans détail. Une case n'est vérifiée que si ses quatre champs sont remplis. Le chargement d'une
+partie n'évalue **aucun** groupe : l'évaluation ne suit qu'un changement de case (ou « Soumettre la
+branche » en mode manuel) ; une évaluation en attente est faite avant la sauvegarde (`pagehide`,
+passage en arrière-plan).
 
 **Rapport final et fins à sections** : au dénouement, le jeu pose les questions de `report`
 (celles dont `askedWhen` est vraie, options filtrées par `availableWhen`) ; chaque réponse est une

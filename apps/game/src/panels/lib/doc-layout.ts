@@ -192,3 +192,19 @@ export function splitFaces(blocks: readonly Block[]): { front: number[]; back: n
   blocks.forEach((b, i) => (b.t === 'figure' ? front : back).push(i));
   return { front, back };
 }
+
+/**
+ * Illustration d'en-tête d'un document (`illustration: { file, alt }` du frontmatter), à
+ * montrer en tête de la pièce. `null` si le document n'en a pas, ou si le corps contient déjà
+ * une figure du même fichier (pas de doublon).
+ */
+export function leadIllustration(doc: {
+  illustration?: { file: string; alt: string };
+  body: readonly Block[];
+}): { file: string; alt: string } | null {
+  const art = doc.illustration;
+  if (!art) return null;
+  const inBody = (bs: readonly Block[]): boolean =>
+    bs.some((b) => (b.t === 'figure' && b.asset === art.file) || (b.t === 'quote' && inBody(b.c)));
+  return inBody(doc.body) ? null : art;
+}

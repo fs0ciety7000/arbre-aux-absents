@@ -5,10 +5,10 @@
 -->
 <script lang="ts">
   import type { Block } from '@arbre/contract';
-  import { Loader, Stamp } from '@arbre/ui';
-  import { svgContent } from '@arbre/map/svelte';
+  import { Stamp } from '@arbre/ui';
   import { layoutInlines, pathKey, type HighlightRange } from '../lib/doc-layout';
   import { BODY_LABELS, type BodyOptions, type KeywordState } from './context';
+  import Figure from './Figure.svelte';
   import Inlines from './Inlines.svelte';
   import Self from './DocumentBody.svelte';
 
@@ -114,28 +114,27 @@
         </table>
       </div>
     {:else if b.t === 'figure'}
-      {@const svg = opts.mode === 'original' ? figure(b.asset) : null}
-      <figure class="doc-figure">
-        {#if opts.mode === 'original' && svg}
-          <div class="art-box" role="img" aria-label={b.alt} use:svgContent={svg}></div>
-        {:else if opts.mode === 'original' && svg === undefined}
-          <div class="art-box loading">
-            <Loader label={BODY_LABELS.imageLoading} />
-          </div>
-        {:else}
-          <p class="figure-alt">
-            <span class="caps">{BODY_LABELS.figure}</span>
-            <span>{b.alt}</span>
-            {#if opts.mode === 'original'}<span class="figure-error">{BODY_LABELS.imageError}</span
-              >{/if}
-          </p>
-        {/if}
-        {#if b.caption}
-          <figcaption data-path={pathKey(path)}>
-            <Inlines nodes={inl(path, b.caption)} {opts} />
-          </figcaption>
-        {/if}
-      </figure>
+      {#if b.caption}
+        {@const cap = b.caption}
+        <Figure
+          asset={b.asset}
+          alt={b.alt}
+          mode={opts.mode}
+          load={figure}
+          eager={opts.decorative}
+          captionPath={pathKey(path)}
+        >
+          {#snippet caption()}<Inlines nodes={inl(path, cap)} {opts} />{/snippet}
+        </Figure>
+      {:else}
+        <Figure
+          asset={b.asset}
+          alt={b.alt}
+          mode={opts.mode}
+          load={figure}
+          eager={opts.decorative}
+        />
+      {/if}
     {:else if b.t === 'stamp'}
       {#if opts.mode === 'original'}
         <div class="doc-stamp"><Stamp text={b.text} tone="ink" size="s" rotate={-4} /></div>
@@ -202,49 +201,6 @@
   th {
     font-weight: var(--weight-semibold);
     background: var(--surface-2);
-  }
-  .doc-figure {
-    margin: 0;
-    display: grid;
-    gap: var(--space-2);
-  }
-  .art-box {
-    inline-size: 100%;
-    background: var(--surface-1);
-    border-radius: var(--radius-paper);
-  }
-  .art-box.loading {
-    display: grid;
-    place-items: center;
-    aspect-ratio: 4 / 3;
-  }
-  .art-box :global(svg) {
-    display: block;
-    inline-size: 100%;
-    block-size: auto;
-  }
-  .figure-alt {
-    display: grid;
-    gap: var(--space-1);
-    margin: 0;
-    padding: var(--space-3);
-    border: var(--border) dashed var(--line-strong);
-    border-radius: var(--radius-paper);
-    font-style: italic;
-  }
-  .figure-alt .caps {
-    font-style: normal;
-    color: var(--text-muted);
-  }
-  .figure-error {
-    font-style: normal;
-    color: var(--danger);
-    font-family: var(--font-ui);
-    font-size: var(--step-0);
-  }
-  figcaption {
-    font-style: italic;
-    color: var(--text-muted);
   }
   .doc-stamp {
     display: flex;

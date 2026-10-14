@@ -422,6 +422,34 @@ gap: var(--space-3) ; padding: var(--space-3) ; deux Lecteurs comparés = volet 
 zone principale plein écran + **tiroir bas** (`Panel` dans une feuille à deux crans 40 % / 90 %,
 poignée `--drawer-handle`) et barre d'onglets basse `Tabs variant="bar"`.
 
+*Tiroir à deux crans (tablette portrait, `Desk.svelte`).* La navigation reste « un panneau à la
+fois » (barre d'onglets du téléphone), mais la **dernière chemise** ouverte (Arbre, Carte,
+Tableau, Galerie) reste posée dans la zone principale ; tout panneau secondaire (Lecteur,
+Archives, Catalogue, Carnet, Journal, Aide) s'ouvre par-dessus dans un **tiroir bas** :
+
+- feuille `--surface-1`, coins hauts `--radius-l`, ombre `--shadow-3`, `z-index: var(--z-drawer)`
+  (local au Bureau), marges latérales `--space-2` + zones sûres ; le contenu est le `Panel` du
+  panneau, sans fond ni surpiqûre (comme dans le volet latéral) ;
+- **crans** : 40 % (ouverture) et 90 % de la zone principale ; chaque ouverture repart à 40 % ;
+- **poignée** : barre visible `--drawer-handle` × 2 de large, `--drawer-handle` / 4 d'épaisseur,
+  `--line-strong` (→ `--accent` au survol et pendant le glissement) ; la cible est toute la tête du
+  tiroir (≥ `--hit`), un `<button aria-expanded>` (« Agrandir ou réduire le tiroir ») :
+  toucher, clic, `Entrée` ou `Espace` = cran suivant ; `↑` = 90 %, `↓` = 40 % ; glisser la
+  poignée suit le doigt (25–95 %) puis se pose sur le cran le plus proche ;
+- **fermer** : `IconButton` « Fermer le tiroir » ou `Échap` → retour à la chemise ;
+- **mouvement** : entrée `sheetPull`, changement de cran en `block-size` sur `--dur-base` /
+  `--ease-paper`, aucune transition pendant le glissement ; en mouvement réduit les durées des
+  jetons tombent à ~0 (fondu de `sheetPull`) ;
+- le mini-lecteur n'est pas affiché tant que le tiroir est ouvert ; `forced-colors` : bord
+  `CanvasText` sur le tiroir et la poignée.
+
+*Carte et fiche du lieu (P06, `MapPanel.svelte`).* Le cadre de la carte est un conteneur en
+taille (`container-type: size`) : au-dessus de 48 rem de large, carte et fiche côte à côte ;
+plus étroit, la carte en haut (au moins `max(10rem, 40cqb)`, place des boutons de zoom
+comprise) et la fiche dessous (≤ 22 rem), chacune dans sa rangée : la fiche défile dans la
+sienne et ne passe jamais sur la carte ; étroit et bas (≤ 26 rem, téléphone couché) : de
+nouveau côte à côte, fiche ≤ `min(20rem, 48cqi)`.
+
 **Téléphone 360–599 px** — un panneau à la fois.
 
 ```
@@ -1178,6 +1206,10 @@ Le site vitrine, lui, garde le zoom.
 
 `IndexCard title cote={génération en chiffres romains} deal={rang} tilt={±1}` :
 - dates en Courier Prime sur la réglure ;
+- métier **sous le portrait**, sur toute la largeur de la fiche (`lang="fr"`, `hyphens: auto`,
+  coupure entre les mots seulement), 2 lignes au plus puis points de suspension (texte complet dans
+  le nom accessible) ; un mot trop long pour une ligne réduit le corps (`--occ-chars`) ; le cadenas
+  se place à droite du portrait ;
 - case **établie** : `Stamp text="Établi" size="s"` en bas à droite, débordant de la fiche ;
 - case **ouverte** : titre « ? », aide « Déposer une pièce » + `Icon unknown-person`, opacité 0,88 ;
 - cible de dépôt : lavis `--accent-tint` + anneau ; objet saisi : `mv-held` ;
@@ -1191,6 +1223,11 @@ Le site vitrine, lui, garde le zoom.
 `--paper-accent-strong` (fonds, cote) ; titre Fraunces `--step-2` ; corps `.reading` ou Courier
 Prime ; mots-clés `.kw`, surlignages `.hl-*` ; actions `Button secondary` (Épingler) et `ghost`
 (Surligner). Ouverture `sheetPull`, nouvel indice `use:rustle`.
+
+Illustration d'en-tête (`illustration` du document) : `Figure` entre le titre et le texte (au recto
+des pièces retournables, et dans la loupe), chargée à l'approche de l'écran, nommée par son `alt` ;
+en mode Transcription ou en cas d'échec, l'`alt` s'affiche en texte. Pas de doublon si le corps
+contient déjà la même figure.
 
 Barre d'outils du Lecteur (v2.1) : **deux rangées**, dans l'ordre du DOM (= ordre de tabulation) —
 1) affichage Original / Transcription, zoom, épingle et note (à droite) ; 2) surlignage (5 pastilles)

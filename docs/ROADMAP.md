@@ -81,6 +81,16 @@ Fait :
 - [x] Dans le dépôt : couvertures du roman et leurs sources dans `assets/roman/` (hors image Docker) ; tous les
       visuels itch.io (couvertures, captures 1440/1920, GIF/WebM, promo, thème) dans `apps/site/static/itch/`
 
+## Session 0 octies — 14 oct. 2026 (correctifs téléphone et finitions)
+
+- [x] Carte sur téléphone : la carte et la fiche du lieu ont chacune leur zone (plus de chevauchement),
+      côte à côte en paysage ; test `map-layout.spec.ts` sur 6 formats
+- [x] Tiroir à deux crans (40 % / 90 %) sur tablette portrait
+- [x] Métiers coupés au milieu d'un mot ; illustrations d'en-tête enfin affichées dans le Lecteur ;
+      numéro de génération décalé d'un cran ; groupes établis tout seuls au rechargement
+- [x] Icône de l'appli = sceau du kit presse (desktop, Android adaptative, favicon du jeu) ; image de
+      partage du site = bannière « bureau »
+
 ## Backlog
 
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
@@ -99,7 +109,7 @@ Fait :
 - Site en ligne (https://arbre.fs0ciety.org) : ajout au catalogue occ-studios (mons-corp fait : PR #8) ; basculer
   l'app Coolify sur `main` après fusion (DEPLOYMENT §1).
 - Affaires supplémentaires (contenu seul).
-- Tiroir à deux crans sur tablette portrait. Mettre à jour `docs/game/GAME_DESIGN.md` §15 et `ECRANS.md` §5 (tutoriel) ; montrer `Coachmark` sur `/design`.
+- Retour Android : fermer le tiroir tablette avant de revenir à l'Arbre ou d'ouvrir Pause. Mettre à jour `docs/game/GAME_DESIGN.md` §15 et `ECRANS.md` §5 (tutoriel) ; montrer `Coachmark` sur `/design`.
 - `Dialog` : prop `initialFocus` (design-lead) pour retirer l'action `initial-focus.ts` du jeu.
 - Contrat : remappage des touches dans `Settings`, emplacement dédié au mode chronométré, fractionnés sauvegardés.
 - Illustrations : qualité inégale (pb-01, photos de groupe aux tenues répétées) ; vrais profils pour ph-16/17.

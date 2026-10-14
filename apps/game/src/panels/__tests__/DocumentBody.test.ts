@@ -1,8 +1,10 @@
 import type { Block } from '@arbre/contract';
+import type { ComponentProps } from 'svelte';
 import { render } from 'svelte/server';
 import { describe, expect, it } from 'vitest';
 import type { BodyOptions } from '../doc/context';
 import DocumentBody from '../doc/DocumentBody.svelte';
+import Figure from '../doc/Figure.svelte';
 
 const opts = (over: Partial<BodyOptions> = {}): BodyOptions => ({
   mode: 'original',
@@ -173,5 +175,41 @@ describe('DocumentBody', () => {
     );
     expect(out).not.toContain('un<');
     expect(out).toContain('deux');
+  });
+});
+
+describe('Figure (illustration d’en-tête)', () => {
+  type FigureProps = ComponentProps<typeof Figure>;
+  const fig = (props: Partial<FigureProps> & Pick<FigureProps, 'load'>) =>
+    render(Figure, {
+      props: {
+        asset: 'illustrations/ph-01.svg',
+        alt: 'Un couple devant un bac',
+        mode: 'original',
+        lead: true,
+        ...props,
+      },
+    })
+      .body.replace(/<!--[^]*?-->/g, '')
+      .replace(/ svelte-[a-z0-9]+/g, '');
+
+  it('original : le SVG du contenu, nom accessible = texte alternatif', () => {
+    const asked: string[] = [];
+    const out = fig({ load: (a: string) => (asked.push(a), '<svg viewBox="0 0 1 1"></svg>') });
+    expect(asked).toEqual(['illustrations/ph-01.svg']);
+    expect(out).toMatch(
+      /<figure class="doc-figure lead"[^>]*data-asset="illustrations\/ph-01.svg"/,
+    );
+    expect(out).toMatch(/class="art-box" role="img" aria-label="Un couple devant un bac"/);
+  });
+
+  it('chargement, erreur, et transcription (texte alternatif en clair, rien de chargé)', () => {
+    expect(fig({ load: () => undefined })).toMatch(/class="art-box loading".*role="status"/s);
+    expect(fig({ load: () => null })).toContain('L’image n’a pas pu être chargée.');
+    const asked: string[] = [];
+    const out = fig({ mode: 'transcript', load: (a: string) => (asked.push(a), null) });
+    expect(asked).toEqual([]);
+    expect(out).toMatch(/class="figure-alt".*Illustration.*Un couple devant un bac/s);
+    expect(out).not.toContain('figure-error');
   });
 });

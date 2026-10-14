@@ -1,5 +1,14 @@
 <script lang="ts">
-  import { Button, Dialog, Folder, LampLight, Tabs, sheetPull, type TabItem } from '@arbre/ui';
+  import {
+    Button,
+    Dialog,
+    Folder,
+    IconButton,
+    LampLight,
+    Tabs,
+    sheetPull,
+    type TabItem,
+  } from '@arbre/ui';
   import { unreadDocuments } from '@arbre/engine';
   import { getApp, setGame } from '../lib/game/context';
   import {
@@ -57,10 +66,98 @@
   /** Onglet affiché comme sélectionné dans la barre (le panneau actif peut être hors barre). */
   const barValue = $derived(PHONE_TABS.includes(game.ui.main) ? game.ui.main : '');
 
-  const MainPanel = $derived(PANELS[game.ui.main]);
+  // ── Tiroir (tablette portrait, ECRANS §3.2, DESIGN §5.3) ──
+  // La tablette en portrait reste « un panneau à la fois » pour la navigation, mais un panneau
+  // secondaire (Lecteur, Archives, Catalogue, Carnet…) s'ouvre dans un tiroir bas posé sur la
+  // dernière chemise (Arbre, Carte…), qui reste visible au-dessus.
+  const drawerMode = $derived(single && viewport.kind === 'tablet' && viewport.portrait);
+  let lastMain = $state<PanelId>('tree');
+  $effect(() => {
+    if (MAIN_PANELS.includes(game.ui.main)) lastMain = game.ui.main;
+  });
+  const drawerOpen = $derived(drawerMode && !MAIN_PANELS.includes(game.ui.main));
+  /** Panneau de la chemise : en mode tiroir, la dernière chemise reste sous le tiroir. */
+  const MainPanel = $derived(PANELS[drawerOpen ? lastMain : game.ui.main]);
+  const DrawerPanel = $derived(PANELS[game.ui.main]);
   const showMini = $derived(
-    single && game.ui.openDocument !== null && game.ui.main !== 'reader' && !game.miniReaderHidden,
+    single &&
+      !drawerOpen &&
+      game.ui.openDocument !== null &&
+      game.ui.main !== 'reader' &&
+      !game.miniReaderHidden,
   );
+
+  /** Deux crans (40 % / 90 % de la zone) ; on glisse la poignée entre les deux. */
+  const DRAWER_SNAPS = { half: 0.4, full: 0.9 } as const;
+  const DRAWER_MIN = 0.25;
+  const DRAWER_MAX = 0.95;
+  const TAP_SLOP = 6;
+  let drawerSnap = $state<keyof typeof DRAWER_SNAPS>('half');
+  /** Fraction pendant le glissement (null hors glissement). */
+  let drawerDrag = $state<number | null>(null);
+  let drawerZone: HTMLElement | undefined = $state();
+  const drawerFraction = $derived(drawerDrag ?? DRAWER_SNAPS[drawerSnap]);
+  let drawerStartY = 0;
+  let drawerStartF = 0;
+  let drawerMoved = false;
+
+  function toggleDrawer() {
+    drawerSnap = drawerSnap === 'half' ? 'full' : 'half';
+  }
+  function closeDrawer() {
+    game.showPanel(lastMain);
+  }
+  function onDrawerDown(e: PointerEvent) {
+    if (e.button !== 0) return;
+    drawerStartY = e.clientY;
+    drawerStartF = DRAWER_SNAPS[drawerSnap];
+    drawerMoved = false;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    drawerDrag = drawerStartF;
+  }
+  function onDrawerMove(e: PointerEvent) {
+    if (drawerDrag === null || !drawerZone) return;
+    const dy = e.clientY - drawerStartY;
+    if (Math.abs(dy) > TAP_SLOP) drawerMoved = true;
+    const h = drawerZone.clientHeight || 1;
+    drawerDrag = Math.min(DRAWER_MAX, Math.max(DRAWER_MIN, drawerStartF - dy / h));
+  }
+  function onDrawerUp() {
+    if (drawerDrag === null) return;
+    if (drawerMoved) {
+      const mid = (DRAWER_SNAPS.half + DRAWER_SNAPS.full) / 2;
+      drawerSnap = drawerDrag >= mid ? 'full' : 'half';
+    }
+    drawerDrag = null;
+  }
+  function onDrawerCancel() {
+    drawerDrag = null;
+  }
+  function onDrawerClick(e: MouseEvent) {
+    // Un glissement n'est pas un toucher ; toucher (ou Entrée/Espace) = cran suivant.
+    if (drawerMoved) {
+      drawerMoved = false;
+      e.preventDefault();
+      return;
+    }
+    toggleDrawer();
+  }
+  function onDrawerKey(e: KeyboardEvent) {
+    if (e.key === 'ArrowUp') drawerSnap = 'full';
+    else if (e.key === 'ArrowDown') drawerSnap = 'half';
+    else return;
+    e.preventDefault();
+  }
+  function onDrawerEscape(e: KeyboardEvent) {
+    if (e.key !== 'Escape' || e.defaultPrevented) return;
+    e.preventDefault();
+    e.stopPropagation();
+    closeDrawer();
+  }
+  // Chaque ouverture du tiroir repart du premier cran.
+  $effect(() => {
+    if (!drawerOpen) drawerSnap = 'half';
+  });
 
   // Réaligne l'état d'interface quand la disposition change.
   $effect(() => {
@@ -122,8 +219,65 @@
   <DeskHeader {game} onmenu={() => (menuOpen = true)} sideToggle={!single} />
 
   {#if single}
-    <main id={contentId} class="single-main" tabindex="-1" aria-label={m.region}>
-      {#if inFolder}
+    <main
+      id={contentId}
+      class="single-main"
+      class:with-drawer={drawerOpen}
+      tabindex="-1"
+      aria-label={m.region}
+      bind:this={drawerZone}
+    >
+      {#if drawerOpen}
+        <span class="cote single-cote mat-label red" aria-hidden="true">{cote}</span>
+        <Folder title={folderTitle} class="main-folder">
+          <div class="panel-host" aria-label={messages.panels[lastMain]} role="region">
+            {#key lastMain}
+              <div class="panel-in"><MainPanel /></div>
+            {/key}
+          </div>
+        </Folder>
+        <!-- Échap remonte des contrôles du tiroir : la section ne fait qu'écouter. -->
+        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+        <section
+          class="drawer"
+          class:dragging={drawerDrag !== null}
+          class:full={drawerSnap === 'full'}
+          style:--drawer-size="{(drawerFraction * 100).toFixed(2)}%"
+          aria-label={m.drawerTitle}
+          data-snap={drawerSnap}
+          in:sheetPull
+          onkeydown={onDrawerEscape}
+        >
+          <div class="drawer-head">
+            <button
+              type="button"
+              class="drawer-grip"
+              aria-label={m.drawerHandle}
+              aria-expanded={drawerSnap === 'full'}
+              aria-controls="desk-bar-panel"
+              onpointerdown={onDrawerDown}
+              onpointermove={onDrawerMove}
+              onpointerup={onDrawerUp}
+              onpointercancel={onDrawerCancel}
+              onclick={onDrawerClick}
+              onkeydown={onDrawerKey}
+            >
+              <span class="grip-bar" aria-hidden="true"></span>
+            </button>
+            <IconButton icon="close" label={m.drawerClose} onclick={closeDrawer} />
+          </div>
+          <div
+            class="panel-host drawer-host"
+            role="tabpanel"
+            id="desk-bar-panel"
+            aria-label={messages.panels[game.ui.main]}
+          >
+            {#key game.ui.main}
+              <div class="panel-in"><DrawerPanel /></div>
+            {/key}
+          </div>
+        </section>
+      {:else if inFolder}
         <!-- Cote posée à côté de l'onglet de la chemise (comme au desktop) : une seule rangée
              au-dessus du carton au lieu d'une ligne de plus dans la chemise. -->
         <span class="cote single-cote mat-label red" aria-hidden="true">{cote}</span>
@@ -512,6 +666,81 @@
     border-radius: var(--radius-l);
     box-shadow: var(--shadow-2);
   }
+  /* ── Tiroir bas (tablette portrait) : une feuille à deux crans posée sur la chemise ── */
+  .drawer {
+    position: absolute;
+    z-index: var(--z-drawer);
+    inset-inline: max(var(--space-2), env(safe-area-inset-left))
+      max(var(--space-2), env(safe-area-inset-right));
+    inset-block-end: 0;
+    display: flex;
+    flex-direction: column;
+    block-size: var(--drawer-size, 40%);
+    min-block-size: 0;
+    background: var(--surface-1);
+    border-start-start-radius: var(--radius-l);
+    border-start-end-radius: var(--radius-l);
+    box-shadow: var(--shadow-3);
+    overflow: hidden;
+    transition: block-size var(--dur-base) var(--ease-paper);
+  }
+  .drawer.dragging {
+    transition: none;
+  }
+  .drawer-head {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-block-size: var(--hit);
+    padding-inline: var(--space-2);
+  }
+  /* La poignée : toute la largeur de la tête (cible ≥ 44 px), la barre visible fait 24 px. */
+  .drawer-grip {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: ns-resize;
+    touch-action: none;
+  }
+  .drawer-head > :global(:not(.drawer-grip)) {
+    position: relative;
+  }
+  .grip-bar {
+    inline-size: calc(var(--drawer-handle) * 2);
+    block-size: calc(var(--drawer-handle) / 4);
+    border-radius: var(--radius-pill);
+    background: var(--line-strong);
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      transform var(--dur-fast) var(--ease-out);
+  }
+  .drawer-grip:hover .grip-bar,
+  .drawer.dragging .grip-bar {
+    background: var(--accent);
+    transform: scaleX(1.15);
+  }
+  .drawer-grip:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: -3px;
+    border-radius: var(--radius-l);
+  }
+  .drawer-host {
+    border-block-start: var(--border) solid var(--line);
+  }
+  .drawer :global(.panel.desk) {
+    background: transparent;
+    box-shadow: none;
+    border: 0;
+  }
+  .drawer :global(.panel.desk::after) {
+    display: none;
+  }
   .bar {
     position: relative;
     z-index: var(--z-rail);
@@ -523,6 +752,12 @@
   @media (forced-colors: active) {
     .side::after {
       border-color: CanvasText;
+    }
+    .drawer {
+      border: var(--border) solid CanvasText;
+    }
+    .grip-bar {
+      background: CanvasText;
     }
   }
 </style>

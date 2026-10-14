@@ -30,6 +30,7 @@
   import {
     containerAt,
     inlineText,
+    leadIllustration,
     passageText,
     pathKey,
     rangesByPath,
@@ -39,6 +40,7 @@
   import { carryFromPortrait, carryFromText, formatPartialDate, isActivation } from './lib/view';
   import type { BodyOptions, KeywordState, ReadMode } from './doc/context';
   import DocumentBody from './doc/DocumentBody.svelte';
+  import Figure from './doc/Figure.svelte';
   import KeywordBubble, { type BubbleItem } from './doc/KeywordBubble.svelte';
   import { HL_LABELS, KIND_LABELS, pm } from './messages';
 
@@ -107,6 +109,9 @@
       faces.front.length > 0 &&
       faces.back.length > 0,
   );
+  /** Illustration d'en-tête (frontmatter) : au recto des pièces qui se retournent. */
+  const lead = $derived(doc ? leadIllustration(doc) : null);
+  const showLead = $derived(!!lead && (!flippable || mode === 'transcript' || face === 'front'));
   const only = $derived(
     !flippable || mode === 'transcript' ? null : face === 'front' ? faces.front : faces.back,
   );
@@ -590,6 +595,9 @@
               >
                 {@render sheetHead()}
                 <h2 id="reader-title" class="doc-title">{doc.title}</h2>
+                {#if lead && showLead}
+                  <Figure asset={lead.file} alt={lead.alt} {mode} load={figure} lead />
+                {/if}
                 <div class="reading" data-tour="reader-text">
                   <DocumentBody blocks={doc.body} {opts} {highlights} {figure} {only} />
                 </div>
@@ -620,6 +628,9 @@
             >
               {@render sheetHead()}
               <p class="doc-title">{doc.title}</p>
+              {#if lead && showLead}
+                <Figure asset={lead.file} alt={lead.alt} {mode} load={figure} lead eager />
+              {/if}
               <div class="reading">
                 <DocumentBody blocks={doc.body} opts={lensOpts} {highlights} {figure} {only} />
               </div>

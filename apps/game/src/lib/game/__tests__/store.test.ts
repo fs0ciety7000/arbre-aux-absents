@@ -1,11 +1,11 @@
 /**
- * Store de partie : validation des groupes en attente à la fermeture et au chargement (R1),
+ * Store de partie : validation des groupes en attente à la fermeture, jamais au chargement (R1),
  * rapport final remis après « Revenir au bureau ».
  */
 import type { GameEvent, SaveState, Settings } from '@arbre/contract';
 import { defaultProfile, defaultSettings } from '@arbre/contract';
 import { newGame } from '@arbre/engine';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 import { SOLUTION, fixtureCase } from '../../../../../../packages/engine/test/fixtures/case';
 import { createMemorySaveStore } from '../../../platform/memory';
 import { GameStoreImpl, type StoreHost } from '../store.svelte';
@@ -68,31 +68,82 @@ describe('groupes en attente (R1, 800 ms)', () => {
     });
   });
 
-  it('au chargement : un groupe complet et juste non validé se verrouille', () => {
+  it('au chargement : un groupe complet et juste, jamais évalué, ne s’établit pas tout seul', () => {
     const g = new GameStoreImpl(c, withElders(base()), host());
     const events: GameEvent[] = [];
     g.onEvents((e) => events.push(...e));
     g.start();
-    for (const id of ELDERS) expect(isLocked(g, id)).toBe(true);
-    expect(events.some((e) => e.type === 'slotsLocked')).toBe(true);
+    for (const id of ELDERS) expect(isLocked(g, id)).toBe(false);
+    expect(g.pendingGroups).toEqual([]);
+    expect(events).toEqual([]);
     g.destroy();
   });
 
-  it('au chargement : échec silencieux, et rien en validation manuelle', () => {
+  it('au chargement : rien non plus pour un groupe faux ou partiel, ni en validation manuelle', () => {
     const wrong = withElders(base());
     wrong.tree['g1-tam'] = { ...wrong.tree['g1-tam']!, occupation: 'meunier' };
-    const g = new GameStoreImpl(c, wrong, host());
-    const events: GameEvent[] = [];
-    g.onEvents((e) => events.push(...e));
-    g.start();
-    expect(isLocked(g, 'g0-elna')).toBe(false);
-    expect(events).toEqual([]);
-    g.destroy();
+    for (const state of [wrong, withElders(base(), true)]) {
+      const g = new GameStoreImpl(c, state, host());
+      const events: GameEvent[] = [];
+      g.onEvents((e) => events.push(...e));
+      g.start();
+      expect(isLocked(g, 'g0-elna')).toBe(false);
+      expect(events).toEqual([]);
+      g.destroy();
+    }
 
     const m = new GameStoreImpl(c, withElders(base()), host('manual'));
     m.start();
     expect(isLocked(m, 'g0-elna')).toBe(false);
     m.destroy();
+  });
+
+  it('après chargement, le groupe s’établit par le déclencheur normal (R1, 800 ms)', () => {
+    vi.useFakeTimers();
+    try {
+      const g = new GameStoreImpl(c, withElders(base()), host());
+      g.start();
+      vi.advanceTimersByTime(5_000);
+      expect(isLocked(g, 'g0-elna')).toBe(false);
+      // Une case du groupe change (et reste complète) : évaluation 800 ms plus tard.
+      g.dispatch({ type: 'setSlot', slot: 'g1-tam', patch: { occupation: 'meunier' } });
+      g.dispatch({
+        type: 'setSlot',
+        slot: 'g1-tam',
+        patch: { occupation: SOLUTION['g1-tam']!.occupation },
+      });
+      vi.advanceTimersByTime(799);
+      expect(isLocked(g, 'g0-elna')).toBe(false);
+      vi.advanceTimersByTime(1);
+      for (const id of ELDERS) expect(isLocked(g, id)).toBe(true);
+      g.destroy();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('validation manuelle : établi seulement par « Soumettre la branche »', () => {
+    const m = new GameStoreImpl(c, withElders(base()), host('manual'));
+    m.start();
+    expect(isLocked(m, 'g0-elna')).toBe(false);
+    m.dispatch({ type: 'validate' });
+    for (const id of ELDERS) expect(isLocked(m, id)).toBe(true);
+    m.destroy();
+  });
+
+  it('fermeture de la page : l’évaluation en attente est faite avant la sauvegarde', () => {
+    // Environnement node : `start()` n'écoute la page que si `window` existe.
+    vi.stubGlobal('window', new EventTarget());
+    vi.stubGlobal('document', Object.assign(new EventTarget(), { hidden: false }));
+    onTestFinished(() => void vi.unstubAllGlobals());
+    const g = new GameStoreImpl(c, withElders(base(), true), host());
+    g.start();
+    g.dispatch({ type: 'setSlot', slot: 'g1-lisbe', patch: { given: 'Lisbé' } });
+    expect(g.pendingGroups).toEqual(['grp-aines']);
+    window.dispatchEvent(new Event('pagehide'));
+    expect(g.pendingGroups).toEqual([]);
+    for (const id of ELDERS) expect(isLocked(g, id)).toBe(true);
+    g.destroy();
   });
 });
 
@@ -125,5 +176,21 @@ describe('rapport final', () => {
     const ended = new GameStoreImpl(c, { ...complete(), ending: Object.keys(c.endings)[0]! }, h);
     expect(ended.reportAvailable).toBe(false);
     ended.destroy();
+  });
+});
+
+describe('cartes de révélation', () => {
+  it('« Génération n complète » : même numéro que la cote de l’arbre (contenu numéroté dès 1)', () => {
+    const shifted = structuredClone(c);
+    for (const slot of Object.values(shifted.slots)) slot.generation += 1;
+    const s = newGame(shifted, { slot: 'slot-1', mode: 'standard', at: 1_000 });
+    const all = Object.fromEntries(Object.keys(shifted.documents).map((id) => [id, 1_000]));
+    const state = withElders({ ...s, unlocked: all, read: all, revealedSlots: [] });
+    const g = new GameStoreImpl(shifted, state, host('manual'));
+    g.dispatch({ type: 'validate' });
+    // g0-ivo (pré-rempli) et g0-elna établis : la première génération est complète.
+    expect(g.reveals.map((r) => r.title)).toContain('Génération 1 complète');
+    expect(g.reveals.map((r) => r.title)).not.toContain('Génération 2 complète');
+    g.destroy();
   });
 });

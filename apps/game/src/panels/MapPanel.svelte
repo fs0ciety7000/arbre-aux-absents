@@ -265,17 +265,21 @@
   :global(.map-panel) {
     block-size: 100%;
   }
+  /* Conteneur en taille (largeur ET hauteur) : la disposition carte + fiche du lieu dépend de
+     la place réelle du panneau (téléphone portrait, téléphone couché, tablette, desktop). La
+     hauteur vient du panneau, jamais du contenu. */
   .frame {
-    container-type: inline-size;
+    container-type: size;
     block-size: 100%;
+    min-block-size: 0;
   }
   .layout {
     position: relative;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     gap: var(--space-3);
     block-size: 100%;
-    min-block-size: 20rem;
     padding: 0 var(--space-3) var(--space-3);
   }
   .layout.has-place {
@@ -284,7 +288,7 @@
   /* La carte est une feuille posée dans la chemise (§13.6) ; elle s'encre couche par couche. */
   .stage {
     position: relative;
-    min-block-size: 20rem;
+    min-block-size: 0;
     block-size: 100%;
     border-radius: var(--radius-xs);
     box-shadow: var(--shadow-paper);
@@ -431,18 +435,29 @@
     display: flex;
     flex-wrap: wrap;
   }
+  /* Panneau étroit (téléphone, volet de tablette) : la carte en haut, la fiche du lieu dessous,
+     chacune dans sa rangée. La carte garde au moins 40 % de la hauteur (et la place de ses
+     boutons de zoom) ; la fiche prend le reste au plus et défile dans sa rangée, jamais
+     par-dessus la carte. */
   @container (max-width: 47.9375rem) {
     .layout.has-place {
-      grid-template-columns: 1fr;
-      grid-template-rows: minmax(0, 1fr) auto;
-    }
-    .layout.has-place .stage {
-      min-block-size: 10rem;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: minmax(max(10rem, 40cqb), 1fr) minmax(0, auto);
     }
     .place {
-      max-block-size: min(22rem, 45dvh);
+      max-block-size: 22rem;
       border-radius: var(--radius-xs);
       box-shadow: var(--shadow-2);
+    }
+  }
+  /* Panneau étroit et bas (téléphone couché) : carte et fiche côte à côte. */
+  @container (max-width: 47.9375rem) and (max-height: 26rem) {
+    .layout.has-place {
+      grid-template-columns: minmax(0, 1fr) minmax(0, min(20rem, 48cqi));
+      grid-template-rows: minmax(0, 1fr);
+    }
+    .place {
+      max-block-size: none;
     }
   }
 </style>

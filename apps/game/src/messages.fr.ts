@@ -330,6 +330,7 @@ export const messages = {
     miniReaderHide: 'Ranger le document',
     drawerHandle: 'Agrandir ou réduire le tiroir',
     drawerTitle: 'Tiroir',
+    drawerClose: 'Fermer le tiroir',
     validateBranch: 'Soumettre la branche',
     reopenReport: 'Remettre le rapport',
     saved: 'Partie sauvegardée.',

@@ -13,11 +13,13 @@
   import { portraitSvg } from './lib/assets.svelte';
   import { onMount, tick } from 'svelte';
   import { getGame } from '../lib/game/context';
+  import { generationCote, generationNumber } from '../lib/game/generations';
   import { listenCommands, ownsCommands } from './lib/commands';
   import { carry, decodeCarry, DRAG_MIME } from './lib/carry.svelte';
   import {
     DEFAULT_DIMS,
     layoutTree,
+    longestUnbreakable,
     neighbourSlot,
     type TreeDirection,
     type TreeNodeInput,
@@ -48,7 +50,14 @@
 
   let view = $state<View>('graph');
   let zoom = $state(1);
-  let generation = $state(0);
+  /** Génération montrée (vue par génération), par sa valeur dans le contenu : une génération
+   révélée plus tard ne décale pas la vue (l'indice de rangée, lui, change). */
+  let shownGen = $state<number | null>(null);
+  const generation = $derived(
+    shownGen !== null && layout.generations.includes(shownGen)
+      ? layout.generations.indexOf(shownGen)
+      : 0,
+  );
   let sheetSlot = $state<SlotId | null>(null);
   let wrap: HTMLDivElement | undefined = $state();
   let focusId = $state<SlotId | null>(null);
@@ -94,12 +103,12 @@
     };
   }
 
-  const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
-  /** Génération en chiffres romains (cote de la fiche). */
+  /** Génération en chiffres romains (cote de la fiche), numérotée comme dans tout le jeu. */
   function genCote(id: SlotId): string {
-    const g = layout.generations.indexOf(game.content.slots[id]?.generation ?? 0);
-    return ROMAN[g] ?? String(g + 1);
+    return generationCote(game.content, game.content.slots[id]?.generation ?? 0);
   }
+  /** Libellé « Génération n » d'une génération du contenu (jamais l'indice de rangée visible). */
+  const genLabel = (gen: number) => pm.tree.generation(generationNumber(game.content, gen));
   /** Rang de distribution (≤ 12 animées) et inclinaison de repos, stables par case. */
   function dealRank(id: SlotId): number | undefined {
     const i = nodes.findIndex((n) => n.id === id);
@@ -117,7 +126,7 @@
     if (!id || !visible.includes(id)) return;
     focusId = id;
     const gen = game.content.slots[id]?.generation;
-    if (gen !== undefined) generation = layout.generations.indexOf(gen);
+    if (gen !== undefined) shownGen = gen;
     void tick().then(() => cardEl(id)?.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
   });
 
@@ -164,7 +173,7 @@
       if (!next) return;
       select(next);
       const gen = game.content.slots[next]?.generation;
-      if (view === 'generation' && gen !== undefined) generation = layout.generations.indexOf(gen);
+      if (view === 'generation' && gen !== undefined) shownGen = gen;
       await tick();
       cardEl(next)?.focus();
       return;
@@ -235,7 +244,8 @@
     swipe = null;
     if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
     const n = layout.generations.length;
-    generation = Math.min(n - 1, Math.max(0, generation + (dx < 0 ? 1 : -1)));
+    shownGen =
+      layout.generations[Math.min(n - 1, Math.max(0, generation + (dx < 0 ? 1 : -1)))] ?? null;
   }
 
   function onDragOver(e: DragEvent, id: SlotId) {
@@ -267,7 +277,12 @@
       .sort((a, b) => a.column - b.column),
   );
   const genItems = $derived(
-    layout.generations.map((g, i) => ({ id: String(i), label: pm.tree.generation(i + 1), g })),
+    layout.generations.map((g, i) => ({
+      id: String(i),
+      n: generationNumber(game.content, g),
+      label: genLabel(g),
+      g,
+    })),
   );
 </script>
 
@@ -328,7 +343,13 @@
             <Icon name="unknown-person" size="1.75rem" />
           {/if}
         </span>
-        <span class="occ" class:unknown={!occ}>{occ ?? FIELD_LABELS.occupation + ' ?'}</span>
+        {@const occText = occ ?? FIELD_LABELS.occupation + ' ?'}
+        <span
+          class="occ"
+          class:unknown={!occ}
+          lang="fr"
+          style:--occ-chars={longestUnbreakable(occText)}>{occText}</span
+        >
       {/if}
     </span>
     {#if locked}
@@ -450,15 +471,15 @@
                 class="gen-dot num"
                 aria-pressed={generation === i}
                 aria-label={item.label}
-                onclick={() => (generation = i)}>{i + 1}</button
+                onclick={() => (shownGen = item.g)}>{item.n}</button
               >
             {/each}
           </div>
-          <h3 class="gen-title">{pm.tree.generation(generation + 1)}</h3>
+          <h3 class="gen-title">{genItems[generation]?.label ?? ''}</h3>
           <div
             class="gen-list"
             role="group"
-            aria-label={pm.tree.generation(generation + 1)}
+            aria-label={genItems[generation]?.label ?? pm.tree.generations}
             onpointerdown={onSwipeStart}
             onpointerup={onSwipeEnd}
           >
@@ -471,9 +492,9 @@
       {:else}
         <div class="list-view" data-tree-view="list">
           <ol class="gens" aria-label={pm.tree.listCaption}>
-            {#each layout.generations as gen, i (gen)}
+            {#each layout.generations as gen (gen)}
               <li>
-                <h3>{pm.tree.generation(i + 1)}</h3>
+                <h3>{genLabel(gen)}</h3>
                 <ol class="slots">
                   {#each nodes
                     .filter((n) => n.generation === gen)
@@ -665,7 +686,6 @@
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     color: var(--ink);
-    overflow-wrap: anywhere;
   }
   .slot .name > span {
     overflow: hidden;
@@ -680,14 +700,19 @@
   .slot .body.blank {
     grid-template-columns: 1fr;
   }
+  /* Portrait en haut, métier dessous sur toute la largeur de la fiche : à côté du portrait, il
+     ne restait que ~7 caractères et les métiers se coupaient au milieu d'un mot. */
   .slot .body {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     align-items: start;
-    gap: var(--space-2);
-    padding: 0 var(--space-2) var(--space-2) var(--space-3);
+    gap: var(--space-1) var(--space-2);
+    padding: 0 var(--space-2) var(--space-1) var(--space-3);
     min-height: 0;
+    min-width: 0;
     line-height: var(--rule-gap);
+    container-type: inline-size;
   }
   .portrait {
     display: grid;
@@ -710,11 +735,30 @@
     inline-size: 100%;
     block-size: 100%;
   }
+  /* Métier : retour à la ligne entre les mots seulement (césure française si le moteur la
+     propose), jamais au milieu d'un mot. Si le plus long mot (--occ-chars, posé par la fiche)
+     dépasse la largeur, le corps se réduit pour qu'il tienne (police à chasse fixe : 0,6 em par
+     caractère, marge comprise) ; au-delà de deux lignes, points de suspension. */
   .occ {
+    grid-column: 1 / -1;
+    min-inline-size: 0;
     font-family: var(--font-type);
+    font-size: min(1em, 100cqi / (var(--occ-chars, 1) * 0.62));
     line-height: var(--rule-gap);
     color: var(--ink);
-    overflow-wrap: anywhere;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: auto;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+  }
+  .occ.hint {
+    display: block;
+    font-size: inherit;
+    hyphens: manual;
   }
   .occ.hint {
     color: var(--ink-muted);
@@ -746,10 +790,11 @@
     background: var(--accent-tint);
     pointer-events: none;
   }
+  /* Cadenas à droite du portrait (le métier occupe le bas de la fiche). */
   .lock {
     position: absolute;
-    inset-block-end: var(--space-2);
-    inset-inline-start: var(--space-3);
+    inset-block-start: calc(var(--head-h) + var(--space-1));
+    inset-inline-end: var(--space-3);
     color: var(--established);
   }
   .stamp {
