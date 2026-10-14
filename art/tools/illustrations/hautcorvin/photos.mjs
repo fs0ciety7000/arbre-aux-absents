@@ -9,6 +9,7 @@ import { Scene, mount, wear, foliage, crowd, printBlock, headline, lighthouse, w
 import { hand } from '../people.mjs';
 import { rect, ell, circ, smooth, poly, tube, f, handLines } from '../lib.mjs';
 import { extra, garment, hc, hcBust, limb, shinyBurn, snowfall, lower } from './cast.mjs';
+import { signature } from './papers.mjs';
 
 /* ───────────────────────── Décors ───────────────────────── */
 
@@ -758,6 +759,9 @@ export const SCENES = {
         slate(S, 300, 210, 100, 36, '38-0377');
         hand(S, 412, 262, 160, 3.6, { skin: 2, burn: true });
       });
+      // signature du détenu, au crayon pressé (T barré droit, détaché) ; celle de l'agent n° 64, à l'encre
+      signature(S, 30, 328, 168, { t: false, h: 20, cls: 'ink-soft', sw: 1 });
+      signature(S, 320, 330, 150, { h: 12, cls: 'ink' });
     });
   },
 
@@ -1068,6 +1072,76 @@ export const SCENES = {
     S.close();
     // pochette annotée
     sleeve(S, 440, 230, 200, 190, { rot: 5, date: '9.1.76', lines: 4 });
+    return S;
+  },
+
+  /* ── EP-02 : « Tous les vivants », devant le refuge de l'Ourse, 10 juillet 1976 (tirage 13 × 18, bords blancs) ── */
+  'ep-02'(id) {
+    const S = new Scene(id, 720, 520, 'photo');
+    const win = mount(S, { m: 24, cardTone: 'photo-paper', gilt: false });
+    S.within(win.d, () => {
+      S.p('photo-paper', win.d);
+      // plein soleil : crêtes, éboulis et plaques de neige d'été
+      ridge(S, [[24, 150], [110, 92], [190, 122], [260, 70], [330, 104], [420, 66], [520, 116], [610, 80], [696, 120]], 300, 'light');
+      S.fill(rect(24, 300, 672, 196), 'mid', { opacity: 0.55 });
+      S.stip(rect(24, 300, 672, 196), { opacity: 0.45 });
+      let sc = '';
+      for (let k = 0; k < 70; k++) sc += ell(30 + S.r() * 660, 304 + S.r() * 60, 3 + S.r() * 5, 1.6 + S.r() * 2);
+      S.fill(sc, 'light');
+      S.ln(sc, 0.4, 'ink-faint');
+      snowPatch(S, [[40, 316], [120, 306], [170, 320], [130, 334], [40, 330]]);
+      snowPatch(S, [[600, 300], [670, 296], [694, 312], [640, 322]]);
+      // le refuge : moellons, toit de lauzes, porte ouverte au soleil
+      const wall = rect(250, 168, 230, 150);
+      S.fill(wall, 'light');
+      let st = '';
+      for (let y = 178, k = 0; y < 318; y += 14, k++) for (let x = 250 + (k % 2) * 12; x < 480; x += 26) st += rect(x + 1, y - 9, 22 + (x % 3), 11);
+      S.ln(st, 0.5, 'ink-faint');
+      const roof = poly([[236, 172], [365, 110], [494, 172]], true);
+      S.fill(roof, 'dark');
+      S.ln(roof + wall, 0.8, 'ink-soft');
+      S.fill(rect(340, 222, 52, 96), 'dark');
+      // le sentier qui descend vers la droite, en lacets
+      S.ln('M480 330Q560 340 600 372T690 420', 6, 'ink-faint', { opacity: 0.5 });
+      // ombres portées (soleil haut)
+      const shadow = (x, w) => S.p('ombre', ell(x, 478, w, 6));
+      // second plan : le jeune homme aux oreilles décollées, lunettes de glacier relevées
+      hc(S, 'pierre', 27, 262, 190, 0.43, { patch: { hat: null, marks: { bigEars: true }, clothes: { type: 'coat', wash: 'paper', dark: false, collar: 'open', lapels: false } }, lower: { kind: 'stand', tone: 'mid', hatch: true } });
+      // à gauche : le guide barbu, n° 31, piolet sous le bras ; la dame aux lunettes papillon à son bras
+      shadow(96, 34);
+      hc(S, 'gilles', 39, 52, 216, 0.42, { patch: { hat: null, extras: [{ type: 'badge', n: 31, x: 44, y: 172 }] }, lower: { kind: 'stand', hatch: true } });
+      // piolet sous le bras, à la façon d'un parapluie : tête en arrière, pointe vers le sol devant lui
+      S.ln('M146 290L70 344', 3.2, 'ink');
+      S.fill(smooth([[132, 284], [150, 274], [160, 282], [150, 290]], true), 'dark');
+      S.ln('M136 272Q150 280 166 296', 2.6, 'ink');
+      shadow(160, 30);
+      hc(S, 'brigitte', 34, 118, 222, 0.41, { lower: { kind: 'skirt', tone: 'mid', arms: 'right' } });
+      // son bras passé sous celui du guide
+      limb(S, [[128, 302], [126, 334], [116, 356]], 12, 'mid', { hatch: true, skin: 2, size: 2.4, ang: 150 });
+      // au centre : l'homme maigre en costume de toile, loupe au cordon ; la femme qui rit, sifflet au cou
+      shadow(268, 30);
+      hc(S, 'andrin63', 63, 226, 214, 0.42, { patch: { clothes: { type: 'coat', wash: 'paper-shade', dark: false, collar: 'open', tie: 'none', lapelW: 1.3 } }, lower: { kind: 'stand', tone: 'light', w: 1.06 } });
+      shadow(336, 30);
+      hc(S, 'agnes', 37, 296, 218, 0.41, { patch: { mouth: { smile: 1, teeth: true }, eyes: { gaze: 0.6 } }, lower: { kind: 'stand', tone: 'mid', hatch: true } });
+      // le très grand vieillard aux oreilles décollées, appuyé sur une canne
+      shadow(408, 32);
+      hc(S, 'remi', 67, 362, 186, 0.47, { patch: { hat: null, hair: 'gris', brows: { color: 'gris' }, marks: { bigEars: true }, extras: [] }, lower: { kind: 'stand', tone: 'mid', hatch: true, foot: 608, arms: 'left' } });
+      limb(S, [[434, 280], [444, 330], [440, 372]], 13, 'mid', { hatch: true, none: true });
+      S.ln('M441 370L450 476', 3, 'ink');
+      S.ln('M441 370q-6 -8 -14 -2', 3, 'ink');
+      hand(S, 441, 372, 0, 2.6, { skin: 2, fist: true });
+      // un peu à part : l'homme chauve en nœud papillon, qui a gardé sa veste
+      shadow(530, 30);
+      hc(S, 'hugues', 45, 488, 214, 0.42, { lower: { kind: 'stand', tone: 'dark', hatch: true } });
+      // au bord droit, en contrebas : la vieille dame en manteau noir, assise sur une pierre, la canne en travers des genoux
+      const stone = smooth([[596, 448], [624, 436], [668, 440], [684, 470], [600, 474]], true);
+      S.fill(stone, 'light');
+      S.ln(stone, 0.7, 'ink-soft');
+      hc(S, 'colombe', 70, 584, 300, 0.33, { patch: { hands: [] }, lower: { kind: 'sitSkirt', tone: 'dark' } });
+      S.ln('M590 432L676 424', 2.6, 'ink');
+      wear(S, win, { edge: 10, spots: 6 });
+    });
+    S.ln(win.d, 0.6, 'ink-soft');
     return S;
   },
 

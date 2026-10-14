@@ -364,18 +364,28 @@ export const SCENES = {
     S.p('photo-mid', g, { opacity: 0.55 });
     S.ln(g + ell(260, 70, 120, 12) + ell(260, 450, 100, 10), 1, 'ink-soft');
     S.p('rehaut', poly([[156, 84], [176, 84], [184, 440], [172, 440]], true), { opacity: 0.5 });
-    // gravure claire : le Pas (brèche dans la crête), l'ourse et l'ourson, la devise
-    const cp = [[170, 250], [200, 200], [226, 214], [250, 168], [262, 190], [276, 186], [290, 150], [320, 206], [350, 196]];
-    const crest = poly([...cp, ...cp.slice().reverse().map(([x, y]) => [x, y + 7])], true);
-    S.p('photo-paper', crest, { opacity: 0.75 });
-    S.ln(poly(cp), 0.6, 'ink-faint');
+    // gravure claire (tout le tour) : une brèche entre deux crêtes, le sentier en lacets avec une
+    // petite croix au troisième lacet, l'ourse et son petit qui montent vers la brèche
+    const cp = [[166, 236], [196, 196], [214, 206], [238, 142], [262, 198], [286, 136], [312, 196], [330, 186], [354, 230]];
+    const crest = poly([...cp, ...cp.slice().reverse().map(([x, y]) => [x, y + 8])], true);
+    S.p('photo-paper', crest, { opacity: 0.8 });
+    S.ln(poly(cp), 0.7, 'ink-faint');
     let rocks = '';
-    for (let i = 0; i < 12; i++) rocks += `M${180 + i * 14} ${222 + (i % 3) * 8}l8 -4`;
+    for (let i = 0; i < 12; i++) rocks += `M${176 + i * 15} ${236 + (i % 3) * 8}l8 -4`;
     S.ln(rocks, 0.8, 'ink-faint');
-    const b1 = bear(S, 236, 300, 1.15, 1, 'ink-soft', 1.4);
-    const b2 = bear(S, 312, 330, 0.62, 1, 'ink-soft', 1.2);
-    S.p('rehaut', b1 + b2, { opacity: 0.45 });
-    S.ln('M176 360Q260 352 344 360', 1, 'ink-soft');
+    // sentier : du bas vers la brèche ; lacets 1, 2, 3 en partant du bas
+    const trail = [[196, 352], [312, 330], [210, 304], [318, 278], [226, 252], [292, 226], [262, 204]];
+    S.ln(poly(trail), 2.4, 'ink-soft', { opacity: 0.6 });
+    S.ln(poly(trail), 1, 'ink-faint');
+    const [kx, ky] = trail[3];
+    S.ln(`M${kx + 8} ${ky - 18}v14M${kx + 3} ${ky - 13}h10`, 1.4, 'ink-soft');
+    // l'ourse et l'ourson, sur le sentier, tournés vers la brèche
+    S.open({ transform: 'rotate(-14 248 318)' });
+    const b1 = bear(S, 248, 318, 0.62, 1, 'ink-soft', 1.2);
+    const b2 = bear(S, 206, 330, 0.36, 1, 'ink-soft', 1);
+    S.p('rehaut', b1 + b2, { opacity: 0.5 });
+    S.close();
+    S.ln('M176 366Q260 358 344 366', 1, 'ink-soft');
     S.push('<text class="label-note" x="260" y="394" text-anchor="middle" font-size="15">À la fille du souffleur</text>');
     S.push('<text class="label-note" x="260" y="414" text-anchor="middle" font-size="13">14.II.1959</text>');
     return S;

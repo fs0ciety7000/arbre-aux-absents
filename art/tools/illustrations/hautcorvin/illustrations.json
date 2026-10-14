@@ -23,9 +23,13 @@
     "file": "illustrations/dv-02.svg",
     "alt": "Carnet à couverture brune ouvert : sur la garde, « B. — 14.2.39 » et un tourbillon de cheveux dessiné au crayon ; en face, des dates et des bâtons groupés par cinq."
   },
+  "ep-02": {
+    "file": "illustrations/ep-02.svg",
+    "alt": "Photographie en plein soleil devant une cabane de pierre, neige d'été dans les éboulis : sept personnes devant la porte, dont un guide barbu au piolet sous le bras et une femme à son bras, un homme maigre en costume clair, une femme qui rit, un très grand vieillard à la canne, un jeune homme aux lunettes de glacier relevées, un homme chauve en nœud papillon un peu à part ; au bord droit, en contrebas, une vieille dame en manteau noir assise sur une pierre du sentier, une canne en travers des genoux."
+  },
   "ex-02": {
     "file": "illustrations/ex-02.svg",
-    "alt": "Planche comparative de quatre T majuscules manuscrits, datés 1937, 1944, 1953 et 1976 : les deux premiers à barre droite, les deux derniers à barre bouclée."
+    "alt": "Planche comparative de T majuscules manuscrits : en haut, A, billet au crayon du 1.12.1937, T barré d'un trait droit, court, détaché de la hampe ; en bas, B, C, D et E (1953 et 1976), T à barre bouclée sur la hampe, et sur B l'amorce d'une barre droite reprise en boucle."
   },
   "ex-03": {
     "file": "illustrations/ex-03.svg",
@@ -37,7 +41,7 @@
   },
   "lt-04": {
     "file": "illustrations/lt-04.svg",
-    "alt": "Billet au crayon sur une feuille pliée en huit, l'écriture commence par un T majuscule à barre droite."
+    "alt": "Billet au crayon sur une feuille pliée en huit ; deux phrases commencent par un T majuscule barré d'un trait droit, court, détaché de la hampe."
   },
   "lt-05": {
     "file": "illustrations/lt-05.svg",
@@ -53,7 +57,7 @@
   },
   "ob-02": {
     "file": "illustrations/ob-02.svg",
-    "alt": "Gobelet de verre gravé : une crête de montagne, une ourse et son ourson, et l'inscription « À la fille du souffleur — 14.II.1959 »."
+    "alt": "Gobelet de verre gravé : une brèche entre deux crêtes, un sentier en lacets marqué d'une petite croix, une ourse et son petit qui montent vers la brèche, et l'inscription « À la fille du souffleur — 14.II.1959 »."
   },
   "ob-03": {
     "file": "illustrations/ob-03.svg",
@@ -109,7 +113,7 @@
   },
   "ph-09": {
     "file": "illustrations/ph-09.svg",
-    "alt": "Fiche anthropométrique 38-0377 : un jeune homme à la tête rasée, de face et de profil droit devant la toise, l'oreille droite bien visible ; une main au dos brûlé tient l'ardoise du numéro."
+    "alt": "Fiche anthropométrique 38-0377 : un jeune homme à la tête rasée, de face et de profil droit devant la toise, l'oreille droite bien visible ; une main au dos brûlé tient l'ardoise du numéro. En bas, une signature au crayon au T barré droit, et celle de l'agent."
   },
   "ph-10": {
     "file": "illustrations/ph-10.svg",

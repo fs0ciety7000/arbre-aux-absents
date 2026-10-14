@@ -49,7 +49,8 @@ function grid(S, xs, y0, y1, rowH, { head = 18 } = {}) {
 
 /**
  * T majuscule manuscrit à (x, y) (haut de la barre), hauteur h. `loop` : T thalbère, la barre se
- * referme en boucle à gauche ; sinon barre droite des écoles de Hautcorvin.
+ * referme en boucle sur la hampe ; sinon barre droite, courte, levée et détachée de la hampe
+ * (écoles de la haute vallée, 07-coherence §0).
  */
 function capT(S, x, y, h, loop, w = 1.4, cls = 'ink') {
   const bw = h * 0.7;
@@ -57,8 +58,13 @@ function capT(S, x, y, h, loop, w = 1.4, cls = 'ink') {
   if (loop) {
     d = `M${f(x + bw * 0.55)} ${f(y + h * 0.02)}C${f(x + bw * 0.2)} ${f(y - h * 0.06)} ${f(x - bw * 0.42)} ${f(y - h * 0.02)} ${f(x - bw * 0.46)} ${f(y + h * 0.1)}`;
     d += `C${f(x - bw * 0.5)} ${f(y + h * 0.24)} ${f(x - bw * 0.2)} ${f(y + h * 0.26)} ${f(x - bw * 0.16)} ${f(y + h * 0.12)}C${f(x - bw * 0.12)} ${f(y)} ${f(x - bw * 0.3)} ${f(y - h * 0.04)} ${f(x - bw * 0.38)} ${f(y + h * 0.04)}`;
-  } else d = `M${f(x - bw * 0.5)} ${f(y + h * 0.04)}L${f(x + bw * 0.55)} ${f(y)}`;
-  d += `M${f(x + bw * 0.04)} ${f(y + h * 0.02)}C${f(x + bw * 0.02)} ${f(y + h * 0.4)} ${f(x - bw * 0.06)} ${f(y + h * 0.8)} ${f(x - bw * 0.2)} ${f(y + h)}`;
+    d += `M${f(x + bw * 0.04)} ${f(y + h * 0.02)}`;
+  } else {
+    // barre droite, courte, levée, jamais liée : la hampe part plus bas (écoles de la haute vallée)
+    d = `M${f(x - bw * 0.4)} ${f(y - h * 0.02)}L${f(x + bw * 0.44)} ${f(y - h * 0.07)}`;
+    d += `M${f(x + bw * 0.04)} ${f(y + h * 0.1)}`;
+  }
+  d += `C${f(x + bw * 0.02)} ${f(y + h * 0.44)} ${f(x - bw * 0.06)} ${f(y + h * 0.8)} ${f(x - bw * 0.2)} ${f(y + h)}`;
   S.ln(d, w, cls, { 'stroke-linecap': 'round' });
 }
 
@@ -101,6 +107,8 @@ function caption(S, x, y, t, size = 12) {
 }
 
 /* ───────────────────────── Scènes ───────────────────────── */
+
+export { capT, signature };
 
 export const SCENES = {
   /* ── OF-08 : billet anonyme au crayon, sur une fiche de dépôt des Postes coupée ── */
@@ -298,8 +306,14 @@ export const SCENES = {
     S.p('paper-shade', rect(0, 0, 460, 400));
     sheet(S, 50, 40, 360, 320, { rot: -3, shade: 0.3 });
     folds(S, 50, 40, 360, 320, 2, 4);
-    writing(S, 76, 86, 300, 8, 28, { pencil: true, slant: 0.4, h: 4.6, step: 5, w: 1.1 });
-    capT(S, 92, 56, 22, false, 1.3, 'ink-faint');
+    // « Tu… » ouvre deux phrases : T à barre droite, courte, levée, détachée de la hampe
+    const pen = { pencil: true, slant: 0.4, h: 4.6, step: 5, w: 1.1 };
+    capT(S, 86, 72, 20, false, 1.4, 'ink-faint');
+    writing(S, 100, 86, 276, 1, 28, pen);
+    writing(S, 76, 114, 300, 3, 28, { ...pen, last: 0.5 });
+    capT(S, 236, 156, 20, false, 1.4, 'ink-faint');
+    writing(S, 250, 170, 126, 1, 28, pen);
+    writing(S, 76, 198, 300, 4, 28, pen);
     end(S);
     return S;
   },
@@ -463,24 +477,35 @@ export const SCENES = {
     return S;
   },
 
-  /* ── EX-02 : planche comparative, quatre T majuscules (1937, 1944 / 1953, 1976) ── */
+  /* ── EX-02 : planche comparative des T majuscules (A 1937 contre B–E, 1953–1976) ── */
   'ex-02'(id) {
     const S = new Scene(id, 600, 460, 'color');
     S.p('paper', rect(0, 0, 600, 460));
     S.ln(rect(10, 10, 580, 440), 0.8, 'ink');
-    const cells = [
-      [30, 40, false, '1 — 1937'],
-      [310, 40, false, '2 — 1944'],
-      [30, 240, true, '3 — 1953'],
-      [310, 240, true, '4 — 1976'],
-    ];
-    for (const [x, y, loop, t] of cells) {
-      S.p('paper-shade', rect(x, y, 260, 170), { opacity: 0.4 });
-      S.ln(rect(x, y, 260, 170), 0.8, 'ink-soft');
-      capT(S, x + 90, y + 40, 90, loop, 3, loop ? 'ink' : 'ink-soft');
-      S.ln(handLines(S.r, x + 140, y + 120, 100, 1, 10, { slant: 0.5, h: 10, step: 9, last: 1 }), 1.6, loop ? 'ink' : 'ink-soft');
-      caption(S, x + 130, y + 196, t, 13);
-    }
+    const cell = (x, y, w, h, loop, label, o = {}) => {
+      S.p('paper-shade', rect(x, y, w, h), { opacity: 0.4 });
+      S.ln(rect(x, y, w, h), 0.8, 'ink-soft');
+      const th = o.th ?? 80;
+      const tx = x + (o.tx ?? w * 0.32);
+      const ty = y + 30;
+      // B : amorce d'une barre droite interrompue au tiers, recouverte par la boucle
+      if (o.restart) S.ln(`M${f(tx - th * 0.7 * 0.5)} ${f(ty + th * 0.07)}L${f(tx - th * 0.7 * 0.15)} ${f(ty + th * 0.06)}`, 1.6, 'ink-soft');
+      capT(S, tx, ty, th, loop, o.sw ?? 2.6, o.cls ?? 'ink');
+      if (o.pre) S.push(`<text class="label-note" x="${f(tx - th * 0.42)}" y="${f(ty + th * 0.92)}" text-anchor="end" font-size="${f(th * 0.62)}" font-style="normal">${o.pre}</text>`);
+      if (o.caps) S.push(`<text class="label-note" x="${f(tx + th * 0.42)}" y="${f(ty + th * 0.92)}" font-size="${f(th * 0.62)}" font-style="normal">${o.caps}</text>`);
+      else S.ln(handLines(S.r, tx + th * 0.45, ty + th * 0.92, w - (tx - x) - th * 0.6, 1, 10, { slant: 0.5, h: th * 0.1, step: th * 0.1, last: 1 }), 1.4, o.cls ?? 'ink');
+      caption(S, x + w / 2, y + h + 20, label, 12);
+    };
+    // A : le billet de 1937, au crayon (barre droite détachée)
+    cell(30, 34, 260, 160, false, 'A — billet au crayon, 1.12.1937', { cls: 'ink-soft', sw: 2.2, th: 90 });
+    S.push('<text class="label-note" x="440" y="100" text-anchor="middle" font-size="13">A contre B – E</text>');
+    S.ln('M330 112H550', 0.6, 'ink-faint');
+    // B à E : la boucle thalbère
+    const cw = 126;
+    cell(30, 250, cw, 150, true, 'B — 12.1.1976', { restart: true, th: 70 });
+    cell(30 + (cw + 12), 250, cw, 150, true, 'C — 13.1 / 5.2.1976', { th: 70 });
+    cell(30 + 2 * (cw + 12), 250, cw, 150, true, 'D — 3.6.1953', { th: 70 });
+    cell(30 + 3 * (cw + 12), 250, cw, 150, true, 'E — 10.1.1976', { th: 60, tx: 52, pre: 'S', caps: 'OP', sw: 2.4 });
     return S;
   },
 
