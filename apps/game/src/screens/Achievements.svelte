@@ -5,55 +5,89 @@
   import { messages } from '../messages.fr';
   import ScreenFrame from './ScreenFrame.svelte';
 
-  /** E06 : obtenus, à obtenir, cachés (« ??? »). */
+  /**
+   * E06 : obtenus, à obtenir, cachés (« ??? »), une section par affaire (ordre des affaires) avec
+   * son compteur. Les succès sont rangés par id dans le profil (ids préfixés par affaire).
+   */
   const app = getApp();
   const m = messages.achievements;
-  const content = $derived(app.game?.content ?? app.cases[0]?.content ?? null);
-  const list = $derived(content?.achievements ?? []);
-  const got = $derived(list.filter((a) => app.profile.achievements[a.id] !== undefined).length);
+  const contents = $derived.by(() => {
+    const all = app.cases.map((c) => c.content);
+    const g = app.game?.content;
+    if (g && !all.some((c) => c.id === g.id)) all.unshift(g);
+    return all;
+  });
+  const single = $derived(contents.length === 1);
+  const gotOf = (list: readonly { id: string }[]) =>
+    list.filter((a) => app.profile.achievements[a.id] !== undefined).length;
 </script>
 
-<ScreenFrame title={m.title} kicker={content?.meta.title} onback={() => app.closeSecondary()}>
-  {#if !content}
+<ScreenFrame
+  title={m.title}
+  kicker={single ? contents[0]?.meta.title : undefined}
+  onback={() => app.closeSecondary()}
+>
+  {#if contents.length === 0}
     <p class="muted" role="status">{m.none}</p>
   {:else}
-    <div class="stack">
-      <p class="count num">{m.count(got, list.length)}</p>
-      <ul class="grid">
-        {#each list as a, i (a.id)}
-          {@const at = app.profile.achievements[a.id]}
-          {@const hidden = a.hidden && at === undefined}
-          <li
-            class="item mat-card mv-deal mv-liftable"
-            class:got={at !== undefined}
-            class:hidden
-            data-surface="paper"
-            style:--i={Math.min(i, 12)}
-            style:--tilt="{i % 3 === 0 ? -0.6 : i % 3 === 1 ? 0.5 : -0.2}deg"
-          >
-            <span class="icon" aria-hidden="true"
-              ><Icon name={at !== undefined ? 'star' : 'lock'} size="1.5rem" /></span
-            >
-            <div>
-              <h2>{hidden ? m.hidden : a.title}</h2>
-              <p class="muted">{hidden ? m.hiddenDesc : a.description}</p>
-              {#if at !== undefined}
-                <Badge tone="success" iconName="check">{m.obtainedOn(formatDay(at))}</Badge>
-              {:else}
-                <Badge tone="neutral">{m.locked}</Badge>
-              {/if}
-            </div>
-          </li>
-        {/each}
-      </ul>
+    <div class="sections">
+      {#each contents as content (content.id)}
+        {@const list = content.achievements}
+        <section class="stack" aria-labelledby="ach-{content.id}" data-case={content.id}>
+          <h2 id="ach-{content.id}" class="case-title" class:visually-hidden={single}>
+            {content.meta.title}
+          </h2>
+          <p class="count num">{m.count(gotOf(list), list.length)}</p>
+          {#if list.length === 0}
+            <p class="muted">{m.noneForCase}</p>
+          {/if}
+          <ul class="grid">
+            {#each list as a, i (a.id)}
+              {@const at = app.profile.achievements[a.id]}
+              {@const hidden = a.hidden && at === undefined}
+              <li
+                class="item mat-card mv-deal mv-liftable"
+                class:got={at !== undefined}
+                class:hidden
+                data-surface="paper"
+                style:--i={Math.min(i, 12)}
+                style:--tilt="{i % 3 === 0 ? -0.6 : i % 3 === 1 ? 0.5 : -0.2}deg"
+              >
+                <span class="icon" aria-hidden="true"
+                  ><Icon name={at !== undefined ? 'star' : 'lock'} size="1.5rem" /></span
+                >
+                <div>
+                  <h3>{hidden ? m.hidden : a.title}</h3>
+                  <p class="muted">{hidden ? m.hiddenDesc : a.description}</p>
+                  {#if at !== undefined}
+                    <Badge tone="success" iconName="check">{m.obtainedOn(formatDay(at))}</Badge>
+                  {:else}
+                    <Badge tone="neutral">{m.locked}</Badge>
+                  {/if}
+                </div>
+              </li>
+            {/each}
+          </ul>
+        </section>
+      {/each}
     </div>
   {/if}
 </ScreenFrame>
 
 <style>
+  .sections {
+    display: grid;
+    gap: var(--space-10);
+  }
   .stack {
     display: grid;
     gap: var(--space-4);
+  }
+  .case-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-size: var(--step-2);
   }
   .count {
     color: var(--text-muted);
@@ -83,7 +117,7 @@
   .icon {
     color: var(--ink-faint);
   }
-  h2 {
+  h3 {
     display: flex;
     align-items: flex-end;
     min-height: calc(var(--head-h) - var(--space-3) - var(--space-1));

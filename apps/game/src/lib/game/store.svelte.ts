@@ -15,6 +15,7 @@ import type {
 import { hintPreset } from '@arbre/contract';
 import {
   applyAction,
+  claimedFields,
   emptyGuard,
   evaluateAchievements,
   groupCorrectCount,
@@ -31,6 +32,8 @@ import { messages } from '../../messages.fr';
 import { announcer } from './announcer.svelte';
 import { generationNumber } from './generations';
 import { askedQuestions } from './report';
+import { FIELD_LABELS } from '../../panels/messages';
+import { claimFields, fieldValueLabel } from '../../panels/lib/view';
 import type {
   DeskUi,
   DistributiveOmit,
@@ -278,7 +281,10 @@ export class GameStoreImpl implements GameStore {
     }
     if (a.type === 'setSlot' || a.type === 'clearSlot') {
       const accepted = !t.events.some((e) => e.type === 'rejected') && t.state !== before;
-      if (accepted) this.#scheduleGroup(a.slot);
+      if (accepted) {
+        this.#announceClaim(a.slot, before, t.state);
+        this.#scheduleGroup(a.slot);
+      }
     }
     if (a.type === 'search' && t.events.length > 0) {
       const res = t.events.find((e) => e.type === 'searchResult');
@@ -295,6 +301,37 @@ export class GameStoreImpl implements GameStore {
 
   updateSettings(patch: Partial<Settings>): void {
     this.#host.updateSettings(patch);
+  }
+
+  /**
+   * Case revendiquée (AFFAIRE-2 §1.8) : annonce ce qui change dans la déclaration (champ retiré
+   * ou remplacé, déclaration retirée ou rétablie). Aucun retour de justesse.
+   */
+  #announceClaim(slot: SlotId, before: SaveState, after: SaveState): void {
+    const c = this.content;
+    const all = claimFields(c, slot);
+    if (all.length === 0 || after.locked[slot] !== undefined) return;
+    const was = claimedFields(slot, before, c);
+    const now = claimedFields(slot, after, c);
+    const m = messages.announce;
+    if (now.length > was.length) {
+      if (now.length === all.length) announcer.say(m.claimRestored);
+      return;
+    }
+    const gone = was.filter((f) => !now.includes(f));
+    if (gone.length === 0) return;
+    const g = after.tree[slot];
+    if (gone.length > 1) {
+      announcer.say(m.claimRemoved(gone.length));
+      return;
+    }
+    const f = gone[0]!;
+    const value = fieldValueLabel(c, f, g ?? null);
+    announcer.say(
+      value
+        ? m.claimFieldReplaced(FIELD_LABELS[f], value, now.length, all.length)
+        : m.claimFieldRemoved(FIELD_LABELS[f]),
+    );
   }
 
   /** R1 : (ré)arme l'évaluation du groupe de la case, 800 ms après la dernière modification. */

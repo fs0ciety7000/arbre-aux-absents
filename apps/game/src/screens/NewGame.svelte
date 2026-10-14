@@ -1,13 +1,17 @@
 <script lang="ts">
   import type { GameMode, SaveSlotId } from '@arbre/contract';
-  import { Badge, Button, Dialog, Select, Toggle } from '@arbre/ui';
+  import { Badge, Button, CaseFolder, CaseFolderGroup, Dialog, Select, Toggle } from '@arbre/ui';
   import { getApp } from '../lib/game/context';
   import { messages } from '../messages.fr';
   import ScreenFrame from './ScreenFrame.svelte';
   import Spot from '../shell/Spot.svelte';
   import { prepareTutorial } from '../tutorial/tutorial.svelte';
+  import { caseStatus, defaultCaseId } from '../lib/game/case-folders';
 
-  /** E04 : affaire, mode, préréglage d'aide, « J'ai déjà joué », emplacement. */
+  /**
+   * E04 : affaire (une chemise par affaire, AFFAIRE-2 §2.1), mode, préréglage d'aide, « J'ai
+   * déjà joué », emplacement.
+   */
   const app = getApp();
   const m = messages.newGame;
   const SLOTS: SaveSlotId[] = ['slot-1', 'slot-2', 'slot-3'];
@@ -15,7 +19,8 @@
   const firstFree = SLOTS.find((s) => !app.saves.some((x) => x.slot === s)) ?? 'slot-1';
   const initialPreset = app.settings.hints.preset;
 
-  let caseId = $state(app.cases[0]?.content.id ?? '');
+  // Affaires déjà triées (`order`, content-tools) ; par défaut la dernière jouée, sinon la première.
+  let caseId = $state(defaultCaseId(app.cases, app.saves));
   let mode = $state<string>('standard');
   let preset = $state(String(initialPreset === 'custom' ? 1 : initialPreset));
   let skipTutorial = $state(false);
@@ -27,12 +32,6 @@
   const timedOk = $derived(entry ? app.timedUnlocked(entry.content.id) : false);
   const occupied = $derived(app.saves.find((s) => s.slot === slot));
 
-  const caseOptions = $derived(
-    app.cases.map((c) => ({
-      value: c.content.id,
-      label: c.fixture ? m.devFixture : `${c.content.meta.title} · ${m.edition(c.content.edition)}`,
-    })),
-  );
   const modeOptions = $derived([
     { value: 'standard', label: m.modeStandard },
     { value: 'timed', label: timedOk ? m.modeTimed : m.modeTimedLocked, disabled: !timedOk },
@@ -82,7 +81,21 @@
     </div>
   {:else}
     <form class="form" onsubmit={submit}>
-      <Select label={m.caseLabel} options={caseOptions} bind:value={caseId} />
+      <CaseFolderGroup legend={m.caseLabel}>
+        {#each app.cases as c, i (c.content.id)}
+          <CaseFolder
+            name="case"
+            id="case-{c.content.id}"
+            value={c.content.id}
+            checked={caseId === c.content.id}
+            onselect={(v) => (caseId = v)}
+            title={c.fixture ? m.devFixture : c.content.meta.title}
+            cote={c.content.edition === 'demo' ? m.edition('demo') : undefined}
+            status={caseStatus(c.content, app.saves, app.profile)}
+            deal={i}
+          />
+        {/each}
+      </CaseFolderGroup>
       {#if entry?.fixture}
         <p class="note">
           <Badge tone="warning" variant="outline">{messages.menu.devBadge}</Badge>

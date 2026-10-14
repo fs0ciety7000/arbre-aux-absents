@@ -12,7 +12,7 @@ import type {
   Settings,
 } from '@arbre/contract';
 import { defaultProfile, defaultSettings, hintPreset, ProfileSchema } from '@arbre/contract';
-import { newGame, parseSave, summarize } from '@arbre/engine';
+import { claimedFields, newGame, parseSave, summarize, visibleSlots } from '@arbre/engine';
 import { pushToast } from '@arbre/ui';
 import type { Component } from 'svelte';
 import { audio } from '../../audio/engine';
@@ -388,6 +388,10 @@ export class AppController implements StoreHost {
     this.screen = 'desk';
     store.start();
     if (opts.fresh) void store.flush(true);
+    // Case revendiquée (AFFAIRE-2 §1.8) : le lecteur d'écran apprend d'emblée qu'une identité
+    // de l'arbre est déclarée, pas établie.
+    const claimed = visibleSlots(state, c).filter((id) => claimedFields(id, state, c).length > 0);
+    if (claimed.length > 0) announcer.say(messages.announce.claimOnOpen(claimed.length));
     if (this.storageWarning) {
       pushToast({ tone: 'warning', title: this.storageWarning });
     }

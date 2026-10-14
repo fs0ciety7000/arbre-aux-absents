@@ -12,7 +12,15 @@
   import { portraitSvg } from './lib/assets.svelte';
   import { getGame } from '../lib/game/context';
   import { initialFocus } from '../lib/game/initial-focus';
-  import { guessOf, occupationOrigins, portraitOrigins, seenIn, usageCount } from './lib/view';
+  import {
+    claimView,
+    fieldValueLabel,
+    guessOf,
+    occupationOrigins,
+    portraitOrigins,
+    seenIn,
+    usageCount,
+  } from './lib/view';
   import { FIELD_ARTICLES, FIELD_LABELS, pm } from './messages';
 
   const game = getGame();
@@ -24,6 +32,12 @@
   const slot = $derived(picking?.slot ?? '');
   const guess = $derived(slot ? guessOf(game.state, game.content, slot) : null);
   const currentValue = $derived(guess ? (guess[field] ?? null) : null);
+  /** Case revendiquée : rappel non sélectionnable de la valeur déclarée (AFFAIRE-2 §1.4). */
+  const declaredLabel = $derived.by(() => {
+    if (!slot || !claimView(game.state, game.content, slot).open) return null;
+    const g = game.content.slots[slot]?.claimedGuess ?? null;
+    return fieldValueLabel(game.content, field, g);
+  });
 
   const options: Candidate[] = $derived.by(() => {
     const s = game.state;
@@ -110,6 +124,12 @@
     mobile="fullscreen"
     onclose={close}
   >
+    {#if declaredLabel}
+      <p class="declared">
+        {pm.picker.declared} <span class="claim-value">{declaredLabel}</span>
+        {pm.picker.declaredSource}
+      </p>
+    {/if}
     {#if isEmpty}
       <div class="empty" use:initialFocus={'button'}>
         <p>{pm.picker.empty(FIELD_ARTICLES[field])}</p>
@@ -173,6 +193,15 @@
 {/if}
 
 <style>
+  /* Bureau sombre : l'encre du formulaire (--claim-ink) n'est mesurée que sur papier ; la
+     valeur garde ses signes de forme (Courier romain, « ») dans la couleur du texte. */
+  .claim-value {
+    color: var(--text);
+  }
+  .declared {
+    margin: 0 0 var(--space-3);
+    color: var(--text-muted);
+  }
   .empty {
     display: grid;
     gap: var(--space-3);

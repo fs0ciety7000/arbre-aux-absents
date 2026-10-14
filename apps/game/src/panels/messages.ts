@@ -129,6 +129,22 @@ export const pm = {
     },
     listCaption: 'L’arbre, génération par génération',
     swipeHint: 'Balayez ou choisissez une génération.',
+    // Case revendiquée (AFFAIRE-2 §1)
+    claimTag: 'Déclaré',
+    claimedSummary: (gen: string, fields: string) =>
+      `${gen}, case revendiquée, non établie. ${fields}`,
+    fieldDeclared: (label: string, value: string) => `${label} : ${value}, déclaré.`,
+    fieldPosed: (label: string, value: string) => `${label} : ${value}, posé par vous.`,
+    fieldBlank: (label: string) => `${label} : à remplir.`,
+    declaredMark: 'déclaré',
+    claimNotice: 'Identité déclarée par le requérant : à vérifier.',
+    claimNoticeCleared: 'Déclaration du requérant retirée : la case se remplit comme une autre.',
+    claimActions: 'Déclaration du requérant',
+    claimRemove: 'Retirer la déclaration',
+    claimRestore: 'Rétablir la déclaration',
+    claimSource: 'Voir la requête',
+    claimConfirmRestore: (n: number) =>
+      `Remplacer ${n} ${n > 1 ? 'champs posés' : 'champ posé'} par la déclaration ?`,
   },
   picker: {
     title: (field: string) => `Choisir : ${field}`,
@@ -139,6 +155,8 @@ export const pm = {
     gallery: 'Visages collectés',
     current: 'choix actuel',
     listLabel: 'Candidats découverts',
+    declared: 'Déclaré :',
+    declaredSource: '(requête)',
   },
   archives: {
     title: 'Archives',

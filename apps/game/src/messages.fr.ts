@@ -90,7 +90,7 @@ export const messages = {
   newGame: {
     title: 'Nouvelle partie',
     kicker: 'Ouvrir un dossier',
-    caseLabel: 'Affaire',
+    caseLabel: 'Choisir une affaire',
     modeLabel: 'Mode',
     modeStandard: 'Normal',
     modeStandardHint: 'Sans limite de temps.',
@@ -113,6 +113,9 @@ export const messages = {
     devFixture: 'Affaire de test du moteur (développement)',
     devFixtureHint: 'Affichée seulement en développement, quand aucune affaire n’est compilée.',
     edition: (e: string) => (e === 'demo' ? 'Démo' : 'Version complète'),
+    statusNew: 'Non ouvert',
+    statusOngoing: (pct: number) => `En cours, ${pct} %`,
+    statusDone: (n: number, t: number) => `Rapport remis · fins vues ${n} / ${t}`,
   },
 
   hintPresets: {
@@ -224,6 +227,7 @@ export const messages = {
     obtainedOn: (d: string) => `Obtenu le ${d}`,
     count: (n: number, t: number) => `${n} / ${t} obtenus`,
     none: 'Aucune affaire chargée : les succès apparaîtront ici.',
+    noneForCase: 'Aucun succès pour cette affaire.',
     unlockedToast: 'Succès obtenu',
   },
 
@@ -436,6 +440,18 @@ export const messages = {
       `${n} ${plural(n, 'case correcte', 'cases correctes')} en jeu dans ce groupe.`,
     endingReached: 'L’arbre est complet.',
     unknownSlot: 'Case',
+    // Case revendiquée (AFFAIRE-2 §1.8)
+    claimOnOpen: (n: number) =>
+      n > 1
+        ? `${n} cases de l’arbre sont revendiquées : leur identité est déclarée, pas établie.`
+        : 'Une case de l’arbre est revendiquée : son identité est déclarée, pas établie.',
+    claimFieldRemoved: (field: string) =>
+      `${field} déclaré retiré. Rétablir la déclaration : menu de la case.`,
+    claimFieldReplaced: (field: string, value: string, n: number, t: number) =>
+      `${field} : ${value}, posé. ${n} ${plural(n, 'champ déclaré', 'champs déclarés')} sur ${t}.`,
+    claimRemoved: (n: number) =>
+      `Déclaration retirée : ${n} ${plural(n, 'champ vidé', 'champs vidés')}.`,
+    claimRestored: 'Déclaration rétablie.',
   },
 
   toasts: {

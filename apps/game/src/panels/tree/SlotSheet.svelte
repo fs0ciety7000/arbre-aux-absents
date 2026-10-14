@@ -1,17 +1,25 @@
 <!--
   Fiche d'une case (P01) : les quatre champs en lignes de 56 px, chacun ouvre le sélecteur de
   candidat (P10) ; bouton « vider » par champ (confirmation si l'option est active). Case
-  établie : lecture seule, tampon.
+  établie : lecture seule, tampon. Case revendiquée (AFFAIRE-2 §1.4) : valeurs déclarées entre
+  « », mention « à vérifier », actions Retirer / Rétablir la déclaration et Voir la requête.
 -->
 <script lang="ts">
   import type { SlotGuess, SlotId } from '@arbre/contract';
-  import { Button, Dialog, Icon, IconButton, Stamp } from '@arbre/ui';
+  import { Button, ClaimTag, Dialog, Icon, IconButton, Stamp } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
   import { portraitSvg } from '../lib/assets.svelte';
   import { getGame } from '../../lib/game/context';
   import type { SlotField } from '../../lib/game/types';
   import { carry } from '../lib/carry.svelte';
-  import { fieldValueLabel, guessOf, slotName } from '../lib/view';
+  import {
+    claimDocument,
+    claimFields,
+    claimView,
+    fieldValueLabel,
+    guessOf,
+    slotName,
+  } from '../lib/view';
   import { FIELD_LABELS, pm } from '../messages';
 
   interface Props {
@@ -35,6 +43,59 @@
   );
 
   let confirming = $state<SlotField | null>(null);
+
+  // ── Case revendiquée (AFFAIRE-2 §1.4) ──
+  const claim = $derived(
+    slot
+      ? claimView(game.state, game.content, slot)
+      : { claimed: false, declared: new Set<SlotField>(), open: false },
+  );
+  const claimed = $derived(slot ? claimFields(game.content, slot) : []);
+  const declaration = $derived(slot ? game.content.slots[slot]?.claimedGuess : undefined);
+  /** Champs posés par le joueur que « Rétablir » écraserait. */
+  const overwritten = $derived(
+    declaration && guess
+      ? claimed.filter((f) => !claim.declared.has(f) && guess[f] !== null && guess[f] !== '')
+      : [],
+  );
+  const restorable = $derived(claim.open && claim.declared.size < claimed.length);
+  const requestDoc = $derived(slot && claim.open ? claimDocument(game.content, slot) : null);
+  let confirmingRestore = $state(false);
+
+  function emptyPatch(fields: readonly SlotField[]): Partial<SlotGuess> {
+    const patch: Partial<SlotGuess> = {};
+    for (const f of fields) {
+      if (f === 'portrait' || f === 'occupation') patch[f] = null;
+      else patch[f] = '';
+    }
+    return patch;
+  }
+
+  /** Vide tous les champs encore déclarés ; les champs posés restent. Réversible, sans confirmation. */
+  function removeClaim() {
+    if (!slot || locked || claim.declared.size === 0) return;
+    game.dispatch({ type: 'setSlot', slot, patch: emptyPatch([...claim.declared]) });
+  }
+
+  function askRestore() {
+    if (overwritten.length > 0) confirmingRestore = true;
+    else restoreClaim();
+  }
+
+  /** Remet les valeurs déclarées dans les champs (confirmation si un champ posé est écrasé). */
+  function restoreClaim() {
+    confirmingRestore = false;
+    if (!slot || locked || !declaration) return;
+    const patch: Partial<SlotGuess> = {};
+    for (const f of claimed) Object.assign(patch, { [f]: declaration[f] });
+    game.dispatch({ type: 'setSlot', slot, patch });
+  }
+
+  function showRequest() {
+    if (!requestDoc) return;
+    game.navigate({ kind: 'document', id: requestDoc });
+    onclose();
+  }
 
   function pick(field: SlotField) {
     if (!slot || locked) return;
@@ -74,6 +135,11 @@
     {#if locked}
       <p class="locked"><Icon name="lock" /> {pm.tree.sheetLocked}</p>
       <div class="stamp"><Stamp size="s" /></div>
+    {:else if claim.open}
+      <p class="claim-notice" class:cleared={!claim.claimed}>
+        {#if claim.claimed}<ClaimTag decorative label={pm.tree.claimTag} />{/if}
+        <span>{claim.claimed ? pm.tree.claimNotice : pm.tree.claimNoticeCleared}</span>
+      </p>
     {/if}
     <ul class="fields">
       {#each FIELDS as field (field)}
@@ -95,7 +161,10 @@
                 <span class="thumb" use:svgContent={portraitSvg(game.content, guess.portrait)}
                 ></span>
               {/if}
-              {#if value}<span>{value}</span>{:else}<span class="empty">{pm.tree.fieldEmpty}</span
+              {#if value && claim.declared.has(field)}<span class="claim-value">{value}</span><span
+                  class="visually-hidden">, {pm.tree.declaredMark}</span
+                >{:else if value}<span>{value}</span>{:else}<span class="empty"
+                  >{pm.tree.fieldEmpty}</span
                 >{/if}
             </span>
             <span class="verb">
@@ -113,6 +182,30 @@
         </li>
       {/each}
     </ul>
+    {#if claim.open}
+      <div class="claim-actions" role="group" aria-label={pm.tree.claimActions}>
+        {#if claim.claimed}
+          <Button iconName="close" onclick={removeClaim}>{pm.tree.claimRemove}</Button>
+        {/if}
+        {#if restorable}
+          <Button iconName="staple" onclick={askRestore}>{pm.tree.claimRestore}</Button>
+        {/if}
+        {#if requestDoc}
+          <Button variant="ghost" iconName="reader" onclick={showRequest}
+            >{pm.tree.claimSource}</Button
+          >
+        {/if}
+      </div>
+    {/if}
+    {#if confirmingRestore}
+      <div class="confirm" role="alertdialog" aria-label={pm.tree.claimRestore}>
+        <p>{pm.tree.claimConfirmRestore(overwritten.length)}</p>
+        <Button variant="danger" onclick={restoreClaim}>{pm.common.confirm}</Button>
+        <Button variant="ghost" onclick={() => (confirmingRestore = false)}
+          >{pm.common.cancel}</Button
+        >
+      </div>
+    {/if}
     {#if confirming}
       <div class="confirm" role="alertdialog" aria-label={pm.tree.confirmClear}>
         <p>{pm.tree.confirmClear} ({FIELD_LABELS[confirming]})</p>
@@ -136,6 +229,27 @@
     align-items: center;
     margin: 0 0 var(--space-3);
     color: var(--established);
+  }
+  /* Bureau sombre : l'encre du formulaire (--claim-ink) n'est mesurée que sur papier ; la
+     valeur garde ses signes de forme (Courier romain, « ») dans la couleur du texte. */
+  .claim-value {
+    color: var(--text);
+  }
+  .claim-notice {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+    margin: 0 0 var(--space-3);
+  }
+  .claim-notice.cleared {
+    color: var(--text-muted);
+  }
+  .claim-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-block-start: var(--space-4);
   }
   .stamp {
     display: flex;

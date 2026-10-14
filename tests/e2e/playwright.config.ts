@@ -1,6 +1,8 @@
 /**
  * Tests e2e (hors `npm run check`) : `npm run test:e2e`.
  * - `game` : le jeu construit contre la fixture `mini` (servers/game.mjs, port 4319) ;
+ * - `game-cases` : le jeu avec deux affaires, `mini` et `claim` (case revendiquée), port 4321 :
+ *   choix d'affaire (E04), succès et crédits par affaire, case revendiquée (`game/cases/`) ;
  * - `site` : le site prérendu (servers/static.mjs, port 4320), axe compris.
  * Chromium seulement en local (navigateurs dans PLAYWRIGHT_BROWSERS_PATH, jamais installés ici).
  */
@@ -12,6 +14,8 @@ const here = fileURLToPath(new URL('.', import.meta.url));
 const cache = resolve(here, '../../node_modules/.cache/arbre-e2e');
 const GAME = `http://localhost:${process.env.E2E_GAME_PORT ?? 4319}`;
 const SITE = `http://localhost:${process.env.E2E_SITE_PORT ?? 4320}`;
+const CASES_PORT = process.env.E2E_CASES_PORT ?? '4321';
+const CASES = `http://localhost:${CASES_PORT}`;
 
 export default defineConfig({
   testDir: here,
@@ -27,7 +31,13 @@ export default defineConfig({
     {
       name: 'game',
       testDir: resolve(here, 'game'),
+      testIgnore: '**/cases/**',
       use: { ...devices['Desktop Chrome'], baseURL: GAME, viewport: { width: 1440, height: 900 } },
+    },
+    {
+      name: 'game-cases',
+      testDir: resolve(here, 'game/cases'),
+      use: { ...devices['Desktop Chrome'], baseURL: CASES, viewport: { width: 1440, height: 900 } },
     },
     {
       name: 'site',
@@ -42,6 +52,14 @@ export default defineConfig({
       url: GAME,
       timeout: 240_000,
       reuseExistingServer: !process.env.CI,
+    },
+    {
+      command: 'node tests/e2e/servers/game.mjs',
+      cwd: resolve(here, '../..'),
+      url: CASES,
+      timeout: 240_000,
+      reuseExistingServer: !process.env.CI,
+      env: { E2E_FIXTURES: 'mini,claim', E2E_BUILD: 'cases', E2E_GAME_PORT: CASES_PORT },
     },
     {
       command: 'node tests/e2e/servers/static.mjs',
