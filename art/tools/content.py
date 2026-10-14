@@ -36,6 +36,14 @@ DESCRIPTIONS = {
                         'Mérande, lycée de jeunes filles.',
     'hautcorvin': "Ville de montagne de la haute vallée de l'Orvelle : verreries, garnison, papeterie "
                   "d'apprentissage.",
+    'vernezac': "Village de la haute vallée, sur la Vèze, torrent qui descend des crêtes vers l'Orvelle : "
+                'halle des fours des Verreries de Hautcorvin, auberge, église, école, bureau de poste, '
+                'brigade des douanes, compagnie des guides.',
+    'pas-de-l-ourse': 'Brèche dans la crête des monts Corvins, au sud du col de Corvenne, sur la frontière : '
+                      'borne gravée, croix de fer au lacet ; refuge de montagne un peu en contrebas, côté '
+                      'velmarchois.',
+    'dalvezac': 'Hameau thalbère de charbonniers dans la vallée de la Dalva, à l\'écart de la route du col '
+                '(Dalvica en thalbère) : maisons de bois, meules, école, cimetière.',
     'col-de-corvenne': 'Passage des monts Corvins vers la Thalberie : fortins de la guerre des Cols, croix des '
                        'morts.',
     'monts-corvins': "Chaîne du sud-est où naît l'Orvelle : sommets enneigés, forêts de pins.",

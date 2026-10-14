@@ -1,0 +1,12 @@
+{
+  "id": "dalvezac",
+  "name": "Dalvezac",
+  "kind": "village",
+  "position": {
+    "x": 0.945,
+    "y": 0.722
+  },
+  "description": "Hameau thalbère de charbonniers dans la vallée de la Dalva, à l'écart de la route du col (Dalvica en thalbère) : maisons de bois, meules, école, cimetière.",
+  "focusZoom": 3.4,
+  "hitRadius": 22
+}

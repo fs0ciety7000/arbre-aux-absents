@@ -95,6 +95,9 @@ def build():
     r = rng('relief')
     fld = world.field()
     mask = world.full_mask()
+    # Les ajouts de l'affaire 2 effacent ce qui les recouvre sans changer le tirage (graine) : tout
+    # est tiré comme à la première gravure, puis on ne grave pas ce qui tombe sous l'overlay.
+    over = world.overlay_mask()
     used = Mask(3.0)
     used.g[:] = mask.g
     for name, (hx, hy) in world.HAMLETS.items():
@@ -130,15 +133,17 @@ def build():
                 for qu, qv in q:
                     uu, vv = u0 + qu * cw + r.uniform(-0.6, 0.6), v0 + qv * ch + r.uniform(-0.6, 0.6)
                     pts.append((cx + uu * ca - vv * sa, cy + uu * sa + vv * ca))
+                hidden = over.hit(x, y, 5)
                 if r.random() < 0.35:
-                    wheat += d_poly(pts, True)
+                    wheat += '' if hidden else d_poly(pts, True)
                 else:
-                    fields_o += d_poly(pts, True)
+                    fields_o += '' if hidden else d_poly(pts, True)
                 if r.random() < 0.6:
                     # sillons parallèles à un côté
                     (ax, ay), (bx, by), (cx2, cy2), (dx2, dy2) = pts
                     for t in (0.2, 0.4, 0.6, 0.8):
-                        furrows += d_seg(ax + (dx2 - ax) * t, ay + (dy2 - ay) * t, bx + (cx2 - bx) * t, by + (cy2 - by) * t)
+                        if not hidden:
+                            furrows += d_seg(ax + (dx2 - ax) * t, ay + (dy2 - ay) * t, bx + (cx2 - bx) * t, by + (cy2 - by) * t)
                 fmask.circle(x, y, 5)
     o.append(path('wash-safran', wheat, fill_opacity='0.35'))
     o.append(path('wash-sauge', fields_o, fill_opacity='0.25'))
@@ -229,10 +234,12 @@ def build():
             h = w * r.uniform(0.28, 0.42)
             if not fld.is_land(x, y, 4) or used.hit(x, y - h / 2, w * 0.45):
                 continue
+            hidden = over.hit(x, y - h / 2, w * 0.45)
             # arc du sommet
-            hill_out += f'M{f(x - w / 2)} {f(y)}q{f(w * 0.45)} {f(-h * 2)} {f(w)} 0'
+            if not hidden:
+                hill_out += f'M{f(x - w / 2)} {f(y)}q{f(w * 0.45)} {f(-h * 2)} {f(w)} 0'
             # hachures côté est (ombre)
-            m = 5
+            m = 0 if hidden else 5
             for j in range(1, m + 1):
                 t = 0.5 + 0.45 * j / (m + 1)
                 px = x - w / 2 + w * (0.45 * 2 * t * (1 - t) + t * t)
@@ -263,14 +270,19 @@ def build():
             row += 1
         pts.sort(key=lambda p: p[1])
         for x, y in pts:
+            hidden = over.hit(x, y, 2.4)
             if kind == 'feuillu':
                 rr = r.uniform(2.3, 3.1)
+                if hidden:
+                    continue
                 crowns += (f'M{f(x - rr)} {f(y)}a{f(rr)} {f(rr * 0.92)} 0 1 1 {f(2 * rr)} 0'
                            f'a{f(rr)} {f(rr * 0.92)} 0 1 1 {f(-2 * rr)} 0z')
                 trunks += f'M{f(x)} {f(y + rr * 0.9)}v{f(1.6)}'
                 shades += f'M{f(x + rr * 0.15)} {f(y + rr * 0.85)}a{f(rr)} {f(rr)} 0 0 0 {f(rr * 0.8)} {f(-rr * 1.1)}'
             else:
                 s = r.uniform(2.2, 3.0)
+                if hidden:
+                    continue
                 pines += f'M{f(x)} {f(y - s * 2)}l{f(s * 0.9)} {f(s * 2)}h{f(-s * 1.8)}z'
                 trunks += f'M{f(x)} {f(y)}v{f(1.4)}'
         for x, y in pts:
@@ -298,13 +310,41 @@ def build():
         gy_ += 11
     peaks.sort()
     pk_used = Mask(3.0)
+    kept = []
     for y, x, w, h in peaks:
         if pk_used.hit(x, y - h * 0.5, w * 0.12):
             continue
         body, shadow, outline, snow = peak(x, y, w, h, r, r.uniform(-0.08, 0.1))
+        pk_used.circle(x, y - h * 0.5, w * 0.16)
+        if over.hit(x, y - h * 0.3, w * 0.17):
+            continue
+        kept.append((y, x, w, h, body, shadow, outline, snow))
+    # Regarnissage (affaire 2) : petits sommets, tirage à part, dans les trouées laissées par l'overlay.
+    r2 = rng('relief-overlay')
+    kmask = Mask(3.0)
+    for y, x, w, h, *_ in kept:
+        kmask.circle(x, y - h * 0.45, w * 0.3)
+    fr = list(world.frontier())
+    gy_ = 0.70 * H
+    while gy_ < 0.82 * H:
+        gx_ = 0.90 * W
+        while gx_ < 0.99 * W:
+            x, y = gx_ + r2.uniform(-5, 5), gy_ + r2.uniform(-3, 3)
+            w = r2.uniform(16, 26)
+            h = w * r2.uniform(0.5, 0.65)
+            d, _ = dist_polyline(x, y, spine)
+            east = x > max(p[0] for p in fr if abs(p[1] - y) < 6) + w * 0.6 if any(abs(p[1] - y) < 6 for p in fr) else False
+            if (east and d < 110 and fld.is_land(x, y, 2) and not used.hit(x, y - h * 0.45, w * 0.3)
+                    and not over.hit(x, y - h * 0.4, w * 0.36) and not kmask.hit(x, y - h * 0.45, w * 0.3)
+                    and math.hypot(x - colx, y - coly) > 30):
+                kept.append((y, x, w, h) + peak(x, y, w, h, r2, r2.uniform(-0.08, 0.1)))
+                kmask.circle(x, y - h * 0.45, w * 0.32)
+            gx_ += 12
+        gy_ += 9
+    kept.sort(key=lambda k: k[0])
+    for y, x, w, h, body, shadow, outline, snow in kept:
         o.append(path('paper', body))
         o.append(path('hatch', shadow))
         o.append(path('ink-soft', outline + snow, stroke_width='0.75' if h > 20 else '0.6'))
-        pk_used.circle(x, y - h * 0.5, w * 0.16)
     o.append('</svg>')
     return ''.join(o)

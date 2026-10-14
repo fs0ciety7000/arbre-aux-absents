@@ -311,6 +311,13 @@ export function renderFigure(input, { prefix, mode = 'color' } = {}) {
   const earPts = s.marks.bigEars
     ? [[1.12, -0.16], [1.34, -0.3], [1.6, -0.14], [1.6, 0.18], [1.48, 0.4], [1.34, 0.5], [1.18, 0.44]]
     : [[1.14, -0.12], [1.28, -0.2], [1.43, -0.08], [1.42, 0.16], [1.36, 0.34], [1.29, 0.45], [1.16, 0.42]];
+  if (s.marks.lobe === 'free') {
+    // lobe détaché : il pend sous l'attache, encoche nette
+    earPts.splice(4, 3, [1.4, 0.36], [1.37, 0.5], [1.29, 0.56], [1.22, 0.5], [1.235, 0.43, 1], [1.16, 0.42]);
+  } else if (s.marks.lobe === 'attached') {
+    // lobe adhérent : le bord descend en biais et se fond dans la joue
+    earPts.splice(4, 3, [1.38, 0.3], [1.3, 0.4], [1.18, 0.47]);
+  }
   const earD = smooth(U(earPts), false);
   const drawEar = () => {
     const ed = `${earD}Z`;
@@ -407,7 +414,11 @@ export function renderFigure(input, { prefix, mode = 'color' } = {}) {
     let iris = '';
     // ombre de la paupière sur le blanc
     iris += path('ombre', smooth([[I[0], I[1] - b], [O[0], O[1] - b], [O[0], O[1] + 0.25 * b], [x, y - 0.35 * b], [I[0], I[1] + 0.1 * b]], true));
-    if (!sp.eyes.light) iris += path('ombre', ell(ix, iy, rx, ri)) + path('ombre', ell(ix, iy, rx, ri));
+    // couleur d'iris (affaire 2) : 'pale' = gris très clair (plus clair que la peau sur un tirage),
+    // 'dark' = noir. Sans `iris`, rendu historique.
+    if (sp.eyes.iris === 'pale') iris += path(photo ? 'rehaut' : 'wash-ardoise', ell(ix, iy, rx, ri)) + (photo ? '' : path('rehaut', ell(ix, iy, rx * 0.8, ri * 0.8)));
+    else if (sp.eyes.iris === 'dark') iris += path('hair-noir', ell(ix, iy, rx, ri)) + path('ombre', ell(ix, iy, rx, ri));
+    if (!sp.eyes.light && sp.eyes.iris !== 'pale') iris += path('ombre', ell(ix, iy, rx, ri)) + path('ombre', ell(ix, iy, rx, ri));
     let rays = '';
     for (let q = 0; q < 10; q++) {
       const t = (q / 10) * Math.PI * 2;
@@ -448,7 +459,7 @@ export function renderFigure(input, { prefix, mode = 'color' } = {}) {
     const arch = s.brows.arch ?? 0.5;
     const lift = s.brows.lift ?? 0;
     const brow = ([x, y], a, inDir, near) => {
-      const yb = y - (0.2 + lift * 0.04) * H;
+      const yb = y - (0.2 + (lift + (!near ? (s.brows.liftFar ?? 0) : 0)) * 0.04) * H;
       const pts = [
         [x + inDir * 1.0 * a, yb + 0.02 * H],
         [x + inDir * 0.15 * a, yb - (0.035 + 0.035 * arch) * H],
@@ -481,6 +492,22 @@ export function renderFigure(input, { prefix, mode = 'color' } = {}) {
     };
     brow(ex1, a1 / eyeSize, -1, true);
     brow(ex2, a2 / eyeSize, 1, false);
+    if (s.brows.joined) {
+      // sourcils presque joints au-dessus du nez : pont de poils entre les deux têtes
+      const yb1 = ex1[1] - (0.2 + lift * 0.04) * H + 0.02 * H;
+      const yb2 = ex2[1] - (0.2 + lift * 0.04) * H + 0.02 * H;
+      const xa = ex2[0] + (a2 / eyeSize) * 1.0;
+      const xb = ex1[0] - (a1 / eyeSize) * 1.0;
+      const t = 0.75 + 0.55 * thick;
+      const bridge = smooth([[xa - 0.5, yb2 - t * 0.35], [(xa + xb) / 2, Math.min(yb1, yb2) + 0.2], [xb + 0.5, yb1 - t * 0.35], [xb + 0.5, yb1 + t * 0.3], [(xa + xb) / 2, Math.max(yb1, yb2) + t * 0.45], [xa - 0.5, yb2 + t * 0.3]], true);
+      emit(path(browCls, bridge));
+      let hd = '';
+      for (let q = 0; q < 6; q++) {
+        const x0 = lerp(xa, xb, (q + 0.5) / 6);
+        hd += `M${f(x0 + r.jit(0.3))} ${f(lerp(yb2, yb1, (q + 0.5) / 6) + 0.6)}l${f(r.jit(0.5))} ${f(-1.4)}`;
+      }
+      emit(path('ink-soft', hd, { 'stroke-width': 0.45 }));
+    }
   }
 
   // nez
@@ -560,6 +587,19 @@ export function renderFigure(input, { prefix, mode = 'color' } = {}) {
       emit(path('ink-faint', smooth(U([[0.16, nb - 0.03], [0.4, nb + 0.12], [0.55, mv + 0.07 - sm * 0.02]])), { 'stroke-width': ag > 0.5 ? 0.7 : undefined }));
       emit(path('ink-faint', smooth(U([[-0.34, nb + 0.03], [-0.4, mv + 0.04]]))));
     }
+    if (s.marks.soot) {
+      // suie de charbonnier incrustée dans les rides et sous les pommettes
+      const zone = U([[-0.6, -0.5], [0.9, -0.55], [1.05, 0.5], [0.6, 0.62], [0.3, 0.45], [-0.5, 0.45]]);
+      emit(clipped(headD, path('stipple', smooth(zone, true)) + path('ombre', smooth(U([[0.35, 0.38], [0.95, 0.42], [0.9, 0.62], [0.45, 0.52]]), true))));
+      let wr = '';
+      for (const v of [-0.44, -0.53, -0.62]) wr += smooth(U([[-0.4, v + 0.02], [0.2, v - 0.03], [0.8, v + 0.02]]));
+      emit(path('ink-soft', wr, { 'stroke-width': 0.6 }));
+    }
+    if (s.marks.dimple) {
+      // fossette unique, joue gauche de la personne (côté proche, à droite de l'image)
+      emit(path('ombre', ell(...P(0.68, mv - 0.005), 1.1, 2.2)));
+      emit(path('ink-soft', smooth(U([[0.64, mv - 0.085], [0.69, mv - 0.02], [0.66, mv + 0.05]])), { 'stroke-width': 0.85 }));
+    }
     if (s.marks.dimples) {
       emit(path('ink-soft', smooth(U([[0.63, mv - 0.08], [0.67, mv - 0.02], [0.64, mv + 0.04]]))));
       emit(path('ink-faint', smooth(U([[-0.4, mv - 0.06], [-0.43, mv + 0.02]]))));
@@ -627,6 +667,8 @@ export function renderFigure(input, { prefix, mode = 'color' } = {}) {
 
   /* ── 8. Chevelure, mèche ── */
   hair.front?.(hctx);
+  if (s.hairOpt.baldTop) HAIR_MARKS.baldTop(hctx);
+  if (s.hairOpt.cowlick && !s.hat?.back) HAIR_MARKS.cowlick(hctx);
   if (s.marks.meche && hair.meche !== false) {
     const m = s.marks.meche === true ? (hair.mecheZone ?? DEFAULT_MECHE) : s.marks.meche;
     const md = smooth(U(m.zone), true);
@@ -636,16 +678,31 @@ export function renderFigure(input, { prefix, mode = 'color' } = {}) {
   if (!hair.coversEar || s.marks.bigEars) drawEar();
 
   /* ── 9. Coiffe ── */
-  if (s.hat) HATS[s.hat.type]?.(hctx, s.hat);
+  if (s.hat) {
+    const n0 = out.length;
+    HATS[s.hat.type]?.(hctx, s.hat);
+    if (s.hat.back) {
+      // coiffe repoussée en arrière : remontée et basculée, le front reste visible
+      const [hx, hy] = P(0.6, -1.0);
+      const seg = out.splice(n0);
+      const [px, py] = P(1.5, -0.7);
+      out.push(`<g transform="rotate(${f(s.hat.back * 14)} ${f(px)} ${f(py)}) translate(${f(s.hat.back * 1.5)} ${f(-s.hat.back * 0.05 * H)})">${seg.join('')}</g>`);
+      void hx;
+      void hy;
+      // l'épi dépasse sous la visière relevée
+      if (s.hairOpt.cowlick) HAIR_MARKS.cowlick(hctx);
+    }
+  }
 
   /* ── 10. Lunettes, bijoux ── */
   if (s.glasses) GLASSES[s.glasses.type]?.({ ...hctx, ex1, ex2, a1, a2 }, s.glasses);
   if (s.earrings) EARRINGS[s.earrings.type]?.(hctx, s.earrings);
 
   /* ── 11. Mains, avant-bras, objets ── */
+  if (s.extras) for (const x of s.extras) if (x.under) EXTRAS[x.type]?.(bctx, x);
   for (const h of s.hands ?? []) drawHand(h);
   for (const a of s.arms ?? []) drawArm(a);
-  if (s.extras) for (const x of s.extras) EXTRAS[x.type]?.(bctx, x);
+  if (s.extras) for (const x of s.extras) if (!x.under) EXTRAS[x.type]?.(bctx, x);
 
   function drawHand(h) {
     const side = h.side === 'L' ? 1 : -1; // L = main gauche (côté droit de l'image)
@@ -726,6 +783,17 @@ export function renderFigure(input, { prefix, mode = 'color' } = {}) {
       pp('blush', bd);
       pp('ink-faint', bd);
       pp('ink-faint', `M${f(-1.5 * side)} -7.5q1.5 -1.5 3 -0.4M${f(0)} -5.5q1.5 -1 3 0`);
+      // brûlure luisante (affaire 2) : reflet de gouache sur la peau cicatrisée
+      if (h.burn === 'shiny') pp('rehaut', smooth([[-1 * side, -9.4], [2 * side, -9.8], [3.4 * side, -8], [1 * side, -8.2]], true));
+    }
+    if (h.holds === 'chalk') {
+      pp('paper', poly([[-2, -30], [1, -31], [2.2, -22], [-0.8, -21]], true));
+      pp('rehaut', poly([[-2, -30], [1, -31], [2.2, -22], [-0.8, -21]], true));
+      pp('ink-soft', poly([[-2, -30], [1, -31], [2.2, -22], [-0.8, -21]], true), { 'stroke-width': 0.5 });
+    } else if (h.holds === 'pencil') {
+      pp('wash-safran', poly([[-1.2, -36], [0.6, -36.4], [1.8, -18], [0, -17.6]], true));
+      pp('ink-soft', poly([[-1.2, -36], [0.6, -36.4], [1.8, -18], [0, -17.6]], true), { 'stroke-width': 0.45 });
+      pp('ink', poly([[-1.2, -36], [-0.2, -39.4], [0.6, -36.4]], true), { fill: 'currentColor', 'stroke-width': 0.3 });
     }
     if (h.pincushion) {
       const cd = smooth([[-8, 3], [-7.5, -1.4], [0, -4], [7.5, -1.4], [8, 3]], true);
@@ -2146,6 +2214,526 @@ const EXTRAS = {
     void o;
   },
 };
+
+/* ───────────────────────── Ajouts de l'affaire 2 (Hautcorvin) ─────────────────────────
+ * Tout est à option : un portrait qui ne les demande pas est rendu à l'identique (affaire 1).
+ */
+
+const HAIR_MARKS = {
+  /** Épi : tourbillon au milieu du front qui relève une mèche (lisible à 96 px). */
+  cowlick(h) {
+    const { U, emit, path, solid, P, r } = h;
+    const [u0, v0] = h.s.hairOpt.cowlickAt ?? [0.2, -0.78];
+    const lock = smooth(U([[u0 - 0.24, v0 + 0.03], [u0 - 0.26, v0 - 0.14], [u0 - 0.14, v0 - 0.34], [u0 + 0.06, v0 - 0.4], [u0 + 0.2, v0 - 0.3], [u0 + 0.06, v0 - 0.26], [u0 - 0.02, v0 - 0.14], [u0 + 0.16, v0 - 0.1], [u0 + 0.28, v0 + 0.02], [u0 + 0.04, v0 - 0.03]]), true);
+    solid(lock, h.hairCls, 'ink', { 'stroke-width': 0.75 });
+    const [cx, cy] = P(u0, v0 - 0.08);
+    // tourbillon : spirale gravée à la racine
+    let sp = '';
+    for (let k = 0; k < 14; k++) {
+      const a = k * 0.62;
+      const rr = 0.4 + k * 0.17;
+      sp += `${k ? 'L' : 'M'}${f(cx + Math.cos(a) * rr)} ${f(cy + Math.sin(a) * rr * 0.8)}`;
+    }
+    emit(path('ink-soft', sp, { 'stroke-width': 0.5 }));
+    emit(path('ink-soft', strands([U([[u0 - 0.12, v0], [u0 - 0.08, v0 - 0.16], [u0 + 0.02, v0 - 0.26]]), U([[u0 + 0.16, v0 - 0.02], [u0 + 0.12, v0 - 0.12], [u0 + 0.08, v0 - 0.24]])], 4, r, { jit: 0.15 }), { 'stroke-width': 0.45 }));
+  },
+  /** Calvitie au sommet du crâne. */
+  baldTop(h) {
+    const { U, emit, path, solid } = h;
+    const d = smooth(U([[0.05, -1.12], [0.5, -1.27], [1.0, -1.2], [1.25, -1.0], [0.95, -0.98], [0.5, -1.02]]), true);
+    solid(d, `skin-${h.s.skin}`, null);
+    emit(path('ombre', smooth(U([[0.7, -1.24], [1.0, -1.2], [1.25, -1.0], [1.0, -1.04]]), true)));
+    emit(path('rehaut', smooth(U([[0.3, -1.18], [0.55, -1.23], [0.7, -1.2], [0.5, -1.17]]), true)));
+    emit(path('ink-soft', smooth(U([[0.0, -1.1], [0.5, -1.28], [1.05, -1.2], [1.3, -0.98]])), { 'stroke-width': 0.8 }));
+  },
+};
+
+Object.assign(HAIR, {
+  /** Chignon haut (années 1900–1940). */
+  topBun: {
+    front(h) {
+      const o = h.s.hairOpt;
+      cap(h, HAIRLINE, vol(SKULL, o.vol ?? 0.05), null, {
+        strandsN: 14,
+        guides: [
+          [[-0.68, -0.48], [-0.5, -0.9], [0.05, -1.15], [0.4, -1.3]],
+          [[0.45, -0.74], [0.5, -0.95], [0.5, -1.15], [0.5, -1.3]],
+          [[1.08, -0.4], [1.3, -0.7], [1.0, -1.1], [0.6, -1.3]],
+        ],
+        shadeZone: [[1.1, -0.6], [1.5, -0.8], [1.75, -0.3], [1.72, 0.18], [1.5, 0.52], [1.3, 0.3], [1.2, -0.2]],
+        jit: 0.2,
+      });
+      const [bx, by] = h.P(o.bunAt?.[0] ?? 0.55, o.bunAt?.[1] ?? -1.42);
+      const R = (o.bunR ?? 0.36) * h.W;
+      const bun = smooth([[bx - R, by + R * 0.3], [bx - R * 0.8, by - R * 0.6], [bx, by - R * 0.95], [bx + R * 0.85, by - R * 0.55], [bx + R, by + R * 0.3], [bx, by + R * 0.6]], true);
+      h.solid(bun, h.hairCls, 'ink', { 'stroke-width': 0.8 });
+      h.emit(h.path('ink-soft', `M${f(bx - R * 0.7)} ${f(by)}q${f(R * 0.6)} ${f(-R * 0.9)} ${f(R * 1.4)} ${f(-R * 0.3)}M${f(bx - R * 0.5)} ${f(by + R * 0.3)}q${f(R * 0.7)} ${f(-R * 0.6)} ${f(R * 1.3)} 0`, { 'stroke-width': 0.55 }));
+      h.emit(h.path('ombre', smooth([[bx, by + R * 0.6], [bx + R, by + R * 0.3], [bx + R * 0.85, by - R * 0.55], [bx + R * 0.3, by]], true)));
+      if (o.loose) h.emit(h.path('ink-soft', `${smooth(h.U([[-0.66, -0.5], [-0.78, -0.25], [-0.7, -0.05]]))}${smooth(h.U([[1.1, -0.2], [1.16, 0.05], [1.1, 0.25]]))}`, { 'stroke-width': 0.6 }));
+    },
+  },
+  /** Chignon bas, oreilles dégagées. */
+  lowBun: {
+    back(h) {
+      const d = smooth(h.U([[1.45, -0.05], [1.85, -0.12], [2.02, 0.15], [1.92, 0.45], [1.62, 0.52], [1.45, 0.3]]), true);
+      h.solid(d, h.hairCls, 'ink', { 'stroke-width': 0.85 });
+      h.emit(h.path('ink-soft', `${smooth(h.U([[1.55, 0.0], [1.88, 0.05], [1.9, 0.35]]))}${smooth(h.U([[1.6, 0.15], [1.78, 0.22], [1.7, 0.42]]))}`, { 'stroke-width': 0.55 }));
+    },
+    front(h) {
+      const hl = [[-0.7, -0.46], [-0.52, -0.66], [-0.2, -0.76], [0.2, -0.8, 1], [0.55, -0.74], [0.92, -0.6], [1.08, -0.36], [1.12, -0.1], [1.16, 0.12], [1.32, 0.3]];
+      cap(h, hl, vol(SKULL, h.s.hairOpt.vol ?? 0.03), null, {
+        strandsN: 13,
+        guides: [
+          [[0.15, -0.8], [0.6, -0.95], [1.2, -0.9], [1.6, -0.5], [1.75, 0.0]],
+          [[0.9, -0.6], [1.15, -0.5], [1.4, -0.3], [1.6, -0.05], [1.65, 0.2]],
+        ],
+        shadeZone: [[1.1, -0.6], [1.5, -0.8], [1.75, -0.3], [1.72, 0.18], [1.5, 0.52], [1.3, 0.3], [1.2, -0.2]],
+        jit: 0.2,
+      });
+      h.emit(h.path('ink-soft', strands([h.U([[0.15, -0.8], [-0.3, -0.76], [-0.62, -0.5]]), h.U([[0.38, -1.25], [-0.3, -1.12], [-0.7, -0.6]])], 5, h.r, { jit: 0.2 }), { 'stroke-width': 0.5 }));
+    },
+  },
+  /** Tresse unique ramenée sur l'épaule (côté proche). */
+  braidShoulder: {
+    front(h) {
+      HAIR.lowBun.front(h);
+      braid(h, [[1.42, 0.2], [1.5, 0.65], [1.4, 1.15], [1.2, 1.7], [1.05, 2.3]], 7.5 * (h.W / 28.8), h.hairCls);
+    },
+  },
+});
+
+Object.assign(BEARD, {
+  /** Barbe en collier : de l'oreille au menton le long de la mâchoire, lèvre rasée. */
+  collar(h) {
+    const top = [[1.12, -0.05], [1.0, 0.4], [0.75, 0.74], [0.35, 0.92], [0.0, 0.96], [-0.3, 0.86], [-0.6, 0.62]];
+    const bot = [[1.24, 0.0], [1.2, 0.5], [0.95, 0.9], [0.45, 1.12], [0.05, 1.16], [-0.38, 1.04], [-0.72, 0.68]];
+    hairMass(h, top, bot, 28, { bulge: 0.2, jit: 0.2 });
+    h.emit(h.path('stipple', smooth(h.U([...top, ...bot.slice().reverse()]), true)));
+  },
+});
+
+Object.assign(MOUSTACHE, {
+  /** Moustache tombante (de part et d'autre de la bouche). */
+  droop(h, o, mv, nb) {
+    const top = [[-0.36, mv + 0.16], [-0.34, mv - 0.02], [-0.18, nb + 0.06], [0.05, nb + 0.07], [0.32, nb + 0.06], [0.58, mv - 0.02], [0.6, mv + 0.18]];
+    const bot = [[-0.31, mv + 0.17], [-0.3, mv + 0.05], [-0.16, mv + 0.02], [0.05, mv + 0.03], [0.3, mv + 0.02], [0.5, mv + 0.06], [0.54, mv + 0.19]];
+    hairMass(h, top, bot, 22, { bulge: 0.2, cls: o.cls });
+  },
+  /** Fer à cheval : moustache dont les pointes descendent jusqu'au menton. */
+  horseshoe(h, o, mv, nb) {
+    const top = [[-0.38, 0.98], [-0.38, mv - 0.02], [-0.18, nb + 0.06], [0.05, nb + 0.07], [0.32, nb + 0.06], [0.6, mv - 0.02], [0.62, 0.96]];
+    const bot = [[-0.29, 0.98], [-0.3, mv + 0.05], [-0.16, mv + 0.02], [0.05, mv + 0.03], [0.3, mv + 0.02], [0.52, mv + 0.06], [0.52, 0.97]];
+    hairMass(h, top, bot, 30, { bulge: 0.15, cls: o.cls });
+  },
+  /** Moustache courte, taillée. */
+  short(h, o, mv, nb) {
+    const top = [[-0.24, mv - 0.03], [-0.12, nb + 0.07], [0.05, nb + 0.075], [0.25, nb + 0.07], [0.42, mv - 0.03]];
+    const bot = [[-0.24, mv - 0.005], [-0.1, mv - 0.02], [0.05, mv - 0.01], [0.25, mv - 0.02], [0.42, mv - 0.005]];
+    hairMass(h, top, bot, 14, { bulge: 0.1, jit: 0.15, cls: o.cls });
+  },
+  /** Moustache épaisse (guide). */
+  thick(h, o, mv, nb) {
+    const top = [[-0.4, mv + 0.02], [-0.2, nb + 0.04], [0.05, nb + 0.05], [0.32, nb + 0.04], [0.64, mv + 0.02]];
+    const bot = [[-0.42, mv + 0.09], [-0.2, mv + 0.04], [0.05, mv + 0.05], [0.34, mv + 0.04], [0.68, mv + 0.1]];
+    hairMass(h, top, bot, 24, { bulge: 0.4, cls: o.cls });
+  },
+});
+
+Object.assign(HATS, {
+  /** Cornette blanche à larges ailes (hospitalières). */
+  cornette(h) {
+    const { U, emit, path, solid, shade } = h;
+    const hood = smooth(U([[-0.74, 0.1], [-0.84, -0.5], [-0.62, -1.0], [0.4, -1.16], [1.4, -1.06], [1.82, -0.6], [1.86, 0.2], [1.6, 0.7], [1.2, 0.6], [1.15, -0.2], [0.8, -0.62], [0.1, -0.7], [-0.55, -0.45], [-0.62, 0.1]]), true);
+    solid(hood, 'paper', 'ink');
+    shade(U([[1.2, -1.0], [1.82, -0.6], [1.86, 0.2], [1.6, 0.7], [1.25, 0.5], [1.3, -0.3]]), { angle: 40, sp: 1.6, cls: 'ink-faint' });
+    // ailes empesées, larges et presque horizontales, relevées aux pointes
+    const wL = smooth(U([[-0.62, -1.02], [-1.4, -1.12], [-2.3, -1.2], [-2.9, -1.38, 1], [-2.7, -0.98], [-2.0, -0.82], [-1.2, -0.74], [-0.72, -0.62]]), true);
+    const wR = smooth(U([[1.35, -1.12], [2.1, -1.22], [2.9, -1.3], [3.5, -1.48, 1], [3.3, -1.02], [2.6, -0.78], [2.0, -0.62], [1.7, -0.5]]), true);
+    for (const w of [wL, wR]) {
+      solid(w, 'paper', 'ink');
+      emit(path('ink-faint', w.replace(/Z$/, ''), { transform: 'translate(0.6 1)' }));
+    }
+    shade(U([[2.0, -0.62], [2.6, -0.78], [3.3, -1.02], [3.5, -1.48], [2.6, -1.0]]), { angle: 75, sp: 1.6, cls: 'ink-faint' });
+    shade(U([[-1.2, -0.74], [-2.0, -0.82], [-2.7, -0.98], [-2.9, -1.38], [-2.0, -1.0]]), { angle: 75, sp: 1.8, cls: 'ink-faint' });
+    emit(path('ink-soft', smooth(U([[-0.6, -0.55], [0.1, -0.78], [0.8, -0.7], [1.12, -0.25]])), { 'stroke-width': 0.8 }));
+  },
+  /** Bonnet noir à brides nouées sous le menton. */
+  bonnetBrides(h, o) {
+    const { U, emit, path, solid } = h;
+    const d = smooth(U([[-0.76, -0.25], [-0.85, -0.85], [-0.4, -1.3], [0.45, -1.42], [1.3, -1.25], [1.85, -0.7], [1.88, 0.1], [1.6, 0.55], [1.25, 0.3], [1.12, -0.3], [0.7, -0.66], [0.0, -0.74], [-0.55, -0.55]]), true);
+    solid(d, o.cls ?? 'hair-noir', 'ink');
+    emit(path('hatch-dense', d));
+    emit(path('ink-soft', strands([U([[-0.6, -0.6], [0.2, -0.88], [1.1, -0.66], [1.4, 0.0]]), U([[-0.5, -1.2], [0.45, -1.36], [1.6, -0.9], [1.8, 0.1]])], 4, h.r, { jit: 0.2 }), { 'stroke-width': 0.5 }));
+    // brides
+    const b1 = smooth(U([[1.3, 0.35], [1.15, 0.8], [0.7, 1.08], [0.62, 1.0], [1.02, 0.74], [1.18, 0.32]]), true);
+    const b2 = smooth(U([[-0.66, 0.0], [-0.55, 0.55], [-0.1, 1.05], [0.0, 0.98], [-0.42, 0.52], [-0.56, 0.0]]), true);
+    for (const b of [b1, b2]) solid(b, o.cls ?? 'hair-noir', 'ink-soft');
+    const [kx, ky] = h.P(0.45, 1.1);
+    solid(ell(kx, ky, 2.6, 1.8), o.cls ?? 'hair-noir', 'ink');
+    emit(path('ink', `M${f(kx - 1)} ${f(ky + 1.5)}l-1.6 5M${f(kx + 1)} ${f(ky + 1.5)}l1.2 5.4`, { 'stroke-width': 1.2 }));
+  },
+  /** Bonnet de feutre thalbère, bord roulé. */
+  feltRoll(h, o) {
+    const { U, emit, path, solid, shade } = h;
+    const crown = smooth(U([[-0.74, -0.6], [-0.7, -1.1], [-0.2, -1.45], [0.6, -1.52], [1.3, -1.35], [1.72, -0.9], [1.7, -0.5], [0.5, -0.66]]), true);
+    solid(crown, o.cls ?? 'wash-sienne', 'ink');
+    emit(path('stipple', crown));
+    shade(U([[0.9, -1.45], [1.3, -1.35], [1.72, -0.9], [1.7, -0.5], [1.1, -0.6]]), { angle: 50, sp: 1.3, cls: 'ink-soft', sw: 0.5 });
+    const roll = smooth(U([[-0.8, -0.72], [0.5, -0.8], [1.76, -0.62], [1.78, -0.42], [0.5, -0.56], [-0.78, -0.5]]), true);
+    solid(roll, o.cls ?? 'wash-sienne', 'ink');
+    emit(path('hatch', roll));
+    emit(path('ink-faint', smooth(U([[-0.78, -0.62], [0.5, -0.69], [1.76, -0.52]]))));
+    shade(U([[-0.75, -0.5], [0.5, -0.54], [1.1, -0.45], [1.1, -0.36], [0.3, -0.42], [-0.7, -0.4]]), { angle: 10, sp: 1.2, ombre: true });
+  },
+  /** Chapeau rond (melon bas). */
+  roundHat(h, o) {
+    const { U, emit, path, solid, P, shade } = h;
+    const [bx, by] = P(0.45, -0.8);
+    const W = h.W;
+    emit(`<g transform="rotate(-6 ${f(bx)} ${f(by)})">${path('paper', ell(bx, by, 1.75 * W, 0.34 * W))}${path(o.cls ?? 'hair-noir', ell(bx, by, 1.75 * W, 0.34 * W))}${path('ink', ell(bx, by, 1.75 * W, 0.34 * W))}${path('ink-faint', ell(bx, by - 1, 1.5 * W, 0.24 * W))}</g>`);
+    const crown = smooth(U([[-0.6, -0.86], [-0.62, -1.25], [-0.2, -1.6], [0.5, -1.68], [1.2, -1.55], [1.5, -1.2], [1.46, -0.84], [0.45, -0.76]]), true);
+    solid(crown, o.cls ?? 'hair-noir', 'ink');
+    emit(path('hatch', crown));
+    emit(path('rehaut', smooth(U([[-0.3, -1.45], [0.1, -1.6], [0.0, -1.5], [-0.35, -1.3]]), true)));
+    solid(smooth(U([[-0.62, -0.92], [0.45, -0.84], [1.47, -0.9], [1.48, -1.02], [0.45, -0.96], [-0.62, -1.04]]), true), 'hair-noir', 'ink-soft');
+    shade(U([[-0.8, -0.6], [0.4, -0.5], [1.3, -0.5], [1.2, -0.32], [0.3, -0.32], [-0.75, -0.42]]), { angle: 5, sp: 1.1, ombre: true });
+  },
+  /** Feutre de guide à plume de tétras. */
+  tyrolean(h, o) {
+    HATS.feltBrim(h, { cls: o.cls ?? 'wash-sauge' });
+    const { U, emit, path, solid } = h;
+    // plume de tétras en lyre, piquée dans le ruban, côté droit de l'image
+    const q = smooth(U([[1.3, -1.05], [1.75, -1.5], [2.05, -2.0], [2.0, -2.3], [1.85, -1.95], [1.55, -1.45], [1.25, -1.0]]), true);
+    solid(q, 'hair-noir', 'ink');
+    const q2 = smooth(U([[1.3, -1.05], [1.95, -1.25], [2.4, -1.6], [2.42, -1.85], [2.2, -1.55], [1.75, -1.2], [1.28, -0.98]]), true);
+    solid(q2, 'hair-noir', 'ink');
+    emit(path('rehaut', smooth(U([[1.5, -1.3], [1.85, -1.8], [1.8, -1.85], [1.45, -1.32]]), true)));
+  },
+  /** Bonnet de laine (à pompon : `pompom`, `flat` pour un pompon plat). */
+  knit(h, o) {
+    const { U, emit, path, solid, shade, P, r } = h;
+    const d = smooth(U([[-0.8, -0.45], [-0.82, -0.95], [-0.4, -1.4], [0.45, -1.52], [1.3, -1.38], [1.8, -0.9], [1.82, -0.35], [0.5, -0.56]]), true);
+    solid(d, o.cls ?? 'wash-carmin', 'ink');
+    let rib = '';
+    for (let q = 0; q < 14; q++) {
+      const t = q / 13;
+      const [x0, y0] = P(lerp(-0.78, 1.78, t), lerp(-0.55, -0.48, t) - 0.02);
+      const [x1, y1] = P(lerp(-0.4, 1.2, t) + 0.0, -1.38 + Math.sin(t * Math.PI) * -0.12);
+      rib += `M${f(x0)} ${f(y0)}Q${f((x0 + x1) / 2 + 2)} ${f((y0 + y1) / 2)} ${f(x1)} ${f(y1)}`;
+    }
+    emit(h.clipped(d, path('ink-faint', rib)));
+    shade(U([[1.0, -1.4], [1.3, -1.38], [1.8, -0.9], [1.82, -0.35], [1.2, -0.45]]), { angle: 50, sp: 1.4, cls: 'ink-soft', sw: 0.5 });
+    const band = smooth(U([[-0.84, -0.66], [0.5, -0.76], [1.84, -0.56], [1.86, -0.3], [0.5, -0.5], [-0.82, -0.4]]), true);
+    solid(band, o.cls ?? 'wash-carmin', 'ink');
+    let br = '';
+    for (let q = 0; q <= 22; q++) {
+      const t = q / 22;
+      const [x0, y0] = P(lerp(-0.82, 1.85, t), lerp(-0.64, -0.55, t));
+      br += `M${f(x0)} ${f(y0)}l0 ${f(0.2 * h.H)}`;
+    }
+    emit(h.clipped(band, path('ink-soft', br, { 'stroke-width': 0.5 })));
+    if (o.stripe) emit(h.clipped(d, path(o.stripe, smooth(U([[-0.9, -0.9], [0.5, -1.06], [1.9, -0.82], [1.9, -0.7], [0.5, -0.94], [-0.9, -0.78]]), true))));
+    if (o.pompom) {
+      const [px, py] = P(0.5, -1.62);
+      const R = o.flat ? 0.22 * h.W : 0.3 * h.W;
+      const pd = smooth(scallop([[px - R, py], [px - R * 0.7, py - R * (o.flat ? 0.45 : 0.75)], [px, py - R * (o.flat ? 0.6 : 0.95)], [px + R * 0.75, py - R * (o.flat ? 0.45 : 0.7)], [px + R, py], [px, py + R * (o.flat ? 0.35 : 0.5)], [px - R, py]], 0.9, r), true);
+      solid(pd, o.pompomCls ?? o.cls ?? 'wash-carmin', 'ink');
+      emit(path('stipple', pd));
+    }
+  },
+});
+
+Object.assign(GLASSES, {
+  /** Petites lunettes rondes relevées sur le front. */
+  roundUp(h) {
+    const { emit, path, P } = h;
+    const W = h.W;
+    const [x1, y1] = P(0.52, -0.62);
+    const [x2, y2] = P(-0.36, -0.6);
+    emit(path('rehaut', circ(x1, y1, 0.2 * W)), path('ink', circ(x1, y1, 0.2 * W) + ell(x2, y2, 0.14 * W, 0.19 * W), { 'stroke-width': 0.75 }));
+    emit(path('ink', `M${f(x1 - 0.2 * W)} ${f(y1 - 0.5)}Q${f((x1 + x2) / 2)} ${f(y1 - 3)} ${f(x2 + 0.14 * W)} ${f(y2 - 0.5)}M${f(x1 + 0.2 * W)} ${f(y1)}L${f(P(1.18, -0.5)[0])} ${f(P(1.18, -0.5)[1])}`, { 'stroke-width': 0.75 }));
+  },
+  /** Lunettes « papillon » (monture en ailes relevées). */
+  butterfly(h, o) {
+    const { emit, path, ex1, ex2 } = h;
+    const W = h.W;
+    const lens = (x, y, rx, ry, out) => smooth([[x - out * rx * 1.25, y - ry * 1.15, 1], [x, y - ry * 0.95], [x + out * -rx, y - ry * 0.4], [x + out * -rx * 0.9, y + ry * 0.5], [x, y + ry], [x + out * rx, y + ry * 0.4], [x + out * rx * 1.05, y - ry * 0.5]], true);
+    const L1 = lens(ex1[0] + 0.5, ex1[1] + 0.6, 0.3 * W, 0.2 * W, -1);
+    const L2 = lens(ex2[0] - 0.2, ex2[1] + 0.6, 0.21 * W, 0.2 * W, 1);
+    emit(path('rehaut', L1));
+    emit(path(o.cls ?? 'hair-noir', L1), path(o.cls ?? 'hair-noir', L2));
+    emit(path('ink', L1 + L2, { 'stroke-width': 1.2 }));
+    emit(path('rehaut', ell(ex1[0] + 0.5, ex1[1] + 0.6, 0.24 * W, 0.15 * W)), path('rehaut', ell(ex2[0] - 0.2, ex2[1] + 0.6, 0.16 * W, 0.15 * W)));
+    emit(path('ink', `M${f(ex1[0] - 0.25 * W)} ${f(ex1[1])}Q${f((ex1[0] + ex2[0]) / 2)} ${f(ex1[1] - 3)} ${f(ex2[0] + 0.18 * W)} ${f(ex2[1])}M${f(ex1[0] + 0.32 * W)} ${f(ex1[1] - 1)}L${f(h.P(1.24, -0.08)[0])} ${f(h.P(1.24, -0.08)[1])}`, { 'stroke-width': 1.1 }));
+  },
+  /** Lunettes de glacier relevées sur le bonnet (verres sombres, œillères). */
+  glacier(h) {
+    const { emit, path, solid, P } = h;
+    const W = h.W;
+    const strap = smooth(h.U([[-0.82, -0.86], [0.0, -1.02], [0.9, -1.04], [1.8, -0.8], [1.78, -0.68], [0.9, -0.9], [0.0, -0.88], [-0.8, -0.72]]), true);
+    solid(strap, 'hair-noir', 'ink-soft');
+    for (const [u, v, rx] of [[-0.1, -0.98, 0.3], [0.66, -1.02, 0.34]]) {
+      const [cx, cy] = P(u, v);
+      solid(ell(cx, cy, rx * W + 1.4, 0.2 * h.H + 1.4), 'wash-sienne', 'ink');
+      solid(ell(cx, cy, rx * W, 0.2 * h.H), 'hair-noir', 'ink');
+      emit(path('rehaut', ell(cx + rx * W * 0.3, cy - 1.2, rx * W * 0.3, 1.2)));
+    }
+  },
+});
+
+Object.assign(COLLARS, {
+  /** Col relevé (imperméable) : deux pans dressés contre le cou. */
+  up(b) {
+    const { yN, nx0, nx1, solid, emit, path, P } = b;
+    const yT = P(0, 1.0)[1];
+    const cL = smooth([[nx0 + 2, yN - 3], [nx0 - 4, yT + 4], [nx0 - 10, yT - 2, 1], [nx0 - 14, yN + 6], [nx0 - 4, yN + 16]], true);
+    const cR = smooth([[nx1 - 2, yN - 5], [nx1 + 4, yT + 2], [nx1 + 12, yT - 6, 1], [nx1 + 16, yN + 4], [nx1 + 6, yN + 14]], true);
+    solid(cL, b.s.clothes.wash ?? 'wash-safran', 'ink');
+    solid(cR, b.s.clothes.wash ?? 'wash-safran', 'ink');
+    emit(path('ombre', cR), path('hatch', cR));
+  },
+});
+
+Object.assign(CLOTHES, {
+  /** Chemise col ouvert, tablier de cuir de graveur ou de verrier. */
+  leatherApron(b, o) {
+    const { yN, cm, emit, path, solid } = b;
+    torso(b, o.wash ?? 'paper-shade', o.dark ?? false);
+    COLLARS.open(b, o);
+    const bib = smooth([[cm - 20, yN + 26, 1], [cm + 24, yN + 24, 1], [cm + 27, 205, 1], [cm - 24, 205, 1]], true, 0);
+    solid(bib, o.apron ?? 'wash-sienne', 'ink');
+    emit(path('hatch', bib), path('ombre', smooth([[cm + 10, yN + 25], [cm + 24, yN + 24], [cm + 27, 205], [cm + 14, 205]], true)));
+    emit(path('ink-faint', `M${f(cm - 18)} ${f(yN + 30)}l${f(42)} ${f(-2)}`, { 'stroke-dasharray': '1 1' }));
+    emit(path('ink', `M${f(cm - 18)} ${f(yN + 27)}L${f(b.nx0 - 12)} ${f(yN + 2)}M${f(cm + 22)} ${f(yN + 25)}L${f(b.nx1 + 16)} ${f(yN)}`, { 'stroke-width': 1.8 }));
+    if (o.sleevesRolled) {
+      // manches de chemise retroussées aux bords du cadre
+      emit(path('ink-faint', smooth([[20, yN + 30], [26, yN + 70], [22, 200]]) + smooth([[140, yN + 26], [132, yN + 64], [138, 200]])));
+    }
+  },
+  /** Tablier à carreaux à bavette sur robe. */
+  checkApron(b, o) {
+    CLOTHES.dress(b, { wash: o.wash, neck: o.neck });
+    const { yN, cm, emit, path, solid, clipped } = b;
+    const bib = smooth([[cm - 22, yN + 26, 1], [cm + 26, yN + 24, 1], [cm + 28, 205, 1], [cm - 26, 205, 1]], true, 0);
+    solid(bib, 'paper', 'ink');
+    let g = '';
+    for (let x = cm - 26; x < cm + 30; x += 5) g += `M${f(x)} ${f(yN + 20)}l1 100`;
+    for (let y = yN + 26; y < 205; y += 5) g += `M${f(cm - 30)} ${f(y)}l60 -1.2`;
+    emit(clipped(bib, path(o.check ?? 'wash-indigo', g, { 'stroke-width': 2.2, stroke: 'currentColor' }) + path('ink-faint', g)));
+    emit(path('ink', `M${f(cm - 20)} ${f(yN + 27)}L${f(b.nx0 - 12)} ${f(yN + 2)}M${f(cm + 24)} ${f(yN + 25)}L${f(b.nx1 + 16)} ${f(yN)}`, { 'stroke-width': 1.8 }));
+  },
+  /** Imperméable à col relevé, ceinture. */
+  raincoat(b, o) {
+    const { yN, nx0, nx1, cm, emit, path, solid } = b;
+    torso(b, o.wash ?? 'wash-safran', o.dark ?? 'hatch');
+    const vee = smooth([[nx0 + 2, yN - 3], [cm + 1, yN + 30, 1], [nx1 - 2, yN - 5], [(nx0 + nx1) / 2, yN - 6]], true);
+    solid(vee, o.under ?? 'wash-ardoise', 'ink');
+    emit(path('hatch', vee));
+    const L = lapelPts(b, 1.25);
+    for (const d of [smooth([...L.left, [nx0 + 6, yN + 20]], true, 0.4), smooth([...L.right, [nx1 - 6, yN + 20]], true, 0.4)]) {
+      solid(d, o.wash ?? 'wash-safran', 'ink');
+      emit(path('hatch', d));
+    }
+    COLLARS.up(b, o);
+    let btn = '';
+    for (let q = 0; q < 2; q++) btn += circ(cm - 10, yN + 50 + q * 14, 1.6) + circ(cm + 14, yN + 48 + q * 14, 1.6);
+    emit(path('ink', btn, { 'stroke-width': 0.6 }));
+  },
+});
+
+Object.assign(EXTRAS, {
+  /** Loupe pendue à un cordon : 'graveur' (oculaire noir tronconique) ou 'opticien' (verre cerclé). */
+  loupe(b, o) {
+    const { emit, path, solid, yN, nx0, nx1, cm } = b;
+    const x = o.x ?? cm + 6;
+    const y = o.y ?? yN + 32;
+    emit(path('ink-soft', `M${f(nx0 - 2)} ${f(yN - 2)}Q${f(nx0 + 2)} ${f(yN + 26)} ${f(x - 1)} ${f(y - 5)}M${f(nx1 + 2)} ${f(yN - 4)}Q${f(nx1 + 4)} ${f(yN + 24)} ${f(x + 1)} ${f(y - 5)}`, { 'stroke-width': 0.7 }));
+    if (o.kind === 'opticien') {
+      solid(circ(x, y + 2, 5.2), 'paper', 'ink');
+      emit(path('rehaut', circ(x, y + 2, 4)), path('ink', circ(x, y + 2, 4), { 'stroke-width': 1.3 }));
+      emit(path('ink', `M${f(x - 1.4)} ${f(y - 3.4)}a1.6 1.6 0 1 1 2.8 0`, { 'stroke-width': 0.7 }));
+      emit(path('ombre', smooth([[x + 1, y + 5.4], [x + 4, y + 3], [x + 3.4, y + 0.4], [x + 1.6, y + 3.8]], true)));
+    } else {
+      const d = smooth([[x - 3.2, y - 3.6, 1], [x + 3.2, y - 3.6, 1], [x + 4.6, y + 4.4, 1], [x - 4.6, y + 4.4, 1]], true, 0);
+      solid(d, 'hair-noir', 'ink');
+      emit(path('ink', `M${f(x - 3.6)} ${f(y - 0.8)}h7.2`, { 'stroke-width': 0.6 }));
+      solid(ell(x, y + 4.4, 4.6, 1.5), 'rehaut', 'ink');
+      emit(path('rehaut', smooth([[x - 2.4, y - 2.8], [x - 1.4, y - 2.8], [x - 2.2, y + 3], [x - 3.4, y + 3]], true)));
+    }
+  },
+  /** Sifflet de corne pendu au cou. */
+  whistle(b, o) {
+    const { emit, path, solid, yN, nx0, nx1, cm } = b;
+    const x = o.x ?? cm + 4;
+    const y = o.y ?? yN + 30;
+    emit(path('ink-soft', `M${f(nx0)} ${f(yN - 3)}Q${f(nx0 + 2)} ${f(yN + 16)} ${f(x - 2)} ${f(y - 2)}M${f(nx1)} ${f(yN - 5)}Q${f(nx1 + 1)} ${f(yN + 14)} ${f(x + 1)} ${f(y - 2)}`, { 'stroke-width': 0.6 }));
+    const d = smooth([[x - 2, y - 2.4], [x + 3, y - 1], [x + 9, y + 3.5], [x + 10.4, y + 6.4, 1], [x + 7.4, y + 6], [x + 1.6, y + 3], [x - 2.4, y + 1.2]], true);
+    solid(d, o.cls ?? 'wash-sienne', 'ink');
+    emit(path('ink-faint', `M${f(x + 2.4)} ${f(y - 1.2)}l-1 4M${f(x + 5.6)} ${f(y + 0.6)}l-1.2 3.6`), path('ombre', smooth([[x + 1.6, y + 3], [x + 7.4, y + 6], [x + 10.4, y + 6.4], [x + 6, y + 4]], true)));
+    emit(path('ink', circ(x - 2.2, y - 0.6, 0.8), { fill: 'currentColor', 'stroke-width': 0.3 }));
+  },
+  /** Corde lovée en bandoulière. */
+  rope(b) {
+    const { emit, path, solid, yN, nx1 } = b;
+    const band = poly([[nx1 + 10, yN - 4], [nx1 + 20, yN + 2], [26, 205], [12, 205]], true);
+    solid(band, 'wash-safran', 'ink');
+    let tw = '';
+    for (let t = 0.04; t < 1; t += 0.06) {
+      const x = lerp(nx1 + 15, 19, t);
+      const y = lerp(yN - 1, 205, t);
+      tw += `M${f(x - 5)} ${f(y - 2)}q3 4 9 1`;
+    }
+    emit(path('ink-soft', tw, { 'stroke-width': 0.55 }));
+    const coil = `${ell(nx1 + 26, yN + 6, 9, 5)}${ell(nx1 + 26, yN + 6, 6, 3)}`;
+    emit(path('wash-safran', coil, { 'fill-rule': 'evenodd' }), path('ink', coil, { 'fill-rule': 'evenodd', 'stroke-width': 0.7 }));
+  },
+  /** Insigne numéroté (guides). */
+  badge(b, o) {
+    const { emit, path, solid, yN, nx1 } = b;
+    const x = o.x ?? nx1 + 24;
+    const y = o.y ?? yN + 32;
+    const d = smooth([[x - 4.6, y - 4.6, 1], [x + 4.6, y - 4.6, 1], [x + 4.6, y + 1], [x, y + 5.6, 1], [x - 4.6, y + 1]], true, 0.4);
+    solid(d, 'wash-safran', 'ink');
+    emit(path('ink-faint', smooth([[x - 3.4, y - 3.4, 1], [x + 3.4, y - 3.4, 1], [x + 3.4, y + 0.6], [x, y + 4.2, 1], [x - 3.4, y + 0.6]], true, 0.4)));
+    emit(`<text class="label-note" x="${f(x)}" y="${f(y + 1.6)}" text-anchor="middle" font-size="5.2" font-style="normal">${o.n}</text>`);
+  },
+  /** Trousseau de clés à la ceinture. */
+  keys(b, o) {
+    const { emit, path, solid } = b;
+    const x = o.x ?? 34;
+    const y = o.y ?? 178;
+    emit(path('ink', circ(x, y, 3.4), { 'stroke-width': 0.9 }));
+    for (const [a, L] of [[1.2, 11], [1.6, 13], [2.0, 10]]) {
+      const ex = x + Math.cos(a) * L;
+      const ey = y + Math.sin(a) * L;
+      emit(path('ink', `M${f(x + Math.cos(a) * 3.4)} ${f(y + Math.sin(a) * 3.4)}L${f(ex)} ${f(ey)}`, { 'stroke-width': 1.1 }));
+      solid(circ(x + Math.cos(a) * 5.4, y + Math.sin(a) * 5.4, 1.6), 'wash-safran', 'ink-soft');
+      emit(path('ink', `M${f(ex)} ${f(ey)}l1.6 0.4`, { 'stroke-width': 0.8 }));
+    }
+  },
+  /** Crayon glissé derrière l'oreille. */
+  pencilEar(b) {
+    const { emit, path, solid, P } = b;
+    const [x0, y0] = P(1.05, -0.32);
+    const [x1, y1] = P(1.62, 0.12);
+    const ang = Math.atan2(y1 - y0, x1 - x0);
+    const nx = -Math.sin(ang) * 1.1;
+    const ny = Math.cos(ang) * 1.1;
+    const d = poly([[x0 + nx, y0 + ny], [x1 + nx, y1 + ny], [x1 - nx, y1 - ny], [x0 - nx, y0 - ny]], true);
+    solid(d, 'wash-safran', 'ink-soft');
+    emit(path('ink', poly([[x0 + nx, y0 + ny], [x0 - Math.cos(ang) * 3, y0 - Math.sin(ang) * 3], [x0 - nx, y0 - ny]], true), { fill: 'currentColor', 'stroke-width': 0.3 }));
+  },
+  /** Pochette blanche. */
+  pocketSquare(b) {
+    const { emit, path, solid, yN, nx1 } = b;
+    const x = nx1 + 18;
+    const y = yN + 38;
+    solid(poly([[x, y], [x + 3, y - 4.6], [x + 5.6, y - 1.6], [x + 8.4, y - 4.4], [x + 10, y]], true), 'paper', 'ink-soft');
+    emit(path('ink', `M${f(x - 1)} ${f(y)}h12.4`, { 'stroke-width': 0.8 }));
+  },
+  /** Médaille épinglée. */
+  medal(b, o) {
+    const { emit, path, solid, yN, nx0 } = b;
+    const x = o.x ?? nx0 - 10;
+    const y = o.y ?? yN + 30;
+    solid(poly([[x - 2.4, y - 6], [x + 2.4, y - 6], [x + 1.6, y], [x - 1.6, y]], true), o.ribbon ?? 'wash-carmin', 'ink-soft');
+    solid(circ(x, y + 3.2, 3.4), 'wash-safran', 'ink');
+    emit(path('ink-faint', circ(x, y + 3.2, 2.2)));
+  },
+  /** Ruban de velours noir au cou. */
+  velvet(b) {
+    const { emit, path, P } = b;
+    const pts = b.U([[-0.3, 1.3], [0.3, 1.42], [0.85, 1.38], [1.12, 1.3]]);
+    const top = pts.map(([x, y]) => [x, y - 1.6]);
+    const bot = pts.map(([x, y]) => [x, y + 1.6]);
+    const d = `${smooth(top)}${smooth(bot.slice().reverse()).replace(/^M/, 'L')}Z`;
+    emit(path('hair-noir', d), path('ink', d, { 'stroke-width': 0.5 }));
+    void P;
+  },
+  /** Croix de verre bleu en pendentif. */
+  glassCross(b, o) {
+    const { emit, path, solid, yN, nx0, nx1, cm } = b;
+    const x = o.x ?? cm + 2;
+    const y = o.y ?? yN + 34;
+    emit(path('ink-soft', `M${f(nx0 + 2)} ${f(yN - 2)}Q${f(nx0 + 4)} ${f(yN + 18)} ${f(x)} ${f(y - 5)}M${f(nx1 - 2)} ${f(yN - 4)}Q${f(nx1)} ${f(yN + 16)} ${f(x)} ${f(y - 5)}`, { 'stroke-width': 0.5 }));
+    const d = poly([[x - 1.2, y - 5], [x + 1.2, y - 5], [x + 1.2, y - 2], [x + 3.6, y - 2], [x + 3.6, y + 0.4], [x + 1.2, y + 0.4], [x + 1.2, y + 6], [x - 1.2, y + 6], [x - 1.2, y + 0.4], [x - 3.6, y + 0.4], [x - 3.6, y - 2], [x - 1.2, y - 2]], true);
+    solid(d, 'wash-indigo', 'ink');
+    emit(path('wash-indigo', d), path('rehaut', poly([[x - 0.6, y - 4.4], [x, y - 4.4], [x, y + 4], [x - 0.6, y + 4]], true)));
+  },
+  /** Broche : 'lens' (lentille dorée miniature) ou 'dove' (verre gravé d'une colombe). */
+  brooch(b, o) {
+    const { emit, path, solid, yN, nx0, nx1 } = b;
+    const x = o.x ?? (nx0 + nx1) / 2 + 22;
+    const y = o.y ?? yN + 14;
+    if (o.kind === 'dove') {
+      solid(ell(x, y, 5.6, 4.6), 'wash-celadon', 'ink');
+      emit(path('ink-soft', `M${f(x - 3.4)} ${f(y + 0.6)}q2 -2.6 4 -0.6q1.4 -2.4 3.2 -1.6l-1.6 1.4q-0.4 2.4 -3 2.2z`, { 'stroke-width': 0.5 }));
+      emit(path('rehaut', ell(x - 2, y - 2, 1.4, 0.8)));
+    } else {
+      solid(circ(x, y, 4.4), 'wash-safran', 'ink');
+      emit(path('ink-faint', circ(x, y, 3.2) + circ(x, y, 2) + circ(x, y, 0.9)));
+      emit(path('rehaut', ell(x - 1.4, y - 1.6, 1.2, 0.7)));
+    }
+  },
+  /** Foulard brodé noué au cou (pointes sur la poitrine). */
+  neckerchief(b, o) {
+    const { emit, path, solid, yN, nx0, nx1, cm } = b;
+    const d = smooth([[nx0 - 6, yN - 6], [(nx0 + nx1) / 2, yN - 2], [nx1 + 6, yN - 9], [nx1 + 8, yN + 2], [cm + 6, yN + 26, 1], [cm - 2, yN + 26], [nx0 - 8, yN + 4]], true);
+    solid(d, o.cls ?? 'wash-carmin', 'ink');
+    let zz = '';
+    for (let q = 0; q <= 12; q++) zz += `${q ? 'L' : 'M'}${f(lerp(nx0 - 4, cm + 2, q / 12))} ${f(lerp(yN + 4, yN + 22, q / 12) + (q % 2 ? -1.2 : 1.2))}`;
+    for (let q = 0; q <= 12; q++) zz += `${q ? 'L' : 'M'}${f(lerp(nx1 + 6, cm + 6, q / 12))} ${f(lerp(yN + 1, yN + 22, q / 12) + (q % 2 ? -1.2 : 1.2))}`;
+    emit(path(o.embroidery ?? 'wash-indigo', zz, { stroke: 'currentColor', 'stroke-width': 1.4 }), path('ink-soft', zz, { 'stroke-width': 0.5 }));
+    emit(path('ombre', smooth([[cm + 2, yN + 10], [nx1 + 8, yN + 2], [cm + 6, yN + 26]], true)));
+  },
+  /** Canne de souffleur tenue debout (sous les mains). */
+  blowpipe(b, o) {
+    const { emit, path, solid } = b;
+    const x = o.x ?? 40;
+    const d = poly([[x - 1.4, 205], [x - 1.1, o.top ?? 120], [x + 1.1, o.top ?? 120], [x + 1.4, 205]], true);
+    solid(d, 'wash-ardoise', 'ink');
+    emit(path('rehaut', poly([[x - 0.6, 205], [x - 0.5, (o.top ?? 120) + 2], [x, (o.top ?? 120) + 2], [x, 205]], true)));
+    solid(ell(x, o.top ?? 120, 2.4, 1.2), 'wash-ardoise', 'ink');
+  },
+  /** Pelle à l'épaule. */
+  shovel(b) {
+    const { emit, path, solid, yN, nx1 } = b;
+    const shaft = poly([[nx1 + 8, yN + 14], [nx1 + 10.6, yN + 12.6], [150, yN - 52], [147.4, yN - 54]], true);
+    solid(shaft, 'wash-sienne', 'ink');
+    const blade = smooth([[136, yN - 66, 1], [154, yN - 70], [160, yN - 50, 1], [146, yN - 44]], true);
+    solid(blade, 'wash-ardoise', 'ink');
+    emit(path('hatch', blade));
+  },
+  /** Piolet tenu debout (tête près de l'épaule). */
+  iceAxe(b, o) {
+    const { emit, path, solid } = b;
+    const x = o.x ?? 136;
+    const top = o.top ?? 128;
+    solid(poly([[x - 1.3, 205], [x - 1.1, top], [x + 1.1, top], [x + 1.3, 205]], true), 'wash-sienne', 'ink');
+    const head = smooth([[x - 12, top + 3, 1], [x - 2, top - 2], [x + 4, top - 2.6], [x + 14, top - 1, 1], [x + 4, top + 1.6], [x - 2, top + 2.4]], true);
+    solid(head, 'wash-ardoise', 'ink');
+    emit(path('rehaut', smooth([[x - 8, top + 1.6], [x, top - 1], [x + 8, top - 1.4], [x, top]], true)));
+  },
+  /** Rabat blanc de col romain (soutane). */
+  clericalTab(b) {
+    const { solid, yN, nx0, nx1 } = b;
+    const x = (nx0 + nx1) / 2 - 2;
+    solid(`M${f(x - 3)} ${f(yN - 6)}h6v6.4h-6Z`, 'paper', 'ink-soft');
+  },
+  /** Képi tenu sous le bras (douanier). */
+  kepiArm(b, o) {
+    const { emit, path, solid } = b;
+    const x = o.x ?? 128;
+    const y = o.y ?? 182;
+    const crown = smooth([[x - 14, y - 2], [x - 13, y - 14], [x + 12, y - 16], [x + 14, y - 4]], true);
+    solid(crown, o.cls ?? 'wash-indigo', 'ink');
+    emit(path('hatch-dense', crown));
+    solid(smooth([[x - 14, y - 4], [x + 14, y - 6], [x + 14, y + 1], [x - 14, y + 3]], true), 'hair-noir', 'ink');
+    solid(smooth([[x - 14, y + 2], [x - 22, y + 6], [x - 10, y + 7], [x + 2, y + 3]], true), 'hair-noir', 'ink');
+    emit(path('ink-soft', `M${f(x - 12)} ${f(y - 9)}l25 -2`, { 'stroke-width': 0.6, 'stroke-dasharray': '1 0.8' }));
+    solid(circ(x - 1, y - 10, 2), 'wash-safran', 'ink-soft');
+  },
+});
 
 /* ───────────────────────── Portrait complet ───────────────────────── */
 

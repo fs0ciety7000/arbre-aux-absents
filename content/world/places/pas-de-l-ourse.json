@@ -1,0 +1,12 @@
+{
+  "id": "pas-de-l-ourse",
+  "name": "Le Pas de l'Ourse",
+  "kind": "landmark",
+  "position": {
+    "x": 0.902,
+    "y": 0.772
+  },
+  "description": "Brèche dans la crête des monts Corvins, au sud du col de Corvenne, sur la frontière : borne gravée, croix de fer au lacet ; refuge de montagne un peu en contrebas, côté velmarchois.",
+  "focusZoom": 3.6,
+  "hitRadius": 20
+}

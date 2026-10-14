@@ -1,0 +1,12 @@
+{
+  "id": "vernezac",
+  "name": "Vernezac",
+  "kind": "village",
+  "position": {
+    "x": 0.842,
+    "y": 0.814
+  },
+  "description": "Village de la haute vallée, sur la Vèze, torrent qui descend des crêtes vers l'Orvelle : halle des fours des Verreries de Hautcorvin, auberge, église, école, bureau de poste, brigade des douanes, compagnie des guides.",
+  "focusZoom": 3.4,
+  "hitRadius": 24
+}
