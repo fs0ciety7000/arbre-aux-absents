@@ -1,0 +1,7 @@
+# Les succès des affaires référencent les « secrets » de l'intrigue par leur clé
+# (`"secret": "s1-le-feu-de-1937"`) : ce sont des identifiants de récit, pas des
+# identifiants de connexion. GitGuardian les prend pour des secrets génériques.
+version: 2
+secret:
+  ignored_paths:
+    - 'content/cases/*/achievements.json'
