@@ -10,6 +10,8 @@ export { default as Coachmark } from './Coachmark.svelte';
 export type { CoachPlacement } from './Coachmark.svelte';
 export { default as Combobox, fold } from './Combobox.svelte';
 export type { Candidate } from './Combobox.svelte';
+export { default as DecisionCard } from './DecisionCard.svelte';
+export { default as DecisionGroup } from './DecisionGroup.svelte';
 export { default as Dialog } from './Dialog.svelte';
 export { default as FocusRing } from './FocusRing.svelte';
 export { default as Icon } from './Icon.svelte';

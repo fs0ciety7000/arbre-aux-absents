@@ -164,6 +164,14 @@
 .claim-value {
   font-family: var(--font-type);
   font-weight: var(--weight-regular);
+  /* Hors papier (bureau sombre : fiche de case, sélecteur) : variante claire mesurée sur les
+     surfaces du bureau ; sur papier, kraft et fiche bristol : l'encre du formulaire. */
+  color: var(--claim-ink-desk);
+}
+[data-surface='paper'] .claim-value,
+[data-surface='kraft'] .claim-value,
+.mat-card .claim-value,
+.claim-value[data-surface='paper'] {
   color: var(--claim-ink);
 }
 .claim-value::before {

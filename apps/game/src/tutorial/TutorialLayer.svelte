@@ -13,21 +13,23 @@
   import type { GameStoreImpl } from '../lib/game/store.svelte';
   import { viewport } from '../lib/game/viewport.svelte';
   import { messages } from '../messages.fr';
-  import type { TutorialStep } from './steps';
+  import type { TutorialScreen, TutorialStep } from './steps';
   import { TutorialController } from './tutorial.svelte';
 
   interface Props {
     app: AppController;
     game: GameStoreImpl;
+    /** Écran hôte : le Bureau (déf.) ou le rapport final. */
+    screen?: TutorialScreen;
   }
-  let { app, game }: Props = $props();
+  let { app, game, screen = 'desk' }: Props = $props();
   const m = messages.tutorial;
 
   /** Délai avant de poser une note : le geste en cours se termine d'abord. */
   const SETTLE_MS = 700;
 
   // svelte-ignore state_referenced_locally
-  const tutorial = new TutorialController(app, game);
+  const tutorial = new TutorialController(app, game, screen);
 
   // `evaluate` écrit le profil (notes passées en silence) : effet, pas dérivé.
   // eslint-disable-next-line svelte/prefer-writable-derived

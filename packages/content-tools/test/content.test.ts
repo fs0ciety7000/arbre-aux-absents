@@ -206,7 +206,8 @@ describe('fixture mini', () => {
     expect(s.locked.size).toBe(6);
     expect([...s.endings.keys()].sort()).toEqual(['fin-arbre', 'fin-edda']);
     expect(s.endingsAtEnd).toEqual(['fin-arbre', 'fin-edda']);
-    expect(s.reportCombinations).toBe(4);
+    // heritier (2) × lettres (bruler, garder, remettre) = 6
+    expect(s.reportCombinations).toBe(6);
     expect(s.endingAnswers.get('fin-edda')).toMatchObject({ lettres: 'garder' });
     expect(s.endingAnswers.get('fin-arbre')).toMatchObject({ lettres: 'bruler' });
     expect(solveReport(base)).toContain('`fin-edda` : `heritier` → `maren`, `lettres` → `garder`');
@@ -448,6 +449,16 @@ describe('rapport final et sections (règles)', () => {
     expect(errorsOf(r, 4).join('\n')).toMatch(
       /question du rapport « heritier » dépend de lui-même/,
     );
+  });
+
+  it('2 · unavailableReason sans availableWhen', async () => {
+    const r = await checkWith((root) =>
+      editJson(root, 'progression.json', (j) => {
+        delete j.report[0].options[0].availableWhen;
+        j.report[0].options[0].unavailableReason = 'Pas encore établi.';
+      }),
+    );
+    expect(errorsOf(r, 2).join('\n')).toMatch(/a une unavailableReason sans availableWhen/);
   });
 
   it('6 · fin inatteignable quelle que soit la combinaison de réponses', async () => {

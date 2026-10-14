@@ -166,7 +166,8 @@ export interface Progression {
   demo?: { documents: DocumentId[]; slots: SlotId[]; end: DocumentId };
 }
 export interface ReportQuestion { id: string; prompt: string; kind: 'question' | 'choice';
-  askedWhen?: OutcomeCondition; options: { id: string; label: string; availableWhen?: Condition }[] /* ≥ 2 */ }
+  askedWhen?: OutcomeCondition; options: { id: string; label: string; availableWhen?: Condition;
+    unavailableReason?: string /* ≤ 140 ; exige availableWhen : option grisée avec sa raison au lieu d'être masquée */ }[] /* ≥ 2 */ }
 // hints.json, achievements.json (level-designer) : tableaux racine Hint[] et Achievement[]
 export interface Hint { id: HintId; target: { slot: SlotId } | { group: GroupId }; level: 1 | 2 | 3; text: string; availableWhen: Condition }
 export type AchievementCondition = OutcomeCondition
@@ -247,6 +248,13 @@ export interface Settings {
 }
 export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>; completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] }>;
   tutorial?: { done: boolean; seen: string[] } } // tutoriel en bulles : optionnel (anciens profils valides), seen ≤ 32 ids kebab-case
+// Crans des « Notes de service » (E04) sans champ de plus : écrits dans `tutorial` au lancement.
+// Complètes → done false, seen ∪ {returning} (repart de zéro si done) ; Nouveautés seulement →
+// done false, seen ∪ 10 notes de base ; Aucune → done true. `done` devient vrai quand les notes
+// requises par l'affaire (base + nouveautés dont la mécanique est dans les données) sont vues.
+// Cran par défaut : Nouveautés si done, base toute vue, ou une fin vue (`completed`).
+// Ids : base (welcome…help), `returning`, nouveautés génériques `claim`, `hearing`, `decision`
+// (déclencheurs : `claimedGuess`, pièce `report` dont le titre parle d'audition, question `choice`).
 ```
 
 ### 3.5 Moteur pur (`packages/engine`)
@@ -314,7 +322,8 @@ branche » en mode manuel) ; une évaluation en attente est faite avant la sauve
 passage en arrière-plan).
 
 **Rapport final et fins à sections** : au dénouement, le jeu pose les questions de `report`
-(celles dont `askedWhen` est vraie, options filtrées par `availableWhen`) ; chaque réponse est une
+(celles dont `askedWhen` est vraie, options filtrées par `availableWhen` ; une option indisponible
+qui porte `unavailableReason` reste dans `reportQuestions` avec cette raison, à montrer grisée) ; chaque réponse est une
 action `answer` (refusée si la question n'est pas posée ou l'option indisponible ; modifiable tant
 que `finish` n'a pas eu lieu). `finish` choisit la fin (priorité, conditions pouvant utiliser
 `answered`), puis l'écran affiche ses sections dont `when` est vraie. Dans `endings/<id>.md`, une
@@ -346,7 +355,8 @@ Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, 
    **Entre affaires** : ids de succès, ids et fichiers de portraits, `order` uniques sur tout le contenu.
 2. **Références** toutes résolues (documents, mots-clés, lieux, portraits dont `altPortraits`, métiers,
    cases, groupes, secrets, fins, assets) ; `claim.portrait` et `claim.occupation` connus,
-   `claim.given` / `claim.family` variantes (normalisées) d'au moins une `Person`.
+   `claim.given` / `claim.family` variantes (normalisées) d'au moins une `Person` ; une option du
+   rapport avec `unavailableReason` a un `availableWhen`.
 3. **Arbre** : personnes uniques par case ; groupes = partition des cases non pré-remplies (cases
    revendiquées comprises, `prefilled` exclues) ; seuil ≥ 3 ; `claim` exclusif de `prefilled` et de
    `revealedBy` ; une déclaration est **fausse sur au moins un champ** (juste sur ses 4 champs, autre

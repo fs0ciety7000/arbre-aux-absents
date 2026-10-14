@@ -99,6 +99,8 @@ export interface GameStore {
   readonly focusPassage: number[] | null;
   /** Cartes de révélation de la session, pour le Journal. */
   readonly reveals: RevealRecord[];
+  /** Déclarations contestées de la session (case revendiquée), pour le Journal. */
+  readonly contested: RevealRecord[];
   /** Fractionnés du mode chronométré (cases verrouillées à chaque étape). */
   readonly splits: Split[];
 }

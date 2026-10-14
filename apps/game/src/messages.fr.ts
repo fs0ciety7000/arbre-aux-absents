@@ -99,9 +99,17 @@ export const messages = {
     modeTimedLocked: 'Chronométré (après un premier dénouement)',
     hintsLabel: "Niveau d'aide",
     hintsHint: 'Modifiable à tout moment dans les options, sans pénalité.',
-    skipTutorial: "J'ai déjà joué",
-    skipTutorialHint:
-      'Passe les bulles du tutoriel ; tout reste expliqué dans Aide › Comment jouer.',
+    tutorialLabel: 'Notes de service',
+    tutorialModes: {
+      full: 'Complètes',
+      news: 'Nouveautés seulement',
+      none: 'Aucune',
+    } as Record<'full' | 'news' | 'none', string>,
+    tutorialHints: {
+      full: 'Une collègue vous guide pas à pas, du premier document au premier coup de tampon.',
+      news: 'Seulement ce qui change dans cette affaire ; le reste est connu.',
+      none: 'Aucune bulle ; tout reste expliqué dans Aide › Comment jouer.',
+    } as Record<'full' | 'news' | 'none', string>,
     slotLabel: 'Emplacement',
     slotFree: (name: string) => `${name} (libre)`,
     slotUsed: (name: string, title: string) => `${name} (occupé : ${title})`,
@@ -305,6 +313,15 @@ export const messages = {
         'Les lieux cités se posent sur la Carte. Chacun a ses propres fonds d’archives : allez-y fouiller.',
       help: () =>
         'Un doute ? Aide › Comment jouer reprend tout, et « Où chercher ? » vous remet sur une piste. Bon courage !',
+      // Cran « Nouveautés seulement » et nouveautés (AFFAIRE-2 §2.4), ≤ 25 mots chacune.
+      returning: () =>
+        'Content de vous revoir, rapporteur titulaire. Le dossier attend dans les Archives ; je ne vous signalerai que ce qui change.',
+      claim: () =>
+        'Le requérant a rempli cette case lui-même. Rien n’y est établi : retirez ou remplacez ce qui ne tient pas.',
+      hearing: () =>
+        'Un procès-verbal d’audition : ce qu’on déclare devant l’Office est une pièce comme une autre. Recoupez-la avec le dossier.',
+      decision: () =>
+        'Ce rapport se conclut par une décision de l’Office. Un tampon grisé signale une piste encore ouverte au dossier.',
     },
   },
 
@@ -413,6 +430,15 @@ export const messages = {
     confirm: 'Remettre',
     cancel: 'Relire',
     noOption: 'Aucune réponse disponible',
+    /** Décision (question `choice`) : tampon posé sur la fiche choisie. */
+    decisionStamp: 'Visé',
+    unavailable: 'Indisponible : ',
+    backToFile: 'Revenir au dossier',
+    confirmDecisionTitle: 'Apposer ce tampon ?',
+    // AFFAIRE-2 §3.2 prévoit « Vous pourrez remettre un autre rapport après le dénouement. » :
+    // à reprendre quand le moteur permettra un nouveau rapport après `finish` (pas encore le cas).
+    confirmDecisionText:
+      'Votre décision et vos réponses seront classées, puis le dénouement s’affichera.',
   },
 
   timed: {

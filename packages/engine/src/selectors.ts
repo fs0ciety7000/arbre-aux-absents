@@ -421,8 +421,12 @@ export interface ReportQuestionView {
   id: string;
   prompt: string;
   kind: ReportQuestion['kind'];
-  /** Options disponibles maintenant (`availableWhen` absente ou vraie). */
-  options: { id: string; label: string }[];
+  /**
+   * Options disponibles maintenant (`availableWhen` absente ou vraie), plus les indisponibles
+   * qui portent une `unavailableReason` (à montrer grisées, jamais choisissables), dans
+   * l'ordre du contenu.
+   */
+  options: { id: string; label: string; unavailableReason?: string }[];
   /** Réponse actuelle, ou `null`. */
   answer: string | null;
 }
@@ -450,9 +454,12 @@ export function reportQuestions(s: SaveState, c: CompiledCase): ReportQuestionVi
       id: q.id,
       prompt: q.prompt,
       kind: q.kind,
-      options: q.options
-        .filter((o) => holds(o.availableWhen, s, c))
-        .map((o) => ({ id: o.id, label: o.label })),
+      options: q.options.flatMap((o) => {
+        if (holds(o.availableWhen, s, c)) return [{ id: o.id, label: o.label }];
+        return o.unavailableReason
+          ? [{ id: o.id, label: o.label, unavailableReason: o.unavailableReason }]
+          : [];
+      }),
       answer: (s.report && own(s.report, q.id)) ?? null,
     }));
 }

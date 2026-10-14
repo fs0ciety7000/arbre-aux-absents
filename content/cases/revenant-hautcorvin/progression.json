@@ -4588,7 +4588,8 @@
           "label": "Réinscrire Bastien Tessonnal à titre posthume ; reconnaître Agnès Neviot, sa fille ; inscrire Andrin Dalvarin sous son nom.",
           "availableWhen": {
             "secret": "s5-la-fille-du-souffleur"
-          }
+          },
+          "unavailableReason": "La filiation d'Agnès n'est pas établie par deux pièces."
         },
         {
           "id": "laisser-vivre",

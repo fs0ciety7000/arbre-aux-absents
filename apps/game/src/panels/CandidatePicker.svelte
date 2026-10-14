@@ -193,11 +193,6 @@
 {/if}
 
 <style>
-  /* Bureau sombre : l'encre du formulaire (--claim-ink) n'est mesurée que sur papier ; la
-     valeur garde ses signes de forme (Courier romain, « ») dans la couleur du texte. */
-  .claim-value {
-    color: var(--text);
-  }
   .declared {
     margin: 0 0 var(--space-3);
     color: var(--text-muted);

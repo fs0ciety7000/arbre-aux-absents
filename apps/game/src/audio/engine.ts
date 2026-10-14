@@ -26,7 +26,8 @@ export type SoundName =
   | 'pin'
   | 'stamp'
   | 'chord'
-  | 'reveal';
+  | 'reveal'
+  | 'unstaple';
 
 const BUS_OF: Record<SoundName, Bus> = {
   tap: 'ui',
@@ -40,6 +41,7 @@ const BUS_OF: Record<SoundName, Bus> = {
   stamp: 'sfx',
   chord: 'sfx',
   reveal: 'sfx',
+  unstaple: 'sfx',
 };
 
 /** Niveau de base des sons synthétisés (discrets). */
@@ -164,6 +166,21 @@ class AudioEngine {
         break;
       case 'reveal':
         [523, 659, 784].forEach((f, i) => this.#tone(bus, t + i * 0.09, f * k, 0.9, 0.22, 'sine'));
+        break;
+      case 'unstaple':
+        // Agrafe ôtée : les pattes raclent le papier (souffle aigu qui monte), petit tintement
+        // métallique de l'agrafe libérée, puis la feuille relâchée.
+        noiseHit(ctx, bus, t, {
+          dur: 0.06,
+          freq: 3800,
+          sweepTo: 6200,
+          q: 2.2,
+          level: BASE * 0.45,
+          attack: 0.004,
+        });
+        this.#tone(bus, t + 0.05, 3150, 0.07, 0.18, 'sine', 2950);
+        this.#tone(bus, t + 0.055, 4720, 0.05, 0.08, 'sine');
+        noiseHit(ctx, bus, t + 0.09, { dur: 0.08, freq: 1800, q: 0.9, level: BASE * 0.3 });
         break;
     }
   }

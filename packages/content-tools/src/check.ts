@@ -414,7 +414,15 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
   }
   for (const q of prog.report ?? []) {
     condRefs('progression.json', q.askedWhen);
-    for (const o of q.options) condRefs('progression.json', o.availableWhen);
+    for (const o of q.options) {
+      condRefs('progression.json', o.availableWhen);
+      if (o.unavailableReason !== undefined && o.availableWhen === undefined)
+        issues.error(
+          2,
+          'progression.json',
+          `rapport « ${q.id} » : l'option « ${o.id} » a une unavailableReason sans availableWhen`,
+        );
+    }
   }
   // Sections des fins : étiquettes du fichier ↔ clés de `sections`.
   for (const e of prog.endings) {

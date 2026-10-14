@@ -124,6 +124,12 @@
                   "question": "lettres",
                   "option": "bruler"
                 }
+              },
+              {
+                "answered": {
+                  "question": "lettres",
+                  "option": "remettre"
+                }
               }
             ]
           }
@@ -214,6 +220,14 @@
           "availableWhen": {
             "read": "lettre-edda"
           }
+        },
+        {
+          "id": "remettre",
+          "label": "Les remettre au registre de Val-Dormant",
+          "availableWhen": {
+            "visited": "val-dormant"
+          },
+          "unavailableReason": "Le registre de Val-Dormant n’a pas été consulté."
         }
       ]
     }

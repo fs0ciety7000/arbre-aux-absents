@@ -6,7 +6,7 @@
  * visage et le métier : Tomas Morvan, « Garçon au visage rond », Meunier.
  */
 import type { Locator, Page } from '@playwright/test';
-import { desk, expect, gotoTitle, saveAndQuit, slotButton, test } from '../helpers';
+import { desk, expect, gotoTitle, saveAndQuit, showPanel, slotButton, test } from '../helpers';
 
 const CLAIM = 'La requête du passeur';
 const MINI = 'La malle du grenier';
@@ -21,7 +21,7 @@ async function startCase(page: Page, title: string): Promise<void> {
   await gotoTitle(page);
   await page.getByRole('button', { name: 'Nouvelle partie' }).click();
   await folders(page).getByRole('radio', { name: title }).check();
-  await page.getByRole('switch', { name: "J'ai déjà joué" }).click();
+  await page.getByRole('combobox', { name: 'Notes de service' }).selectOption({ label: 'Aucune' });
   await page.getByRole('button', { name: 'Commencer' }).click();
   await expect(desk(page)).toBeVisible();
 }
@@ -96,6 +96,14 @@ test('case revendiquée : marque, nom accessible, retirer et rétablir la décla
   await s.getByRole('button', { name: 'Retirer la déclaration' }).click();
   await page.keyboard.press('Escape');
 
+  // Journal : un constat par déclaration intacte contestée (le retrait d'un reste n'en ajoute pas).
+  await showPanel(page, 'Journal');
+  const journal = page.getByRole('region', { name: 'Journal' });
+  await expect(
+    journal.getByText('Déclaration contestée : portrait', { exact: true }),
+  ).toBeVisible();
+  await expect(journal.getByText(/^Déclaration contestée/)).toHaveCount(2);
+
   // Une déclaration retirée ne réapparaît pas au rechargement de la partie.
   await saveAndQuit(page);
   await page
@@ -119,4 +127,30 @@ test('succès et crédits : une section par affaire', async ({ page }) => {
   await page.getByRole('button', { name: 'Crédits' }).first().click();
   await expect(page.getByRole('heading', { name: `Affaire : ${CLAIM}` })).toBeVisible();
   await expect(page.getByRole('heading', { name: `Affaire : ${MINI}` })).toBeVisible();
+});
+
+test('notes de service « Nouveautés seulement » : accueil titulaire puis case revendiquée', async ({
+  page,
+}) => {
+  await gotoTitle(page);
+  await page.getByRole('button', { name: 'Nouvelle partie' }).click();
+  await folders(page).getByRole('radio', { name: CLAIM }).check();
+  const notes = page.getByRole('combobox', { name: 'Notes de service' });
+  // Premier lancement : « Complètes » par défaut ; on choisit « Nouveautés seulement ».
+  await expect(notes).toHaveValue('full');
+  await notes.selectOption({ label: 'Nouveautés seulement' });
+  await page.getByRole('button', { name: 'Commencer' }).click();
+  await expect(desk(page)).toBeVisible();
+
+  const note = page.getByRole('complementary', { name: 'Note de service' });
+  await expect(note).toContainText('rapporteur titulaire');
+  await note.getByRole('button', { name: 'Compris' }).click();
+  await expect(note).toContainText('Le requérant a rempli cette case lui-même');
+  await note.getByRole('button', { name: 'Compris' }).click();
+  await expect(note).toHaveCount(0);
+
+  // Profil : la prochaine partie propose « Nouveautés seulement » d'office.
+  await saveAndQuit(page);
+  await page.getByRole('button', { name: 'Nouvelle partie' }).click();
+  await expect(page.getByRole('combobox', { name: 'Notes de service' })).toHaveValue('news');
 });

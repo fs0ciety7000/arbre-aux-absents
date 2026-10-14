@@ -215,7 +215,8 @@ export class AppController implements StoreHost {
       case 'launch':
         return false;
       case 'ending':
-        if (this.ending === null) this.leaveReport();
+        // Rapport final : une note de service ouverte se range d'abord (tutoriel).
+        if (this.ending === null && !this.game?.backIntercept?.()) this.leaveReport();
         return true;
       case 'options':
       case 'achievements':

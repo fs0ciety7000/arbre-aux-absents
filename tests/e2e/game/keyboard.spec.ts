@@ -123,7 +123,7 @@ test('Entrée sur le logo ne relance pas la dernière partie (Continuer)', async
   await page.goto('./');
   await page.getByRole('button', { name: 'Passer' }).last().click();
   await page.getByRole('button', { name: 'Nouvelle partie' }).click();
-  await page.getByRole('switch', { name: "J'ai déjà joué" }).click();
+  await page.getByRole('combobox', { name: 'Notes de service' }).selectOption({ label: 'Aucune' });
   await page.getByRole('button', { name: 'Commencer' }).click();
   await expect(desk(page)).toBeVisible();
   await page.keyboard.press('Control+s');

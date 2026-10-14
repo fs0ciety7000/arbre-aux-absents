@@ -187,6 +187,17 @@ montrées une fois par profil, réactivables dans Options) :
 3. `hc-decision` — ouverture du rapport final : « Ce rapport se conclut par une décision. Vous
    pourrez en remettre un autre après le dénouement. »
 
+**Mise en œuvre (v2.0)** : le tutoriel ne connaît aucun id d'affaire. Les nouveautés portent des ids
+génériques (`claim`, `hearing`, `decision`, plus l'accueil `returning`) au lieu du préfixe `hc-`,
+et se déclenchent sur les données : case avec `claimedGuess` (à l'arbre), pièce `report` dont le
+titre contient « audition » (au Lecteur), question `choice` du rapport (à l'écran du rapport). Une
+affaire sans la mécanique ne montre pas la note. L'accueil « titulaire » n'apparaît que s'il reste
+une nouveauté du Bureau à signaler. Le cran est écrit dans `Profile.tutorial` (ARCHITECTURE §3.4),
+sans champ nouveau. Textes de `hearing` et `decision` adaptés : la note d'audition vaut pour tout
+procès-verbal (pas seulement celui du requérant), la note de décision signale le tampon grisé
+(« vous pourrez en remettre un autre » attend que le moteur permette un nouveau rapport après le
+dénouement).
+
 Aide › Comment jouer gagne une fiche « Cases revendiquées » (5 lignes + une illustration de case).
 Le prologue (groupe de 3 cases autour de la requête, 10–15 min) existe dans les trois crans ; seul
 le nombre de bulles change.

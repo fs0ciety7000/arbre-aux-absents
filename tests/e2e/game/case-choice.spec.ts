@@ -20,7 +20,7 @@ test('E04 : chemise d’affaire choisie d’office, au clavier comme à la souri
   await group.getByRole('radio', { name: MINI }).focus();
   await page.keyboard.press('Space');
   await expect(group.getByRole('radio', { name: MINI })).toBeChecked();
-  await page.getByRole('switch', { name: "J'ai déjà joué" }).click();
+  await page.getByRole('combobox', { name: 'Notes de service' }).selectOption({ label: 'Aucune' });
   await page.getByRole('button', { name: 'Commencer' }).click();
   await expect(desk(page)).toBeVisible();
 });

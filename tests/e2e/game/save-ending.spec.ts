@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import {
   dismissReveals,
   expect,
@@ -7,6 +8,7 @@ import {
   readForElders,
   readForYounger,
   saveAndQuit,
+  searchAndRead,
   showPanel,
   slotButton,
   startNewGame,
@@ -84,4 +86,78 @@ test('arbre complet → rapport final → dénouement', async ({ page }) => {
     '6 personnes identifiées sur 6',
   );
   await dismissReveals(page);
+});
+
+test('rapport final : la décision en tampons, option grisée avec sa raison', async ({ page }) => {
+  test.setTimeout(150_000);
+  await startNewGame(page);
+  // Le secret d'Edda pose la seconde question, une décision (`choice`).
+  await searchAndRead(page, 'Edda Brask', 'Lettre d’Edda');
+  await dismissReveals(page);
+  await readForElders(page);
+  await lockGroup(page, ['s-ancel', 's-ida', 's-tomas']);
+  await readForYounger(page);
+  await lockGroup(page, ['s-lena', 's-maren', 's-oskar']);
+  await dismissReveals(page);
+
+  const report = page.getByRole('main');
+  await expect(report).toContainText('Question 1 sur 2');
+  await report.getByRole('radio', { name: 'Maren Morvan' }).check();
+  await report.getByRole('button', { name: 'Suivante' }).click();
+  await expect(report).toContainText('Question 2 sur 2');
+
+  // Trois tampons dans un groupe radio nommé par la question.
+  const group = report.getByRole('group', { name: "Que faire des lettres d'Edda ?" });
+  await expect(group.getByRole('radio')).toHaveCount(3);
+  const burn = group.getByRole('radio', { name: 'Les brûler' });
+  const keep = group.getByRole('radio', { name: 'Les garder' });
+  const hand = group.getByRole('radio', { name: 'Les remettre au registre de Val-Dormant' });
+  // Indisponible : grisée, raison visible et lue en description, piste rouverte.
+  await expect(hand).toBeDisabled();
+  await expect(hand).toHaveAccessibleDescription(
+    'Indisponible : Le registre de Val-Dormant n’a pas été consulté.',
+  );
+  await expect(report.getByText('Le registre de Val-Dormant n’a pas été consulté.')).toBeVisible();
+  await expect(report.getByRole('button', { name: 'Revenir au dossier' })).toBeVisible();
+
+  // Audit WCAG 2.2 AA des tampons (grisé compris), puis au téléphone : empilés, sans défilement.
+  const axe = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+    .analyze();
+  expect(axe.violations.map((v) => `${v.id} : ${v.nodes[0]?.target.join(' ')}`)).toEqual([]);
+  if (process.env.E2E_SHOTS)
+    await page.screenshot({
+      path: `${process.env.E2E_SHOTS}/decision-desktop.png`,
+      fullPage: true,
+    });
+  await page.setViewportSize({ width: 360, height: 780 });
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth))
+    .toBeLessThanOrEqual(360);
+  if (process.env.E2E_SHOTS)
+    await page.screenshot({ path: `${process.env.E2E_SHOTS}/decision-phone.png`, fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 900 });
+
+  // Clavier : les flèches parcourent les tampons disponibles et sautent l'indisponible.
+  await burn.check();
+  await burn.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(keep).toBeChecked();
+  await page.keyboard.press('ArrowRight');
+  await expect(burn).toBeChecked();
+  await page.keyboard.press('ArrowRight');
+  await expect(keep).toBeChecked();
+  await expect(hand).not.toBeChecked();
+  if (process.env.E2E_SHOTS)
+    await page.screenshot({ path: `${process.env.E2E_SHOTS}/decision-checked.png` });
+
+  // Confirmation : « Apposer ce tampon ? », focus initial sur « Relire ».
+  await report.getByRole('button', { name: 'Remettre le rapport' }).click();
+  const confirm = page.getByRole('dialog', { name: 'Apposer ce tampon ?' });
+  await expect(confirm).toContainText('Les garder');
+  await expect(confirm.getByRole('button', { name: 'Relire' })).toBeFocused();
+  await confirm.getByRole('button', { name: 'Remettre' }).click();
+  await expect(page.getByRole('main').getByRole('heading', { level: 1 })).not.toHaveText(
+    'Remettre le rapport',
+  );
 });

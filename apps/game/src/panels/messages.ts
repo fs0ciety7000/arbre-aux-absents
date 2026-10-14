@@ -311,6 +311,8 @@ export const pm = {
     locked: (names: string) => `Établi : ${names}`,
     secret: (t: string) => `Secret découvert : ${t}`,
     ending: (t: string) => `Dénouement : ${t}`,
+    /** Case revendiquée : premier champ retiré d'une déclaration intacte (AFFAIRE-2 §1.7). */
+    claimContested: (fields: string) => `Déclaration contestée : ${fields.toLowerCase()}`,
     replay: 'Relire le dénouement',
     started: 'Début de l’enquête',
   },

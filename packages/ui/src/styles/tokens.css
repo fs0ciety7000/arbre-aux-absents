@@ -88,6 +88,7 @@
   /* Formulaire de requête (case revendiquée, §6.9) : papier vert d'eau, encre bleu canard */
   --raw-form-100: oklch(0.945 0.03 196);
   --raw-form-700: oklch(0.42 0.065 212);
+  --raw-form-300: oklch(0.82 0.07 200); /* encre du formulaire lue sur le bureau sombre */
 
   /* ── 2. Sémantique : contexte « lampe » (défaut, bureau sombre) ───── */
   --canvas: var(--raw-night-950);
@@ -147,6 +148,8 @@
   --claim-paper: var(--raw-form-100); /* fond du cartouche « Déclaré » */
   --claim-ink: var(--raw-form-700); /* texte du cartouche, valeurs déclarées */
   --claim-edge: var(--raw-form-700); /* tirets du bord, filet du cartouche */
+  /* Variante bureau sombre : valeur déclarée posée hors papier (fiche de case, sélecteur) */
+  --claim-ink-desk: var(--raw-form-300);
   --claim-border: 2px;
   --claim-dash: 6px;
   --claim-gap: 4px;
@@ -564,6 +567,7 @@
   --claim-paper: oklch(1 0 0);
   --claim-ink: oklch(0.25 0.035 212);
   --claim-edge: oklch(0.25 0.035 212);
+  --claim-ink-desk: oklch(0.93 0.035 200);
   --tape: oklch(0.9 0 0 / 0.9);
   --tape-edge: oklch(0.13 0 0);
   --label-tape: oklch(0.1 0 0);

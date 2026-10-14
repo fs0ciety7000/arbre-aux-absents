@@ -199,6 +199,13 @@ const common = (min) => [
   ['--canvas', ['--text'], T, 'info-bulle (inversée)'],
   ['--text', ['--selection', '--surface-1'], T, 'sélection de texte'],
 ];
+// Bureau sombre seulement (hors papier) : valeur déclarée d'une case revendiquée (§6.9)
+const deskOnly = (min) => [
+  ['--claim-ink-desk', ['--canvas'], min, 'valeur déclarée sur le bureau'],
+  ['--claim-ink-desk', ['--surface-1'], min, 'valeur déclarée (fiche de case, sélecteur)'],
+  ['--claim-ink-desk', ['--surface-2'], min, 'valeur déclarée (survol)'],
+  ['--claim-ink-desk', ['--surface-3'], min, 'valeur déclarée (ligne active)'],
+];
 const paperOnly = (min) => [
   ['--text', ['--hl-1', '--surface-1'], min, 'surlignage 1'],
   ['--text', ['--hl-2', '--surface-1'], min, 'surlignage 2'],
@@ -288,9 +295,9 @@ const pairs = {
   'carte HC': art(AAA),
   'carte nuit': night(T),
   'carte nuit HC': night(AAA),
-  lampe: common(T),
+  lampe: [...common(T), ...deskOnly(T)],
   papier: [...common(T), ...paperOnly(T)],
-  'lampe HC': common(AAA),
+  'lampe HC': [...common(AAA), ...deskOnly(AAA)],
   'papier HC': [...common(AAA), ...paperOnly(AAA)],
   matières: materials(T),
   'matières HC': materials(AAA),

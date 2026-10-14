@@ -9,6 +9,8 @@
 > **v2.2 — 14 oct. 2026 — affaire 2** : case revendiquée (§6.9 : `--claim-*`, `.claim-frame`,
 > `.claim-value`, `ClaimTag`, `IndexCard claimed`, transition `unclaim`, icône `staple`) et chemises
 > d'affaire de l'écran Nouvelle partie (§6.10 : `CaseFolder`, `CaseFolderGroup`).
+> **v2.3 — 14 oct. 2026 — rapport de l'affaire 2** : tampons de décision (§6.11 : `DecisionCard`,
+> `DecisionGroup`) et variante bureau sombre de l'encre déclarée (`--claim-ink-desk`, §6.9).
 >
 > | Quoi | Où |
 > |---|---|
@@ -133,7 +135,7 @@ de l'illustration.
 | Céladon | `--raw-celadon-300/400/700` | `0.86 0.07 172` · `0.79 0.09 172` · `0.45 0.075 178` | Fougère, ornements, célébration |
 | Kraft | `--raw-kraft-200/400/500/700` | manille `0.89 0.055 88` · kraft `0.76 0.08 72` · ombré `0.68 0.09 66` · tranche `0.47 0.075 58` | Chemises |
 | Tampon | `--raw-stamp-300/700` | `0.77 0.13 300`, `0.46 0.16 300` | « Établi » |
-| Formulaire (v2.2) | `--raw-form-100/700` | `0.945 0.03 196` vert d'eau, `0.42 0.065 212` bleu canard | Case revendiquée (§6.9) |
+| Formulaire (v2.2) | `--raw-form-100/300/700` | `0.945 0.03 196` vert d'eau, `0.82 0.07 200` canard clair (v2.3, bureau sombre), `0.42 0.065 212` bleu canard | Case revendiquée (§6.9) |
 | États | `--raw-red/green/orange/blue-300/700` | inchangés depuis v1 | Erreur, succès, avertissement, info |
 | Papiers, encres | `--raw-paper*`, `--raw-ink-*`, `--raw-rule-blue`, `--raw-steel` | papier neuf `0.978 0.012 92` … encre ferro-gallique `0.27 0.05 262`, réglure `0.76 0.07 236`, acier `0.8 0.012 250` | Documents, fiches, trombones |
 | Bois, crépuscule | `--raw-wood-700/500`, `--raw-velvet`, `--raw-dusk-rose/lilac/peach` | bois ombre `0.36 0.05 40`, bois éclairé `0.59 0.065 46`, velours `0.49 0.05 358`, rose `0.85 0.05 0`, lilas `0.84 0.045 291`, pêche `0.86 0.06 55` | **Décor seulement** (jamais un texte) |
@@ -165,7 +167,8 @@ de l'illustration.
 
 **Matières** (globales, §6) : `--kraft` `--kraft-shade` `--kraft-edge` `--manila` `--kraft-ink`
 · `--card` `--card-rule` `--card-margin` (vermillon-500) · **v2.2** `--claim-paper` `--claim-ink`
-`--claim-edge` `--claim-border` `--claim-dash` `--claim-gap` `--claim-tag-h` (case revendiquée, §6.9) · `--tape` `--tape-edge` · `--label-tape`
+`--claim-edge` `--claim-border` `--claim-dash` `--claim-gap` `--claim-tag-h` (case revendiquée, §6.9)
+· **v2.3** `--claim-ink-desk` (variante bureau sombre de `--claim-ink`, `--raw-form-300`) · `--tape` `--tape-edge` · `--label-tape`
 (bleu `oklch(0.36 0.12 257)`) `--label-tape-red` `--label-tape-text` `--label-sheen` `--label-emboss`
 · `--string` `--pin-head` `--metal` `--metal-shade` · `--wood` `--wood-lit` `--velvet` · `--dusk-rose`
 `--dusk-lilac` `--dusk-peach` `--dusk-sky` (dégradé du ciel de la fenêtre) · images
@@ -239,6 +242,7 @@ couleurs), plus 12 contrôles d'écart entre tons d'état. Détail : annexe §17
 | `--card-margin` sur `--card` (ligne de tête) | 3,75 | 3 |
 | `--claim-ink` sur `--claim-paper` (cartouche « Déclaré ») | 7,09 (HC 15,85) | 4,5 (HC 7) |
 | `--claim-ink` sur `--paper-aged` (valeur déclarée, pire cas) | 6,61 | 4,5 |
+| `--claim-ink-desk` sur `--surface-3` (valeur déclarée sur le bureau, pire cas) | 7,75 (HC 14,59) | 4,5 (HC 7) |
 | `--text-muted` sur `--scrim-art` posé sur papier neuf (art clé, pire cas) | 9,92 | 4,5 |
 | `--brand` sur `--scrim-art` posé sur papier neuf | 6,11 | 4,5 |
 
@@ -587,6 +591,12 @@ cadenas, ni tampon (ceux-là restent la vérité établie, §3.3). Spécificatio
 | 3. Valeur déclarée | Courier Prime **romain** (le formulaire tapé ; le joueur écrit en gras capitales sur la fiche ordinaire), `--claim-ink`, entre **guillemets « »** à espace fine insécable (`::before`/`::after`, texte de remplacement vide : jamais lus) | `.claim-value` |
 | 4. Pas de cadenas ni de tampon | — | — |
 
+- **Bureau sombre (v2.3)** : hors papier (fiche de case en feuille basse, sélecteur P10), la
+  valeur déclarée prend `--claim-ink-desk` (canard clair, ≥ 7,75:1 sur toute surface du bureau,
+  HC `oklch(0.93 0.035 200)` ≥ 14,59:1). `.claim-value` choisit seule : `--claim-ink-desk` par
+  défaut, `--claim-ink` sous `[data-surface='paper']`, `[data-surface='kraft']` et `.mat-card`.
+  Aucun forçage `color: var(--text)` chez l'hôte. Le cartouche garde `--claim-ink` (il porte son
+  propre papier).
 - **Champ posé** dans une case revendiquée : rendu ordinaire de la fiche (sans `.claim-value`) :
   on lit d'un coup d'œil ce qui vient de la requête et ce qui vient du joueur.
 - **Établie** : l'hôte retire `claim-frame`, `ClaimTag` et `.claim-value` (état calculé, §1.2 de la
@@ -671,10 +681,50 @@ dans une étiquette ; `CaseFolderGroup` est le `<fieldset>` qui les range.
 </CaseFolderGroup>
 ```
 
-Les trois **tampons de décision** du rapport final (AFFAIRE-2 §3.2 : cartes de choix en
-`radiogroup`, option indisponible grisée avec sa raison) ne sont **pas** encore une primitive :
-à composer avec le même motif (radio natif dans une fiche, `Stamp tone="ink"`) ou à demander au
-design-lead au lot du rapport.
+Les trois **tampons de décision** du rapport final : §6.11.
+
+### 6.11 Les tampons de décision (`DecisionCard`, `DecisionGroup`) — v2.3, rapport final
+
+Dernière étape du rapport quand une question est de type `choice` (AFFAIRE-2 §3.2) : une **fiche
+bristol par décision**, même motif que `CaseFolder` (radio natif invisible couvrant la fiche, dans
+une étiquette) ; `DecisionGroup` est le `<fieldset>` qui les range.
+
+- **Contenu** : case à cocher dessinée (carré `--ink-muted`, coche quand choisie), **effet
+  administratif** en Courier Prime (`--font-type`), jamais l'issue narrative. Choisie : gras,
+  liseré intérieur `--border-strong` `--accent`, soulevée de 2 × `--lift`, `--shadow-lifted`, et
+  **tampon** `Stamp tone="ink" size="s"` (« Visé ») qui frappe (`animate`), encre neutre : aucune
+  décision n'est « la bonne ».
+- **Indisponible** (`reason`, donnée par le contenu : `unavailableReason`, ARCHITECTURE §3.2) :
+  fiche sans réglure ni ombre, bord en tirets 1 px `--ink-muted`, case en tirets, libellé
+  `--ink-muted` ; la **raison** reste à l'encre pleine (`--ink`, icône `info`, préfixe gras
+  « Indisponible : ») : lisible au contraste AA, jamais par opacité. Radio `disabled` (exposé
+  indisponible, sauté par les flèches), raison en `aria-describedby`. Action facultative
+  (`action`, ex. « Revenir au dossier ») sous la fiche, **hors** de l'étiquette.
+- **Disposition** : cible ≥ 72 px ; `DecisionGroup` empile sous 600 px (37,5 rem), en ligne
+  au-delà (colonnes égales). Distribution `deal={rang}`. Mouvement réduit : `--lift` = 0, le
+  tampon se pose en fondu (§9.15).
+- **Accessibilité** : groupe radio natif (Tab entre une fois, flèches) ; nom = libellé ; légende
+  du `fieldset` = la question (« Décision de l'Office »), visible ou `legendHidden`. Confirmation
+  « Apposer ce tampon ? », focus initial sur « Relire ». Couleurs forcées : cadre `CanvasText`,
+  choisie `Highlight`, indisponible `GrayText` en tirets.
+- **Contrastes** : paires existantes du contexte papier (`--ink`, `--ink-muted` sur `--card`,
+  `--accent` non-texte) : aucun nouveau token.
+- **API** : `DecisionCard` : `name` · `value` · `checked` · `onselect(value)` · `label` · `stamp`
+  (déf. « Visé ») · `reason` · `reasonLabel` (déf. « Indisponible : ») · `action` (snippet) ·
+  `deal` · `id` · `class`. `DecisionGroup` : `legend` · `legendHidden` · `class` · enfants.
+
+```svelte
+<DecisionGroup legend={q.prompt} legendHidden>
+  {#each q.options as o, i (o.id)}
+    <DecisionCard name="report-{q.id}" value={o.id} label={o.label} reason={o.unavailableReason}
+      checked={answer === o.id} onselect={choose} deal={i} />
+  {/each}
+</DecisionGroup>
+<!-- une option grisée : un seul « Revenir au dossier » sous le groupe (fiches d'égale hauteur) -->
+```
+
+Rapport final : fiches d'**égale hauteur** en ligne ; le « Revenir au dossier » est posé **une fois
+sous le groupe** (le snippet `action` d'une fiche grandirait toute la rangée).
 
 ---
 
@@ -985,6 +1035,7 @@ Svelte 5 runes, tokens sémantiques seulement, focus `outline 3px --focus` déca
 | 9.30 | `InkReveal`, `Celebrate`, `FlipCard` | §8.4 | | `inert` sur la face cachée |
 | 9.32 | `ClaimTag` | §6.9 | cartouche agrafé, transition `unclaim` | texte réel, ou `decorative` (`aria-hidden`) |
 | 9.33 | `CaseFolder`, `CaseFolderGroup` | §6.10 | chemise kraft qui se soulève ; `deal` | radio natif dans un `fieldset` |
+| 9.34 | `DecisionCard`, `DecisionGroup` | §6.11 | fiche de décision, tampon `ink` qui frappe ; grisée avec sa raison | radio natif dans un `fieldset`, indisponible `disabled` + description |
 | 9.31 | `Coachmark` | `anchor` (fonction) · `kicker` · `text` · `actionLabel`/`onaction` · `skipLabel`/`onskip` · `placement` · `bottomInset` · `id` · snippet | **Note de service** : bande de papier (contexte papier) à liseré safran, posée près de sa cible avec une flèche, liseré pointillé autour de la cible ; se pose comme une feuille (`--dur-open`, `--ease-paper`) | `<aside>` nommé par son surtitre, décrit par son texte ; jamais de focus pris ; §9.31 |
 
 Utilitaires CSS : base.css (`.reading`, `.ink-type`, `.ink-hand`, `.num`, `.caps`, `.grain`,
@@ -1371,6 +1422,7 @@ lavis qui prend au survol (`opacity`) ; épingles et fil rouge en surimpression.
 ### 13.7 Rapport final et fin
 
 Rapport = **chemise manille** (`Folder tone="manila"`) contenant des `IndexCard` par conclusion ;
+une question `choice` (décision) se pose en tampons de décision (§6.11) ;
 validation : `Stamp` « Établi » ou « Contredit » en cascade (`--stagger`) ; écran de fin : art clé
 `fade="edges"` + `Wordmark size="title"` + `Celebrate` une fois ; crédits avec logos (§11).
 
@@ -1532,6 +1584,10 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--accent` | `--surface-3` | **7,95** ✓ | 4,5 | pastille douce accent |
 | `--canvas` | `--text` | **16,17** ✓ | 4,5 | info-bulle (inversée) |
 | `--text` | `--selection sur --surface-1` | **8,16** ✓ | 4,5 | sélection de texte |
+| `--claim-ink-desk` | `--canvas` | **10,68** ✓ | 4,5 | valeur déclarée sur le bureau |
+| `--claim-ink-desk` | `--surface-1` | **9,57** ✓ | 4,5 | valeur déclarée (fiche de case, sélecteur) |
+| `--claim-ink-desk` | `--surface-2` | **8,46** ✓ | 4,5 | valeur déclarée (survol) |
+| `--claim-ink-desk` | `--surface-3` | **7,75** ✓ | 4,5 | valeur déclarée (ligne active) |
 
 #### Contexte papier
 
@@ -1633,6 +1689,10 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--accent` | `--surface-3` | **13,13** ✓ | 4,5 | pastille douce accent |
 | `--canvas` | `--text` | **20,59** ✓ | 4,5 | info-bulle (inversée) |
 | `--text` | `--selection sur --surface-1` | **9,58** ✓ | 4,5 | sélection de texte |
+| `--claim-ink-desk` | `--canvas` | **16,96** ✓ | 7 | valeur déclarée sur le bureau |
+| `--claim-ink-desk` | `--surface-1` | **16,57** ✓ | 7 | valeur déclarée (fiche de case, sélecteur) |
+| `--claim-ink-desk` | `--surface-2` | **15,75** ✓ | 7 | valeur déclarée (survol) |
+| `--claim-ink-desk` | `--surface-3` | **14,59** ✓ | 7 | valeur déclarée (ligne active) |
 
 #### Contexte papier HC
 

@@ -20,7 +20,7 @@
     icon: IconName;
     title: string;
     lines: string[];
-    tone: 'start' | 'locked' | 'secret' | 'reveal' | 'ending';
+    tone: 'start' | 'locked' | 'secret' | 'reveal' | 'claim' | 'ending';
   }
 
   const game = getGame();
@@ -71,6 +71,16 @@
         title: r.title,
         lines: r.lines,
         tone: 'reveal',
+      });
+    }
+    for (const [i, r] of game.contested.entries()) {
+      out.push({
+        key: `c${i}`,
+        at: r.at,
+        icon: 'staple',
+        title: r.title,
+        lines: r.lines,
+        tone: 'claim',
       });
     }
     const ending = s.ending ? c.endings[s.ending] : undefined;
@@ -198,6 +208,10 @@
   .locked .mark {
     color: var(--established);
     border-color: var(--established);
+  }
+  /* Déclaration contestée : agrafe, cercle en tirets (comme le bord de la case revendiquée). */
+  .claim .mark {
+    border-style: dashed;
   }
   .secret .mark,
   .ending .mark {

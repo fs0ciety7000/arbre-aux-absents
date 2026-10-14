@@ -32,7 +32,7 @@ import { messages } from '../../messages.fr';
 import { announcer } from './announcer.svelte';
 import { generationNumber } from './generations';
 import { askedQuestions } from './report';
-import { FIELD_LABELS } from '../../panels/messages';
+import { FIELD_LABELS, pm } from '../../panels/messages';
 import { claimFields, fieldValueLabel } from '../../panels/lib/view';
 import type {
   DeskUi,
@@ -119,6 +119,8 @@ export class GameStoreImpl implements GameStore {
   #state = $state.raw<SaveState>(null as unknown as SaveState);
   modals = $state<DeskModal[]>([]);
   reveals = $state<RevealRecord[]>([]);
+  /** Déclarations contestées de la session (AFFAIRE-2 §1.7), pour le Journal. */
+  contested = $state<RevealRecord[]>([]);
   splits = $state<Split[]>([]);
   /** Dernier mot-clé ciblé par `navigate` (Carnet). */
   focusKeyword = $state<string | null>(null);
@@ -320,6 +322,19 @@ export class GameStoreImpl implements GameStore {
     }
     const gone = was.filter((f) => !now.includes(f));
     if (gone.length === 0) return;
+    // Agrafe ôtée (effets, coupée avec le son) ; pas de vibration (§1.7).
+    audio.play('unstaple');
+    // Première contestation d'une déclaration intacte : constat d'action au Journal, sans verdict.
+    if (was.length === all.length) {
+      this.contested = [
+        ...this.contested,
+        {
+          at: Date.now(),
+          title: pm.journal.claimContested(gone.map((f) => FIELD_LABELS[f]).join(', ')),
+          lines: [],
+        },
+      ];
+    }
     const g = after.tree[slot];
     if (gone.length > 1) {
       announcer.say(m.claimRemoved(gone.length));

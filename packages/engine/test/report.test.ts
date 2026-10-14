@@ -106,6 +106,42 @@ describe('reportQuestions', () => {
   });
 });
 
+describe('reportQuestions : option indisponible avec raison', () => {
+  const reason = 'Le télégramme n’a pas été lu.';
+  const withReason = {
+    ...C,
+    report: C.report.map((q) =>
+      q.id === 'q-auteur'
+        ? {
+            ...q,
+            options: q.options.map((o) =>
+              o.availableWhen ? { ...o, unavailableReason: reason } : o,
+            ),
+          }
+        : q,
+    ),
+  };
+
+  it('montrée grisée (raison), dans l’ordre du contenu, toujours refusée par answer', () => {
+    const q = reportQuestions(start(), withReason)[0]!;
+    const ids = C.report.find((x) => x.id === 'q-auteur')!.options.map((o) => o.id);
+    expect(q.options.map((o) => o.id)).toEqual(ids);
+    const off = q.options.filter((o) => o.unavailableReason !== undefined);
+    expect(off.length).toBeGreaterThan(0);
+    for (const o of off) {
+      expect(o.unavailableReason).toBe(reason);
+      expect(applyAction(start(), answer('q-auteur', o.id), withReason).events).toEqual(
+        rejected('notAvailable'),
+      );
+    }
+  });
+
+  it('disponible : pas de raison', () => {
+    const q = reportQuestions(informed(), withReason)[0]!;
+    expect(q.options.every((o) => o.unavailableReason === undefined)).toBe(true);
+  });
+});
+
 describe('endingSections', () => {
   it('sections sans condition ou vraies, dans l’ordre ; fin inconnue → []', () => {
     const s: SaveState = deepFreeze({
