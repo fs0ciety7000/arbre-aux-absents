@@ -88,7 +88,9 @@ la loi du 14 mai 1973.*
 
 Fait à Aubrelieu, le ::hand[12 janvier 1976]
 
-Signature du requérant : ::signature[Bastien Tessonnal]
+Signature du requérant :
+
+::signature[Bastien Tessonnal]
 
 ---
 
