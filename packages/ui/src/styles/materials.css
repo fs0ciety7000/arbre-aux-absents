@@ -127,6 +127,65 @@
   box-shadow: var(--shadow-paper);
 }
 
+/* ── Case revendiquée : la déclaration du requérant (DESIGN §6.9) ─── */
+/* Bord en tirets (2 px, tiret 6 / espace 4) tracé dans la fiche, au lieu du bord plein.
+   Quatre dégradés répétés : la longueur des tirets est exacte (border-style: dashed ne la
+   règle pas) et rien n'est animé. Calque ::before : ::after reste libre pour l'hôte
+   (lavis de dépôt de l'arbre). */
+.claim-frame {
+  /* l'hôte est positionné (.mat-card l'est) */
+  --claim-dashes-x: repeating-linear-gradient(
+    90deg,
+    var(--claim-edge) 0 var(--claim-dash),
+    transparent var(--claim-dash) calc(var(--claim-dash) + var(--claim-gap))
+  );
+  --claim-dashes-y: repeating-linear-gradient(
+    180deg,
+    var(--claim-edge) 0 var(--claim-dash),
+    transparent var(--claim-dash) calc(var(--claim-dash) + var(--claim-gap))
+  );
+}
+.claim-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    var(--claim-dashes-x) top left / 100% var(--claim-border) no-repeat,
+    var(--claim-dashes-x) bottom left / 100% var(--claim-border) no-repeat,
+    var(--claim-dashes-y) top left / var(--claim-border) 100% no-repeat,
+    var(--claim-dashes-y) top right / var(--claim-border) 100% no-repeat;
+}
+/* Valeur déclarée : formulaire tapé (Courier Prime romain, encre du formulaire) entre
+   guillemets français à espace fine insécable. Les guillemets sont du décor : texte de
+   remplacement vide pour les lecteurs d'écran (le nom accessible dit « déclaré »). */
+.claim-value {
+  font-family: var(--font-type);
+  font-weight: var(--weight-regular);
+  color: var(--claim-ink);
+}
+.claim-value::before {
+  content: '\00AB\202F';
+  content: '\00AB\202F' / '';
+}
+.claim-value::after {
+  content: '\202F\00BB';
+  content: '\202F\00BB' / '';
+}
+/* Pile : la valeur qui sort (transition unclaim) et celle qui entre occupent la même case,
+   sans pousser la mise en page. */
+.claim-stack {
+  display: inline-grid;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.claim-stack > * {
+  grid-area: 1 / 1;
+  min-inline-size: 0;
+}
+
 /* ── Ruban adhésif mat (extrémités dentelées) ────────────────────── */
 .mat-tape {
   display: block;
@@ -222,6 +281,10 @@
   .mat-card {
     background-image: none;
     border: 1px solid CanvasText;
+  }
+  .claim-frame::before {
+    background: none;
+    border: var(--claim-border) dashed CanvasText;
   }
   .mat-label {
     forced-color-adjust: none;

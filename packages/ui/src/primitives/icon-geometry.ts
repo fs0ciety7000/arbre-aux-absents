@@ -156,6 +156,8 @@ export const ICON_GEOMETRY = {
     'M8 17h8',
   ],
   clip: ['M8 7.5V16a4 4 0 0 0 8 0V6a2.5 2.5 0 0 0-5 0v9.5a1 1 0 0 0 2 0V8'],
+  /** Agrafe : couronne posée sur le bord d'une feuille, pattes qui la traversent (case revendiquée). */
+  staple: ['M4.5 11.5V7.5h15v4', 'M2.5 14.5h19', 'M4.5 17v2', 'M19.5 17v2'],
   /** Étincelle : révélation, branche établie. */
   sparkle: [
     'M12 3c.6 4.5 2.5 6.4 7 7-4.5.6-6.4 2.5-7 7-.6-4.5-2.5-6.4-7-7 4.5-.6 6.4-2.5 7-7z',
