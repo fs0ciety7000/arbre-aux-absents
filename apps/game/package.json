@@ -15,7 +15,7 @@
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
     "tauri:android": "tauri android build",
-    "tauri:icons": "tauri icon src-tauri/icons/app-icon.svg"
+    "tauri:icons": "tauri icon src-tauri/icons/app-icon.json"
   },
   "dependencies": {
     "@arbre/contract": "*",

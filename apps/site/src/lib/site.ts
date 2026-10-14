@@ -9,5 +9,14 @@ export const SITE_NAME = 'L’Arbre aux absents';
 export const SITE_TAGLINE = 'Une enquête généalogique dans un monde imaginaire';
 export const SITE_DESCRIPTION =
   'L’Arbre aux absents : un jeu d’enquête généalogique en solo. Croisez archives, registres et photographies pour reconstituer l’arbre d’une famille de la Velmarche. Par CM Interactive et CM Creative Lab.';
-/** Image Open Graph 1200 × 630 (apps/site/static/og/). */
-export const OG_IMAGE = '/og/arbre-aux-absents.png';
+/**
+ * Image Open Graph 1200 × 630, JPEG (apps/site/static/og/) : copie de la bannière du kit presse
+ * (static/presse/kit/bannieres/arbre-aux-absents-og-1200x630.jpg). Nouveau nom à chaque nouveau
+ * visuel : les réseaux gardent l'ancienne image en cache tant que l'URL ne change pas.
+ */
+export const OG_IMAGE = '/og/arbre-aux-absents-bureau.jpg';
+export const OG_IMAGE_TYPE = 'image/jpeg';
+export const OG_IMAGE_WIDTH = 1200;
+export const OG_IMAGE_HEIGHT = 630;
+export const OG_IMAGE_ALT =
+  'Le bureau de l’enquêteur sous la lampe, la nuit : dossiers, photographies et un arbre généalogique à compléter, à côté du titre L’Arbre aux absents.';

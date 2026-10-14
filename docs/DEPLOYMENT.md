@@ -125,7 +125,7 @@ Configuration : `apps/game/src-tauri/` (Tauri ≥ 2.12, plugins `fs` et `dialog`
 | Windows | NSIS par utilisateur, bootstrapper WebView2 |
 | macOS | binaire universel (Intel + Apple Silicon), dmg, `minimumSystemVersion` 10.15 |
 | Android | `minSdkVersion` 24, APK + AAB |
-| Icônes | provisoires, depuis `src-tauri/icons/app-icon.svg` : `npm run tauri:icons -w @arbre/game` |
+| Icônes | emblème du kit presse (cachet de cire à la fougère sur la nuit). Sources dans `src-tauri/icons/` : `app-icon.png` (icône à coins arrondis 1024 px), `app-icon-android-fg.png` (avant-plan adaptatif Android : cachet ≈ 53 dp sur 108, dans la zone sûre de 66 dp) et le manifeste `app-icon.json` (fond Android `#07152e`). `bash scripts/app-icons.sh` les redérive du kit (`apps/site/static/presse/kit/logos/`, ImageMagick) avec les icônes web du jeu (`apps/game/public/`), puis `npm run tauri:icons -w @arbre/game` régénère PNG/ICO/ICNS et `icons/android/` (supprimer le dossier `icons/ios/` qu'il crée, non utilisé) |
 
 Commandes (racine) : `npm run tauri:dev` (alias `dev:tauri`), `npm run tauri:build`,
 `npm run tauri:android`. En local il faut Rust stable et, sous Linux,
