@@ -6,7 +6,7 @@
 > héréditaires sont des **indices de jeu** : toujours du même côté, toujours lisibles à 96 px.
 >
 > Total : **36 portraits** (28 de case + 2 âges supplémentaires d'Andrin + 6 leurres) et
-> **52 illustrations** de pièces.
+> **53 illustrations** de pièces (v0.2 : + PH-18).
 
 ## 1. Règles de dessin propres à l'affaire
 
@@ -24,7 +24,7 @@
 6. **Mains** : brûlure luisante au dos de la main **droite** (Bastien, dès 1927) ; au dos de la main
    **gauche** (Andrin, **seulement après août 1943**). Sur PH-07 et PH-10, les mains d'Andrin sont
    intactes.
-7. **Loupe de graveur** au cordon : Andrin à 42, 61 et 63 ans (PH-13, CT-02, OF-02, PH-17). Léonce porte
+7. **Loupe de graveur** au cordon : Andrin à 23, 42, 61 et 63 ans (PH-18, PH-13, CT-02, OF-02, PH-17). Léonce porte
    une **loupe d'opticien** (autre forme : monture ronde, cerclée) : ne pas les confondre au dessin.
 
 ## 2. Portraits de case (28)
@@ -88,7 +88,7 @@ Le visage de Bastien **n'a qu'un âge** dans le jeu : c'est voulu (le joueur doi
 Ratio : 36 visages pour 28 cases (≈ 1,29) ; avec le demi-frère qui sert de leurre à l'autre, le ratio
 effectif atteint 1,3 (`docs/game/AFFAIRE-2.md` §1.6).
 
-## 5. Illustrations des pièces (52)
+## 5. Illustrations des pièces (53)
 
 Format et procédé : ceux de l'affaire 1 (`illustrations/<id>.svg`, scripts déterministes). « Photo » =
 tirage noir et blanc ou sépia selon l'époque ; « doc » = fac-similé partiel (en-tête, tampon, écriture).
@@ -116,8 +116,9 @@ tirage noir et blanc ou sépia selon l'époque ; « doc » = fac-similé partiel
 | PH-15 | Mariage de 1960 | 6 personnes | Escalier de la mairie de Hautcorvin. |
 | PH-16 | Fête de la neige, 1974 | 6 personnes nommées + foule | Couleur passée des années 1970 ; reflet de Sabine dans une vitrine ; banderole « École de ski ». |
 | PH-17 | Négatifs du Studio Orlhac | Andrin (63) | Bande de deux négatifs inversés (face / **profil droit**) + pochette annotée. |
+| PH-18 | Les lauréats de la Saint-Éloi (1935) | Bastien (25), Andrin (23) | Tirage d'après négatif sur verre, Studio Orlhac ; les deux jeunes gens en pied devant la gueule du four n° 2, **même ovale, même fossette, même carrure**. À gauche Bastien : casquette à la main, **épi**, **yeux clairs**, canne de souffleur, **dos de la main droite luisant**. À droite Andrin : **sourcils droits épais**, **yeux sombres**, pas d'épi, **tablier de cuir**, une coupe gravée dans les mains, **loupe au cordon**. Pochette manuscrite à côté (« de g. à dr. »). Lisibles à 240 px : yeux, épi, sourcils. Seconde pièce maîtresse, indépendante de PH-07. |
 | CP-01 | « Cap de Tennok — le phare » | Léonce (26, silhouette) | Carte-photo ; silhouette dans la lanterne ; verso manuscrit en vignette. Reprendre le phare de l'affaire 1 (blanc à bande rouge). |
-| CP-02 | « La Combe-aux-Sables, les carriers » | Barthélemy (58), Annette (54), Jules (28) | Entaille blanche dans la pente, wagonnets à bras (pas de rails : brouettes et tombereaux), la sage-femme sur sa mule. |
+| CP-02 | « La Combe-aux-Sables, les carriers » | Barthélemy (58), Annette (54), Jules (28) | Entaille blanche dans la pente, brouettes et tombereaux (aucun rail), la sage-femme sur sa mule. |
 
 ### Presse (7)
 
@@ -172,6 +173,6 @@ les planches montrent, le texte constate.
 
 1. Planche de contrôle du §3 (cinq visages), à faire valider par le `level-designer` (lisibilité de la
    différence à 96 et 240 px).
-2. PH-07, PR-03, OF-02, PH-17, PH-09, PH-10 (le cœur de la déduction).
+2. PH-07, PH-18, PR-03, OF-02, PH-17, PH-09, PH-10 (le cœur de la déduction).
 3. Portraits de case restants, puis leurres.
 4. Photos de groupe, presse, objets, fac-similés.

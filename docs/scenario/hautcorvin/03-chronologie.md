@@ -98,6 +98,7 @@
 | 11 mars 1934 | Naissance d'**Isaure Brossal** (C23). Yeux gris. | → RG-07 |
 | 15 sept. 1934 | Mariage de **Rémi Neviot**, guide (insigne n° 19), et d'**Odette Lamberge**. | → RG-09 |
 | 1935 | Bastien, **chef de nuit** de la halle. **Lucie**, 21 ans, nommée **gardienne du refuge de l'Ourse**. | → RG-17 |
+| 1er déc. 1935 (dimanche) | Concours de la **Saint-Éloi** des Verreries, à la halle : Bastien, 1er prix de soufflage ; Andrin, 1er prix de gravure. Le Studio Orlhac photographie les deux lauréats côte à côte devant le four n° 2 (Bastien 25 ans, Andrin 23). | → RG-17, PH-18 |
 | 2 juin 1936 | Naissance de **Gilles Neviot** (C27). | → RG-09 |
 | juin 1936 | **Grève des fours** contre la baisse des salaires décidée par Aimé Brossal ; Bastien la mène. Il fréquente Lucie depuis l'hiver. | → PR-03 |
 | été 1937 | Photographie du personnel de la halle devant le four n° 2 (16 personnes, dont Honoré, Bastien, Andrin, Danela, Aimé, le gardien de nuit Toussaint Mallet). | → PH-07 |
@@ -185,7 +186,7 @@
 |---|---|---|
 | 9 janv. 1976 (vendredi) | Le futur requérant se fait photographier au **Studio Orlhac**, à Hautcorvin (« le studio où ma mère me menait ») : face et profil. Il porte une **loupe de graveur** au cordon, par habitude. | → PH-17 |
 | 10 janv. 1976 (samedi) | Au bureau de poste de Vernezac, il télégraphie à sa voisine de Dalvica, Jadela Rovin : « … NE DIS RIEN. ANDRIN ». La receveuse, **Brigitte Neviot**, vise le formulaire. Pierre Sarrade le voit monter vers le refuge. | → TG-02 |
-| 12 janv. 1976 (lundi) | À l'ORC : « **Je suis Bastien Tessonnal.** » Requête en réinscription d'un vivant (art. 4), dossier **76-0012**. Signalement : 1,71 m, **yeux bruns**, **cicatrice de brûlure au dos de la main gauche**. | → OF-02 |
+| 12 janv. 1976 (lundi) | À l'ORC : « **Je suis Bastien Tessonnal.** » Requête en réinscription d'un vivant (art. 4), dossier **76-0012**. Profession déclarée : « chef de nuit » (le dernier poste où Andrin a vu Bastien ; la liste n° 9 dit « souffleur »). Signalement : 1,71 m, **yeux bruns**, **cicatrice de brûlure au dos de la main gauche**. | → OF-02 |
 | 13 janv. 1976 | Première audition. Sa version : le 9 mars 1944, c'est **Andrin** qui serait mort ; lui, Bastien, aurait pris le nom et le numéro du mort pour échapper au jugement pour « sabotage », puis vécu 24 ans sous ce nom, par honte et par peur ; l'incendie de 1937 est **prescrit** depuis 1967 ; Honoré est mort. Il veut reconnaître sa fille. | → PV-01 |
 | 17 janv. 1976 | Isaure Brossal l'interroge pour *La Sentinelle* (il accepte : il veut être vu). | → PR-10 |
 | 22 janv. 1976 (jeudi) | **Opposition** de Colombe Brossal (Me Gérard Vallin) : « Cet homme n'est pas mon frère. Mon frère avait les yeux de notre mère. » | → OF-03 |
@@ -198,7 +199,7 @@
 | 10 févr. 1976 | Expertise médicale : **aucune cicatrice à la main droite** ; cicatrice gauche de 20 à 40 ans d'âge ; incisives intactes, sans réparation ; lobe adhérent ; yeux bruns. | → EX-01 |
 | 11 févr. 1976 | Audition d'Agnès : elle veut le croire ; elle prête le verre de 1959. | → PV-04, OB-02 |
 | 16 févr. 1976 | Expertise d'écritures (L. Daubry). | → EX-02 |
-| 18 févr. 1976 | Audition de **Teodor Haask** à Vellaak : « Le 0214 est mort dans mes bras… Je n'ai pas échangé ces deux-là. » | → PV-05 |
+| 18 févr. 1976 | Audition de **Teodor Haask** à Vellaak : « Le 0214 est mort dans mes bras… Personne n'a échangé ces deux-là. » | → PV-05 |
 | 20 févr. 1976 | Expertise anthropométrique (oreille) : le profil de 1976 est celui de la fiche 41-1987. | → EX-03 |
 | 23 févr. 1976 | Audition de **Victorin Sarrade** ; il remet la **boîte de Lucie** (billet de 1944, lettre retournée de 1939, carnet des moutons, photo « Pour B. »). | → PV-06, OB-03 |
 | 24 févr. 1976 | Expertise des verres gravés : la main de la Coupe (1941), du verre d'Agnès (1959) et du catalogue de Brénica (1974) est la même. | → EX-04 |
@@ -222,7 +223,7 @@
 | C26 | Pierre Sarrade | 27 |
 | C27 | Gilles Neviot | 39 |
 | C28 | Brigitte Neviot | 34 |
-| — | Teodor Haask (hors arbre) | 63 (né en 1912, voir affaire 1) |
+| — | Teodor Haask (hors arbre) | 63 (né le **3 avril 1912** : seule fenêtre compatible avec « 34 ans » le 11 mai 1946, RG-19 de l'affaire 1, et « 63 ans » le 18 févr. 1976) |
 
 **Héritiers au sens du testament** (« mes enfants vivants ») : **Colombe** ; **Andrin**, si sa filiation
 est établie (secret S3) ; **Agnès**, représentant Bastien (loi de 1973, art. 12), si sa filiation est

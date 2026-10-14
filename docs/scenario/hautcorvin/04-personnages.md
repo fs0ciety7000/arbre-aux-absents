@@ -132,9 +132,9 @@
 **Caractère.** Généreux, colérique, drôle ; un meneur malgré lui.
 **Background.** Apprenti en 1926, souffleur en 1929, chef de nuit en 1935, meneur de la grève de 1936 ; accusé de l'incendie de 1937, caché au refuge, arrêté au Pas en mai 1938, mort à Kessaar le 9 mars 1944.
 **Secrets.** Innocent ; père d'Agnès ; a confié à Andrin sa vie entière, pour qu'elle survive.
-**Portrait de case : 27 ans** (PH-07, été 1937). **Yeux gris clair**, **fossette**, **épi** au milieu du front, joues larges de souffleur, **casquette de toile** repoussée en arrière, **incisive centrale gauche ébréchée** (bouche entrouverte), **brûlure luisante au dos de la main droite**. À 26 ans (PR-03) : bras levé, même casquette. À 28 ans (PH-09, R) : tête rasée, même regard clair, lobe détaché.
+**Portrait de case : 27 ans** (PH-07, été 1937). **Yeux gris clair**, **fossette**, **épi** au milieu du front, joues larges de souffleur, **casquette de toile** repoussée en arrière, **incisive centrale gauche ébréchée** (bouche entrouverte), **brûlure luisante au dos de la main droite**. À 25 ans (PH-18) : casquette à la main, canne de souffleur, main droite brûlée bien visible. À 26 ans (PR-03) : bras levé, même casquette. À 28 ans (PH-09, R) : tête rasée, même regard clair, lobe détaché.
 **Autres âges.** Aucun portrait supplémentaire (le joueur doit retrouver *ce* visage).
-**Apparitions.** PH-04 (enfant), PH-06 (18 ans), PR-03, PH-07, PH-09 (R).
+**Apparitions.** PH-04 (enfant), PH-06 (18 ans), PH-18, PR-03, PH-07, PH-09 (R).
 
 ### C16 — Lucie Neviot (1914–1969) · gardienne de refuge
 **Caractère.** Rapide, secrète, intrépide ; rit fort, parle peu.
@@ -148,8 +148,8 @@
 **Background.** Fils de Danela (et d'Honoré, sans le savoir) ; graveur aux Verreries ; radié en 1941 pour la Coupe ; à Kessaar avec Bastien (1941–1944) ; libéré en 1952 ; graveur à Brénica ; se présente à l'ORC en janvier 1976 sous le nom de son frère.
 **Secrets.** L'imposture ; S4 ; il croit être le fils de Léonce, donc le **cousin** de Bastien.
 **Portrait de case : 63 ans** (OF-02 / PH-17, 1976). Cheveux blancs **ras**, **yeux sombres**, **sourcils droits et épais** encore noirs, **fossette**, visage maigre, **pas d'épi**, **loupe de graveur pendue à un cordon**, costume trop large (acheté pour l'occasion), **cicatrice au dos de la main gauche** (si la main est visible).
-**Autres âges (`altPortraits`).** **27 ans** (PH-07, PH-10 R) : cheveux noirs, mêmes sourcils, **tablier de cuir**, presque le visage de Bastien ; **41 ans** (RG-15, PH-13) : tempes grises, maigre, même loupe.
-**Apparitions.** PH-05 (enfant), PH-07, PR-05 (arrière-plan), PH-10 (R), RG-15, PH-13, CT-02, PH-17, OF-02, PR-10.
+**Autres âges (`altPortraits`).** **27 ans** (PH-07, PH-10 R) : cheveux noirs, mêmes sourcils, **tablier de cuir**, presque le visage de Bastien ; **41 ans** (RG-15, PH-13) : tempes grises, maigre, même loupe. À 23 ans (PH-18), reconnaissable par l'âge supplémentaire de 27 ans : cheveux noirs, tablier, coupe gravée en main, **déjà la loupe au cordon**.
+**Apparitions.** PH-05 (enfant), PH-18, PH-07, PR-05 (arrière-plan), PH-10 (R), RG-15, PH-13, CT-02, PH-17, OF-02, PR-10.
 
 ### C18 — Victorin Sarrade (1915– ) · douanier
 **Caractère.** Lent, droit, rongé par une nuit de mai.
@@ -249,7 +249,7 @@
 | **Henri Brissac** (1890– ) | Instituteur de Hautcorvin, maître d'école de Bastien ; radié en 1941 (déjà dans l'affaire 1, liste n° 41). | PV-01 (mention) |
 | **Abbé Mathurin Pradeil** | Curé de Vernezac (1905–1940), a baptisé Andrin. | RG-05 |
 | **Dr Hervel** | Médecin du bagne de Kessaar (1943–1944). | RG-13, PV-05 |
-| **Teodor Haask** (1912– ) | Ancien gardien à Kessaar (déjà dans l'affaire 1), vit à Vellaak. Témoin de la mort du 0214. **Caméo neutre** : aucune allusion aux faits de l'affaire 1. | PV-05 |
+| **Teodor Haask** (3 avril 1912– ) | Ancien gardien à Kessaar (déjà dans l'affaire 1), vit à Vellaak. Témoin de la mort du 0214. **Caméo neutre** : il ne parle que du 0214 et du 1171 ; jamais d'autres détenus, de décès irréguliers, d'aide aux détenus, de Tennok ni de sa famille. Crédible par lui-même : gardien de service ce soir-là, il n'a rien à gagner. Règle complète : `07-coherence.md` §6. | PV-05 |
 | **Jadela Rovin** | Voisine d'Andrin à Dalvica, destinataire du télégramme de 1976. **Leurre de visage** (PH-13). | TG-02, PH-13 |
 | **Dr Noémie Castel** | Médecin légiste, Université d'Aubrelieu. | EX-01 |
 | **L. Daubry** | Restauratrice, atelier de conservation des Archives nationales (caméo neutre de l'affaire 1). | EX-02 |

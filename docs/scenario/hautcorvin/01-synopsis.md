@@ -31,9 +31,10 @@ reconnaître la fille d'un mort.
   (pour le testament d'Honoré) et de l'**ascendance maternelle d'Agnès Neviot** : 28 cases, quatre
   générations, nom, visage, métier.
 - **La case revendiquée.** La case de Bastien Tessonnal est remplie « d'après la déclaration du
-  requérant ; rien n'y est établi » (OF-01). Le nom est juste, le métier aussi : c'est le **visage**
-  qui est faux. Le défaire, puis poser ce visage dans la case « ? » (le codétenu sans nom), c'est
-  le cœur de l'affaire.
+  requérant ; rien n'y est établi » (OF-01). Le nom est juste ; deux champs sont faux : le **visage**
+  (celui du requérant) et le **métier** (« chef de nuit », un grade, alors que Bastien était
+  souffleur). Défaire le visage, puis le poser dans la case « ? » (le codétenu sans nom), c'est le
+  cœur de l'affaire.
 - **Règle des deux pièces.** Inchangée (loi de 1973) : justification de la validation par groupes.
 - **Enjeu.** L'héritage d'Honoré (la maison Tessonnal de Hautcorvin et ses parts des Verreries) ; la réinscription
   de Bastien, mort ou vivant ; la filiation d'Agnès ; et le nom que portera, à la fin, le requérant.

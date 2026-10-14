@@ -28,19 +28,22 @@ la **Thalberie** voisine.
 | 1898 | L'ostrien redevient langue d'école ; fondation de *Vel Taalik*. |
 | 1911 | Centenaire de la Charte. |
 | 1916–1919 | **Guerre des Cols** contre la Thalberie pour le col de Corvenne ; paix de Brenzac, frontière inchangée. |
+| 20 avr. 1916 | **Arrêté sur les sujets thalbères des provinces frontières** : ils sont reconduits au col de Corvenne (affaire 2 : Danela et Dranko Dalvarin, retour en 1921). |
 | 1924 | Grande tempête de novembre sur la mer Grise. |
 | 1929 | **Krach Sorbelle** : faillite de la plus vieille banque du pays, crise. |
 | 12 mars 1937 | **Coup d'État** du général **Ambroise Destrade** ; le Grand-Duc abdique ; début de la **Régence**. |
 | 2 févr. 1938 | **Loi sur la pureté des registres** : création du BRR ; les « radiés » sont **déclarés absents** (sans état civil, sans droits). Bagne de Kessaar. Interdiction de la presse ostrienne. |
+| 8 juil. 1938 | **Arrêté sur les étrangers des provinces frontières** : nouvelles expulsions de Thalbères (affaire 2). |
 | août 1939 | **Autodafé de Vellaak** : la Régence brûle les registres paroissiaux **et** les registres d'état civil de la commune (naissances, mariages, décès). Les natifs de Vellaak s'y font ensuite inscrire « sur déclaration », devant deux témoins (loi du 2 février 1938, art. 14 ; RG-19). Les registres de Tennok, tenus à part, ont survécu. |
 | 1940–1952 | Résistance de papier : réseaux de faux papiers, dont le réseau **Fougère**. |
 | 7–11 avr. 1952 | **Journées d'avril** : soulèvement d'Aubrelieu, fuite du Régent, fin de la Régence. |
 | 1953 | **Constitution de la République** ; procès des collaborateurs (dont le « Procès des Papetiers »). |
 | 1950 / 1971 | Télévision noir et blanc, puis couleur. |
 | 1er janv. 1968 | Ouverture des archives de la Régence aux historiens (sauf fonds réservés aux familles). |
-| 14 mai 1973 | **Loi de réinscription civile** ; création de l'**ORC**. |
+| 14 mai 1973 | **Loi de réinscription civile** ; création de l'**ORC**. Art. 4 : réinscription d'un radié vivant non réinscrit en 1953 (deux pièces concordantes, reconnaissance de portrait). Art. 9 : fonds restreints. **Art. 12** (affaire 2) : pour l'exécution des libéralités, l'absent mort en détention est **représenté par ses descendants** dont la filiation est établie. |
 | nov. 1973 | Le **Lecteur LX-2** aux Archives nationales. |
-| oct. 1974 | **Temps du jeu.** |
+| oct. 1974 | **Temps du jeu** (affaire 1). |
+| févr.–mars 1976 | Temps de l'affaire 2 (« Le Revenant de Hautcorvin »). |
 
 ## 3. Géographie et lieux (pour la carte)
 
@@ -72,6 +75,23 @@ L'**Ostrie** occupe tout le tiers nord : plateau de landes, côte découpée de 
 | `golfe-d-ambre` | **Golfe d'Ambre** | mer | tout le bord ouest | Eaux plus douces, ambre sur les plages. | — |
 | `orvelle` | **L'Orvelle** et la **Clairette** | fleuve / rivière | voir ci-dessus | Bacs, ponts, moulins. | Axe de la carte. |
 
+### Lieux ajoutés par l'affaire 2 (« Le Revenant de Hautcorvin »)
+
+Détail, espacements et demandes au `cartographe` : `docs/scenario/hautcorvin/08-lieux.md`. Les lieux
+de l'affaire 1 ne bougent pas.
+
+| `PlaceId` | Lieu | Type | Position | Ce qu'on y trouve | Rôle dans l'affaire 2 |
+|---|---|---|---|---|---|
+| `vernezac` | **Vernezac** (*Vernica*) | village | x 0,842 · y 0,814 (sur la Vèze, trois lieues en amont de Hautcorvin) | Halle des fours des Verreries de Hautcorvin (depuis 1790), Auberge des Guides, église, école, bureau de poste, brigade des douanes de la Vèze, Compagnie des guides. | L'incendie de 1937, les Neviot, le télégramme de 1976. |
+| `pas-de-l-ourse` | **Le Pas de l'Ourse** | brèche / passage | x 0,902 · y 0,772 (sur la frontière, à deux lieues au sud du col de Corvenne) | Refuge de l'Ourse (1911) côté velmarchois, croix de fer au troisième lacet, borne-frontière. | Passages de radiés (1938–1952), arrestation de 1938, épilogue. |
+| `dalvezac` | **Dalvezac** (*Dalvica*, Thalberie) | hameau étranger | x 0,945 · y 0,722 (vallée de la Dalva, à l'écart de la route du col) | Maisons de bois, meules de charbonniers, école, cimetière. | Les Dalvarin. |
+
+Rôles nouveaux de lieux existants : **Hautcorvin** (siège des Verreries et atelier d'optique, maison
+Tessonnal, hospice, Studio Orlhac, étude Escande, *La Sentinelle des Corvins* ; la **halle des fours**
+est à Vernezac), **Brenzac** (Verrerie de Brénica), **Kessaar** (cellule 14, infirmerie, four à
+chaux), **col de Corvenne** (expulsions de 1916 ; fortin des Corneilles), **Vellaak** (audition d'un
+ancien gardien, 1976).
+
 ### Toponymes secondaires de la carte (validés, passe de cohérence v0.2)
 
 Ajouts du `cartographe` (`art/tools/world.py`, `labels.py`), **gravés sur la carte mais sans
@@ -87,6 +107,8 @@ Ajouts du `cartographe` (`art/tools/world.py`, `labels.py`), **gravés sur la ca
 | **marais de Grisenoue** | 0,55 · 0,30 | roselières au nord d'Aubrelieu | Validé (déjà implicite : *-noue*). La « noue de Grisenoue » descend vers l'Orvelle. |
 | **collines de Sorbe** | 0,58 · 0,91 | collines du sud, au-dessus du lac d'Aulne | Validé : la Clairette en descend (§3). Coteaux à vin (« Rouge des coteaux de Sorbe », DV-02). Même racine que la forêt et le moulin de la Sorbe, et que le nom *Sorbelle* (banque, famille d'Henriette). |
 | **route de Brénica** | 0,93–0,99 · 0,67, sur la route du col à Brenzac | note du graveur | Validé (13/10, propriétaire) : **panneau thalbère** de la route qui descend du col de Corvenne. *Brénica* est le nom thalbère de **Brenzac** (§4), pas une autre ville ; les pièces thalbères disent Brénica (RP-05, PH-27). Libellé « vers Brénica » remplacé par « route de Brénica » pour éviter de lire une seconde ville. |
+| **la Combe-aux-Sables** | 0,796 · 0,846 | carrière de sable blanc, rive gauche de l'Orvelle, en face de Hautcorvin | Affaire 2, validé : **libellé seul**, sans `PlaceId` ni vignette (pictogramme d'entaille blanche au plus, aucun rail). Velmarchois transparent. |
+| **la Vèze** | source 0,900 · 0,786 → Orvelle vers 0,818 · 0,814 | torrent de rive droite, descend du Pas de l'Ourse par Vernezac | Affaire 2 : libellé du ruisseau existant, dont la source est **déplacée** sous le Pas (côté velmarchois). |
 | **ligne des Paquebots de l'Orvelle** | pointillés au large de la côte ouest et nord | ligne maritime | Validé : service côtier de la Compagnie (1871) **Port-Sénane → Tennok → Vellaak** (PR-02, PH-20 : « la vedette de Port-Sénane »). L'embranchement vers Kessaar est la **vedette de Kessaar** (ravitaillement du petit phare, puis du bagne 1938–1952 ; RG-15). Les « îles du golfe » (PR-02) sont desservies par la même compagnie. |
 
 **Noms de lieu ostriens qui ne sont que dans les pièces** (pas sur la carte, à ne pas y ajouter sans
@@ -95,7 +117,10 @@ Ammik Laakvik, AN-04, RP-01), *Tormaas*, *Vikmaar* (RG-12), *Kessdaan* (les Dent
 velmarchois des pièces : quartier et rue des Tanneurs, rue des Foulons, quai et place de la Charte,
 quai des Chartes, Plaine-aux-Saules (Aubrelieu) ; quai des Séchoirs et jetée Est (Vellaak) ; quai du
 Môle, cours de l'Amirauté, quai des Messageries (Port-Sénane) ; fortin des Corneilles et redoute du
-Bec (col de Corvenne, PR-04) ; rue des Scieurs et hôpital de la Croix-de-Brénica (Brenzac).
+Bec (col de Corvenne, PR-04) ; rue des Scieurs et hôpital de la Croix-de-Brénica (Brenzac). Affaire 2 : rue Haute, hospice, paroisse
+Saint-Éloi (Hautcorvin) ; halle des fours, four n° 2, magasin des emballages (Vernezac) ; refuge de
+l'Ourse ; *la Dalva* (torrent thalbère de Dalvezac, pièces seulement) ; route de la Vèze et sentiers
+du Pas (tracés demandés au `cartographe`, sans libellé obligatoire).
 
 Suggestions de cartouche : « **Carte de la Velmarche et de l'Ostrie**, dressée pour l'Office de
 Réinscription civile d'après la carte de la Grande Exposition (1889), revue en 1974 ». Échelle en
@@ -173,6 +198,18 @@ Langue étrangère, peu présente : noms en *-in*, *-ko*, *-ela* (*Dobrin*, *Vas
 *Ilko Varasin*). Brenzac se dit *Brénica* en thalbère : les pièces thalbères (RP-05, en-tête de PH-27) et
 le panneau de la carte disent Brénica ; les pièces velmarchoises disent Brenzac.
 
+**Règles précisées par l'affaire 2** (sans rien changer à ce qui précède) :
+- **Toponymes** : suffixe thalbère *-ica* (« lieu habité »), rendu en velmarchois par *-zac* :
+  *Brénica* → Brenzac, *Dalvica* → **Dalvezac**, *Vernica* → **Vernezac**. Vernezac est en Velmarche
+  mais garde un nom d'origine thalbère (avant 1811, la haute vallée mêlait les deux langues) ;
+  *verna* « braise ». *dalva* « eau vive, torrent ». Le Lecteur indexe les lieux thalbères sous leurs
+  deux noms.
+- **Noms de famille** en *-in* (« de la maison de ») : *Dalvarin*, *Rovin* ; **invariables** (pas de
+  féminin). L'état civil velmarchois fait foi pour la graphie.
+- **Prénoms** : masculins en *-ko* ou *-in* (*Dranko*, *Andrin*), féminins en *-ela* (*Danela*, *Jadela*).
+- **Écriture** : les écoles thalbères enseignent un **T majuscule à boucle** (la barre se referme à gauche).
+- **Monnaie** : le *talar* (pluriel *talars*), cité au plus une fois.
+
 ## 5. Monnaie
 
 - **Florin velmarchois (fl.)** = 100 **sous**, jusqu'en 1937.
@@ -210,6 +247,20 @@ le panneau de la carte disent Brénica ; les pièces velmarchoises disent Brenza
 | 1972 | *Annuaire officiel des professions* ; *Vel Taalik* | 45 Fn ; 0,30 Fn | AN-03, PH-29 |
 | 1973 ; 1974 | le *Courrier* ; la *Gazette* | 0,35 Fn ; 0,40 Fn | PH-28, PR-18 |
 
+**Prix attestés dans les pièces de l'affaire 2** (`docs/scenario/hautcorvin/06-corpus.md`) :
+
+| Année | Objet | Prix | Pièce (aff. 2) |
+|---|---|---|---|
+| 1916 | *La Sentinelle des Corvins* (hebdomadaire régional) | 5 sous | PR-02 |
+| 1926 | *Annuaire du commerce et de l'industrie* (districts de Hautcorvin et Vernezac) | 12 fl. | AN-01 |
+| 1936 ; déc. 1937 | *La Sentinelle des Corvins* | 15 sous ; 20 sous | PR-03, PR-04 |
+| sept. 1941 | *Le Héraut* | 40 sous (d'ordre) | PR-05 |
+| 1944 | bon de cantine du bagne de Kessaar | 2 sous (d'ordre) | LT-06 |
+| 1953 | *Le Messager de Brenzac*, édition velmarchoise | 0,20 Fn | PR-06 |
+| 1966 ; 1975–1976 | *La Sentinelle des Corvins* | 0,30 Fn ; 0,40 Fn | PR-08 ; PR-09, PR-10 |
+| 1972 | *Annuaire officiel des professions* | 45 Fn | AN-02 |
+| 1937 | assurance incendie de la halle (L'Égide), capital assuré | 1 200 000 puis 3 500 000 fl. | RP-02 |
+
 Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadaire à 20 fl. d'ordre en
 1951 et un quotidien à 0,25 Fn (25 fl. d'ordre) en 1953. Le *Courrier* coûte 0,35 Fn de 1966 à 1973,
 0,40 Fn en 1974 ; la *Gazette*, régionale, suit avec un temps de retard.
@@ -224,6 +275,7 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
 | *L'Œil velmarchois* | Aubrelieu | 1902– | hebdomadaire illustré (photos), le samedi ; n° 832 en 1918, n° 2908 en 1958 |
 | *Vel Taalik* | Vellaak | 1898–1938, 1953– | bilingue ostrien-velmarchois, hebdomadaire du samedi ; première série jusqu'au n° ≈ 2000 (n° 1912 en mars 1936), seconde série depuis mai 1953 (n° 1012 en oct. 1972) ; édite aussi des livres |
 | *Le Héraut* | Aubrelieu | 1937–1952 | organe de la Régence, emphatique |
+| *La Sentinelle des Corvins* | Hautcorvin | 1871– (alignée 1937–1952) | hebdomadaire régional de la haute vallée, le samedi (affaire 2) |
 | *Fougère* | clandestin | 1940–1952 | feuille ronéotypée du réseau |
 | *Antenne velmarchoise* | Aubrelieu | 1952– | magazine de radio-télévision |
 | *Le Messager de Brenzac* | Brenzac (Thalberie) | — | quotidien local étranger, édition velmarchoise ; daté « Brénica » |
@@ -238,6 +290,9 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
   dans des « familles d'ordre »), les **carnets gris** (livrets des suspects).
 - **République** (1953–) : Président, Assemblée nationale, **Archives nationales** (palais des Chartes),
   **Office de Réinscription civile** (1973), Commission de réinscription, tribunaux, notaires.
+- Affaire 2 : **douanes velmarchoises** (brigade de la Vèze, à Vernezac) ; sous la Régence, la **Garde
+  d'Ordre** a une lieutenance à Hautcorvin ; **Musée des Arts du feu** (Aubrelieu : verre, céramique,
+  émail) ; hospice et hospitalières de Hautcorvin.
 - Services : **Phares et Balises**, Postes velmarchoises (recettes des postes), état civil communal,
   **RTV** (Radio-Télévision velmarchoise, télévision depuis 1950), Université d'Aubrelieu.
 
@@ -251,7 +306,7 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
 | Compagnie des Paquebots de l'Orvelle | 1871, Port-Sénane | lignes côtières et outre-mer |
 | Studio Lumen | 1869, Aubrelieu | photographie de portrait et de mariage |
 | Grands Magasins Belaube | 1882, Aubrelieu | grand magasin, catalogues |
-| Verreries de Hautcorvin | 1790 | verre, lentilles de phares |
+| Verreries de Hautcorvin | 1790, siège à Hautcorvin, halle des fours à Vernezac | verre, verre gravé, lentilles de phares |
 | Aéro-Velmarche | 1928 | poste aérienne, puis passagers |
 | Compagnie Velmarchoise de Calcul (CVC) | 1958 | calculateurs, Lecteur LX-2 |
 | Papeteries de l'Estuaire | Port-Sénane | papier journal ; dirigeant condamné en 1953 (PR-12) |
@@ -263,6 +318,10 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
 | Armement Castagne | Port-Sénane | armateurs (famille d'Irène) |
 | Cabinet Varenque & Desaulnes | Aubrelieu, 21 quai des Chartes | avocats (Fernand Desaulnes défend Gaspard en 1953 ; Armand associé) |
 | Coopérative forestière de Brénica | Brenzac (Thalberie) | emploie « Marc Dobrin » (1953–1959) |
+| L'Égide | 1858, Aubrelieu | assurances contre l'incendie (affaire 2) |
+| Studio Orlhac | 1890, Hautcorvin | photographie de portrait, de mariage et d'entreprise (affaire 2) |
+| Compagnie des guides de Vernezac | 1898, Vernezac | guides de montagne, insignes numérotés (affaire 2) |
+| Verrerie de Brénica | Brenzac (Thalberie) | verre gravé (affaire 2) |
 
 ## 9. Culture
 
@@ -288,3 +347,13 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
 
 Aucun train dans les pièces ni sur la carte : on voyage par la route, le fleuve, la mer et, après
 1928, l'avion postal.
+
+## 11. Ajouts de l'affaire 2 (récapitulatif)
+
+L'affaire 2 (`docs/scenario/hautcorvin/`) a ajouté au monde, dans les sections ci-dessus, en
+marquant chaque ajout « affaire 2 » : les arrêtés de 1916 et de 1938 et l'article 12 de la loi de 1973
+(§2) ; trois lieux (`vernezac`, `pas-de-l-ourse`, `dalvezac`) et deux toponymes secondaires (la
+Combe-aux-Sables, la Vèze) (§3) ; les règles thalbères précisées (§4) ; ses prix (§5) ; *La Sentinelle
+des Corvins* (§6) ; douanes, lieutenance de la Garde, Musée des Arts du feu (§7) ; L'Égide, Studio
+Orlhac, Compagnie des guides, Verrerie de Brénica (§8). Rien de l'affaire 1 n'a été modifié, hormis la
+précision « (affaire 1) » sur la ligne « Temps du jeu ». Référence de travail : `08-lieux.md`.

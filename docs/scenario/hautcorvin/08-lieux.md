@@ -1,24 +1,26 @@
 # 08 — Lieux nouveaux et lieux repris (affaire 2)
 
-> Propositions pour le `cartographe` (`content/world/places/*.json`, `art/tools/world.py`) et, après
-> validation, pour `docs/monde/00-monde.md` §3 (tableau des lieux) et §4 (règles de nommage). Je n'écris
-> ni dans `content/world/` ni dans `docs/monde/` : ce fichier sert de demande.
+> Demande au `cartographe` (`content/world/places/*.json`, `art/tools/world.py`). **Validé (v0.2)** et
+> reporté dans `docs/monde/00-monde.md` §11 (lieux, toponymes, nommage thalbère, institutions, presse,
+> prix). Ce fichier reste la référence de travail pour la carte.
 > Positions en coordonnées normalisées (`x` 0 = ouest → 1 = est, `y` 0 = nord → 1 = sud), cohérentes
 > avec la géométrie existante : Orvelle (source vers 0,878 · 0,890, passe à Hautcorvin 0,800 · 0,785),
 > frontière (0,886 · 0,716 au col ; 0,906 · 0,790 ; 0,936 · 0,858), route majeure Hautcorvin → col →
 > Brenzac, ruisseau affluent de rive droite (0,930 · 0,800 → 0,818 · 0,814), petit lac (0,900 · 0,860).
 
-## 1. Les quatre lieux nouveaux
+## 1. Les trois lieux nouveaux (avec `PlaceId`)
 
 | `PlaceId` | Nom affiché | `kind` | Position proposée | `focusZoom` / `hitRadius` | Ce qu'on y trouve | Rôle |
 |---|---|---|---|---|---|---|
 | `vernezac` | **Vernezac** | `village` | **x 0,842 · y 0,814** | 3,4 / 24 | Halle des fours des Verreries (depuis 1790), Auberge des Guides, église, école, bureau de poste, brigade des douanes de la Vèze, Compagnie des guides. Sur la **Vèze**, torrent de rive droite qui descend du Pas vers l'Orvelle. | Cœur de l'affaire : l'incendie, les Neviot, le télégramme de 1976. |
-| `combe-aux-sables` | **La Combe-aux-Sables** | `landmark` | **x 0,796 · y 0,846** | 3,6 / 20 | Carrière de sable blanc à verre, au flanc des monts Corvins, rive gauche de l'Orvelle, en face de Hautcorvin ; cabanes de carriers. | Les carriers Neviot ; le jeu des « deux frères de la Combe » ; l'éboulement de 1919. |
 | `pas-de-l-ourse` | **Le Pas de l'Ourse** | `landmark` | **x 0,902 · y 0,772** (sur la frontière) | 3,6 / 20 | Brèche dans la crête, à deux lieues au sud du col de Corvenne ; **refuge de l'Ourse** (1911) un peu en contrebas, côté velmarchois ; une **croix de fer** au troisième lacet ; une **borne-frontière** gravée. | Bastien caché (1937–1938) et arrêté (1938) ; passages de radiés (1938–1952) ; Jules tué (1944) ; épilogue. |
 | `dalvezac` | **Dalvezac** (*Dalvica*) | `village` | **x 0,945 · y 0,722** (en Thalberie) | 3,4 / 22 | Hameau thalbère de charbonniers dans la vallée de la **Dalva**, à l'écart de la route col → Brenzac ; maisons de bois, meules ; école ; cimetière où repose Danela. | Les Dalvarin : exil de 1916–1921, Danela après 1938, Andrin après 1952. |
 
+**Décision (validée)** : la **Combe-aux-Sables** n'est **pas** un lieu cliquable : simple toponyme
+gravé sur la carte, sans `PlaceId` ni fiche (§2). Sa pièce propre, CP-02, est classée à `vernezac`.
+
 **Espacements vérifiés** (en unités de viewBox, carte ≈ 1350 × 1000) : Vernezac–Hautcorvin ≈ 64 ;
-Combe–Hautcorvin ≈ 61 ; Combe–Vernezac ≈ 70 ; Combe–monts Corvins (rayon 60) ≈ 94 ; Pas–col de
+libellé de la Combe à ≈ 61 de Hautcorvin et ≈ 70 de Vernezac (pas de cercle de clic) ; Pas–col de
 Corvenne ≈ 60 ; Pas–Vernezac ≈ 91 ; Dalvezac–col ≈ 80 ; Dalvezac–Brenzac ≈ 108 ; Dalvezac est à
 ≈ 0,057 à l'est de la frontière (bien en Thalberie). Aucun cercle de clic ne se chevauche.
 
@@ -42,13 +44,16 @@ de Corvenne est **gardé** (fortins, poste) ; le Pas ne l'est que par les patrou
    dans aucune pièce.
 5. Les lieux de l'affaire 1 ne bougent pas. Les vignettes nouvelles suivent le style des vignettes de
    village (Vernezac : une halle à grande cheminée trapue au bord d'un torrent ; Dalvezac : trois toits
-   de bois et une meule fumante ; le Pas : une brèche, une croix, une cabane ; la Combe : une entaille
-   blanche dans la pente).
+   de bois et une meule fumante ; le Pas : une brèche, une croix, une cabane).
+6. **La Combe-aux-Sables** : libellé seul, en italique de toponyme secondaire, à **0,796 · 0,846**, avec
+   au plus un petit pictogramme (entaille blanche dans la pente, sans rails). Pas de vignette de lieu,
+   pas de `PlaceId`.
 
 ## 2. Toponymes secondaires (sans `PlaceId`)
 
 | Toponyme | Où | Nature | Sens, règle |
 |---|---|---|---|
+| **la Combe-aux-Sables** | 0,796 · 0,846, rive gauche de l'Orvelle, en face de Hautcorvin | carrière de sable blanc (libellé de carte, sans `PlaceId`) | Velmarchois transparent (*combe* + *sables*). Les carriers Neviot ; « les deux frères de la Combe » ; l'éboulement de 1919. Pièces : CP-02 (classée à `vernezac`), RG-16, PV-01. |
 | **la Vèze** | torrent, du Pas à l'Orvelle par Vernezac | rivière (libellé) | Velmarchois ancien. A donné « douanes de la Vèze ». |
 | **la Dalva** | torrent thalbère, de la crête vers Dalvezac | rivière (pièces seulement) | Thalbère *dalva*, « eau vive, torrent ». |
 | **refuge de l'Ourse** | sous le Pas | bâtiment (pièces) | Velmarchois. Légende locale d'une ourse qui montrait le passage aux bergers. |
@@ -58,7 +63,7 @@ de Corvenne est **gardé** (fortins, poste) ; le Pas ne l'est que par les patrou
 | **Studio Orlhac** | Hautcorvin | atelier (pièces) | Fondé en 1890. |
 | **Verrerie de Brénica** | Brenzac | entreprise (pièces) | Thalbère. |
 
-## 3. Règle de nommage thalbère (proposition pour `docs/monde/00-monde.md` §4)
+## 3. Règle de nommage thalbère (reportée dans `docs/monde/00-monde.md` §4)
 
 Compléments à la section « Thalbère », sans contredire l'existant (*Dobrin*, *Vasko*, *Mirela*,
 *Ivela Darin*, *Ilko Varasin*, *Brénica*) :
@@ -91,7 +96,7 @@ Compléments à la section « Thalbère », sans contredire l'existant (*Dobrin*
 | `port-senane` | Télégramme d'Andrin à sa libération (1952). |
 | `monts-corvins` | Décor ; avion postal (PR-08). |
 
-## 5. Nouvelles institutions, entreprises et presse (pour `docs/monde` §6–§8)
+## 5. Nouvelles institutions, entreprises et presse (reportées dans `docs/monde/00-monde.md` §11)
 
 | Nom | Nature | Fondée, siège | Note |
 |---|---|---|---|
@@ -106,5 +111,5 @@ Compléments à la section « Thalbère », sans contredire l'existant (*Dobrin*
 | **Annuaire du commerce et de l'industrie de Velmarche** | annuaire | 1926 : 12 fl. | Prix nouveau, à ajouter au §5. |
 | **Le Messager de Brenzac**, édition velmarchoise | quotidien | existe | 0,20 Fn en 1953 (prix nouveau). |
 | **Garde d'Ordre**, lieutenance de Hautcorvin | Régence | 1937–1952 | Remplace la gendarmerie grand-ducale. |
-| **Loi de 1973, art. 12** | représentation des absents morts en détention | — | À ajouter au §2 si validée. |
-| **Arrêté du 20 avril 1916** ; **arrêté du 8 juillet 1938** | expulsions des Thalbères des provinces frontières | — | À ajouter au §2. |
+| **Loi de 1973, art. 12** | représentation des absents morts en détention | — | Validée ; reportée au §2. |
+| **Arrêté du 20 avril 1916** ; **arrêté du 8 juillet 1938** | expulsions des Thalbères des provinces frontières | — | Reportés au §2. |

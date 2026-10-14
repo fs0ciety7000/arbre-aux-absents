@@ -5,7 +5,7 @@ Bible du monde imaginaire, tenue par `scenariste`. La carte elle-même (SVG) app
 
 | Fichier | Contenu |
 |---|---|
-| [00-monde.md](00-monde.md) | La Velmarche : histoire en grandes dates, **géographie et 19 lieux** (positions, rôle dans l'affaire), toponymes secondaires de la carte (hameaux d'Ostrie, notes du graveur), langues et règles de nommage (velmarchois, ostrien, thalbère), monnaie et **prix attestés**, presse, institutions, entreprises, culture, technologie par époque. |
+| [00-monde.md](00-monde.md) | La Velmarche : histoire en grandes dates, **géographie et 19 lieux** (+ 3 lieux et 2 toponymes de l'affaire 2) (positions, rôle dans l'affaire), toponymes secondaires de la carte (hameaux d'Ostrie, notes du graveur), langues et règles de nommage (velmarchois, ostrien, thalbère), monnaie et **prix attestés**, presse, institutions, entreprises, culture, technologie par époque ; §11, récapitulatif des ajouts de l'affaire 2. |
 
 Règles :
 - Monde **entièrement imaginaire** : aucun lieu, aucune personne, aucune institution réels ; aucune

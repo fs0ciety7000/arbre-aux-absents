@@ -78,7 +78,7 @@ lues (sinon « Non établi »). Pas de pénalité : une réponse fausse est une 
 | **Rétablir chacun** | « Réinscrire Bastien Tessonnal à titre posthume ; reconnaître Agnès Neviot, sa fille ; inscrire Andrin Dalvarin sous son nom » + « fils d'Honoré Tessonnal » si S3. | si **S5** |
 | **Laisser vivre le mensonge** | « Recevoir la requête : inscrire le requérant sous le nom de Bastien Tessonnal. » | toujours |
 
-Raison grisée de « Rétablir chacun » sans S5 : « La filiation d'Agnès Neviot n'est pas établie par
+Sans S5, « Rétablir chacun » est **grisé** (décision validée), avec cette raison : « La filiation d'Agnès Neviot n'est pas établie par
 deux pièces. »
 
 **Coût écrit de « Laisser vivre le mensonge »** (à ne pas adoucir) : Andrin renonce à son propre nom et
@@ -97,8 +97,8 @@ provisoires. Fichiers proposés : `endings/f1-…f4-….md`, format de l'affaire
 |---|---|---|---|
 | 1 | **F1 — Chacun son nom** | décision « Rétablir chacun » | La Commission réinscrit Bastien Tessonnal à titre posthume (« mort à Kessaar le 9 mars 1944, innocent » si S1), reconnaît Agnès comme sa fille et héritière de sa part, et rend à Andrin son nom. Me Escande ouvre le pli scellé ; s'il est adressé à un enfant **établi** (S3), il est remis à Andrin : la lettre commence par « Andrin, ». Andrin et Agnès montent ensemble au refuge. |
 | 2 | **F2 — Le revenant** | décision « Laisser vivre » | « Bastien Tessonnal, vivant » est réinscrit et reconnaît Agnès. Paragraphe variable **S1** : prouvé, le rapport lave le nom qu'il porte ; non prouvé, il porte l'incendie. Paragraphe **S3** : le pli scellé, « à celui de mes enfants qui n'a pas porté mon nom », est remis au requérant au titre de Bastien ; il l'ouvre ; la lettre commence par « Andrin, ». Il apprend, trop tard, qu'il était un fils. Le rapporteur garde dans un tiroir le rapport qu'il n'a pas remis. |
-| 3 | **F3 — L'imposteur, la fille reconnue** | « Dénoncer » + S5 | Le requérant est convaincu d'usurpation (peine avec sursis, au regard des « circonstances »). Bastien est réinscrit à titre posthume ; Agnès est établie sa fille et hérite de sa part. Elle va attendre Andrin à la sortie du tribunal d'Aubrelieu. |
-| 4 | **F4 — L'imposteur** | « Dénoncer » sans S5 | Requête rejetée ; Bastien réinscrit à titre posthume ; la requête 74-0962 reste « non établie ». Colombe est seule héritière. Andrin repart par le col. Une semaine plus tard, Agnès reçoit un verre gravé : le Pas de l'Ourse, sans date. |
+| 3 | **F3 — L'imposteur, la fille reconnue** | « Dénoncer » + S5 | Le requérant est convaincu d'usurpation (emprisonnement avec sursis, au regard des « circonstances »). Bastien est réinscrit à titre posthume ; Agnès est établie sa fille et hérite de sa part. Elle va attendre Andrin à la sortie du tribunal d'Aubrelieu. |
+| 4 | **F4 — L'imposteur** | « Dénoncer » sans S5 | Requête rejetée, le requérant condamné avec sursis ; Bastien réinscrit à titre posthume ; la requête 74-0962 reste « non établie ». Colombe est seule héritière. Andrin repart par le col. Une semaine plus tard, Agnès reçoit un verre gravé : le Pas de l'Ourse, sans date. |
 
 Paragraphes modulaires (ajoutés si le secret est juste, dans toutes les fins) :
 - **S1** : le rapport nomme Aimé Brossal ; Colombe se lève à l'audience, remet elle-même le pli de 1958
@@ -146,9 +146,12 @@ d'Agnès : « Tous les vivants. »
 - `hc-hearing` : idem.
 - `hc-decision` : idem.
 
-## 7. À trancher par l'humain
+## 7. Décisions (validées)
 
-1. La fin **F2** révèle à Andrin qu'il était un fils, mais seulement s'il a pris le nom de son frère :
-   c'est la plus cruelle. Garder ce paragraphe tel quel ?
-2. Le nombre de radiés passés par le Pas (**142**) : à garder modeste ou à grandir ?
-3. Peine du requérant dans F3–F4 : sursis (proposé) ou relaxe ?
+1. La fin **F2** est gardée telle quelle, avec le paragraphe S3 (Andrin apprend par le pli qu'il était
+   un fils, après avoir pris le nom de son frère).
+2. Le nombre de radiés passés par le Pas reste **142**.
+3. Peine du requérant dans F3–F4 : **emprisonnement avec sursis**, « au regard des circonstances ».
+4. Sans S5, le tampon « Rétablir chacun » est **grisé** (pas masqué), avec sa raison : « La filiation
+   d'Agnès Neviot n'est pas établie par deux pièces. »
+5. Condition exacte de S5 (deux de LT-05, LT-06, LT-11) : **ouverte**, au `level-designer`.

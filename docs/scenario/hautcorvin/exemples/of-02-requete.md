@@ -7,7 +7,7 @@ place: aubrelieu
 archive: "ORC, dossier 76-0012, pièce 2 — formulaire R-4 (original), photographie agrafée"
 reveals:
   portraits: [hc-andrin-63]
-  occupations: [souffleur]
+  occupations: [chef-de-nuit]
 illustration:
   file: illustrations/of-02.svg
   alt: "Photographie d'identité agrafée au coin d'un formulaire : un homme maigre d'une soixantaine d'années, cheveux blancs coupés ras, sourcils noirs droits et épais, une fossette à la joue gauche, une loupe pendue à un cordon sur un costume trop grand. Un cachet en relief « Studio Orlhac, Hautcorvin » mord sur le coin de la photographie ; le trombone a rouillé sur le papier."
@@ -18,7 +18,9 @@ illustration:
 d'atelier ; tous les T majuscules sont « à boucle » (la barre se referme à gauche) : c'est l'indice
 d'EX-02, à rendre visible dans l'illustration de la signature. Le cadre « Signalement » est
 dactylographié par le greffe. Portrait révélé : nom de travail `hc-andrin-63` (identifiant définitif
-au build). Le métier révélé est celui que le requérant déclare : il est juste pour la case C15. -->
+au build). Le métier révélé est celui que le requérant déclare,
+le leurre `chef-de-nuit` : avec le visage, c'est le second champ faux de la case revendiquée C15 (le nom,
+lui, est juste). La liste n° 9 (RG-11), que le requérant cite au champ suivant, dit « souffleur ». -->
 
 ::stamp[OFFICE DE RÉINSCRIPTION CIVILE — GREFFE — REÇU LE 12 JANV. 1976 — N° 76-0012]
 
@@ -44,7 +46,7 @@ Né le : ::hand[14 mai 1910] à : ::hand[Hautcorvin]
 
 Fils de : ::hand[Honoré Tessonnal, maître verrier] et de : ::hand[Eugénie Ravenel, modiste]
 
-Profession à la date de la radiation : ::hand[souffleur de verre, chef de nuit à la halle des fours de Vernezac (Verreries de Hautcorvin)]
+Profession à la date de la radiation : ::hand[chef de nuit à la halle des fours de Vernezac (Verreries de Hautcorvin)]
 
 Dernier domicile avant la radiation : ::hand[Vernezac, logement de la halle]
 

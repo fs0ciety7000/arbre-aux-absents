@@ -1,4 +1,4 @@
-# 06 — Corpus : les 95 pièces (+ 2 pièces d'épilogue)
+# 06 — Corpus : les 96 pièces (+ 2 pièces d'épilogue)
 
 > Liste de travail pour le graphe de progression (`level-designer`) puis pour la rédaction intégrale
 > (deuxième passe, après validation du graphe). Chaque entrée : **id** · `kind` (contrat :
@@ -12,8 +12,9 @@
 > **✎** = rédigée intégralement dans `exemples/`. Identifiants de fichier en minuscules (`pv-02.md`).
 > **Départ** = pièce du dossier remis au joueur le 2 février 1976.
 
-Répartition : OF 8 · PV 7 · EX 4 · RP 6 · RG 18 · PH 17 · LT 11 · PR 10 · CP 2 · OB 3 · CT 2 · AN 2 ·
-PB 1 · DV 2 · TG 2 = **95**, plus EP-01 et EP-02 = **97** fichiers.
+Répartition : OF 8 · PV 7 · EX 4 · RP 6 · RG 18 · PH 18 · LT 11 · PR 10 · CP 2 · OB 3 · CT 2 · AN 2 ·
+PB 1 · DV 2 · TG 2 = **96**, plus EP-01 et EP-02 = **98** fichiers. (v0.2 : ajout de PH-18, seconde
+photographie des deux demi-frères, pour ne pas faire dépendre la déduction de PH-07 seule.)
 
 Fonds (pour les cotes) :
 - **ORC, dossier 76-0012** (requête du requérant ; jonction **74-0962**, requête d'Agnès Neviot).
@@ -42,15 +43,15 @@ Prouve : C06 N, M ; C15 N (déclaré) ; C13 N (usage), M ; C25 N ; C01 N.
 
 **OF-02** ✎ · `certificate` · 12 janv. 1976 · `aubrelieu` · ORC, 76-0012, pièce 2 — **Requête en
 réinscription d'un absent vivant (formulaire R-4), photographie et signalement.** Rempli et signé
-« Bastien Tessonnal » (T à boucle). Déclaration : né le 14 mai 1910 à Hautcorvin, souffleur de verre,
-radié liste n° 9 (1938), écroué à Kessaar n° 0214, « porté décédé par erreur le 9 mars 1944 », « a vécu
+« Bastien Tessonnal » (T à boucle). Déclaration : né le 14 mai 1910 à Hautcorvin, « chef de nuit à la
+halle des fours » (profession à la date de la radiation : **le leurre `chef-de-nuit`**), radié liste n° 9 (1938), écroué à Kessaar n° 0214, « porté décédé par erreur le 9 mars 1944 », « a vécu
 depuis sous le nom d'Andrin Dalvarin, son compagnon de cellule, décédé ce jour-là » ; adresse : Dalvica
 (Thalberie). Photo agrafée, cachet « Studio Orlhac, Hautcorvin ». Signalement pris par le greffe :
 1,71 m, **yeux bruns**, cheveux blancs, **cicatrice de brûlure au dos de la main gauche**, porte une
 loupe au cordon. **Départ. Source de la déclaration de la case C15.**
-Mots-clés : Bastien Tessonnal, Andrin Dalvarin, Kessaar, 0214, souffleur, Studio Orlhac, Dalvica,
+Mots-clés : Bastien Tessonnal, Andrin Dalvarin, Kessaar, 0214, chef de nuit, Studio Orlhac, Dalvica,
 Dalvezac, Hautcorvin.
-Prouve : C15 N, M (déclarés) ; C17 V (photo du requérant), N (nom d'emprunt revendiqué) ; C22 M (studio, indirect).
+Prouve : C15 N (déclaré, juste), M (déclaré, **faux** : chef de nuit) ; C17 V (photo du requérant), N (nom d'emprunt revendiqué) ; C22 M (studio, indirect).
 
 **OF-03** · `letter` · 22 janv. 1976 · `hautcorvin` · ORC, 76-0012, pièce 3 — **Opposition de Colombe
 Brossal, née Tessonnal**, par Me Gérard Vallin, avocat. « Cet homme n'est pas mon frère. Mon frère avait
@@ -109,7 +110,7 @@ requérant** (greffier-enquêteur F. Ollier). Sa version : enfance à Hautcorvin
 Brissac », la halle, la grève, l'incendie (« Brossal était là cette nuit-là ; je ne peux pas le
 prouver »), le refuge, Lucie, l'arrestation au Pas (description exacte du sentier), Kessaar, « Andrin,
 le fils de la Thalbère, Danela, notre cousin, le fils de mon oncle Léonce, disait-on », la cellule 14,
-la note de 1944 sur le « sabotage », l'échange des numéros, les vingt-quatre ans en Thalberie, la
+la note de 1944 sur le « sabotage », l'échange des plaques matricules à l'infirmerie (« la nuit, personne ne regardait »), les vingt-quatre ans en Thalberie, la
 prescription, sa fille. « On nous appelait les deux frères de la Combe. » **Départ.**
 Mots-clés : Bastien Tessonnal, Andrin Dalvarin, Danela, Léonce Tessonnal, Lucie Neviot, Henri Brissac,
 Pas de l'Ourse, Kessaar, cellule 14, 1171, 0214, sabotage, Combe-aux-Sables, Aimé Brossal.
@@ -145,9 +146,11 @@ Prouve : C25 M ; C16 ; C18 N (prénom + rôle) ; C26 N ; mène à OB-02. (S5 : a
 **PV-05** · `report` · 18 févr. 1976 · `vellaak` · ORC, 76-0012 (commission rogatoire, mairie de
 Vellaak) — **Audition de Teodor Haask**, 63 ans, ancien gardien à Kessaar. Le 0214, « le souffleur, la
 main droite brûlée, des yeux clairs comme de l'eau », mort de pneumonie le 9 mars 1944 en présence du
-Dr Hervel ; le 1171, « le Thalbère », sorti en avril 1952. « Je n'ai pas échangé ces deux-là. Le
+Dr Hervel ; le 1171, « le Thalbère », sorti en avril 1952. « Personne n'a échangé ces deux-là. Le
 médecin était là, et le Thalbère pleurait. » Le Thalbère avait la main gauche brûlée depuis l'été 1943.
-**Caméo neutre** : aucune allusion à l'affaire 1.
+**Caméo neutre** (règle : `07-coherence.md` §6) : un ancien gardien qui se souvient de deux détenus,
+sans rien d'autre ; aucune allusion à l'affaire 1, à d'autres détenus, à des décès irréguliers, à
+Tennok, à son père ni à une quelconque aide aux détenus.
 Mots-clés : Teodor Haask, Kessaar, 0214, 1171, Bastien Tessonnal, Andrin Dalvarin, Dr Hervel, Vellaak.
 Prouve : C15 (mort en 1944) ; C17 (vivant ; brûlure de 1943) ; traits.
 
@@ -371,11 +374,11 @@ Prouve : C10 M ; C04 M ; C09 N, M ; C11 ; dates de nombreuses cases. (S2 : « ch
 **RG-17** · `register` · 1906–1938 · `vernezac` · Fonds des Verreries, registre du personnel de la halle
 et livre de paie de l'atelier de gravure (extraits) — Danela Dalvarin, graveuse (1906–1916, 1921–1938,
 « expulsée 8.7.38 ») ; Bastien Tessonnal, apprenti souffleur (1926), souffleur (1929), chef de nuit
-(1935), « rayé le 28.11.37 » ; Andrin Dalvarin, apprenti graveur (1926), graveur (1931), « rayé le
-25.9.41 ». Livre de paie : « D. D. — **supplément mensuel, sur ordre de M. Honoré** » (1912–1938).
+(1935), « 1er prix de soufflage, Saint-Éloi 1935 », « rayé le 28.11.37 » ; Andrin Dalvarin, apprenti
+graveur (1926), graveur (1931), « 1er prix de gravure, Saint-Éloi 1935 », « rayé le 25.9.41 ». Livre de paie : « D. D. — **supplément mensuel, sur ordre de M. Honoré** » (1912–1938).
 Mots-clés : Verreries de Hautcorvin, personnel, Danela Dalvarin, Bastien Tessonnal, Andrin Dalvarin,
-graveur, souffleur, supplément, D. D.
-Prouve : C08 M ; C15 M ; C17 M. (S3.)
+graveur, souffleur, supplément, D. D., Saint-Éloi.
+Prouve : C08 M ; C15 M ; C17 M. (S3.) Mène à PH-18 (« Saint-Éloi »).
 
 **RG-18** · `register` · 27–28 nov. 1937 · `vernezac` · Fonds des Verreries, main courante du gardien
 de nuit — **Registre des rondes.** Une page **arrachée** (27 nov., 22 h–24 h) ; la page suivante garde le
@@ -431,7 +434,7 @@ four n° 2** : seize personnes sur deux rangs. Légende dactylographiée, **déc
 T. Mallet, B. Tessonnal, A. Dal[déchiré] ». Bastien (27) et Andrin (24) côte à côte au second rang, l'un
 en casquette de souffleur, l'autre en tablier de cuir. **Les demi-frères ressemblants.**
 Mots-clés : halle des fours, four n° 2, personnel, Verreries de Hautcorvin, Toussaint Mallet, Lavergne.
-Prouve : C15 V ; C17 V (alt. 27 ans) ; C06 V ; C14 V ; C08 V ; C13 V.
+Prouve : C15 V ; C17 V (alt. 27 ans) ; C06 V ; C14 V ; C08 V ; C13 V. (Déduction des demi-frères doublée par PH-18.)
 
 **PH-08** · `photo` · août 1937 · `pas-de-l-ourse` · Boîte de Lucie — **Lucie devant le refuge**, sifflet
 au cou. Au dos : « Pour B. — L. — août 37 ».
@@ -494,6 +497,20 @@ Prouve : C26 V, M ; C27 V, M ; C28 V, M ; C25 V ; C18 V ; C22 V.
 Pochette : « 9.1.76 — M. Tessonnal, pour l'Office ». Loupe au cordon.
 Mots-clés : Studio Orlhac, Sabine Brossal, négatif, profil, Tessonnal.
 Prouve : C17 V ; C22 M. (EX-03.)
+
+**PH-18** · `photo` · dim. 1er déc. 1935 · `vernezac` · Studio Orlhac, négatifs (boîte « Verreries 1935 »,
+remise par Sabine Brossal avec ceux de 1976) — **Les lauréats du concours de la Saint-Éloi** : deux
+jeunes gens côte à côte devant la gueule du four n° 2, en pied, bien éclairés. Pochette : « 1.12.35 —
+Verreries, concours de la St-Éloi. Lauréats, de g. à dr. : B. Tessonnal (soufflage), A. Dalvarin
+(gravure). » À gauche, Bastien (25 ans) : casquette à la main, **épi** dressé, **yeux clairs**, canne de
+souffleur, le **dos de la main droite** luisant sur la canne. À droite, Andrin (23 ans) : **sourcils
+droits et épais**, **yeux sombres**, pas d'épi, **tablier de cuir**, une coupe gravée dans les mains,
+déjà une **loupe au cordon**. Les deux ont la **fossette**. **Seconde preuve des demi-frères**
+ressemblants, indépendante de PH-07 (autre fonds, autre mot-clé) ; à la différence de PH-07, la
+légende est entière, mais la pièce dépend de C22 (Sabine) et du mot « Saint-Éloi » (RG-17, RG-04).
+Mots-clés : Studio Orlhac, Saint-Éloi, concours, Verreries de Hautcorvin, Bastien Tessonnal, Andrin
+Dalvarin, souffleur, graveur, four n° 2.
+Prouve : C15 V, M (souffleur) ; C17 V (alt. 27 ans : même visage, plus jeune), M ; C22 M (indirect).
 
 ## LT — Lettres
 
@@ -647,7 +664,7 @@ de prendre soin d'elle. » (Caméo neutre de l'affaire 1.)
 Mots-clés : Tennok, phare, lentille, Léonce Tessonnal, opticien, Honoré.
 Prouve : C10 V, M ; **alibi de Léonce (S3, pièce clé).**
 
-**CP-02** · `postcard` · 1939 (image vers 1905) · `combe-aux-sables` · Archives communales de Vernezac
+**CP-02** · `postcard` · 1939 (image vers 1905) · `vernezac` · Archives communales de Vernezac
 (papiers de Rémi Neviot) — **« Vernezac — la Combe-aux-Sables, les carriers »** : carriers au travail,
 une sage-femme sur sa mule, un jeune guide. Jules à Rémi, au verso, 1939 : « Les moutons passent bien.
 Ta sœur a la main. Ton vieux, n° 7. »
@@ -766,8 +783,7 @@ Prouve : C17 N ; C28 N (initiale), M.
 |---|---|
 | `aubrelieu` | OF-01, OF-02, OF-07, PV-01, PV-02, PV-07, EX-01–04, RP-06, RG-11, RG-12, PH-01, PR-01, EP-01 |
 | `hautcorvin` | OF-03, OF-04, OF-05, OF-06, PV-03, PV-04, RP-05, RG-01–04, RG-07, RG-16, PH-04, PH-06, PH-09, PH-10, PH-14, PH-15, PH-17, LT-01, LT-03, LT-09, PR-04, PR-05, PR-09, PR-10, OB-01, CT-01, AN-01, AN-02, DV-01 |
-| `vernezac` | OF-08, PV-06, RP-01, RP-02, RG-05, RG-06, RG-08, RG-09, RG-10, RG-15, RG-17, RG-18, PH-03, PH-07, PH-11, PH-12, PH-16, LT-05, LT-07, LT-10, LT-11, PR-03, PR-08, OB-02, OB-03, PB-01, TG-02 |
-| `combe-aux-sables` | CP-02 |
+| `vernezac` | OF-08, PV-06, RP-01, RP-02, RG-05, RG-06, RG-08, RG-09, RG-10, RG-15, RG-17, RG-18, PH-03, PH-07, PH-11, PH-12, PH-16, PH-18, LT-05, LT-07, LT-10, LT-11, PR-03, PR-08, CP-02, OB-02, OB-03, PB-01, TG-02 |
 | `pas-de-l-ourse` | RP-03, RP-04, PH-02, PH-08, LT-04, DV-02, EP-02 |
 | `dalvezac` | PH-05, PH-13, LT-08 |
 | `brenzac` | PR-06, PR-07, CT-02 |
@@ -777,5 +793,5 @@ Prouve : C17 N ; C28 N (initiale), M.
 | `vellaak` | PV-05 |
 | `port-senane` | TG-01 |
 
-Le lieu `combe-aux-sables` n'a qu'une pièce propre : le `level-designer` peut y classer aussi RG-16
-(éboulement de 1919) ou la proposer comme lieu « de décor » (voir `08-lieux.md`).
+**Décision (validée)** : la Combe-aux-Sables est un **simple toponyme** de la carte, sans `PlaceId` ni
+fiche de lieu (`08-lieux.md` §2) ; CP-02 est classée à `vernezac`, comme le dit sa légende.

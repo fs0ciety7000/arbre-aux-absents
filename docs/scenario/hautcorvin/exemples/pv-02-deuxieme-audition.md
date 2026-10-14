@@ -28,7 +28,7 @@ devant nous, Fernand Ollier, greffier-enquêteur, agissant sur instruction du ra
 dossier (bureau 12),
 
 a comparu **le requérant**, qui déclare se nommer Bastien Tessonnal, né le 14 mai 1910 à Hautcorvin,
-souffleur de verre, demeurant à Dalvica (Thalberie), et persister dans sa requête du 12 janvier ;
+chef de nuit à la halle des fours, demeurant à Dalvica (Thalberie), et persister dans sa requête du 12 janvier ;
 
 en présence de **Me Gérard Vallin**, avocat au barreau d'Aubrelieu, pour Mme Colombe Brossal, née
 Tessonnal, partie opposante, qui a déposé une liste de questions écrites (cote 76-0012/8) ;
@@ -63,6 +63,12 @@ brûlure n'est pas un souffleur.
 *Invité par Me Vallin à montrer ses mains, le requérant relève ses manches jusqu'au poignet et refuse
 d'ôter ses gants de laine : « On m'a assez regardé les mains, là-bas. » Me Vallin demande qu'il en
 soit pris acte, et qu'une expertise médicale soit ordonnée. Dont acte.*
+
+**Q. (Me Vallin)** — Le procès-verbal des douanes de la Vèze, en mai 1938, donne au nommé Tessonnal
+des yeux gris. Les vôtres sont bruns.
+
+**R.** — Les douaniers notent ce qu'ils veulent, la nuit, à la lanterne. Et les yeux foncent avec
+l'âge, maître. Les vôtres aussi, vous verrez.
 
 **Q. (Me Vallin)** — Où travailliez-vous la nuit de l'incendie ?
 
