@@ -129,6 +129,8 @@ export class GameStoreImpl implements GameStore {
   /** Le joueur a passé le tutoriel (« J'ai déjà joué »). */
   skipTutorial = $state(false);
   saveFailed = $state(false);
+  /** Retour intercepté avant la pause (note du tutoriel ouverte : Échap / B la range). */
+  backIntercept: (() => boolean) | null = null;
 
   #host: StoreHost;
   #guard: SweepGuard = emptyGuard();
@@ -655,6 +657,7 @@ export class GameStoreImpl implements GameStore {
       this.closeModal();
       return;
     }
+    if (this.backIntercept?.()) return;
     if (viewport.single && !PHONE_TABS.includes(this.ui.main)) {
       this.ui.main = 'tree';
       this.#pushHistory();

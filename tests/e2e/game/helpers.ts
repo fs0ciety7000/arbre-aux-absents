@@ -82,10 +82,14 @@ export async function gotoTitle(page: Page): Promise<void> {
   await expect(newGame).toBeVisible();
 }
 
-/** Titre → Nouvelle partie → Bureau. */
-export async function startNewGame(page: Page): Promise<void> {
+/**
+ * Titre → Nouvelle partie → Bureau. Le tutoriel en bulles est passé (« J'ai déjà joué ») sauf
+ * `tutorial: true` : ses propres tests sont dans `tutorial.spec.ts`.
+ */
+export async function startNewGame(page: Page, opts: { tutorial?: boolean } = {}): Promise<void> {
   await gotoTitle(page);
   await page.getByRole('button', { name: 'Nouvelle partie' }).click();
+  if (!opts.tutorial) await page.getByRole('switch', { name: "J'ai déjà joué" }).click();
   await page.getByRole('button', { name: 'Commencer' }).click();
   await expect(desk(page)).toBeVisible();
 }

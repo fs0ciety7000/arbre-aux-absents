@@ -66,10 +66,6 @@
         : (visible[0] ?? null),
   );
   const isLocked = (id: SlotId) => game.state.locked[id] !== undefined;
-  const empty = $derived(
-    Object.keys(game.state.tree).length === 0 && !(game as { skipTutorial?: boolean }).skipTutorial,
-  );
-  const firstOpen = $derived(visible.find((id) => !isLocked(id)) ?? null);
 
   onMount(() => {
     if (matchMedia('(max-width: 37.4375rem)').matches) view = 'generation';
@@ -384,11 +380,6 @@
         <span>{pm.tree.carry(carry.item.label)}</span>
         <Button variant="ghost" onclick={() => carry.drop()}>{pm.tree.carryCancel}</Button>
       </div>
-    {:else if empty && firstOpen}
-      <p class="bubble mv-rise" role="note" data-surface="paper">
-        <Icon name="info" />
-        {pm.tree.firstHint}
-      </p>
     {/if}
 
     <!-- Panneau des onglets de vue (cible de leur `aria-controls`). -->
@@ -596,23 +587,7 @@
     color: var(--text-muted);
   }
   .carry,
-  .bubble {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    align-items: center;
-    margin: 0 var(--space-3) var(--space-2);
-    padding: var(--space-2) var(--space-3);
-    border: 0;
-    border-inline-start: var(--border-strong) solid var(--accent);
-    border-radius: var(--radius-xs);
-    background: var(--surface-1);
-    box-shadow: var(--shadow-paper);
-    color: var(--text);
-    rotate: -0.3deg;
-  }
-  .carry :global(.icon),
-  .bubble :global(.icon) {
+  .carry :global(.icon) {
     color: var(--accent);
   }
   .canvas-wrap {

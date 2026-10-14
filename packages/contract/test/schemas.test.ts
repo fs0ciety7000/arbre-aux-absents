@@ -274,6 +274,19 @@ describe('réglages et profil', () => {
   it('accepte un profil complet', () => {
     expect(ProfileSchema.parse(fx.profile)).toEqual(fx.profile);
   });
+  it('tutoriel : optionnel (ancien profil sans le champ), seen borné à 32 ids', () => {
+    const { tutorial: _t, ...old } = { ...defaultProfile(), tutorial: undefined };
+    expect('tutorial' in old).toBe(false);
+    expect(ProfileSchema.safeParse(old).success).toBe(true);
+    const withTuto = { ...defaultProfile(), tutorial: { done: false, seen: ['open-document'] } };
+    expect(ProfileSchema.parse(withTuto)).toEqual(withTuto);
+    rejects(ProfileSchema, {
+      ...defaultProfile(),
+      tutorial: { done: false, seen: Array.from({ length: 33 }, (_, i) => `b-${i}`) },
+    });
+    rejects(ProfileSchema, { ...defaultProfile(), tutorial: { done: false, seen: ['Pas Un Id'] } });
+    rejects(ProfileSchema, { ...defaultProfile(), tutorial: { done: true } });
+  });
   it('refuse taille de texte hors crans, volume hors [0,1], réglage manquant', () => {
     rejects(SettingsSchema, { ...defaultSettings(), textScale: 1.1 });
     rejects(SettingsSchema, {

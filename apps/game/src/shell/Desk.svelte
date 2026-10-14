@@ -16,6 +16,7 @@
   import DeskModals from './modals/DeskModals.svelte';
   import { PANEL_ICONS } from './panel-icons';
   import { CandidatePicker, PANELS } from './panels';
+  import TutorialLayer from '../tutorial/TutorialLayer.svelte';
 
   /** Le Bureau (ECRANS §1.2, §3 ; DESIGN §5.3) : en-tête, zones et panneaux par format. */
   interface Props {
@@ -154,7 +155,7 @@
         <MiniReader {game} />
       {/if}
     </main>
-    <nav class="bar" aria-label={m.tabsLabel}>
+    <nav class="bar" aria-label={m.tabsLabel} data-tour="tabbar">
       <Tabs
         items={barItems}
         value={barValue}
@@ -238,6 +239,10 @@
 {/if}
 
 <DeskModals {game} />
+
+{#if app.overlay === null}
+  <TutorialLayer {app} {game} />
+{/if}
 
 <Dialog bind:open={menuOpen} title={m.moreTitle} size="s">
   <div class="more">

@@ -236,7 +236,8 @@ export interface Settings {
   mono: boolean; muteInBackground: boolean; haptics: boolean; longPressMs: 300 | 400 | 600;
   confirmClear: boolean; inputGlyphs: 'auto' | 'keyboard' | 'gamepad';
 }
-export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>; completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] }> }
+export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>; completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] }>;
+  tutorial?: { done: boolean; seen: string[] } } // tutoriel en bulles : optionnel (anciens profils valides), seen ≤ 32 ids kebab-case
 ```
 
 ### 3.5 Moteur pur (`packages/engine`)

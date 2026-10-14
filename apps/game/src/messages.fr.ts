@@ -1,7 +1,16 @@
 /** Textes d'interface du jeu (français). Regroupés ici pour préparer les traductions. */
+import type { Device } from '@arbre/ui';
 import type { PanelId } from './lib/game/types';
 
 const plural = (n: number, one: string, many: string) => (n > 1 ? many : one);
+
+/** Verbe d'action selon le périphérique actif (« Touchez une case », « Cliquez sur une case »…). */
+const tap = (d: Device) =>
+  d === 'touch' ? 'touchez' : d === 'mouse' ? 'cliquez sur' : 'sélectionnez';
+const Tap = (d: Device) => {
+  const v = tap(d);
+  return v.charAt(0).toUpperCase() + v.slice(1);
+};
 
 export const messages = {
   title: "L'Arbre aux absents",
@@ -171,7 +180,7 @@ export const messages = {
       sfx: 'Effets',
       ui: 'Interface',
     } as Record<string, string>,
-    noMusic: 'Aucune musique n’est encore intégrée à cette version.',
+    noMusic: 'Musique composée en direct : elle ne se répète jamais.',
     mono: 'Son mono',
     muteInBackground: 'Couper le son en arrière-plan',
     haptics: 'Vibrations',
@@ -195,6 +204,10 @@ export const messages = {
     languageNote: 'D’autres langues arriveront plus tard.',
     resetSettings: 'Rétablir les réglages par défaut',
     resetDone: 'Réglages rétablis.',
+    tutorialReplay: 'Revoir le tutoriel',
+    tutorialReplayHint:
+      'Les notes de service reviendront une à une, au fil de vos gestes, dès la reprise de la partie.',
+    tutorialReplayDone: 'Le tutoriel reprendra au bureau.',
     storageNote:
       'Les parties sont enregistrées sur cet appareil. Exportez-les pour les transférer.',
     manageSaves: 'Gérer les emplacements',
@@ -254,6 +267,41 @@ export const messages = {
     fonts:
       'Polices : Fraunces, Literata, Instrument Sans, Oswald, Courier Prime, Caveat, Atkinson Hyperlegible Next (SIL OFL 1.1).',
     caseCredits: 'Affaire',
+  },
+
+  /**
+   * Tutoriel en bulles (GAME_DESIGN §15) : notes d'une collègue de l'Office de réinscription
+   * civile au nouveau rapporteur. ≤ 25 mots, une action attendue, rien au-delà de l'ouverture.
+   */
+  tutorial: {
+    kicker: 'Note de service',
+    ok: 'Compris',
+    skip: 'Passer le tutoriel',
+    skipped: 'Tutoriel passé. Tout reste expliqué dans Aide › Comment jouer.',
+    restarted: 'Tutoriel relancé.',
+    announce: (text: string) => `Note de service : ${text}`,
+    steps: {
+      welcome: (d: Device) =>
+        `Bienvenue au bureau, rapporteur. Le dossier attend dans les Archives : ${tap(d)} une première pièce pour la lire.`,
+      reader: (d: Device) =>
+        `Lisez tout, marges comprises. Chaque mot souligné est une piste : ${tap(d)} l’un d’eux pour le noter ou le rechercher.`,
+      catalogue: () =>
+        'Un nom vous intrigue ? Saisissez-le au Catalogue : l’Office vous sort toutes les fiches qui le citent.',
+      tree: (d: Device) =>
+        `Vous tenez quelqu’un ? ${Tap(d)} une case de l’arbre : prénom, nom, visage et métier se choisissent parmi vos lectures.`,
+      faces: (d: Device) =>
+        `${Tap(d)} un visage pour le prendre, puis posez-le sur la bonne case de l’arbre.`,
+      groups: (n: number) =>
+        `Case remplie n’est pas case établie : l’Office confirme par groupe, quand les ${n} cases sont justes ensemble.`,
+      established: () =>
+        'Coup de tampon ! Ces cases sont établies, elles ne bougeront plus. Guettez les Archives : des pièces arrivent parfois avec.',
+      notebook: () =>
+        'Le Carnet garde chaque mot souligné, vos surlignages et vos notes. Ouvrez-le quand la mémoire flanche.',
+      map: () =>
+        'Les lieux cités se posent sur la Carte. Chacun a ses propres fonds d’archives : allez-y fouiller.',
+      help: () =>
+        'Un doute ? Aide › Comment jouer reprend tout, et « Où chercher ? » vous remet sur une piste. Bon courage !',
+    },
   },
 
   desk: {

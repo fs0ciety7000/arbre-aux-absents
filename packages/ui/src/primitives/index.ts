@@ -3,6 +3,8 @@ export { default as ArtDefs } from './ArtDefs.svelte';
 export { default as Badge } from './Badge.svelte';
 export { default as Button } from './Button.svelte';
 export { default as Card } from './Card.svelte';
+export { default as Coachmark } from './Coachmark.svelte';
+export type { CoachPlacement } from './Coachmark.svelte';
 export { default as Combobox, fold } from './Combobox.svelte';
 export type { Candidate } from './Combobox.svelte';
 export { default as Dialog } from './Dialog.svelte';

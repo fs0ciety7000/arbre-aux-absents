@@ -69,11 +69,24 @@ export interface CaseCompletion {
   endings: EndingId[];
 }
 
+/** Tutoriel en bulles (GAME_DESIGN §15) : ce que le joueur a déjà vu. */
+export interface TutorialProgress {
+  /** Terminé ou passé (« J'ai déjà joué », « Passer le tutoriel ») : plus aucune bulle. */
+  done: boolean;
+  /** Identifiants des bulles déjà montrées (≤ 32). */
+  seen: string[];
+}
+
+/** Bulles mémorisées au plus (`TutorialProgress.seen`). */
+export const TUTORIAL_SEEN_MAX = 32;
+
 export interface Profile {
   schemaVersion: 1;
   settings: Settings;
   achievements: Record<AchievementId, number>;
   completed: Record<CaseId, CaseCompletion>;
+  /** Absent : tutoriel jamais commencé (profils antérieurs compris). */
+  tutorial?: TutorialProgress;
 }
 
 /** Réglages par défaut (docs/game/GAME_DESIGN.md §10, §16, §17). */
@@ -162,9 +175,15 @@ export const CaseCompletionSchema = z.strictObject({
   endings: z.array(IdSchema),
 });
 
+export const TutorialProgressSchema = z.strictObject({
+  done: z.boolean(),
+  seen: z.array(IdSchema.max(40)).max(TUTORIAL_SEEN_MAX),
+});
+
 export const ProfileSchema = z.strictObject({
   schemaVersion: z.literal(1),
   settings: SettingsSchema,
   achievements: z.record(IdSchema, MsSchema),
   completed: z.record(IdSchema, CaseCompletionSchema),
+  tutorial: TutorialProgressSchema.optional(),
 });

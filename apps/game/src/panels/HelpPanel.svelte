@@ -7,12 +7,21 @@
   import { hintPreset, type HintId, type Settings } from '@arbre/contract';
   import { hintsFor, whereToLook, type HintStatus, type HintTarget } from '@arbre/engine';
   import { Button, Dialog, Icon, Panel } from '@arbre/ui';
-  import { getGame } from '../lib/game/context';
+  import { announcer } from '../lib/game/announcer.svelte';
+  import { getApp, getGame } from '../lib/game/context';
+  import { messages } from '../messages.fr';
+  import { restartTutorial } from '../tutorial/tutorial.svelte';
   import type { NavTarget } from '../lib/game/types';
   import { slotName } from './lib/view';
   import { pm } from './messages';
 
   const game = getGame();
+  const app = getApp();
+
+  function replayTutorial() {
+    restartTutorial(app);
+    announcer.say(messages.tutorial.restarted);
+  }
   const hints = $derived(game.settings.hints);
 
   const where = $derived(hints.whereToLook ? whereToLook(game.state, game.content) : null);
@@ -140,6 +149,7 @@
     <ol class="howto">
       {#each pm.help.howToItems as item, i (i)}<li>{item}</li>{/each}
     </ol>
+    <Button iconName="quill" onclick={replayTutorial}>{pm.help.replayTutorial}</Button>
   </section>
 </Panel>
 

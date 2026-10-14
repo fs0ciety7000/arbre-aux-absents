@@ -188,6 +188,17 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
+          },
+          "sections": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            },
+            "additionalProperties": {
+              "$ref": "#/$defs/__schema1"
+            }
           }
         },
         "required": [
@@ -195,6 +206,64 @@
           "file",
           "when",
           "priority"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "report": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "prompt": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "question",
+              "choice"
+            ]
+          },
+          "askedWhen": {
+            "$ref": "#/$defs/__schema1"
+          },
+          "options": {
+            "minItems": 2,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                },
+                "label": {
+                  "type": "string",
+                  "pattern": "\\S"
+                },
+                "availableWhen": {
+                  "$ref": "#/$defs/__schema0"
+                }
+              },
+              "required": [
+                "id",
+                "label"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "id",
+          "prompt",
+          "kind",
+          "options"
         ],
         "additionalProperties": false
       }
@@ -503,6 +572,33 @@
           },
           "required": [
             "lockedCount"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "answered": {
+              "type": "object",
+              "properties": {
+                "question": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                },
+                "option": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                }
+              },
+              "required": [
+                "question",
+                "option"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "answered"
           ],
           "additionalProperties": false
         },

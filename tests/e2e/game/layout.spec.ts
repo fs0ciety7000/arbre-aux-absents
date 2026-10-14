@@ -106,6 +106,7 @@ test.describe('téléphone 360 px', () => {
     await noHorizontalScroll(page);
     await page.getByRole('button', { name: 'Nouvelle partie' }).click();
     await noHorizontalScroll(page);
+    // Tutoriel laissé actif exprès : sa note ne doit pas faire déborder l'écran non plus.
     await page.getByRole('button', { name: 'Commencer' }).click();
     await expect(desk(page)).toBeVisible();
     await noHorizontalScroll(page);
@@ -154,6 +155,8 @@ test.describe('axe (WCAG 2.2 AA)', () => {
     expect(await axe(page), 'titre').toEqual([]);
     await page.getByRole('button', { name: 'Nouvelle partie' }).click();
     expect(await axe(page), 'nouvelle partie').toEqual([]);
+    // Tutoriel passé : la note de service a son propre audit (tutorial.spec.ts).
+    await page.getByRole('switch', { name: "J'ai déjà joué" }).click();
     await page.getByRole('button', { name: 'Commencer' }).click();
     await expect(desk(page)).toBeVisible();
     expect(await axe(page), 'Bureau').toEqual([]);

@@ -842,6 +842,7 @@ Svelte 5 runes, tokens sémantiques seulement, focus `outline 3px --focus` déca
 | 9.28 | `Wordmark` | §4.3 | | `aria-label` |
 | 9.29 | `KeyArt` | `svg` · `animate` · `fade: none\|edges\|right\|bottom` · `fit: cover\|contain` · `anchor: start\|center\|end` · `label` | §8.5 | décor (`aria-hidden`) ou `role="img"` + `label` |
 | 9.30 | `InkReveal`, `Celebrate`, `FlipCard` | §8.4 | | `inert` sur la face cachée |
+| 9.31 | `Coachmark` | `anchor` (fonction) · `kicker` · `text` · `actionLabel`/`onaction` · `skipLabel`/`onskip` · `placement` · `bottomInset` · `id` · snippet | **Note de service** : bande de papier (contexte papier) à liseré safran, posée près de sa cible avec une flèche, liseré pointillé autour de la cible ; se pose comme une feuille (`--dur-open`, `--ease-paper`) | `<aside>` nommé par son surtitre, décrit par son texte ; jamais de focus pris ; §9.31 |
 
 Utilitaires CSS : base.css (`.reading`, `.ink-type`, `.ink-hand`, `.num`, `.caps`, `.grain`,
 `.kw[data-state]`, `.hl-1…5`, `.visually-hidden`, `.skip-link`, `[data-verb]`, `.logo-mono`),
@@ -867,6 +868,44 @@ cas) — le mode `'auto'` suffit, aucune prop à ajouter.
 
 v2 : la même mesure s'applique à `variant="folder"` (barre de chemises du Bureau à 390 px :
 icônes seules, info-bulle sous l'onglet).
+
+### 9.31 Bulle de tutoriel (`Coachmark`)
+
+Le tutoriel (GAME_DESIGN §15) parle par **notes de service** : une collègue de l'Office de
+réinscription civile glisse un mot au nouveau rapporteur, à côté de l'élément réel qu'il doit
+toucher. Une seule note à la fois, **au moment du geste** (jamais de diaporama d'entrée).
+
+- **Matière** : `data-surface="paper"` (`--surface-1`, `--text`), liseré `--accent` de 5 px au
+  début, `--radius-paper`, `--shadow-lifted`, inclinaison −0,4° ; surtitre `--font-label`
+  capitales `--step--1` en `--accent` avec la plume (`quill`) ; texte `--step-0`,
+  `--leading-snug`. Largeur `min(22rem, 100vw − 2 × --space-2)`. Boutons : « Passer le
+  tutoriel » (`ghost`) puis « Compris » (`primary`, le seul de la note), cibles ≥ 44 px.
+- **Ancrage** : `anchor()` est relue à chaque image (défilement, panneau changé, redimensionnement).
+  La note se place au-dessous, au-dessus, à droite ou à gauche de la cible (`placement` préféré),
+  centrée ou alignée sur un de ses bords, en choisissant la position qui **couvre le moins de
+  contrôles** (boutons, onglets, champs : relus toutes les 300 ms), avec une hystérésis pour ne
+  pas sautiller. Flèche (carré de papier tourné de 45°) vers la cible ; liseré pointillé
+  `--border-strong` `--accent` autour de la cible (`pointer-events: none`, ne capte rien).
+  Cible trop grande : note posée dans son bas, sans flèche. **Pas de cible visible** (panneau
+  fermé au téléphone…) : note posée en bas de l'écran, au-dessus de la barre d'onglets
+  (`bottomInset`), jamais d'impasse.
+- **Jamais un obstacle** : la note est `pointer-events: none`, seuls ses boutons captent le
+  pointeur ; un clic sur son texte passe à ce qu'elle recouvre.
+- **Pile** : `--z-popover` (sous les modales, toasts et info-bulles). Une modale ouverte
+  (`dialog[open]`) masque la note (elle serait inerte) ; elle revient à la fermeture.
+- **Mouvement** : entrée `m-fade-in` + pose (montée de 1,5 × `--rise`, rotation 1,2° → 0),
+  `--dur-open` `--ease-paper` ; aucune boucle, aucune pulsation. Mouvement réduit : fondu seul
+  (tokens). Aucune note ne disparaît seule par minuterie (GAME_DESIGN §17) ; elle se range quand
+  le geste attendu est fait, sur « Compris », sur Échap / B / retour Android.
+- **Accessibilité** : `<aside>` (`complementary`) nommé « Note de service », décrit par le texte.
+  La note **ne prend jamais le focus** ; l'hôte l'annonce dans la région live **polie
+  permanente** de l'application (une région créée avec son texte n'est pas toujours lue).
+  Échap est routé par l'hôte (intercepte le retour avant la pause). Si le focus était sur un
+  bouton de la note quand elle se range, il revient sur la cible ou sur `#contenu`.
+  Couleurs forcées : cadre `CanvasText`, liseré et cible `Highlight`, flèche masquée. Texte au
+  verbe du périphérique actif (« touchez », « cliquez sur », « sélectionnez »).
+- **Contrastes** : paires existantes du contexte papier (`--text` / `--surface-1`,
+  `--accent` sur papier pour le surtitre, bouton primaire) : aucun nouveau token.
 
 ### 9.21 Mots-clés soulignés (`.kw`)
 

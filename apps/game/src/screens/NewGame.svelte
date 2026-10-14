@@ -5,6 +5,7 @@
   import { messages } from '../messages.fr';
   import ScreenFrame from './ScreenFrame.svelte';
   import Spot from '../shell/Spot.svelte';
+  import { prepareTutorial } from '../tutorial/tutorial.svelte';
 
   /** E04 : affaire, mode, préréglage d'aide, « J'ai déjà joué », emplacement. */
   const app = getApp();
@@ -58,6 +59,8 @@
   async function start() {
     confirmOpen = false;
     starting = true;
+    // « J'ai déjà joué » : aucune bulle ; sinon le tutoriel commence (ou reprend) au Bureau.
+    prepareTutorial(app, skipTutorial);
     await app.startNewGame({
       caseId,
       mode: timedOk ? (mode as GameMode) : 'standard',

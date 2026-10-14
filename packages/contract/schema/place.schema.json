@@ -46,6 +46,15 @@
     "description": {
       "type": "string",
       "pattern": "\\S"
+    },
+    "focusZoom": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "hitRadius": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 200
     }
   },
   "required": [

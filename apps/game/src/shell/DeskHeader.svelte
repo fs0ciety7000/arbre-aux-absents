@@ -100,6 +100,7 @@
       variant="ghost"
       label={m.help}
       tooltip
+      data-tour="help"
       onclick={() => game.showPanel('help')}
     />
     {#if phone}

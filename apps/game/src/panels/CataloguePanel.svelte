@@ -118,7 +118,7 @@
 
 <Panel title={pm.catalogue.title} kicker={pm.catalogue.kicker} class="catalogue-panel">
   <div class="frame">
-    <form class="bar" {onsubmit} role="search" bind:this={field}>
+    <form class="bar" {onsubmit} role="search" bind:this={field} data-tour="catalogue-query">
       <TextField
         label={pm.catalogue.query}
         variant="typewriter"

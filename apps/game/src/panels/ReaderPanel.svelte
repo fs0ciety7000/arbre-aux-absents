@@ -590,7 +590,7 @@
               >
                 {@render sheetHead()}
                 <h2 id="reader-title" class="doc-title">{doc.title}</h2>
-                <div class="reading">
+                <div class="reading" data-tour="reader-text">
                   <DocumentBody blocks={doc.body} {opts} {highlights} {figure} {only} />
                 </div>
                 {#if doc.archive}
@@ -637,7 +637,7 @@
         {/if}
 
         {#if facesOf.length > 0}
-          <section class="extra" aria-labelledby="reader-faces">
+          <section class="extra" aria-labelledby="reader-faces" data-tour="reader-faces">
             <h3 id="reader-faces">{pm.reader.faces}</h3>
             <ul class="faces">
               {#each facesOf as p, i (p)}

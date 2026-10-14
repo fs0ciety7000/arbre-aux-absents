@@ -1,13 +1,18 @@
 import type { Volume } from '@arbre/contract';
+import { AmbiencePlayer } from './ambience';
+import { MusicPlayer } from './music';
+import { noiseHit } from './synth';
+import { MOODS, relativeMajorPc, type Mood } from './theory';
 
 /**
- * Audio du jeu (ARCHITECTURE §4, GAME_DESIGN §16) : Web Audio, bus master → musique,
- * ambiances, effets, interface. Aucun fichier son n'est encore fourni : les effets sont
- * **synthétisés**, courts et discrets ; la musique et les ambiances sont absentes proprement
- * (`playMusic` ne fait rien tant qu'aucune piste n'est déclarée). Aucun son ne porte une
- * information exclusive : chaque son double un retour visuel.
+ * Audio du jeu (ARCHITECTURE §4, GAME_DESIGN §16, docs/game/AUDIO.md) : Web Audio, bus master →
+ * musique, ambiances, effets, interface. **Tout est synthétisé à l'exécution** : aucun fichier
+ * son, aucun réseau. Musique générative par humeur (`setMood`), ambiance du bureau sous la
+ * musique, effets courts et discrets. Aucun son ne porte une information exclusive : chaque son
+ * double un retour visuel.
  *
- * Le contexte n'est créé qu'au premier geste du joueur (politique d'autolecture).
+ * Le contexte n'est créé qu'au premier geste du joueur (politique d'autolecture) ; il est
+ * suspendu quand la fenêtre est cachée (option) ou quand le volume général est nul.
  */
 export type Bus = 'music' | 'ambience' | 'sfx' | 'ui';
 export type SoundName =
@@ -40,6 +45,22 @@ const BUS_OF: Record<SoundName, Bus> = {
 /** Niveau de base des sons synthétisés (discrets). */
 const BASE = 0.18;
 
+/** Cadence de l'ordonnanceur (ms) et anticipation (s), plus longue fenêtre cachée. */
+const TICK_MS = 200;
+const LOOKAHEAD = 0.8;
+const LOOKAHEAD_HIDDEN = 2.5;
+
+type AudioContextCtor = typeof AudioContext;
+
+function audioContextCtor(): AudioContextCtor | undefined {
+  if (typeof window === 'undefined') return undefined;
+  const w = window as unknown as {
+    AudioContext?: AudioContextCtor;
+    webkitAudioContext?: AudioContextCtor;
+  };
+  return w.AudioContext ?? w.webkitAudioContext;
+}
+
 class AudioEngine {
   #ctx: AudioContext | null = null;
   #master: GainNode | null = null;
@@ -50,6 +71,11 @@ class AudioEngine {
   #hidden = false;
   #noise: AudioBuffer | null = null;
   #installed = false;
+  #music: MusicPlayer | null = null;
+  #ambience: AmbiencePlayer | null = null;
+  #mood: Mood | null = null;
+  #layers = 0;
+  #timer: ReturnType<typeof setInterval> | undefined;
 
   /** Écoute le premier geste (création du contexte) et la mise en arrière-plan. */
   install(): void {
@@ -57,7 +83,7 @@ class AudioEngine {
     this.#installed = true;
     const unlock = () => {
       this.#ensure();
-      void this.#ctx?.resume();
+      if (this.#ctx?.state !== 'running' && !this.#shouldSuspend()) void this.#ctx?.resume();
     };
     window.addEventListener('pointerdown', unlock, { capture: true, passive: true });
     window.addEventListener('keydown', unlock, { capture: true });
@@ -74,6 +100,7 @@ class AudioEngine {
     this.#applyGains();
     this.#applyMono();
     this.#applySuspend();
+    this.#applyScene();
   }
 
   play(name: SoundName): void {
@@ -82,6 +109,7 @@ class AudioEngine {
     const bus = this.#buses[BUS_OF[name]];
     if (!bus) return;
     const t = ctx.currentTime + 0.005;
+    const k = 2 ** (this.#harmony() / 12);
     switch (name) {
       case 'tap':
         this.#tone(bus, t, 1400, 0.025, 0.35, 'sine');
@@ -93,10 +121,27 @@ class AudioEngine {
         this.#tone(bus, t, 880, 0.06, 0.35, 'sine', 620);
         break;
       case 'paper':
-        this.#noiseBurst(bus, t, 0.14, 2600, 0.5);
+        // Feuille posée : frottement bref qui descend.
+        noiseHit(ctx, bus, t, {
+          dur: 0.16,
+          freq: 3200,
+          sweepTo: 1600,
+          q: 0.9,
+          level: BASE * 0.5,
+          attack: 0.01,
+        });
         break;
       case 'page':
-        this.#noiseBurst(bus, t, 0.22, 1800, 0.45);
+        // Page tournée : souffle qui monte puis claque doucement.
+        noiseHit(ctx, bus, t, {
+          dur: 0.22,
+          freq: 900,
+          sweepTo: 3400,
+          q: 1,
+          level: BASE * 0.4,
+          attack: 0.06,
+        });
+        noiseHit(ctx, bus, t + 0.2, { dur: 0.05, freq: 2400, q: 1.5, level: BASE * 0.35 });
         break;
       case 'type':
         for (let i = 0; i < 3; i++) this.#noiseBurst(bus, t + i * 0.07, 0.025, 4200, 0.6);
@@ -109,25 +154,80 @@ class AudioEngine {
         this.#tone(bus, t, 2200, 0.03, 0.4, 'square');
         break;
       case 'stamp':
-        this.#tone(bus, t, 110, 0.16, 1, 'sine', 55);
-        this.#noiseBurst(bus, t, 0.05, 900, 0.8);
+        // Tampon : corps de bois grave, claque du caoutchouc sur le papier.
+        this.#tone(bus, t, 150, 0.18, 1, 'sine', 60);
+        this.#tone(bus, t, 420, 0.05, 0.3, 'triangle', 200);
+        noiseHit(ctx, bus, t, { dur: 0.07, freq: 1100, q: 0.8, level: BASE * 0.8, attack: 0.001 });
         break;
       case 'chord':
-        for (const f of [392, 494, 587]) this.#tone(bus, t + 0.05, f, 0.7, 0.25, 'sine');
+        for (const f of [392, 494, 587]) this.#tone(bus, t + 0.05, f * k, 0.7, 0.25, 'sine');
         break;
       case 'reveal':
-        [523, 659, 784].forEach((f, i) => this.#tone(bus, t + i * 0.09, f, 0.9, 0.22, 'sine'));
+        [523, 659, 784].forEach((f, i) => this.#tone(bus, t + i * 0.09, f * k, 0.9, 0.22, 'sine'));
         break;
     }
   }
 
-  /** Musique : aucune piste au MVP. Point d'extension pour `<audio>` Opus/AAC. */
-  playMusic(_track: string | null): void {}
+  /**
+   * Humeur musicale de la scène (`moodFor`) ; `null` : silence. Fondu enchaîné de ~2 s.
+   * Appelable avant le premier geste : l'humeur démarre au déverrouillage du contexte.
+   */
+  setMood(mood: Mood | null): void {
+    this.#mood = mood;
+    this.#applyScene();
+  }
+
+  /** Couches adaptatives (0–4, `layersFor`) : la musique s'étoffe avec l'arbre. */
+  setLayers(n: number): void {
+    this.#layers = n;
+    this.#music?.setLayers(n);
+  }
+
+  #applyScene(): void {
+    const ctx = this.#ctx;
+    if (!ctx || !this.#music || !this.#ambience) return;
+    const now = ctx.currentTime;
+    this.#music.setMood(this.#mood, now);
+    const ambience = this.#mood && this.#volume.ambience > 0 ? MOODS[this.#mood].ambience : 0;
+    this.#ambience.setLevel(ambience, now);
+    this.#syncTimer();
+  }
+
+  /** L'ordonnanceur ne tourne que s'il y a quelque chose à jouer et un contexte actif. */
+  #syncTimer(): void {
+    const ctx = this.#ctx;
+    const needed = !!ctx && ctx.state === 'running' && this.#mood !== null;
+    if (needed && this.#timer === undefined) {
+      this.#timer = setInterval(() => this.#pump(), TICK_MS);
+      this.#pump();
+    } else if (!needed && this.#timer !== undefined) {
+      clearInterval(this.#timer);
+      this.#timer = undefined;
+    }
+  }
+
+  #pump(): void {
+    const ctx = this.#ctx;
+    if (!ctx || ctx.state !== 'running') return;
+    const now = ctx.currentTime;
+    const horizon = now + (this.#hidden ? LOOKAHEAD_HIDDEN : LOOKAHEAD);
+    this.#music?.pump(now, horizon, this.#volume.music <= 0);
+    this.#ambience?.pump(now, horizon);
+  }
+
+  /** Décalage (demi-tons, −5 à +6) des accords d'effet vers la tonalité de la musique. */
+  #harmony(): number {
+    const key = this.#music?.key;
+    if (!key) return 0;
+    const pc = relativeMajorPc(key);
+    return pc > 6 ? pc - 12 : pc;
+  }
 
   #ensure(): void {
-    if (this.#ctx || typeof AudioContext === 'undefined') return;
+    const Ctor = audioContextCtor();
+    if (this.#ctx || !Ctor) return;
     try {
-      const ctx = new AudioContext({ latencyHint: 'interactive' });
+      const ctx = new Ctor({ latencyHint: 'interactive' });
       const master = ctx.createGain();
       master.connect(ctx.destination);
       for (const bus of ['music', 'ambience', 'sfx', 'ui'] as const) {
@@ -137,9 +237,14 @@ class AudioEngine {
       }
       this.#ctx = ctx;
       this.#master = master;
+      this.#music = new MusicPlayer(ctx, this.#buses.music!);
+      this.#music.setLayers(this.#layers);
+      this.#ambience = new AmbiencePlayer(ctx, this.#buses.ambience!);
+      ctx.addEventListener('statechange', () => this.#syncTimer());
       this.#applyGains();
       this.#applyMono();
       this.#applySuspend();
+      this.#applyScene();
     } catch {
       this.#ctx = null;
     }
@@ -166,11 +271,17 @@ class AudioEngine {
     }
   }
 
+  /** Fenêtre cachée (option « couper en arrière-plan ») ou volume général nul : tout s'arrête. */
+  #shouldSuspend(): boolean {
+    return (this.#hidden && this.#muteInBackground) || this.#volume.master <= 0;
+  }
+
   #applySuspend(): void {
     const ctx = this.#ctx;
     if (!ctx) return;
-    if (this.#hidden && this.#muteInBackground) void ctx.suspend();
-    else if (ctx.state === 'suspended') void ctx.resume();
+    if (this.#shouldSuspend()) {
+      if (ctx.state === 'running') void ctx.suspend();
+    } else if (ctx.state === 'suspended') void ctx.resume();
   }
 
   #tone(

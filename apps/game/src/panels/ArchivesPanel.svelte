@@ -152,7 +152,7 @@
         {#if filtered}<Button onclick={clearFilters}>{pm.archives.clearFilters}</Button>{/if}
       </div>
     {:else}
-      <ul class="docs {layout}">
+      <ul class="docs {layout}" data-tour="archives-list">
         {#each docs as id, i (id)}
           {@const d = game.content.documents[id]!}
           <li>

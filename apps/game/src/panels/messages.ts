@@ -108,7 +108,6 @@ export const pm = {
     hidden: 'Case encore cachée',
     slotLabel: (summary: string, state: string) => `${summary}, case ${state}`,
     unknownPerson: 'Personne inconnue',
-    firstHint: 'Commencez ici : touchez une case pour la remplir avec ce que vous avez lu.',
     sheetKicker: 'Fiche de la case',
     sheetLocked: 'Cette case est établie : elle ne peut plus changer.',
     clearField: (f: string) => `Vider le champ ${f}`,
@@ -319,6 +318,7 @@ export const pm = {
     confirmBody: 'L’indice restera visible. Aucune pénalité.',
     locked: 'Pas encore disponible.',
     howTo: 'Comment jouer',
+    replayTutorial: 'Revoir le tutoriel',
     howToItems: [
       'Lisez les documents : les mots soulignés s’ajoutent seuls au Carnet.',
       'Recherchez un terme au Catalogue pour trouver d’autres fiches.',

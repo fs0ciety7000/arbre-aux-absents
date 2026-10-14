@@ -8,6 +8,7 @@
   import { combosOf, comboLabel, COMMANDS, keymap, type CommandId } from '../input/keymap.svelte';
   import { messages } from '../messages.fr';
   import ScreenFrame from './ScreenFrame.svelte';
+  import { restartTutorial } from '../tutorial/tutorial.svelte';
 
   /** E05 : Jeu, Aides, Affichage, Accessibilité, Audio, Contrôles, Langue, Données. */
   const app = getApp();
@@ -99,6 +100,14 @@
             onchange={(e) =>
               set({ longPressMs: Number(e.currentTarget.value) as Settings['longPressMs'] })}
           />
+          <p class="muted">{m.tutorialReplayHint}</p>
+          <Button
+            iconName="quill"
+            onclick={() => {
+              restartTutorial(app);
+              pushToast({ tone: 'success', title: m.tutorialReplayDone });
+            }}>{m.tutorialReplay}</Button
+          >
         {:else if id === 'hints'}
           <Select
             label={m.hintPreset}

@@ -12,6 +12,7 @@
         "textScale": {
           "type": "number",
           "enum": [
+            0.875,
             1,
             1.25,
             1.5,
@@ -22,14 +23,41 @@
           "type": "string",
           "enum": [
             "default",
-            "hyperlegible"
+            "hyperlegible",
+            "dyslexic"
           ]
+        },
+        "lineSpacing": {
+          "type": "string",
+          "enum": [
+            "default",
+            "wide",
+            "wider"
+          ]
+        },
+        "letterSpacing": {
+          "type": "boolean"
+        },
+        "transcriptByDefault": {
+          "type": "boolean"
         },
         "replaceHandwriting": {
           "type": "boolean"
         },
         "highContrast": {
           "type": "boolean"
+        },
+        "reducePaperTexture": {
+          "type": "boolean"
+        },
+        "colorVision": {
+          "type": "string",
+          "enum": [
+            "default",
+            "protanopia",
+            "deuteranopia",
+            "tritanopia"
+          ]
         },
         "motion": {
           "type": "string",
@@ -40,12 +68,54 @@
           ]
         },
         "hints": {
-          "type": "string",
-          "enum": [
-            "off",
-            "highlight",
-            "progressive"
-          ]
+          "type": "object",
+          "properties": {
+            "preset": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "enum": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ]
+                },
+                {
+                  "type": "string",
+                  "const": "custom"
+                }
+              ]
+            },
+            "unreadBadges": {
+              "type": "boolean"
+            },
+            "exhaustedTerms": {
+              "type": "boolean"
+            },
+            "placeCounters": {
+              "type": "boolean"
+            },
+            "whereToLook": {
+              "type": "boolean"
+            },
+            "groupCounter": {
+              "type": "boolean"
+            },
+            "progressiveHints": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "preset",
+            "unreadBadges",
+            "exhaustedTerms",
+            "placeCounters",
+            "whereToLook",
+            "groupCounter",
+            "progressiveHints"
+          ],
+          "additionalProperties": false
         },
         "validation": {
           "type": "string",
@@ -70,7 +140,17 @@
               "minimum": 0,
               "maximum": 1
             },
+            "ambience": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
             "sfx": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "ui": {
               "type": "number",
               "minimum": 0,
               "maximum": 1
@@ -79,9 +159,31 @@
           "required": [
             "master",
             "music",
-            "sfx"
+            "ambience",
+            "sfx",
+            "ui"
           ],
           "additionalProperties": false
+        },
+        "mono": {
+          "type": "boolean"
+        },
+        "muteInBackground": {
+          "type": "boolean"
+        },
+        "haptics": {
+          "type": "boolean"
+        },
+        "longPressMs": {
+          "type": "number",
+          "enum": [
+            300,
+            400,
+            600
+          ]
+        },
+        "confirmClear": {
+          "type": "boolean"
         },
         "inputGlyphs": {
           "type": "string",
@@ -95,13 +197,23 @@
       "required": [
         "textScale",
         "readingFont",
+        "lineSpacing",
+        "letterSpacing",
+        "transcriptByDefault",
         "replaceHandwriting",
         "highContrast",
+        "reducePaperTexture",
+        "colorVision",
         "motion",
         "hints",
         "validation",
         "showTimer",
         "volume",
+        "mono",
+        "muteInBackground",
+        "haptics",
+        "longPressMs",
+        "confirmClear",
         "inputGlyphs"
       ],
       "additionalProperties": false
@@ -145,6 +257,28 @@
         ],
         "additionalProperties": false
       }
+    },
+    "tutorial": {
+      "type": "object",
+      "properties": {
+        "done": {
+          "type": "boolean"
+        },
+        "seen": {
+          "maxItems": 32,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 40,
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        }
+      },
+      "required": [
+        "done",
+        "seen"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [

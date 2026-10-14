@@ -67,6 +67,14 @@ Fait :
 - [x] Envoi automatique : tag `v*` ou commit `[itch]` → builds natifs → butler (`tauri.yml`, job `itch`)
 - [x] Dépôt passé en public (Actions gratuites) ; kit de publication retiré du dépôt
 
+## Session 0 septies — 14 oct. 2026 (musique, tutoriel)
+
+- [x] Musique générative (Web Audio, aucun fichier) : humeurs Titre, Bureau (s'étoffe avec l'arbre),
+      Dénouement ; ambiance pluie, horloge, papier ; voir `docs/game/AUDIO.md`
+- [x] Tutoriel en bulles « Note de service » (10 étapes, déclenchées par les actions, ne bloque
+      jamais) ; progression dans `Profile.tutorial` ; « Revoir le tutoriel » dans Aide et Options
+- [x] Écran fixe sur téléphone (plus de zoom ni de glissement), portrait sur téléphone Android
+
 ## Backlog
 
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
@@ -85,8 +93,7 @@ Fait :
 - Site en ligne (https://arbre.fs0ciety.org) : ajout au catalogue occ-studios (mons-corp fait : PR #8) ; basculer
   l'app Coolify sur `main` après fusion (DEPLOYMENT §1).
 - Affaires supplémentaires (contenu seul).
-- Musique et ambiances (le moteur audio est prêt, `playMusic` ne joue rien).
-- Tutoriel en bulles (le choix « J'ai déjà joué » est seulement mémorisé) ; tiroir à deux crans sur tablette portrait.
+- Tiroir à deux crans sur tablette portrait. Mettre à jour `docs/game/GAME_DESIGN.md` §15 et `ECRANS.md` §5 (tutoriel) ; montrer `Coachmark` sur `/design`.
 - `Dialog` : prop `initialFocus` (design-lead) pour retirer l'action `initial-focus.ts` du jeu.
 - Contrat : remappage des touches dans `Settings`, emplacement dédié au mode chronométré, fractionnés sauvegardés.
 - Illustrations : qualité inégale (pb-01, photos de groupe aux tenues répétées) ; vrais profils pour ph-16/17.

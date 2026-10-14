@@ -1,7 +1,9 @@
 <script lang="ts">
   import { ArtDefs, SkipLink, ToastRegion, paperIn, screenIn } from '@arbre/ui';
   import { onMount, type Component } from 'svelte';
+  import { progress } from '@arbre/engine';
   import { audio } from './audio/engine';
+  import { layersFor, moodFor } from './audio/theory';
   import { installGamepad, installKeyboard } from './input/controller';
   import { input } from './input/device.svelte';
   import { announcer } from './lib/game/announcer.svelte';
@@ -29,6 +31,15 @@
   const needsContent = $derived(CONTENT_SCREENS.includes(app.screen));
   $effect(() => {
     if (needsContent && app.contentStatus === 'idle') void app.ensureContent();
+  });
+
+  // Musique générative : l'humeur suit l'écran (fondu enchaîné), les couches suivent l'arbre.
+  $effect(() => {
+    audio.setMood(moodFor({ screen: app.screen, fatal: app.fatal !== null, ending: app.ending }));
+  });
+  $effect(() => {
+    const g = app.game;
+    audio.setLayers(g ? layersFor(progress(g.state, g.content).ratio) : 0);
   });
 
   // Crédits (logos inlinés, ~65 Ko) chargés à la demande.
