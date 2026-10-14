@@ -57,6 +57,7 @@ async function expectWholeWords(page: Page): Promise<void> {
 
 /** Un métier fait d'un seul très long mot : le corps se réduit pour qu'il tienne, sans coupure. */
 async function expectLongWordShrinks(page: Page): Promise<void> {
+  await page.evaluate(() => document.fonts.ready);
   const res = await page
     .locator('[data-tree-view] [data-slot] .occ:not(.hint)')
     .first()

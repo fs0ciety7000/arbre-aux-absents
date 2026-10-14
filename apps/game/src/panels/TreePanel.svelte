@@ -738,12 +738,12 @@
   /* Métier : retour à la ligne entre les mots seulement (césure française si le moteur la
      propose), jamais au milieu d'un mot. Si le plus long mot (--occ-chars, posé par la fiche)
      dépasse la largeur, le corps se réduit pour qu'il tienne (police à chasse fixe : 0,6 em par
-     caractère, marge comprise) ; au-delà de deux lignes, points de suspension. */
+     caractère, 0,66 avec la marge d'arrondi) ; au-delà de deux lignes, points de suspension. */
   .occ {
     grid-column: 1 / -1;
     min-inline-size: 0;
     font-family: var(--font-type);
-    font-size: min(1em, 100cqi / (var(--occ-chars, 1) * 0.62));
+    font-size: min(1em, 100cqi / (var(--occ-chars, 1) * 0.66));
     line-height: var(--rule-gap);
     color: var(--ink);
     overflow-wrap: normal;
