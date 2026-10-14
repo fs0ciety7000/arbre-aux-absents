@@ -594,7 +594,12 @@
                           <div>
                             <dt>{FIELD_LABELS[f]}</dt>
                             <dd>
-                              {#if listClaim.declared.has(f)}<span class="claim-value"
+                              {#if listClaim.declared.has(f) && f === 'portrait'}{fieldValueLabel(
+                                  game.content,
+                                  f,
+                                  g,
+                                )}<span class="visually-hidden">, {pm.tree.declaredMark}</span
+                                >{:else if listClaim.declared.has(f)}<span class="claim-value"
                                   >{fieldValueLabel(game.content, f, g)}</span
                                 ><span class="visually-hidden">, {pm.tree.declaredMark}</span
                                 >{:else}{fieldValueLabel(game.content, f, g) ??
@@ -757,10 +762,17 @@
   .slot.claimed .name {
     line-height: 1.15;
   }
-  /* Valeur déclarée (§6.9) : formulaire tapé, romain, sans les capitales grasses du joueur. */
+  /* Valeur déclarée (§6.9) : formulaire tapé, romain, sans les capitales grasses du joueur.
+     Sur la fiche de l'arbre, le nom se passe des guillemets « » : ils mangeaient la largeur
+     (« « Tessonn… »). La case porte déjà le cartouche et le bord en tirets, et le romain tapé
+     se distingue des capitales grasses du joueur : la marque reste lisible sans eux. */
   .slot .name .claim-value {
     text-transform: none;
     letter-spacing: normal;
+  }
+  .slot .name .claim-value::before,
+  .slot .name .claim-value::after {
+    content: none;
   }
   .claim-stack {
     overflow: hidden;

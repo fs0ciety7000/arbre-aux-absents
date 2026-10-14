@@ -192,7 +192,8 @@
       var(--shadow-lifted);
   }
   /* Grisée : la fiche pâlit, le texte reste lisible (raison au contraste AA, pas d'opacité
-     sur le texte) ; le libellé est barré d'un trait léger : forme, pas seulement couleur. */
+     sur le texte) ; le bord de la fiche et la case à cocher passent en tirets : forme, pas
+     seulement couleur. Le libellé n'est pas barré. */
   .disabled .card {
     cursor: not-allowed;
     background-image: none;

@@ -618,7 +618,10 @@ cadenas, ni tampon (ceux-là restent la vérité établie, §3.3). Spécificatio
   - `IndexCard` : `claimed` (ajoute `.claim-frame` + `ClaimTag straddle`) · `claimLabel`.
   - Classes (`materials.css`) : `.claim-frame` (sur un `.mat-card` ou tout hôte positionné ; ne
     prend que `::before`, `::after` reste à l'hôte), `.claim-value`, `.claim-stack`.
-- **Case de l'arbre** (bouton `.slot.mat-card` de `TreePanel`, recette §13.3) :
+- **Case de l'arbre** (bouton `.slot.mat-card` de `TreePanel`, recette §13.3). Faute de largeur, le
+  prénom et le nom déclarés s'y passent des guillemets (cartouche, tirets et romain suffisent) ; le
+  métier les garde. Dans la fiche, le portrait déclaré n'est pas en `.claim-value` : vignette et
+  texte limité à deux lignes, texte complet en `visually-hidden`.
 
 ```svelte
 <button class="slot mat-card mv-liftable" class:claim-frame={claimed} …>

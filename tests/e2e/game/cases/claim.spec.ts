@@ -6,7 +6,16 @@
  * visage et le métier : Tomas Morvan, « Garçon au visage rond », Meunier.
  */
 import type { Locator, Page } from '@playwright/test';
-import { desk, expect, gotoTitle, saveAndQuit, showPanel, slotButton, test } from '../helpers';
+import {
+  desk,
+  expect,
+  gotoTitle,
+  openDocument,
+  saveAndQuit,
+  showPanel,
+  slotButton,
+  test,
+} from '../helpers';
 
 const CLAIM = 'La requête du passeur';
 const MINI = 'La malle du grenier';
@@ -113,6 +122,39 @@ test('case revendiquée : marque, nom accessible, retirer et rétablir la décla
   await expect(desk(page)).toBeVisible();
   await expect(slotButton(page, SLOT)).not.toHaveClass(/\bclaim-frame\b/);
   await expect(slotButton(page, SLOT)).toHaveAccessibleName(/case (ouverte|vide)$/);
+});
+
+test('rétablir la déclaration sur un champ posé : la confirmation reçoit le focus', async ({
+  page,
+}) => {
+  // QA affaire 2 : la confirmation « Remplacer N champ(s) posé(s) par la déclaration ? »
+  // (role="alertdialog") apparaît sous les actions sans déplacer le focus ni être annoncée :
+  // au clavier ou au lecteur d'écran, rien ne signale qu'une confirmation attend.
+  await startCase(page, CLAIM);
+  await showPanel(page, /^Archives/);
+  await openDocument(page, 'Note du notaire');
+  await showPanel(page, 'Arbre');
+  const card = slotButton(page, SLOT);
+  await card.click();
+  const s = sheet(page);
+  await expect(s).toBeVisible();
+  // Poser un prénom autre que celui de la déclaration (« Ancel », lu dans la note de départ).
+  await s
+    .getByRole('button', { name: /^Prénom\b/ })
+    .first()
+    .click();
+  const picker = page.getByRole('dialog', { name: /^Choisir/ });
+  await picker
+    .getByRole('option', { name: /^Ancel/ })
+    .first()
+    .click();
+  await expect(picker).toBeHidden();
+  await expect(card).toHaveAccessibleName(/Prénom : Ancel, posé par vous\./);
+
+  await s.getByRole('button', { name: 'Rétablir la déclaration' }).press('Enter');
+  const confirm = s.getByRole('alertdialog', { name: 'Rétablir la déclaration' });
+  await expect(confirm).toContainText('Remplacer 1 champ posé par la déclaration ?');
+  await expect(confirm.locator(':focus')).toHaveCount(1);
 });
 
 test('succès et crédits : une section par affaire', async ({ page }) => {

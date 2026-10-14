@@ -21,6 +21,14 @@ export const KIND_LABELS: Record<DocumentKind, string> = {
   advert: 'Réclame',
 };
 
+/**
+ * Retire le point final d'une valeur (texte de remplacement d'un portrait : « …trop grand. »)
+ * avant d'y accoler une mention (« , déclaré. ») : pas de double ponctuation à l'écoute.
+ */
+export function withoutFinalPeriod(value: string): string {
+  return value.replace(/\s*\.+\s*$/, '');
+}
+
 export const FIELD_LABELS: Record<SlotField, string> = {
   given: 'Prénom',
   family: 'Nom',
@@ -133,8 +141,10 @@ export const pm = {
     claimTag: 'Déclaré',
     claimedSummary: (gen: string, fields: string) =>
       `${gen}, case revendiquée, non établie. ${fields}`,
-    fieldDeclared: (label: string, value: string) => `${label} : ${value}, déclaré.`,
-    fieldPosed: (label: string, value: string) => `${label} : ${value}, posé par vous.`,
+    fieldDeclared: (label: string, value: string) =>
+      `${label} : ${withoutFinalPeriod(value)}, déclaré.`,
+    fieldPosed: (label: string, value: string) =>
+      `${label} : ${withoutFinalPeriod(value)}, posé par vous.`,
     fieldBlank: (label: string) => `${label} : à remplir.`,
     declaredMark: 'déclaré',
     claimNotice: 'Identité déclarée par le requérant : à vérifier.',

@@ -20,7 +20,9 @@
     guessOf,
     slotName,
   } from '../lib/view';
-  import { FIELD_LABELS, pm } from '../messages';
+  import { tick } from 'svelte';
+  import type { Attachment } from 'svelte/attachments';
+  import { FIELD_LABELS, pm, withoutFinalPeriod } from '../messages';
 
   interface Props {
     slot: SlotId | null;
@@ -62,6 +64,38 @@
   const requestDoc = $derived(slot && claim.open ? claimDocument(game.content, slot) : null);
   let confirmingRestore = $state(false);
 
+  // ── Confirmations (role="alertdialog") : le focus y entre, et revient au déclencheur ──
+  /** Élément qui a ouvert la confirmation en cours (bouton « Rétablir », × ou ligne du champ). */
+  let confirmTrigger: HTMLElement | null = null;
+  let fieldsList = $state<HTMLUListElement | null>(null);
+
+  function rememberTrigger() {
+    const active = document.activeElement;
+    confirmTrigger = active instanceof HTMLElement && active !== document.body ? active : null;
+  }
+
+  /** À l'apparition, le premier bouton prend le focus : le lecteur d'écran annonce la confirmation. */
+  const focusFirstButton: Attachment<HTMLElement> = (node) => {
+    node.querySelector<HTMLElement>('button')?.focus();
+  };
+
+  /**
+   * Rend le focus au déclencheur ; s'il a disparu (le × d'un champ vidé, « Rétablir » une fois la
+   * déclaration remise), à la ligne du champ concerné, sinon au premier champ de la fiche.
+   */
+  async function restoreFocus(field: SlotField | null = null) {
+    const trigger = confirmTrigger;
+    confirmTrigger = null;
+    await tick();
+    if (trigger?.isConnected) {
+      trigger.focus();
+      return;
+    }
+    const rows = fieldsList?.querySelectorAll<HTMLElement>('button.field');
+    const index = field ? FIELDS.indexOf(field) : 0;
+    rows?.[Math.max(0, index)]?.focus();
+  }
+
   function emptyPatch(fields: readonly SlotField[]): Partial<SlotGuess> {
     const patch: Partial<SlotGuess> = {};
     for (const f of fields) {
@@ -78,17 +112,27 @@
   }
 
   function askRestore() {
-    if (overwritten.length > 0) confirmingRestore = true;
-    else restoreClaim();
+    if (overwritten.length > 0) {
+      rememberTrigger();
+      confirming = null;
+      confirmingRestore = true;
+    } else restoreClaim();
+  }
+
+  function cancelRestore() {
+    confirmingRestore = false;
+    void restoreFocus();
   }
 
   /** Remet les valeurs déclarées dans les champs (confirmation si un champ posé est écrasé). */
   function restoreClaim() {
+    const wasConfirming = confirmingRestore;
     confirmingRestore = false;
     if (!slot || locked || !declaration) return;
     const patch: Partial<SlotGuess> = {};
     for (const f of claimed) Object.assign(patch, { [f]: declaration[f] });
     game.dispatch({ type: 'setSlot', slot, patch });
+    if (wasConfirming) void restoreFocus();
   }
 
   function showRequest() {
@@ -113,12 +157,24 @@
     const patch: Partial<SlotGuess> =
       field === 'portrait' || field === 'occupation' ? { [field]: null } : { [field]: '' };
     game.dispatch({ type: 'setSlot', slot, patch });
-    confirming = null;
+    if (confirming) {
+      confirming = null;
+      void restoreFocus(field);
+    }
   }
 
   function askClear(field: SlotField) {
-    if (game.settings.confirmClear) confirming = field;
-    else clear(field);
+    if (game.settings.confirmClear) {
+      rememberTrigger();
+      confirmingRestore = false;
+      confirming = field;
+    } else clear(field);
+  }
+
+  function cancelClear() {
+    const field = confirming;
+    confirming = null;
+    void restoreFocus(field);
   }
 
   function onRowKey(e: KeyboardEvent, field: SlotField) {
@@ -141,7 +197,7 @@
         <span>{claim.claimed ? pm.tree.claimNotice : pm.tree.claimNoticeCleared}</span>
       </p>
     {/if}
-    <ul class="fields">
+    <ul class="fields" bind:this={fieldsList}>
       {#each FIELDS as field (field)}
         {@const value = fieldValueLabel(game.content, field, guess)}
         {@const accepts = carry.accepts(field)}
@@ -161,11 +217,19 @@
                 <span class="thumb" use:svgContent={portraitSvg(game.content, guess.portrait)}
                 ></span>
               {/if}
-              {#if value && claim.declared.has(field)}<span class="claim-value">{value}</span><span
-                  class="visually-hidden">, {pm.tree.declaredMark}</span
-                >{:else if value}<span>{value}</span>{:else}<span class="empty"
-                  >{pm.tree.fieldEmpty}</span
-                >{/if}
+              {#if value && field === 'portrait'}
+                <!-- Portrait (§6.9) : le texte de remplacement fait ~200 signes. Deux lignes à
+                     l'écran, le texte entier au lecteur d'écran ; déclaré, il garde son cadre
+                     (pas de .claim-value) : sa marque est le cartouche et le nom accessible. -->
+                <span class="alt" aria-hidden="true">{value}</span><span class="visually-hidden"
+                  >{claim.declared.has(field)
+                    ? `${withoutFinalPeriod(value)}, ${pm.tree.declaredMark}`
+                    : value}</span
+                >
+              {:else if value && claim.declared.has(field)}<span class="claim-value">{value}</span
+                ><span class="visually-hidden">, {pm.tree.declaredMark}</span>{:else if value}<span
+                  >{value}</span
+                >{:else}<span class="empty">{pm.tree.fieldEmpty}</span>{/if}
             </span>
             <span class="verb">
               {#if locked}<Icon name="lock" />{:else if accepts}<Icon name="use" />
@@ -198,21 +262,31 @@
       </div>
     {/if}
     {#if confirmingRestore}
-      <div class="confirm" role="alertdialog" aria-label={pm.tree.claimRestore}>
-        <p>{pm.tree.claimConfirmRestore(overwritten.length)}</p>
+      <div
+        class="confirm"
+        role="alertdialog"
+        aria-label={pm.tree.claimRestore}
+        aria-describedby="slot-confirm-restore"
+        {@attach focusFirstButton}
+      >
+        <p id="slot-confirm-restore">{pm.tree.claimConfirmRestore(overwritten.length)}</p>
         <Button variant="danger" onclick={restoreClaim}>{pm.common.confirm}</Button>
-        <Button variant="ghost" onclick={() => (confirmingRestore = false)}
-          >{pm.common.cancel}</Button
-        >
+        <Button variant="ghost" onclick={cancelRestore}>{pm.common.cancel}</Button>
       </div>
     {/if}
     {#if confirming}
-      <div class="confirm" role="alertdialog" aria-label={pm.tree.confirmClear}>
-        <p>{pm.tree.confirmClear} ({FIELD_LABELS[confirming]})</p>
+      <div
+        class="confirm"
+        role="alertdialog"
+        aria-label={pm.tree.confirmClear}
+        aria-describedby="slot-confirm-clear"
+        {@attach focusFirstButton}
+      >
+        <p id="slot-confirm-clear">{pm.tree.confirmClear} ({FIELD_LABELS[confirming]})</p>
         <Button variant="danger" onclick={() => confirming && clear(confirming)}
           >{pm.common.confirm}</Button
         >
-        <Button variant="ghost" onclick={() => (confirming = null)}>{pm.common.cancel}</Button>
+        <Button variant="ghost" onclick={cancelClear}>{pm.common.cancel}</Button>
       </div>
     {/if}
   {/if}
@@ -298,6 +372,22 @@
     align-items: center;
     min-inline-size: 0;
     overflow-wrap: anywhere;
+  }
+  /* Valeur déclarée : le » final ne part jamais seul à la ligne (pas de coupure « n'importe où »
+     dans la valeur ; l'espace fine insécable des guillemets la soude au dernier mot). */
+  .value .claim-value {
+    overflow-wrap: break-word;
+  }
+  /* Texte de remplacement du portrait : deux lignes au plus, coupées aux mots. */
+  .alt {
+    display: -webkit-box;
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
   }
   .empty {
     color: var(--text-muted);
