@@ -513,7 +513,12 @@
     "level": 2,
     "text": "Pièce utile : la réinscription de 1953 à Vernezac, avec sa photographie d'identité.",
     "availableWhen": {
-      "unlocked": "rg-15"
+      "any": [
+        { "unlocked": "pr-03" },
+        { "unlocked": "ph-07" },
+        { "unlocked": "ph-18" },
+        { "unlocked": "ph-10" }
+      ]
     }
   },
   {
@@ -524,7 +529,7 @@
     "level": 3,
     "text": "Avant 1944, deux photographies le montrent à côté du souffleur : sourcils droits et épais, yeux sombres, pas d'épi, tablier de cuir. C'est le même visage, plus jeune, que celui de la requête.",
     "availableWhen": {
-      "unlocked": "rg-15"
+      "any": [{ "unlocked": "ph-07" }, { "unlocked": "ph-18" }]
     }
   },
   {
@@ -664,7 +669,7 @@
       "slot": "c21"
     },
     "level": 3,
-    "text": "« M. Hugues Brossal, ingénieur aux Verreries » : yeux gris, fossette, nœud papillon.",
+    "text": "« M. Hugues Brossal, ingénieur aux Verreries » : yeux clairs derrière des lunettes, fossette, nœud papillon.",
     "availableWhen": {
       "unlocked": "ph-15"
     }

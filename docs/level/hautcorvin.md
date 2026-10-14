@@ -1,11 +1,12 @@
 # Level design — affaire `revenant-hautcorvin` (*Le Revenant de Hautcorvin*)
 
-> Auteur : `level-designer` · v0.1 · 14 oct. 2026 · affaire 2.
-> Fichiers tenus : `content/cases/revenant-hautcorvin/{case,family,tree,progression,hints,achievements}.json`,
-> squelettes `documents/*.md` (98) et `endings/*.md` (4), à réécrire par le `scenariste`.
+> Auteur : `level-designer` · v0.2 · 14 oct. 2026 · affaire 2.
+> Fichiers tenus : `content/cases/revenant-hautcorvin/{case,family,tree,progression,hints,achievements}.json`.
+> Les 98 pièces et les 4 fins sont rédigées (textes définitifs du `scenariste`) ; v0.1 avait été
+> construite sur des squelettes.
 > Sources : bible `docs/scenario/hautcorvin/` (02, 05, 06, 07, 09), règles `docs/game/AFFAIRE-2.md`
 > et `GAME_DESIGN.md` §7–§10, contrat `docs/ARCHITECTURE.md` §3 (case revendiquée, `altPortraits`).
-> Preuve de solvabilité : §9 (solveur réel de `content-tools` sur les 98 squelettes).
+> Preuve de solvabilité : §9 (solveur réel de `content-tools`), revérifiée sur les textes définitifs (§9.4).
 
 ## 1. Principes retenus
 
@@ -78,7 +79,8 @@ Le nom déclaré est lu dans une pièce de départ (OF-02, OF-01) : aucun averti
 | B | PR-05 (1941, « A. Dalvarin » flou au fond), PH-13 (Dalvica 1955), CT-02 (Brénica 1974) | Andrin avant 1944, mais flou ; le doute reste. |
 | C | **PR-03** (grève 1936), **PH-07** (four n° 2, 1937), **PH-18** (Saint-Éloi 1935), PH-09 (R) | Premier visage de Bastien ; les demi-frères côte à côte, nommés, avant 1944. Le trio peut se verrouiller. |
 
-**Pourquoi le visage déclaré ne permet pas de deviner « ? » par élimination.**
+**Pourquoi le visage déclaré ne permet pas d'*établir* « ? » par élimination.** (v0.2 : on peut le
+*soupçonner* avant C, voir point 3 ; on ne peut pas le faire confirmer.)
 
 1. **Trio 3 / 3** : poser le visage déclaré dans « ? » ne déclenche rien tant que C15 (visage de
    Bastien, `souffleur`) et C25 ne sont pas justes aussi. Le visage de Bastien n'est révélé par
@@ -86,10 +88,20 @@ Le nom déclaré est lu dans une pièce de départ (OF-02, OF-01) : aucun averti
 2. **Le visage déclaré n'est pas le seul visage de « ? »** : `altPortraits` (27 et 41 ans) sont acceptés.
    Le joueur peut établir C17 par le jeune homme au tablier de cuir de PH-07 / PH-18 (preuve positive)
    sans jamais « déplacer » le visage déclaré.
-3. **Deux hypothèses tiennent jusqu'au niveau C** : « le requérant est Andrin » et « le requérant est
-   Bastien sous le nom d'Andrin » placent le même visage dans deux cases différentes ; toutes les pièces
-   d'avant C (RG-15, PH-13, CT-02, PR-10, TG-02) sont compatibles avec les deux. Seules les pièces
-   antérieures au 9 mars 1944 qui montrent **les deux hommes** tranchent.
+3. **Le soupçon vient tôt, la preuve tard** (revu sur les textes définitifs). Les *photographies*
+   d'avant C (RG-15, PH-13, PH-17, CT-02, PR-10, TG-02) sont compatibles avec « le requérant est
+   Andrin » comme avec « Bastien sous le nom d'Andrin ». Mais les *textes* penchent tôt :
+   - **A** : EX-01 (main droite intacte, main gauche brûlée, yeux bruns, lobe adhérent, pas d'épi)
+     contre OF-03 / PV-03 / RP-04 (yeux gris, main droite brûlée, épi, incisive ébréchée) : le
+     requérant n'est pas Bastien. La loupe « de graveur » (OF-02, PR-10) et RP-01 / RP-03 / RG-12
+     (Andrin, graveur) désignent un candidat.
+   - **B** : RG-14 (le 1171 brûlé à la main gauche en août 1943) et surtout **PV-05** (Haask : « le
+     souffleur, c'est moi qui lui ai fermé les yeux » ; « les sourcils du Thalbère ») : le requérant
+     est Andrin, de façon quasi explicite. C'était déjà le cas dans les squelettes (bible 06).
+   Le joueur attentif sait donc dès B que le visage déclaré va dans « ? ». Il ne peut pas le faire
+   confirmer : C15 exige le visage de Bastien, qui n'existe qu'en C (points 1 et 2). Les indices
+   `c17-2` et `c17-3`, qui disaient la réponse dès RG-15 (couche 1), sont réservés à la porte C (v0.2).
+   Ce qui reste à trouver en C : le **visage de Bastien**, et la preuve positive (PH-07, PH-18).
 4. **Leurres de visage d'homme mûr** révélés avant le trio : Léon Escande (PH-14, A), l'abbé Pradeil
    (PH-02, A), Fauvel (PH-11, B) ; Mallet et Lavergne arrivent avec PH-07.
 5. Aucune autre case ne partage le visage déclaré : les verrouillages d'autres groupes n'apprennent
@@ -300,16 +312,46 @@ Pour chacune des 89 pièces hors départ, on la retire du modèle et on relance 
   par une condition `any` à plusieurs branches), PH-09, PH-10, RG-13, RG-14, RP-06 (restreintes),
   EP-01, EP-02.
 
+### 9.4 Revérification sur les textes définitifs (v0.2)
+
+Mêmes scripts (couches, contre-épreuve), relancés sur les 98 textes définitifs, puis comparés
+pièce par pièce, mot-clé par mot-clé et case par case avec les squelettes (commit `a2c49cf`, mêmes
+JSON). `content:build` et `content:check` : verts (seul avertissement : pas de `demo`).
+
+- **Aucun mot-clé retiré** (contrôle sur les 98 pièces) ; 222 mots-clés ajoutés (distincts par pièce) dans 72 pièces.
+- **Couches inchangées** : 77 / 89 / 97 / 98 pièces, 15 / 25 / 28 cases, mêmes groupes, mêmes secrets.
+  **Aucune pièce, aucune case, aucun visage, aucun métier n'entre plus tôt.** Raison : tous les
+  résultats des mots-clés « avancés » sont conditionnés par une porte ; connaître un mot plus tôt ne
+  rend rien plus tôt.
+- **Deux mots-clés connus plus tôt** (couche 1 au lieu de 2), sans effet : « atelier de gravure »
+  (PR-04 ; résultats PH-03, LT-03 derrière B) et « Saint-Éloi » (RG-04 ; PH-18 derrière C + C22/PH-17).
+  Les autres ajouts signalés (PH-09, PH-10, PR-10, PR-03, PR-04, PR-06, RG-05 « B. Neviot » → TG-02)
+  portent sur des mots déjà connus en couche 1 par les pièces de départ.
+- **Mots-clés réservés** : « Bastien Tessonnal » et « Andrin Dalvarin » n'ont qu'un terme chacun, le
+  nom complet dans cet ordre ; les formes de registre (« TESSONNAL Bastien » dans PH-10, RG-13,
+  RG-17 ; « Dalvarin Andrin » dans RP-01, RP-03, RG-12, RG-14) tombent sur les mots-clés distincts.
+  Les deux noms sont lus dès OF-01 / OF-02 / PV-01 : leur présence dans PR-10 ou dans une autre pièce
+  de couche 1 ne change rien. Leurs résultats restreints restent derrière B (RG-13, RP-06, RG-14) et
+  C (PH-09, PR-03, PH-10, RP-05).
+- **Contre-épreuve** : identique à §9.3 (aucune pièce nécessaire à une case ; mêmes pièces clés des
+  secrets ; seuls les deux mots-clés réservés sont nécessaires, à des pièces restreintes).
+- **Trio relu à la main** : voir §4, point 3. Correction des données : indices `c17-2` et `c17-3`
+  réservés à la porte C (ils nommaient la réponse dès RG-15, en couche 1).
+
 ## 10. Durée estimée
+
+Les textes définitifs font environ 38 700 mots (98 pièces, contre 44 600 pour l'affaire 1 en 118
+pièces) : pièces plus longues, plus de signalements à comparer, et des mots-clés plus nombreux dans le
+carnet (recherches qui ne rendent rien de neuf). Révision à la hausse des niveaux A et B.
 
 | Phase | Joueur moyen |
 |---|---|
-| Prologue (C07, C13, C14) | 10–20 min |
-| Niveau A (verriers, combe, Brossal) | 1 h 15 – 2 h |
-| Niveau B (baptême, ourse, Vernezac ; S1, S3) | 1 h 30 – 2 h 15 |
+| Prologue (C07, C13, C14) | 15–25 min |
+| Niveau A (verriers, combe, Brossal) | 1 h 30 – 2 h 15 |
+| Niveau B (baptême, ourse, Vernezac ; S1, S3) | 1 h 45 – 2 h 30 |
 | Niveau C (trio ; S2, S4, S5) | 1 h – 1 h 45 |
 | Rapport, décision, épilogue | 20–30 min |
-| **Total** | **4 h 15 – 6 h 45** (cible AFFAIRE-2 : 4 h 30 – 7 h) |
+| **Total** | **4 h 50 – 7 h 25** (cible AFFAIRE-2 : 4 h 30 – 7 h ; haut de fourchette à surveiller) |
 
 `timedTargetsMs` : 3 h, 4 h 30, 7 h. Succès chronométrés : 2 h 30 et 75 min (AFFAIRE-2 §4).
 
@@ -327,8 +369,13 @@ Pour chacune des 89 pièces hors départ, on la retire du modèle et on relance 
 ## 12. Points faibles et cases à risque
 
 1. **C17 et l'élimination** : le solveur ne modélise pas l'élimination (il dispose du visage déclaré
-   dès le départ). La protection est structurelle (§4) ; à mesurer en playtest : temps entre le
-   retrait du visage déclaré et l'établissement du trio.
+   dès le départ). Les textes définitifs rendent le soupçon net dès A et quasi explicite en B (PV-05,
+   §4 point 3). La protection reste structurelle : C15 sans visage avant C. Risque : un joueur qui a
+   « compris » en B et attend la porte C peut s'ennuyer ; à mesurer en playtest (temps entre la
+   lecture de PV-05 et l'établissement du trio).
+1 bis. **« Chef de nuit »** : les textes confirment que Bastien était chef de nuit (PR-03, RP-01,
+   RG-17 « grade, prime de nuit ») ; le métier déclaré n'est faux que parce qu'un grade n'est pas une
+   qualité. OF-01 §5 ne le dit pas encore : risque de sentiment d'injustice (signalé au scénariste).
 2. **C15 Bastien** : quatre pièces de visage, toutes au niveau C. C'est voulu, mais le trio est la
    dernière étape pour presque tous les joueurs ; ne pas durcir la porte C.
 3. **C03 Dranko** : deux visages (PH-05, PR-02), tous deux derrière B.
@@ -339,10 +386,16 @@ Pour chacune des 89 pièces hors départ, on la retire du modèle et on relance 
    retirés, `illustration` retirée en attendant les fichiers) ; dans OF-02, la ligne « Signature du
    requérant : ::signature[…] » a dû être coupée (la signature doit occuper sa propre ligne).
 7. **Mentions marginales** des fins : pas de champ dans le contrat.
+8. **Recherches vides en couche 1** : « atelier de gravure » et « Saint-Éloi » sont désormais lus en
+   couche 1 mais ne rendent rien avant B (resp. C). Sans effet sur la progression ; à surveiller si le
+   Lecteur n'explique pas un résultat vide (« fonds non encore versés »).
+9. **Indices écrits sur squelettes** : les 82 indices ont été relus contre les textes définitifs ;
+   un seul détail corrigé (`c21-3` : « yeux clairs » et non « gris »).
 
 ## 13. Contraintes pour la rédaction des pièces
 
-Les squelettes commencent tous par la ligne « BROUILLON — squelette de level design… » (sauf les
+(v0.2 : rédaction faite ; le tableau reste le **minimum** de mots-clés de chaque pièce, contrôlé au
+§9.4.) Les squelettes commençaient tous par la ligne « BROUILLON — squelette de level design… » (sauf les
 trois exemples). En réécrivant, le scénariste **garde dans chaque pièce les mots-clés ci-dessous**
 (le graphe en dépend) ; en ajouter est sans risque tant que `content:check` ne signale pas de
 chevauchement. Mentions ajoutées par rapport à 06-corpus (voir 06 « Contraintes du graphe ») :
