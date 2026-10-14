@@ -103,6 +103,7 @@ Points de rupture (largeur de la fenêtre, pas de l'appareil) :
 - Volet latéral redimensionnable (poignée, `Ctrl+[` / `Ctrl+]` par pas de 40 px), repliable.
 - **Lecteur détachable** en fenêtre flottante (desktop natif) ou en second volet : jusqu'à
   **2 documents** comparés côte à côte (comparaison de signatures, d'écritures, de dates).
+  *Reporté au backlog, hors 2.0 ; affaire 2, E04 et case revendiquée : `AFFAIRE-2.md`.*
 - Le Sélecteur de candidat P10 s'ouvre en **popover** ancré à la case (320 × max 480 px).
 - Fenêtré minimum : 1024 × 640 (bascule en disposition tablette sous 1280).
 
