@@ -89,8 +89,6 @@ Fait :
 - Tutoriel en bulles (le choix « J'ai déjà joué » est seulement mémorisé) ; tiroir à deux crans sur tablette portrait.
 - `Dialog` : prop `initialFocus` (design-lead) pour retirer l'action `initial-focus.ts` du jeu.
 - Contrat : remappage des touches dans `Settings`, emplacement dédié au mode chronométré, fractionnés sauvegardés.
-- Points de scénario à valider par l'humain : `docs/scenario/07-coherence.md` §7 (visa de PB-04, mandats
-  de 1953–1959, auteur de la note de PR-11, lettre lue à Firmin en 1883, « vers Brénica »).
 - Illustrations : qualité inégale (pb-01, photos de groupe aux tenues répétées) ; vrais profils pour ph-16/17.
 - Playtests : difficulté réelle des homonymes (Augustin, Firmin) et des cases à risque (C17, C21, C19, C25).
 

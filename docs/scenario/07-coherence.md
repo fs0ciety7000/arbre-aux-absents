@@ -393,3 +393,8 @@ CT-01 dédicace « Pour V. » (Victor, 1920) ; RP-02 rapport qui disculpe Gaspar
 marginale d'une main non identifiée ; DV-02 place vide pour Lucien au banquet de 1922 ; DV-05 sens des
 prénoms ostriens et *daan* ; PR-14 cadenas visible ; RP-06 déclaration de Lise (14 oct. 1974).
 Monde : hameaux et toponymes de la carte validés dans `docs/monde/00-monde.md` §3, prix de presse au §5.
+
+**Validé par le propriétaire (14 oct. 2026)** : visa de Marcel sur PB-04 conservé ; mandats anonymes
+de 1953–1959 conservés, sans dire si Blanche a deviné ; note marginale de PR-11 d'une main qui reste
+**non identifiée** ; lettre de 1883 lue à Firmin par un matelot, traduite par Adélaïde en 1893 ;
+panneau de la carte « route de Brénica » (au lieu de « vers Brénica »).

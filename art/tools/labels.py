@@ -178,9 +178,9 @@ def toponyms():
     for s, x, y, size in (('les Dents de Tennok', tx + 6, ty - 44, 9.5),
                           ('marais de Grisenoue', P(0.545, 0.300)[0], P(0.545, 0.300)[1], 10),
                           ('collines de Sorbe', P(0.575, 0.905)[0], P(0.575, 0.905)[1], 10),
-                          ('vers Brénica', P(0.990, 0.668)[0], P(0.990, 0.668)[1], 8.5),
+                          ('route de Brénica', P(0.990, 0.668)[0], P(0.990, 0.668)[1], 8.5),
                           ):
-        o.append(text('label-note', x, y, s, size=size, anchor='end' if s == 'vers Brénica' else 'middle'))
+        o.append(text('label-note', x, y, s, size=size, anchor='end' if s == 'route de Brénica' else 'middle'))
     o.append(text('label-note', 34, 0.40 * H, 'ligne des Paquebots de l’Orvelle', size=9, rot=-90))
     # hameaux d'Ostrie
     dots = ''
