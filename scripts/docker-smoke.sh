@@ -33,6 +33,8 @@ code=$(curl -s -o /dev/null -w '%{http_code}' "$base/")
 
 headers=$(curl -sSI -H 'Accept-Encoding: gzip' "$base/")
 echo "$headers" | grep -qi "^content-security-policy: default-src 'self'" || fail "CSP absente"
+echo "$headers" | grep -qi "frame-src https://itch.io https://www.youtube-nocookie.com;" \
+  || fail "CSP : frame-src sans itch.io ni youtube-nocookie.com (widget, bande-annonce)"
 echo "$headers" | grep -qi '^content-encoding: gzip' || fail "HTML non servi précompressé"
 echo "$headers" | grep -qi '^cache-control: no-cache' || fail "HTML mis en cache"
 

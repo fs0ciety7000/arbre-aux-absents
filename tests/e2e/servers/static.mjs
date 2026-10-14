@@ -28,7 +28,7 @@ const CSP =
   `default-src 'self'; script-src 'self' ${nginxVar('csp_script_hashes')}; ` +
   `style-src 'self' ${nginxVar('csp_style_hashes')}; ` +
   "style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; " +
-  "connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-src https://itch.io; " +
+  "connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-src https://itch.io https://www.youtube-nocookie.com; " +
   "object-src 'none'; " +
   "base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
 
@@ -38,6 +38,8 @@ const TYPES = {
   '.css': 'text/css; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.webp': 'image/webp',
   '.woff2': 'font/woff2',
   '.json': 'application/json',
   '.txt': 'text/plain; charset=utf-8',

@@ -1279,6 +1279,18 @@ papier), surtitre Oswald, titre Fraunces `--step-2`, texte `--ink-muted`. `use:r
 Colonnes CSS (masonry simple), chaque planche en `PaperSheet` (photo : `fastener="tape"`) ou
 `Card variant="photo"` ; révélation `use:reveal` ; agrandissement en `Dialog size="l"`.
 
+### 14.5 Façade de vidéo (bande-annonce)
+
+Accueil, entre le principe et les gestes : cadre 16:9 (`--radius-m`, `--surface-3`,
+`--shadow-lifted`), affiche locale (`<picture>` WebP 640/1280, JPEG de repli, `loading="lazy"`)
+sous un voile `--scrim` vers le bas ; disque de lecture safran (`--accent`, `--shadow-press`,
+triangle `--accent-contrast` découpé en CSS, aucune icône « lecture » au jeu d'icônes) qui grossit
+de 6 % au survol et au focus (coupé en mouvement réduit) ; libellé Oswald capitales + durée en
+Courier Prime. C'est un **lien** vers YouTube (repli sans JS) que `video-facade.js` (en ligne,
+accueil seulement) change en bouton puis remplace au clic par le lecteur `youtube-nocookie.com`
+focalisé : aucune requête ni cookie YouTube avant le clic. Mention sous le cadre en Courier Prime
+`--text-muted`.
+
 ### 14.4 Pied de page
 
 Filet `--line`, crédits studio en Oswald capitales + `Icon fern`, mention en Courier Prime

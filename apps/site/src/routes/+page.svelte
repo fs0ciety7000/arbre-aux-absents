@@ -13,7 +13,20 @@
   import PortraitPlate from '#lib/components/PortraitPlate.svelte';
   import Seo from '#lib/components/Seo.svelte';
   import VineDivider from '#lib/components/VineDivider.svelte';
-  import { ITCH_EMBED, ITCH_URL, SITE_DESCRIPTION, SITE_NAME } from '#lib/site';
+  import {
+    ITCH_EMBED,
+    ITCH_URL,
+    SITE_DESCRIPTION,
+    SITE_NAME,
+    SITE_URL,
+    TRAILER_DESCRIPTION,
+    TRAILER_DURATION,
+    TRAILER_EMBED_URL,
+    TRAILER_POSTER,
+    TRAILER_TITLE,
+    TRAILER_UPLOAD_DATE,
+    TRAILER_WATCH_URL,
+  } from '#lib/site';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
@@ -87,9 +100,32 @@
     { spot: s.map, title: 'La carte et ses lieux', tilt: 0.9 },
     { spot: s.letter, title: 'Le carnet d’enquête', tilt: -0.5 },
   ]);
+
+  /** Bande-annonce : données structurées (VideoObject) et lecteur `og:video`. */
+  const trailerLd = {
+    '@type': 'VideoObject',
+    name: TRAILER_TITLE,
+    description: TRAILER_DESCRIPTION,
+    thumbnailUrl: [new URL(TRAILER_POSTER.jpg, SITE_URL).href],
+    uploadDate: TRAILER_UPLOAD_DATE,
+    duration: TRAILER_DURATION,
+    contentUrl: TRAILER_WATCH_URL,
+    embedUrl: TRAILER_EMBED_URL,
+    inLanguage: 'fr',
+  };
 </script>
 
-<Seo title={SITE_NAME} description={SITE_DESCRIPTION} path="/" />
+<Seo
+  title={SITE_NAME}
+  description={SITE_DESCRIPTION}
+  path="/"
+  video={{
+    embedUrl: TRAILER_EMBED_URL,
+    width: TRAILER_POSTER.width,
+    height: TRAILER_POSTER.height,
+  }}
+  jsonLd={trailerLd}
+/>
 
 <svelte:head>
   <!-- L'art clé est le LCP : demandé dès l'en-tête, avant la lecture du corps de page. -->
@@ -186,6 +222,51 @@
         <p class="letter-sign ink-hand">Le Directeur de l’Office</p>
       </PaperSheet>
     </div>
+  </div>
+</section>
+
+<VineDivider vine={data.vine} />
+
+<!-- ── Bande-annonce : façade (affiche locale), lecteur YouTube au clic seulement ── -->
+<section class="band" aria-labelledby="bande-annonce-title">
+  <div class="container trailer-wrap">
+    <div class="section-head center" data-sr>
+      <p class="kicker">Bande-annonce</p>
+      <h2 id="bande-annonce-title" class="section-title">Une minute <em>sous la lampe</em></h2>
+    </div>
+    <div class="trailer" data-sr>
+      <a
+        class="trailer-facade"
+        href={TRAILER_WATCH_URL}
+        rel="external"
+        data-yt-embed="{TRAILER_EMBED_URL}?autoplay=1&rel=0"
+        data-yt-title={TRAILER_TITLE}
+        data-yt-class="trailer-frame"
+      >
+        <picture>
+          <source
+            type="image/webp"
+            srcset="{TRAILER_POSTER.webp640} 640w, {TRAILER_POSTER.webp1280} 1280w"
+            sizes="(max-width: 60rem) 100vw, 60rem"
+          />
+          <img
+            class="trailer-poster"
+            src={TRAILER_POSTER.jpg}
+            width={TRAILER_POSTER.width}
+            height={TRAILER_POSTER.height}
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+        <span class="trailer-play" aria-hidden="true"></span>
+        <span class="trailer-label">Lire la bande-annonce <span class="num">1 min</span></span>
+      </a>
+    </div>
+    <p class="trailer-note">
+      Vidéo hébergée sur YouTube : rien n’est chargé depuis YouTube avant que vous lanciez la
+      lecture.
+    </p>
   </div>
 </section>
 
@@ -449,6 +530,118 @@
     text-align: end;
     font-family: var(--font-hand);
     font-size: var(--step-2);
+  }
+
+  /* ── Bande-annonce : façade 16:9 (DESIGN §14.5) ── */
+  .trailer-wrap {
+    max-inline-size: 60rem;
+  }
+  .trailer {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-m);
+    background: var(--surface-3);
+    box-shadow: var(--shadow-lifted);
+  }
+  .trailer-facade {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .trailer-facade:focus-visible {
+    outline-offset: -6px;
+  }
+  .trailer-facade::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--scrim) 0%, transparent 45%);
+    pointer-events: none;
+  }
+  .trailer-poster {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+  .trailer-play {
+    position: relative;
+    z-index: 1;
+    inline-size: clamp(3rem, 10vw, 5.5rem);
+    aspect-ratio: 1;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    box-shadow: var(--shadow-press), var(--shadow-2);
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      background-color var(--dur-fast) var(--ease-out);
+  }
+  /* Triangle de lecture découpé dans le disque (aucune icône « lecture » dans le jeu). */
+  .trailer-play::before {
+    content: '';
+    position: absolute;
+    inset: 30% 26% 30% 36%;
+    background: var(--accent-contrast);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+  .trailer-facade:hover .trailer-play,
+  .trailer-facade:focus-visible .trailer-play {
+    transform: scale(1.06);
+    background: var(--accent-strong);
+  }
+  .trailer-label {
+    position: absolute;
+    z-index: 1;
+    inset-inline: var(--space-4);
+    inset-block-end: var(--space-4);
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: var(--space-3);
+    font-family: var(--font-label);
+    font-size: var(--step-0);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
+  }
+  .trailer-label .num {
+    font-family: var(--font-type);
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--text-muted);
+  }
+  .trailer :global(.trailer-frame) {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    border: 0;
+  }
+  .trailer-note {
+    margin-block-start: var(--space-4);
+    font-family: var(--font-type);
+    font-size: var(--step--1);
+    color: var(--text-muted);
+    text-align: center;
+  }
+  @media (max-width: 37.4375rem) {
+    .trailer-label {
+      inset-block-end: var(--space-2);
+      font-size: var(--step--1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .trailer-play {
+      transition: none;
+    }
+    .trailer-facade:hover .trailer-play,
+    .trailer-facade:focus-visible .trailer-play {
+      transform: none;
+    }
   }
 
   /* ── Gestes ── */
