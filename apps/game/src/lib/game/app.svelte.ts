@@ -3,12 +3,10 @@ import type {
   CompiledCase,
   EndingId,
   GameMode,
-  Platform,
   Profile,
   SaveSlotId,
   SaveSlotSummary,
   SaveState,
-  SaveStore,
   Settings,
 } from '@arbre/contract';
 import { defaultProfile, defaultSettings, hintPreset, ProfileSchema } from '@arbre/contract';
@@ -16,7 +14,12 @@ import { claimedFields, newGame, parseSave, summarize, visibleSlots } from '@arb
 import { pushToast } from '@arbre/ui';
 import type { Component } from 'svelte';
 import { audio } from '../../audio/engine';
-import { PlatformError } from '../../platform/index';
+import {
+  PlatformError,
+  type GamePlatform,
+  type GameSaveStore,
+  type GameSlotSummary,
+} from '../../platform/index';
 import { messages } from '../../messages.fr';
 import { announcer } from './announcer.svelte';
 import { loadContent, type CaseEntry } from './cases';
@@ -76,7 +79,8 @@ export class AppController implements StoreHost {
   /** Bureau (panneaux), chargé avec l'affaire. */
   desk = $state.raw<DeskComponent | null>(null);
   game = $state.raw<GameStoreImpl | null>(null);
-  saves = $state.raw<SaveSlotSummary[]>([]);
+  /** Emplacements manuels, puis un secours par affaire (AFFAIRE-2 §2.3). */
+  saves = $state.raw<GameSlotSummary[]>([]);
   ready = $state(false);
   /** Avertissement de stockage de la plateforme (mode secours, iframe itch…). */
   storageWarning = $state<string | null>(null);
@@ -84,12 +88,12 @@ export class AppController implements StoreHost {
   fatal = $state<FatalError | null>(null);
   ending = $state<EndingId | null>(null);
 
-  #platform: Platform | null = null;
+  #platform: GamePlatform | null = null;
   #profileTimer: ReturnType<typeof setTimeout> | undefined;
   #backUnsub: (() => void) | null = null;
   #contentLoad: Promise<boolean> | null = null;
 
-  get platform(): Platform | null {
+  get platform(): GamePlatform | null {
     return this.#platform;
   }
 
@@ -102,7 +106,7 @@ export class AppController implements StoreHost {
     return this.overlay !== null || this.screen !== 'desk';
   }
 
-  get saveStore(): SaveStore {
+  get saveStore(): GameSaveStore {
     if (!this.#platform) throw new Error('plateforme non chargée');
     return this.#platform.saves;
   }
@@ -283,24 +287,29 @@ export class AppController implements StoreHost {
 
   async refreshSaves(): Promise<void> {
     if (!this.#platform) return;
-    const list = await this.#safe(() => this.#platform!.saves.list(), [] as SaveSlotSummary[]);
-    this.saves = [...list].sort((a, b) => SLOTS.indexOf(a.slot) - SLOTS.indexOf(b.slot));
+    const list = await this.#safe(() => this.#platform!.saves.list(), [] as GameSlotSummary[]);
+    this.saves = [...list].sort(
+      (a, b) =>
+        SLOTS.indexOf(a.slot) - SLOTS.indexOf(b.slot) ||
+        (a.caseId ?? '').localeCompare(b.caseId ?? ''),
+    );
   }
 
   /** Dernier emplacement joué (bouton Continuer). */
-  get lastSave(): SaveSlotSummary | null {
-    let best: SaveSlotSummary | null = null;
+  get lastSave(): GameSlotSummary | null {
+    let best: GameSlotSummary | null = null;
     for (const s of this.saves) if (!best || s.updatedAt > best.updatedAt) best = s;
     return best;
   }
 
-  async removeSlot(slot: SaveSlotId): Promise<void> {
-    await this.saveStore.remove(slot);
+  /** `caseId` : secours de cette affaire (`slot === 'auto'`). */
+  async removeSlot(slot: SaveSlotId, caseId?: string): Promise<void> {
+    await this.saveStore.remove(slot, caseId);
     await this.refreshSaves();
   }
 
-  async exportSlot(slot: SaveSlotId): Promise<void> {
-    await this.saveStore.exportFile(slot);
+  async exportSlot(slot: SaveSlotId, caseId?: string): Promise<void> {
+    await this.saveStore.exportFile(slot, caseId);
   }
 
   /** Importe un fichier dans un emplacement ; tout passe par `parseSave`. */
@@ -338,13 +347,14 @@ export class AppController implements StoreHost {
     this.#openGame(entry.content, state, { skipTutorial: req.skipTutorial, fresh: true });
   }
 
-  async loadSlot(slot: SaveSlotId): Promise<LoadResult> {
+  /** `caseId` : secours de cette affaire (`slot === 'auto'`) ; sinon le plus récent. */
+  async loadSlot(slot: SaveSlotId, caseId?: string): Promise<LoadResult> {
     if (!(await this.ensureContent())) {
       return { ok: false, error: messages.errors.contentLoad, corrupt: false };
     }
     let raw: unknown;
     try {
-      raw = await this.saveStore.load(slot);
+      raw = await this.saveStore.load(slot, caseId);
     } catch (err) {
       if (err instanceof PlatformError && err.code === 'storage') {
         return { ok: false, error: err.message, corrupt: false };
@@ -372,7 +382,7 @@ export class AppController implements StoreHost {
   async continueLast(): Promise<LoadResult> {
     const last = this.lastSave;
     if (!last) return { ok: false, error: messages.slots.none, corrupt: false };
-    return this.loadSlot(last.slot);
+    return this.loadSlot(last.slot, last.caseId ?? undefined);
   }
 
   #openGame(

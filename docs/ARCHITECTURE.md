@@ -401,6 +401,14 @@ interface Platform { kind: 'web' | 'desktop' | 'android'; saves: SaveStore;
 
 - **Tauri** : `$APPDATA/saves/<slot>.json`, écriture atomique (`.tmp` + renommage) et `.bak` ; capability
   limitée à `$APPDATA/saves/**` ; `plugin-dialog` pour export/import.
+- **Secours par affaire** (AFFAIRE-2 §2.3) : les emplacements `slot-1` à `slot-3` restent communs ; le
+  secours `auto` existe une fois par affaire. Le jeu étend le contrat (`GameSaveStore`,
+  `apps/game/src/platform/common.ts`) : `save('auto', s)` écrit le secours de `s.caseId` ;
+  `load`/`remove`/`exportFile('auto', caseId?)` visent celui de `caseId` (sans lui : le plus récent) ;
+  `list()` renvoie `GameSlotSummary` (+ `caseId`, null pour un emplacement manuel). Clés : web
+  `save:auto:<affaire>` / `summary:auto:<affaire>`, Tauri `auto.<affaire>.json` /
+  `auto.<affaire>.summary.json`. L'ancien secours commun (`save:auto`, `auto.json`) est rangé sous sa
+  propre affaire au premier accès, sans perte (illisible : laissé tel quel).
 - **Web** : IndexedDB natif, repli localStorage, `navigator.storage.persist()` ; export/import visibles
   (le stockage de l'iframe itch peut être purgé par Safari et Firefox).
 - Sauvegarde auto 2 s après chaque action, et à `visibilitychange`, `pagehide`, mise en arrière-plan.

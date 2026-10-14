@@ -784,6 +784,7 @@ export class GameStoreImpl implements GameStore {
     try {
       await saves.save(state.slot, state);
       if (state.slot !== 'auto' && this.#backup && now() - this.#backup.at >= BACKUP_AGE_MS) {
+        // Un secours par affaire : la plateforme le range sous `caseId` (AFFAIRE-2 §2.3).
         await saves.save('auto', { ...this.#backup.state, slot: 'auto' });
         this.#backup = { state, at: now() };
       }

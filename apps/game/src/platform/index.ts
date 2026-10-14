@@ -12,6 +12,8 @@ export {
   PlatformError,
   exportFileName,
   type GamePlatform,
+  type GameSaveStore,
+  type GameSlotSummary,
   type PlatformErrorCode,
   type Summarizer,
 } from './common';

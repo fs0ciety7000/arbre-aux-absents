@@ -185,9 +185,10 @@ describe('tauri : sauvegardes', () => {
     expect(await store.list()).toEqual([]);
     await store.save('slot-1', makeSave('slot-1'));
     await store.save('auto', makeSave('auto'));
-    expect((await store.list()).map((s) => [s.slot, s.caseTitle])).toEqual([
-      ['auto', 'T'],
-      ['slot-1', 'T'],
+    // Emplacements manuels d'abord, puis un secours par affaire.
+    expect((await store.list()).map((s) => [s.slot, s.caseTitle, s.caseId])).toEqual([
+      ['slot-1', 'T', null],
+      ['auto', 'T', 'affaire-test'],
     ]);
   });
 
@@ -221,6 +222,53 @@ describe('tauri : sauvegardes', () => {
   });
 });
 
+describe('tauri : secours par affaire (AFFAIRE-2 §2.3)', () => {
+  const one = makeSave('auto', { caseId: 'succession-varenque', updatedAt: 1000 });
+  const two = makeSave('auto', { caseId: 'deuxieme-affaire', updatedAt: 3000 });
+
+  it('un fichier par affaire ; l’affaire 2 n’écrase pas l’affaire 1', async () => {
+    const store = createTauriSaveStore();
+    await store.save('auto', one);
+    await store.save('auto', two);
+    expect(fsState.files.has('saves/auto.succession-varenque.json')).toBe(true);
+    expect(fsState.files.has('saves/auto.deuxieme-affaire.json')).toBe(true);
+    expect(fsState.files.has('saves/auto.json')).toBe(false);
+    expect(await store.load('auto', 'succession-varenque')).toEqual(one);
+    expect(await store.load('auto')).toEqual(two); // le plus récent
+    expect((await store.list()).map((s) => [s.slot, s.caseId])).toEqual([
+      ['auto', 'deuxieme-affaire'],
+      ['auto', 'succession-varenque'],
+    ]);
+    await store.remove('auto', 'deuxieme-affaire');
+    expect([...fsState.files.keys()].filter((k) => k.includes('deuxieme'))).toEqual([]);
+    expect(await store.load('auto', 'succession-varenque')).toEqual(one);
+    await expect(store.load('auto', '../../etc')).rejects.toMatchObject({ code: 'not-found' });
+  });
+
+  it('ancien auto.json migré sous son affaire, sans perte, au premier accès', async () => {
+    fsState.dirs.add('saves');
+    fsState.files.set('saves/auto.json', JSON.stringify(one));
+    fsState.files.set('saves/auto.json.bak', JSON.stringify(one));
+    fsState.files.set('saves/auto.summary.json', '{"invalide":true}');
+    const store = createTauriSaveStore();
+    await store.save('auto', two);
+    expect(fsState.files.has('saves/auto.json')).toBe(false);
+    expect(fsState.files.has('saves/auto.json.bak')).toBe(false);
+    expect(fsState.files.has('saves/auto.summary.json')).toBe(false);
+    expect(await store.load('auto', 'succession-varenque')).toEqual(one);
+    expect(await store.load('auto', 'deuxieme-affaire')).toEqual(two);
+  });
+
+  it('ancien auto.json illisible : laissé tel quel', async () => {
+    fsState.dirs.add('saves');
+    fsState.files.set('saves/auto.json', 'tronqué');
+    const store = createTauriSaveStore();
+    expect(await store.list()).toEqual([]);
+    expect(await store.load('auto')).toBeNull();
+    expect(fsState.files.get('saves/auto.json')).toBe('tronqué');
+  });
+});
+
 describe('tauri : export / import', () => {
   it('export via dialogue ; annulé = rien', async () => {
     const store = createTauriSaveStore();
@@ -233,7 +281,7 @@ describe('tauri : export / import', () => {
     expect(JSON.parse(fsState.files.get('/home/joueur/partie.json')!)).toEqual(makeSave('auto'));
     const { save } = await import('@tauri-apps/plugin-dialog');
     expect(vi.mocked(save).mock.calls[0]?.[0]?.defaultPath).toMatch(
-      /^arbre-aux-absents-auto-\d{4}-\d{2}-\d{2}\.json$/,
+      /^arbre-aux-absents-auto-affaire-test-\d{4}-\d{2}-\d{2}\.json$/,
     );
   });
 

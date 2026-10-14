@@ -29,6 +29,7 @@ describe('adaptateur mémoire', () => {
         elapsedMs: 5000,
         mode: 'standard',
         progress: 0.5,
+        caseId: null,
       },
     ]);
     expect(await p.saves.load('slot-3')).toEqual(s);
@@ -64,7 +65,7 @@ describe('adaptateur mémoire', () => {
     await p.saves.save('auto', makeSave('auto'));
     await p.saves.exportFile('auto');
     expect(exportText).toHaveBeenCalledWith(
-      expect.stringMatching(/^arbre-aux-absents-auto-\d{4}-\d{2}-\d{2}\.json$/),
+      expect.stringMatching(/^arbre-aux-absents-auto-affaire-test-\d{4}-\d{2}-\d{2}\.json$/),
       expect.any(String),
     );
     expect(await p.saves.importFile()).toEqual({ a: 1 });

@@ -89,6 +89,12 @@ export function idbBackend(db: IDBDatabase): KvBackend {
       for (const k of keys) store.delete(k);
       await done(tx);
     },
+    async keys(prefix) {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      // Quelques clés seulement (profil, 3 emplacements, un secours par affaire) : pas de plage.
+      const all = await req(tx.objectStore(IDB_STORE).getAllKeys());
+      return all.filter((k): k is string => typeof k === 'string' && k.startsWith(prefix));
+    },
   };
 }
 
@@ -120,6 +126,15 @@ export function localStorageBackend(ls: Storage): KvBackend {
     },
     deleteMany: async (keys) => {
       for (const key of keys) ls.removeItem(k(key));
+    },
+    async keys(prefix) {
+      const full = k(prefix);
+      const out: string[] = [];
+      for (let i = 0; i < ls.length; i++) {
+        const key = ls.key(i);
+        if (key !== null && key.startsWith(full)) out.push(key.slice(LS_PREFIX.length));
+      }
+      return out;
     },
   };
 }

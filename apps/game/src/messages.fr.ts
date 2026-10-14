@@ -61,6 +61,8 @@ export const messages = {
     kicker: 'Charger une partie',
     slotName: (slot: string) =>
       slot === 'auto' ? 'Secours automatique' : `Emplacement ${slot.replace('slot-', '')}`,
+    /** Secours d'une affaire (un par affaire, AFFAIRE-2 §2.3). */
+    backupName: (caseTitle: string) => `Secours · ${caseTitle}`,
     empty: 'Emplacement libre',
     progress: (pct: number) => `${pct} % de l'arbre`,
     playTime: (t: string) => `Temps de jeu : ${t}`,
