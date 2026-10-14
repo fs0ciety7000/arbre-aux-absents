@@ -82,7 +82,7 @@ Fait :
 - Tests sur appareils réels (Windows, macOS, Linux/Steam Deck, Android téléphone et tablette).
 - Signature macOS (Developer ID) et Windows : seulement si le jeu devient payant.
 - itch.io : l'APK passé par butler est livré dans un .zip (envoi manuel de l'APK pour un téléchargement direct).
-- Site en ligne (https://arbre.fs0ciety.org) : ajout aux catalogues mons-corp et occ-studios ; basculer
+- Site en ligne (https://arbre.fs0ciety.org) : ajout au catalogue occ-studios (mons-corp fait : PR #8) ; basculer
   l'app Coolify sur `main` après fusion (DEPLOYMENT §1).
 - Affaires supplémentaires (contenu seul).
 - Musique et ambiances (le moteur audio est prêt, `playMusic` ne joue rien).
