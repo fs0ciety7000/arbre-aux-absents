@@ -9,6 +9,9 @@
 
   Sans couches d'art (cartographe pas encore livré), un rendu de secours dessine les lieux
   en points sur papier gravé, avec les mêmes classes d'art et les mêmes états.
+
+  Boutons de zoom (coin bas droit) : si la vue d’ensemble poserait des lieux dessous, la caméra
+  travaille dans le viewport moins leur colonne ou leur bande (`reserveCorner`).
 -->
 <script lang="ts" module>
   import type { MapLayer, NormPoint } from '@arbre/contract';
@@ -76,6 +79,7 @@
     overview,
     panBy,
     releaseVelocity,
+    reserveCorner,
     reveal,
     shouldCoast,
     transitionDuration,
@@ -133,6 +137,7 @@
 
   let el: HTMLDivElement | undefined = $state();
   let scene: HTMLDivElement | undefined = $state();
+  let zoomEl: HTMLDivElement | undefined = $state();
   let camera: Camera = $state({ center: { x: 0.5, y: 0.5 }, zoom: 1 });
   let vp: Viewport = $state({ width: 0, height: 0 });
   let dragging = $state(false);
@@ -366,19 +371,36 @@
     return `translate3d(${dx.toFixed(2)}px, ${dy.toFixed(2)}px, 0) scale(${camera.zoom.toFixed(4)})`;
   });
 
+  /**
+   * Viewport de la caméra : la boîte de la carte moins, si la vue d'ensemble y poserait des lieux,
+   * la colonne (ou la bande) des boutons de zoom (`reserveCorner`). Mesures en offsets : insensibles
+   * aux transformations des panneaux qui s'animent.
+   */
+  function measure(host: HTMLElement): Viewport {
+    const w = host.clientWidth;
+    const h = host.clientHeight;
+    const z = zoomEl;
+    const reserve = z
+      ? {
+          width: 2 * (w - z.offsetLeft) - z.offsetWidth,
+          height: 2 * (h - z.offsetTop) - z.offsetHeight,
+        }
+      : { width: 0, height: 0 };
+    return reserveCorner({ width: w, height: h }, reserve, bounds);
+  }
+
   onMount(() => {
     const host = el!;
-    vp = { width: host.clientWidth, height: host.clientHeight };
-    if (!placed) camera = firstView(vp, bounds);
-    camera = clamp(camera, vp, bounds);
-    measured = true;
-    const ro = new ResizeObserver(([entry]) => {
-      if (!entry) return;
-      vp = { width: entry.contentRect.width, height: entry.contentRect.height };
+    const update = () => {
+      vp = measure(host);
       if (!placed) camera = firstView(vp, bounds);
       camera = clamp(camera, vp, bounds);
-    });
+    };
+    update();
+    measured = true;
+    const ro = new ResizeObserver(update);
     ro.observe(host);
+    if (zoomEl) ro.observe(zoomEl);
     const r = new SvgRenderer({ layers, enabled: enabledLayers, aspect });
     if (hasArt) {
       r.mount(scene!);
@@ -481,6 +503,8 @@
     class:measured
     class:dragging
     style:--vp-aspect={aspect}
+    style:--cam-w={measured ? `${vp.width}px` : undefined}
+    style:--cam-h={measured ? `${vp.height}px` : undefined}
     role="region"
     aria-roledescription="carte"
     aria-label={label}
@@ -558,7 +582,7 @@
   </div>
   <p class="visually-hidden" id={instrId}>{strings.instructions}</p>
 
-  <div class="zoom" role="group" aria-label={strings.controls}>
+  <div bind:this={zoomEl} class="zoom" role="group" aria-label={strings.controls}>
     <IconButton
       label={strings.zoomIn}
       icon="plus"
@@ -611,13 +635,17 @@
     outline-offset: -3px;
   }
 
-  /* Scène et surimpression partagent la boîte du zoom 1 : la carte entière, centrée. */
+  /* Scène et surimpression partagent la boîte du zoom 1 : la carte entière, centrée dans le
+     viewport de la caméra (`--cam-w` × `--cam-h`, ancré en haut à gauche : la vue entière, moins
+     la colonne ou la bande réservée aux boutons de zoom, voir `reserveCorner`). */
   .scene,
   .overlay {
-    --uh: min(100cqh, 100cqw / var(--vp-aspect));
+    --cw: var(--cam-w, 100cqw);
+    --ch: var(--cam-h, 100cqh);
+    --uh: min(var(--ch), var(--cw) / var(--vp-aspect));
     position: absolute;
-    left: 50%;
-    top: 50%;
+    left: calc(var(--cw) / 2);
+    top: calc(var(--ch) / 2);
     block-size: var(--uh);
     aspect-ratio: var(--vp-aspect);
     translate: -50% -50%;

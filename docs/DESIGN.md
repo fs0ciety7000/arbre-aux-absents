@@ -1183,6 +1183,10 @@ Un `font-size` en attribut est respecté.
   `ink-faint`, aiguille `ink` (moitié nord `fill="currentColor"`). **Échelle fantaisie** dans une
   unité du monde. **Cadre** : double filet comme le cartouche.
 - Lieux de fiction dans la fiction (rumeurs, lieux disparus) : étiquette `font-style="italic"`.
+- **Boutons de zoom** (bas droite) : en vue d'ensemble, la caméra cadre la carte hors de leur colonne
+  ou de leur bande (celle qui réduit le moins la carte), mesurée sur les boutons eux-mêmes
+  (`reserveCorner`) : aucun lieu ne démarre sous eux. Rien n'est réservé quand la carte part zoomée
+  (téléphone en portrait) ou ne touche pas le coin.
 
 ### 10.7 Portraits (galerie des visages, cases de l'arbre)
 
