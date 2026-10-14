@@ -10,10 +10,12 @@
  */
 import { atAge, renderFigure } from '../portraits/figure.mjs';
 import { PEOPLE } from '../portraits/people.mjs';
+import { PEOPLE as PEOPLE_HC } from '../portraits/people-hautcorvin.mjs';
 import { ell, f, lerp, smooth, tube } from './lib.mjs';
 import { hand } from './people.mjs';
 
-export const BY_ID = Object.fromEntries(PEOPLE.map((p) => [p.id, p]));
+/** Visages de toutes les affaires (ids de travail distincts : `hc-…` pour l'affaire 2). */
+export const BY_ID = Object.fromEntries([...PEOPLE, ...PEOPLE_HC].map((p) => [p.id, p]));
 
 function deepMerge(a, b) {
   const out = { ...a };
@@ -52,7 +54,8 @@ export const SIL = 'M0 0H160V140H0ZM3 204C4 170 18 144 42 132H108C132 142 148 16
  * o.patch : retouches de spec (vêtement, chapeau, mains…) ; o.mode : 'photo' | 'color' ;
  * o.clip : `d` de rognage dans le repère du buste (ex. ne garder que tête et épaules).
  */
-export function fam(S, id, age, x, y, s, o = {}) {
+/** Spec effective d'un buste (âge + retouches de scène), telle que `fam` la dessine. */
+export function resolveSpec(id, age, o = {}) {
   const base = o.spec ?? BY_ID[id];
   if (!base) throw new Error(`personne inconnue : ${id}`);
   let spec = age === base.age ? { ...base } : atAge(base, age);
@@ -63,6 +66,40 @@ export function fam(S, id, age, x, y, s, o = {}) {
   if (o.patch && 'hat' in o.patch) spec.hat = o.patch.hat;
   if (o.patch && 'glasses' in o.patch) spec.glasses = o.patch.glasses;
   if (o.patch && 'extras' in o.patch) spec.extras = o.patch.extras;
+  return spec;
+}
+
+/**
+ * Valeur du vêtement du buste (classe du torse et tailles, cf. figure.mjs › CLOTHES/torso), en
+ * options de `lower()` : le corps prolonge le même vêtement (raccord `seam`).
+ */
+export function garmentTone(spec) {
+  const c = spec.clothes ?? { type: 'coat' };
+  const t = c.type ?? 'coat';
+  const DEF_WASH = { uniform: 'wash-indigo', leather: 'wash-sienne', leatherApron: 'paper-shade', raincoat: 'wash-safran' };
+  const wash = t === 'shawl' ? (c.dress ?? 'wash-ardoise') : (c.wash ?? DEF_WASH[t] ?? spec.wash ?? 'wash-ardoise');
+  const DARK = { coat: c.dark ?? true, uniform: true, suit: true, highCollar: c.dark ?? 'hatch', turtle: c.dark ?? 'hatch', raincoat: c.dark ?? 'hatch', shawl: 'hatch', sweater: 'hatch', leather: 'hatch', smock: c.dark ?? false, dress: c.dark ?? false, leatherApron: c.dark ?? false, apron: false };
+  const dark = t in DARK ? DARK[t] : (c.dark ?? true);
+  // valeur photo de la classe (figure.mjs › photoClass) : brun/noir → sombre, gris/carnation → clair
+  const p = wash === 'paper' ? 'paper' : /^(paper-shade|hair-gris|skin-)/.test(wash) ? 'light' : /^hair-(noir|brun|chatain)$/.test(wash) ? 'dark' : 'mid';
+  const out = { torsoTone: { p, c: wash }, torsoHatch: dark === 'hatch', torsoDense: dark === true || dark === 'hatch-dense' };
+  // bavette de tablier (figure.mjs : centrée sur cm, milieu de poitrine) : prolongée en tablier
+  const BIB = {
+    apron: [-22, 24, { p: 'light', c: 'paper-shade' }, false],
+    checkApron: [-26, 28, { p: 'paper', c: 'paper' }, false],
+    leatherApron: [-24, 27, { p: 'mid', c: c.apron ?? 'wash-sienne' }, true],
+  };
+  if (BIB[t]) {
+    const cm0 = 70 + (spec.dx ?? 0) + 0.37 * (spec.W ?? 24) * 1.2 - 4;
+    const cm = spec.flip ? 160 - cm0 : cm0;
+    const [a, b, tone, hatch] = BIB[t];
+    out.torsoBib = spec.flip ? { x0: cm - b, x1: cm - a, tone, hatch } : { x0: cm + a, x1: cm + b, tone, hatch };
+  }
+  return out;
+}
+
+export function fam(S, id, age, x, y, s, o = {}) {
+  const spec = resolveSpec(id, age, o);
   const want = o.mode ?? (S.mode === 'color' ? 'color' : S.mode === 'engr' ? 'engr' : 'photo');
   const mode = want === 'engr' ? 'color' : want;
   let { defs, body } = renderFigure(spec, { prefix: S.uid('f'), mode });
@@ -158,9 +195,22 @@ export function lower(S, x, y, s, o = {}) {
     line(lap, 0.8);
     S.ln(smooth(pts([[cx - hW * 1.5, hipY + 18], [cx, hipY + 6], [cx + hW * 1.5, hipY + 24]])), 0.5, 'ink-faint');
   }
-  S.fill(torso, tone);
-  if (o.dense) S.hatd(torso);
-  if (o.hatch) S.hat(torso);
+  // vêtement du haut : par défaut la valeur du bas ; `torso*` (raccord seam) suit le buste
+  const tTone = o.torsoTone ?? tone;
+  const tHatch = o.torsoHatch ?? o.hatch;
+  const tDense = o.torsoDense ?? o.dense;
+  S.fill(torso, tTone);
+  if (tDense) S.hatd(torso);
+  if (tHatch) S.hat(torso);
+  let bibD = null;
+  if (o.torsoBib) {
+    const { x0, x1 } = o.torsoBib;
+    const yB = kind === 'stand' ? hipY + 70 : waistY + 10;
+    bibD = smooth(pts([[x0, SEAM_TOP, 1], [x1, SEAM_TOP, 1], [x1 + 4, waistY], [x1 + 10, yB, 1], [x0 - 10, yB, 1], [x0 - 4, waistY]]), true, 0.5);
+    S.fill(bibD, o.torsoBib.tone);
+    if (o.torsoBib.hatch) S.hat(bibD);
+    S.ln(bibD, 0.6, S.mode === 'photo' ? 'ink-soft' : 'ink');
+  }
   if (o.zigzag) {
     let z = '';
     for (const yy of [top + 22, top + 34]) {
@@ -188,9 +238,9 @@ export function lower(S, x, y, s, o = {}) {
       const wx = sit ? cx + side * (sh - 34) : cx + side * (sh - 8);
       const wy = sit ? hipY + 4 : hipY - 16;
       const a = tube([P(sx, top + 2), P(ex, waistY - 10), P(wx, wy)], 34 * s, 26 * s);
-      S.fill(a, o.sleeveTone ?? tone);
-      if (o.hatch) S.hat(a);
-      if (o.dense) S.hatd(a);
+      S.fill(a, o.sleeveTone ?? tTone);
+      if (tHatch) S.hat(a);
+      if (tDense) S.hatd(a);
       line(a, 0.7);
       const ho = o.hands?.[side] ?? {};
       if (ho !== false) {
@@ -199,7 +249,63 @@ export function lower(S, x, y, s, o = {}) {
       }
     }
   }
-  return { P, hipY, footY, waistY };
+  // raccord buste/corps (voir seamPass) : aplats du torse et des manches, prolongés sous l'épaule
+  const [l0, t0] = P(cx - sh, SEAM_TOP);
+  const [r0, b0] = P(cx + sh, top + 10);
+  const shoulder = `M${f(l0)} ${f(t0)}H${f(r0)}V${f(b0)}H${f(l0)}Z`;
+  const parts = [shoulder, torso].map((d) => ({ d, tone: tTone, hatch: tHatch, dense: tDense }));
+  if (bibD) parts.push({ d: bibD, tone: o.torsoBib.tone, hatch: o.torsoBib.hatch });
+  return { P, hipY, footY, waistY, seam: { x, y, s, parts } };
+}
+
+/** Haut de la bande de fondu entre le buste (rogné à y 204) et le corps (repère du buste). */
+const SEAM_TOP = 176;
+const SEAM_BOT = 206;
+const SEAM_STEPS = 7;
+
+/** Point de la courbe de Bézier cubique (a, b, c, d) au paramètre t. */
+function bez(a, b, c, d, t) {
+  const u = 1 - t;
+  return [0, 1].map((k) => u * u * u * a[k] + 3 * u * u * t * b[k] + 3 * u * t * t * c[k] + t * t * t * d[k]);
+}
+
+/**
+ * Raccord sans couture d'un buste de portrait sur un corps en pied (option `seam`) : le buste
+ * s'arrête net à y 204 avec ses propres ombres ; on recouvre la bande [SEAM_TOP, SEAM_BOT] par les
+ * aplats du corps en opacité croissante (fondu en paliers, sans dégradé ni couleur en dur), puis
+ * on trace le contour des épaules, que le rognage SIL laisse sans trait. Un seul vêtement.
+ */
+export function seamPass(S, info) {
+  if (!info) return;
+  const { x, y, s, parts } = info;
+  const keep = S.out;
+  S.out = [];
+  for (const pt of parts) {
+    S.fill(pt.d, pt.tone);
+    if (pt.dense) S.hatd(pt.d);
+    if (pt.hatch) S.hat(pt.d);
+  }
+  const body = S.out.join('');
+  S.out = keep;
+  const gid = S.uid('sm');
+  S.defs.push(`<g id="${gid}">${body}</g>`);
+  const step = (SEAM_BOT - SEAM_TOP) / SEAM_STEPS;
+  for (let i = 0; i < SEAM_STEPS; i++) {
+    const y0 = y + (SEAM_TOP + i * step) * s;
+    const h = (i === SEAM_STEPS - 1 ? step + 2 : step) * s;
+    const id = S.clip(`M${f(x - 20 * s)} ${f(y0)}h${f(200 * s)}v${f(h + 0.3)}h${f(-200 * s)}Z`);
+    S.push(`<g clip-path="url(#${id})" opacity="${((i + 1) / SEAM_STEPS).toFixed(2)}"><use href="#${gid}"/></g>`);
+  }
+  // contour des épaules (portion basse des courbes de SIL)
+  const P = ([a, b]) => `${f(x + a * s)} ${f(y + b * s)}`;
+  let d = '';
+  for (const [a, b, c, e] of [
+    [[42, 132], [18, 144], [4, 170], [3, 204]],
+    [[108, 132], [132, 142], [148, 168], [151, 204]],
+  ]) {
+    for (let k = 0; k <= 8; k++) d += `${k ? 'L' : 'M'}${P(bez(a, b, c, e, 0.42 + (0.58 * k) / 8))}`;
+  }
+  S.ln(d, 0.9 * Math.max(0.6, s), S.mode === 'photo' ? 'ink-soft' : 'ink');
 }
 
 function legsPair(S, P, cx, hw, hipY, kneeY, footY, s, tone, o, bare) {
@@ -226,17 +332,30 @@ export function handPt(x, y, s, h, lx, ly) {
   return [x + px * s, y + py * s];
 }
 
+/** Options du bas du corps ; avec `seam: true`, le haut du corps reprend le vêtement du buste. */
+function seamLower(id, age, o) {
+  if (o.seam !== true) return o.lower ?? {};
+  return { ...garmentTone(resolveSpec(id, age, o)), ...(o.lower ?? {}) };
+}
+
 /** Figurant (hors arbre) dessiné par le même générateur : spec libre, sans trait de famille. */
 export function extra(S, spec, x, y, s, o = {}) {
   const sp = { id: `x${Math.round(x)}-${Math.round(y)}`, marks: {}, ...spec };
-  if (o.lower !== false) lower(S, x, y, s, o.lower ?? {});
-  return fam(S, null, sp.age ?? 40, x, y, s, { clip: true, ...o, spec: sp });
+  const lo = o.lower !== false ? lower(S, x, y, s, seamLower(null, sp.age ?? 40, { ...o, spec: sp })) : null;
+  const r = fam(S, null, sp.age ?? 40, x, y, s, { clip: true, ...o, spec: sp });
+  if (o.seam) seamPass(S, typeof o.seam === 'object' ? o.seam : lo?.seam);
+  return r;
 }
 
-/** Personnage complet : bas du corps + buste rogné (silhouette). */
+/**
+ * Personnage complet : bas du corps + buste rogné (silhouette). `o.seam` : raccord sans couture
+ * (true, ou le `seam` rendu par un `lower()` dessiné à part) ; absent, rendu historique.
+ */
 export function person(S, id, age, x, y, s, o = {}) {
-  if (o.lower !== false) lower(S, x, y, s, o.lower ?? {});
-  return fam(S, id, age, x, y, s, { clip: true, ...o });
+  const lo = o.lower !== false ? lower(S, x, y, s, seamLower(id, age, o)) : null;
+  const r = fam(S, id, age, x, y, s, { clip: true, ...o });
+  if (o.seam) seamPass(S, typeof o.seam === 'object' ? o.seam : lo?.seam);
+  return r;
 }
 
 /** Surimpression photo de la brûlure (la classe `blush` disparaît en mode photo). */

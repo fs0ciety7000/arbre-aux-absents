@@ -1,0 +1,214 @@
+{
+  "cp-01": {
+    "file": "illustrations/cp-01.svg",
+    "alt": "Carte-photo : un phare blanc à bande rouge sur un cap ; une petite silhouette se découpe dans la lanterne. En vignette, le verso manuscrit."
+  },
+  "cp-02": {
+    "file": "illustrations/cp-02.svg",
+    "alt": "Carte-photo : une carrière de sable clair entaillée dans la pente, des brouettes et un tombereau, des carriers ; une femme passe sur une mule."
+  },
+  "ct-01": {
+    "file": "illustrations/ct-01.svg",
+    "alt": "Page de catalogue : une coupe au décor de laurier gravé, sous son numéro ; en vignette, une grande lentille de verre à échelons."
+  },
+  "ct-02": {
+    "file": "illustrations/ct-02.svg",
+    "alt": "Page de catalogue bilingue « Nos graveurs » : un graveur âgé penché sur sa roue, une loupe pendue à un cordon."
+  },
+  "dv-01": {
+    "file": "illustrations/dv-01.svg",
+    "alt": "Journal manuscrit ouvert, écriture régulière sur papier ligné ; une image pieuse à bord de dentelle sert de marque-page."
+  },
+  "dv-02": {
+    "file": "illustrations/dv-02.svg",
+    "alt": "Carnet à couverture brune ouvert : sur la garde, « B. — 14.2.39 » et un tourbillon de cheveux dessiné au crayon ; en face, des dates et des bâtons groupés par cinq."
+  },
+  "ex-02": {
+    "file": "illustrations/ex-02.svg",
+    "alt": "Planche comparative de quatre T majuscules manuscrits, datés 1937, 1944, 1953 et 1976 : les deux premiers à barre droite, les deux derniers à barre bouclée."
+  },
+  "ex-03": {
+    "file": "illustrations/ex-03.svg",
+    "alt": "Planche comparative de trois oreilles droites, I « 38-0377 (1938) », II « 41-1987 (1941) » et III « négatif du 9.1.76 », avec des repères numérotés de 1 à 4 : bordure de l'hélix, anthélix, tragus, lobe."
+  },
+  "ex-04": {
+    "file": "illustrations/ex-04.svg",
+    "alt": "Planche comparative de quatre feuilles de laurier gravées, datées 1941, 1959, 1974 et, à part, 1925 ; les trois premières finissent par un petit coup de pointe."
+  },
+  "lt-04": {
+    "file": "illustrations/lt-04.svg",
+    "alt": "Billet au crayon sur une feuille pliée en huit, l'écriture commence par un T majuscule à barre droite."
+  },
+  "lt-05": {
+    "file": "illustrations/lt-05.svg",
+    "alt": "Enveloppe retournée, timbre oblitéré et adresse manuscrite, barrée du tampon « Destinataire absent — Loi du 2 février 1938, art. 6 »."
+  },
+  "lt-06": {
+    "file": "illustrations/lt-06.svg",
+    "alt": "Bon de cantine imprimé n° 4117 et, à côté, son verso couvert d'une écriture au crayon très serrée jusqu'aux bords."
+  },
+  "ob-01": {
+    "file": "illustrations/ob-01.svg",
+    "alt": "Coupe d'apparat au décor de laurier, avec deux détails agrandis à la loupe : entre deux feuilles, de minuscules signes gravés."
+  },
+  "ob-02": {
+    "file": "illustrations/ob-02.svg",
+    "alt": "Gobelet de verre gravé : une crête de montagne, une ourse et son ourson, et l'inscription « À la fille du souffleur — 14.II.1959 »."
+  },
+  "ob-03": {
+    "file": "illustrations/ob-03.svg",
+    "alt": "Boîte en fer ouverte : une photographie, une lettre, un billet plié, un carnet, une larme de verre et un sifflet cassé."
+  },
+  "of-02": {
+    "file": "illustrations/of-02.svg",
+    "alt": "Photo d'identité d'un homme âgé, de face, sur fond gris de studio, agrafée par un trombone rouillé ; cachet en relief dans un coin."
+  },
+  "of-05": {
+    "file": "illustrations/of-05.svg",
+    "alt": "Portrait d'un vieil homme découpé aux ciseaux dans un journal, à la trame d'imprimerie visible."
+  },
+  "of-08": {
+    "file": "illustrations/of-08.svg",
+    "alt": "Demi-fiche des Postes coupée de travers, avec un billet écrit au crayon par-dessus les rubriques imprimées."
+  },
+  "pb-01": {
+    "file": "illustrations/pb-01.svg",
+    "alt": "Affiche en couleurs : une montagne stylisée, un refuge, et en médaillon le portrait photographique d'une femme."
+  },
+  "ph-01": {
+    "file": "illustrations/ph-01.svg",
+    "alt": "Stand d'exposition drapé : une grande lentille de verre à échelons sous une cage vitrée, un coffret doré ; un homme, une femme et un jeune garçon posent."
+  },
+  "ph-02": {
+    "file": "illustrations/ph-02.svg",
+    "alt": "Inauguration d'une cabane de pierre neuve dans la neige : un prêtre bénit le seuil, des montagnards avec piolets, un couple âgé, un jeune couple et un petit enfant."
+  },
+  "ph-03": {
+    "file": "illustrations/ph-03.svg",
+    "alt": "Atelier de gravure sur verre : roues de cuivre et lampes ; une jeune femme en tablier, de trois quarts, entre deux graveurs."
+  },
+  "ph-04": {
+    "file": "illustrations/ph-04.svg",
+    "alt": "Photo de famille au jardin, sous une treille : huit personnes autour d'un banc, dont un homme debout, une loupe au cordon, et une religieuse en cornette."
+  },
+  "ph-05": {
+    "file": "illustrations/ph-05.svg",
+    "alt": "Charbonnière en forêt : une meule fumante, une cabane de bois, un homme âgé, une jeune femme et un petit enfant ; légende manuscrite au bas du tirage."
+  },
+  "ph-06": {
+    "file": "illustrations/ph-06.svg",
+    "alt": "Photo de mariage sur un perron : dix personnes, la mariée en robe courte ; au bout du rang, un jeune homme aux cheveux relevés d'un épi."
+  },
+  "ph-07": {
+    "file": "illustrations/ph-07.svg",
+    "alt": "Le personnel d'une verrerie devant la gueule d'un four, sur deux rangs : au premier, assis sur un banc, des notables et des ouvriers ; au second, debout, des ouvriers en blouse, en casquette ou en tablier. Légende dactylographiée, coin droit arraché."
+  },
+  "ph-08": {
+    "file": "illustrations/ph-08.svg",
+    "alt": "Une jeune femme devant la porte d'un refuge de montagne, un sifflet au cou ; en vignette, le dos du tirage annoté à la main."
+  },
+  "ph-09": {
+    "file": "illustrations/ph-09.svg",
+    "alt": "Fiche anthropométrique 38-0377 : un jeune homme à la tête rasée, de face et de profil droit devant la toise, l'oreille droite bien visible ; une main au dos brûlé tient l'ardoise du numéro."
+  },
+  "ph-10": {
+    "file": "illustrations/ph-10.svg",
+    "alt": "Fiche anthropométrique 41-1987 : un jeune homme de face, les deux mains posées sur l'ardoise, et de profil droit, l'oreille droite bien visible."
+  },
+  "ph-11": {
+    "file": "illustrations/ph-11.svg",
+    "alt": "Mariage sur le parvis d'une église, dans une neige de printemps : treize personnes, le marié en uniforme, une demoiselle d'honneur."
+  },
+  "ph-12": {
+    "file": "illustrations/ph-12.svg",
+    "alt": "Photo de classe : une institutrice et ses élèves sur trois rangs, poêle et carte murale au fond, ardoises sur les genoux au premier rang."
+  },
+  "ph-13": {
+    "file": "illustrations/ph-13.svg",
+    "alt": "Devant une maison de bois et sa clôture, une vieille femme, un homme et une troisième personne. Écriture à l'encre au bas du tirage."
+  },
+  "ph-14": {
+    "file": "illustrations/ph-14.svg",
+    "alt": "Mariage en studio devant une toile peinte : neuf personnes en tenue de cérémonie."
+  },
+  "ph-15": {
+    "file": "illustrations/ph-15.svg",
+    "alt": "Mariage sur l'escalier d'une mairie : six personnes."
+  },
+  "ph-16": {
+    "file": "illustrations/ph-16.svg",
+    "alt": "Photo couleur passée d'une fête de la neige : une foule, une banderole « École de ski », et dans une vitrine le reflet d'une jeune femme."
+  },
+  "ph-17": {
+    "file": "illustrations/ph-17.svg",
+    "alt": "Bande de deux négatifs inversés d'un homme âgé, de face et de profil droit, l'oreille droite visible, avec la pochette annotée du studio."
+  },
+  "ph-18": {
+    "file": "illustrations/ph-18.svg",
+    "alt": "Tirage d'après négatif sur verre : deux jeunes gens en pied devant la gueule d'un four ; l'un, tête nue, tient une canne de souffleur et sa casquette, l'autre, en tablier de cuir, tient une coupe. Pochette datée « 1.12.35 »."
+  },
+  "pr-02": {
+    "file": "illustrations/pr-02.svg",
+    "alt": "Photo de presse : une barrière de col sous la neige, un groupe de voyageurs ; au premier plan un charbonnier, une femme et un petit enfant."
+  },
+  "pr-03": {
+    "file": "illustrations/pr-03.svg",
+    "alt": "Photo de presse : un jeune ouvrier, le bras levé, harangue ses camarades devant une halle."
+  },
+  "pr-04": {
+    "file": "illustrations/pr-04.svg",
+    "alt": "Photo de presse : les ruines fumantes d'une halle, une cheminée encore debout."
+  },
+  "pr-05": {
+    "file": "illustrations/pr-05.svg",
+    "alt": "Photo de presse : une femme et un homme tendent une coupe de verre ; au fond, flou, un graveur."
+  },
+  "pr-08": {
+    "file": "illustrations/pr-08.svg",
+    "alt": "Photo de presse : deux alpinistes encordés dans la neige ; en vignette, une jeune femme au télégraphe."
+  },
+  "pr-09": {
+    "file": "illustrations/pr-09.svg",
+    "alt": "Photo de presse : des obsèques, une famille en deuil au premier plan ; au fond, une femme seule, de dos."
+  },
+  "pr-10": {
+    "file": "illustrations/pr-10.svg",
+    "alt": "Page de journal à trois photos : un homme âgé de face ; une femme et un jeune homme ; une signature reproduite."
+  },
+  "rg-05": {
+    "file": "illustrations/rg-05.svg",
+    "alt": "Page d'un registre de baptêmes : deux actes manuscrits, chacun suivi de deux signatures."
+  },
+  "rg-11": {
+    "file": "illustrations/rg-11.svg",
+    "alt": "Colonne imprimée d'un bulletin officiel, intitulée « Liste n° 9 », avec cinq noms en capitales suivis de leur notice."
+  },
+  "rg-13": {
+    "file": "illustrations/rg-13.svg",
+    "alt": "Folio d'un registre d'écrou tenu en colonnes ; une ligne surlignée porte, dans la dernière colonne, une mention d'une autre main, plus penchée."
+  },
+  "rg-14": {
+    "file": "illustrations/rg-14.svg",
+    "alt": "Folio d'un registre d'écrou, et par-dessus une fiche d'infirmerie : le schéma d'une main vue de dos, une brûlure hachurée."
+  },
+  "rg-15": {
+    "file": "illustrations/rg-15.svg",
+    "alt": "Procès-verbal dactylographié avec une photo d'identité agrafée ; en bas, une signature dont l'initiale est un T à barre bouclée, deux témoins et un cachet."
+  },
+  "rg-17": {
+    "file": "illustrations/rg-17.svg",
+    "alt": "Livre de paie ouvert, colonnes de noms et de sommes ; une ligne commençant par « D. D. » est d'une autre encre."
+  },
+  "rg-18": {
+    "file": "illustrations/rg-18.svg",
+    "alt": "Page blanche d'une main courante photographiée en lumière rasante : des lignes d'écriture apparaissent en creux, dont une se lit, « 23 h 10 — M. B. au magasin… » ; à la reliure, le talon d'une page arrachée."
+  },
+  "tg-01": {
+    "file": "illustrations/tg-01.svg",
+    "alt": "Télégramme imprimé aux bandes de texte collées, annoté au crayon « Pour H. »."
+  },
+  "tg-02": {
+    "file": "illustrations/tg-02.svg",
+    "alt": "Formulaire de dépôt de télégramme rempli à la main, adresse commençant par un T à barre bouclée ; cachet rond « Vernezac 10-1 76 » et visa de la receveuse."
+  }
+}

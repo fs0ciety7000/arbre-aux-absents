@@ -318,6 +318,10 @@ export function renderFigure(input, { prefix, mode = 'color' } = {}) {
     // lobe adhérent : le bord descend en biais et se fond dans la joue
     earPts.splice(4, 3, [1.38, 0.3], [1.3, 0.4], [1.18, 0.47]);
   }
+  if (s.marks.helixNotch && !s.marks.bigEars) {
+    // encoche accidentelle de l'hélix, au tiers supérieur de la bordure (affaire 2, EX-03)
+    earPts.splice(3, 0, [1.44, -0.03], [1.375, 0.025, 1], [1.43, 0.075]);
+  }
   const earD = smooth(U(earPts), false);
   const drawEar = () => {
     const ed = `${earD}Z`;
