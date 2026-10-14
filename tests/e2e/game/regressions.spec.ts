@@ -67,7 +67,13 @@ async function expectLongWordShrinks(page: Page): Promise<void> {
       el.textContent = word;
       el.style.setProperty('--occ-chars', String(word.length));
       const after = parseFloat(getComputedStyle(el).fontSize);
-      return { before, after, overflow: el.scrollWidth - el.clientWidth };
+      // Largeur réelle du texte (Range) contre la boîte : scrollWidth/clientWidth arrondissent
+      // chacun de leur côté et donnent 1 px de « débordement » fantôme selon la largeur.
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const text = range.getBoundingClientRect().width;
+      const box = el.getBoundingClientRect().width;
+      return { before, after, overflow: text - box - 0.5 };
     });
   expect(res.after).toBeLessThan(res.before);
   expect(res.overflow).toBeLessThanOrEqual(0);
