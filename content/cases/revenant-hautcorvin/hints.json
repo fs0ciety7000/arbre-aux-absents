@@ -1,0 +1,935 @@
+[
+  {
+    "id": "c01-1",
+    "target": {
+      "slot": "c01"
+    },
+    "level": 1,
+    "text": "Son nom est dans la lettre de mission ; sa qualité dans un registre de Hautcorvin et dans la presse de 1889.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c01-2",
+    "target": {
+      "slot": "c01"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du stand des Verreries à la Grande Exposition. Le Lecteur la rend sur « Grande Exposition » ou « lentille de Tennok ».",
+    "availableWhen": {
+      "unlocked": "ph-01"
+    }
+  },
+  {
+    "id": "c01-3",
+    "target": {
+      "slot": "c01"
+    },
+    "level": 3,
+    "text": "Verso de la photographie de 1889 : « É., C. et H. ». L'homme a les lunettes relevées sur le front et la barbe en collier, comme au jardin en 1915.",
+    "availableWhen": {
+      "unlocked": "ph-01"
+    }
+  },
+  {
+    "id": "c02-1",
+    "target": {
+      "slot": "c02"
+    },
+    "level": 1,
+    "text": "Son nom de naissance est dans les registres de Hautcorvin ; son métier se lit dans la presse de l'Exposition.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c02-2",
+    "target": {
+      "slot": "c02"
+    },
+    "level": 2,
+    "text": "Pièce utile : le mariage de 1878, aux registres de Hautcorvin.",
+    "availableWhen": {
+      "unlocked": "rg-02"
+    }
+  },
+  {
+    "id": "c02-3",
+    "target": {
+      "slot": "c02"
+    },
+    "level": 3,
+    "text": "Sur la photographie de 1889, la femme porte une broche ronde de verre doré ; le journal parle d'un coffret « doré par Mme Tessonnal elle-même ».",
+    "availableWhen": {
+      "unlocked": "pr-01"
+    }
+  },
+  {
+    "id": "c03-1",
+    "target": {
+      "slot": "c03"
+    },
+    "level": 1,
+    "text": "Cette case apparaît quand on lit qui était le grand-père d'Andrin. Son métier est dans le même acte.",
+    "availableWhen": {
+      "read": "rg-05"
+    }
+  },
+  {
+    "id": "c03-2",
+    "target": {
+      "slot": "c03"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie « Dalvica, 1916 », du fonds Honoré, rendue sur « Dalvica » ou « Dranko ».",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c03-3",
+    "target": {
+      "slot": "c03"
+    },
+    "level": 3,
+    "text": "Légende traduite de la photographie de 1916 : « Dranko, Danela, Andrin ». L'homme devant la meule a les sourcils droits et épais des Dalvarin.",
+    "availableWhen": {
+      "unlocked": "ph-05"
+    }
+  },
+  {
+    "id": "c04-1",
+    "target": {
+      "slot": "c04"
+    },
+    "level": 1,
+    "text": "Les registres de naissance de Vernezac nomment les parents de Jules Neviot.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c04-2",
+    "target": {
+      "slot": "c04"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie de l'inauguration du refuge de l'Ourse (1911).",
+    "availableWhen": {
+      "unlocked": "ph-02"
+    }
+  },
+  {
+    "id": "c04-3",
+    "target": {
+      "slot": "c04"
+    },
+    "level": 3,
+    "text": "Légende de 1911 : « M. et Mme B. Neviot ». Le vieil homme a une main à trois doigts sur le manche de sa pelle.",
+    "availableWhen": {
+      "unlocked": "ph-02"
+    }
+  },
+  {
+    "id": "c05-1",
+    "target": {
+      "slot": "c05"
+    },
+    "level": 1,
+    "text": "Elle a mis au monde la moitié de Vernezac : cherchez qui a déclaré la naissance d'Andrin Dalvarin.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c05-2",
+    "target": {
+      "slot": "c05"
+    },
+    "level": 2,
+    "text": "Pièce utile : la carte postale de la Combe-aux-Sables (une sage-femme sur sa mule).",
+    "availableWhen": {
+      "unlocked": "cp-02"
+    }
+  },
+  {
+    "id": "c05-3",
+    "target": {
+      "slot": "c05"
+    },
+    "level": 3,
+    "text": "« Annette Neviot, née Combal, sage-femme » : son nom de naissance est dans l'acte de 1912 et dans les naissances de Vernezac.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c07-1",
+    "target": {
+      "slot": "c07"
+    },
+    "level": 1,
+    "text": "La requête et l'opposition parlent toutes deux de sa mère, sans toujours la nommer.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c07-2",
+    "target": {
+      "slot": "c07"
+    },
+    "level": 2,
+    "text": "Pièce utile : le mariage de 1904 aux registres de Hautcorvin ; il donne son nom et son métier.",
+    "availableWhen": {
+      "unlocked": "rg-03"
+    }
+  },
+  {
+    "id": "c07-3",
+    "target": {
+      "slot": "c07"
+    },
+    "level": 3,
+    "text": "Sur le mariage de 1928, la dame au ruban de velours, à côté d'Honoré, est la mère de la mariée ; le verso de 1915 la nomme « Eugénie ».",
+    "availableWhen": {
+      "unlocked": "ph-06"
+    }
+  },
+  {
+    "id": "c08-1",
+    "target": {
+      "slot": "c08"
+    },
+    "level": 1,
+    "text": "La première audition la nomme par son prénom ; l'acte de naissance de son fils, par son nom.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c08-2",
+    "target": {
+      "slot": "c08"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie de l'atelier de gravure (1912), rendue sur « atelier de gravure ».",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c08-3",
+    "target": {
+      "slot": "c08"
+    },
+    "level": 3,
+    "text": "« Mlle D. Dalvarin, graveuse » : yeux noirs, sourcils droits et épais, tablier de cuir. On la retrouve à Dalvica en 1916 et en 1955.",
+    "availableWhen": {
+      "unlocked": "ph-03"
+    }
+  },
+  {
+    "id": "c09-1",
+    "target": {
+      "slot": "c09"
+    },
+    "level": 1,
+    "text": "Attention au nom : une religieuse a un nom de religion, mais l'Office inscrit son nom d'état civil.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c09-2",
+    "target": {
+      "slot": "c09"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'acte de baptême de Vernezac (1912) ; il donne les deux noms de la marraine.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c09-3",
+    "target": {
+      "slot": "c09"
+    },
+    "level": 3,
+    "text": "« Marguerite Tessonnal, en religion sœur Agathe » : la religieuse en cornette du jardin de 1915.",
+    "availableWhen": {
+      "unlocked": "ph-04"
+    }
+  },
+  {
+    "id": "c10-1",
+    "target": {
+      "slot": "c10"
+    },
+    "level": 1,
+    "text": "Il est témoin au mariage de son frère, en 1904, et parrain d'un enfant en 1912.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c10-2",
+    "target": {
+      "slot": "c10"
+    },
+    "level": 2,
+    "text": "Pièce utile : la carte postale du cap de Tennok (1911), du fonds Honoré.",
+    "availableWhen": {
+      "unlocked": "rg-03"
+    }
+  },
+  {
+    "id": "c10-3",
+    "target": {
+      "slot": "c10"
+    },
+    "level": 3,
+    "text": "Sur la photographie du jardin de 1915, l'homme debout aux lunettes cerclées porte une loupe ronde d'opticien.",
+    "availableWhen": {
+      "unlocked": "ph-04"
+    }
+  },
+  {
+    "id": "c11-1",
+    "target": {
+      "slot": "c11"
+    },
+    "level": 1,
+    "text": "Un guide, l'insigne n° 7, et un père : cherchez les naissances de Vernezac.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c11-2",
+    "target": {
+      "slot": "c11"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie de l'inauguration du refuge de l'Ourse (1911).",
+    "availableWhen": {
+      "unlocked": "ph-02"
+    }
+  },
+  {
+    "id": "c11-3",
+    "target": {
+      "slot": "c11"
+    },
+    "level": 3,
+    "text": "Légende de 1911 : « le guide J. Neviot (n° 7) et Mme ». L'insigne n° 7 est aussi au verso de la carte de la Combe.",
+    "availableWhen": {
+      "unlocked": "ph-02"
+    }
+  },
+  {
+    "id": "c12-1",
+    "target": {
+      "slot": "c12"
+    },
+    "level": 1,
+    "text": "Elle tenait une auberge : l'annuaire de 1926 la donne sous son nom d'épouse.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c12-2",
+    "target": {
+      "slot": "c12"
+    },
+    "level": 2,
+    "text": "Pièce utile : les naissances de Vernezac, qui donnent son nom de naissance.",
+    "availableWhen": {
+      "unlocked": "rg-06"
+    }
+  },
+  {
+    "id": "c12-3",
+    "target": {
+      "slot": "c12"
+    },
+    "level": 3,
+    "text": "Sur la photographie de 1911, la jeune femme au tablier à carreaux et au trousseau de clés est l'épouse du guide n° 7.",
+    "availableWhen": {
+      "unlocked": "ph-02"
+    }
+  },
+  {
+    "id": "c13-1",
+    "target": {
+      "slot": "c13"
+    },
+    "level": 1,
+    "text": "L'opposition est signée en son nom : vous avez déjà son prénom, son nom d'usage et sa qualité.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c13-2",
+    "target": {
+      "slot": "c13"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du mariage de 1928, rendue sur « Colombe Tessonnal » ou « Studio Orlhac ».",
+    "availableWhen": {
+      "unlocked": "ph-06"
+    }
+  },
+  {
+    "id": "c13-3",
+    "target": {
+      "slot": "c13"
+    },
+    "level": 3,
+    "text": "Son nom de naissance est dans le registre des mariages de 1928. La mariée de 1928 a la fossette et les yeux gris de sa mère.",
+    "availableWhen": {
+      "unlocked": "rg-07"
+    }
+  },
+  {
+    "id": "c14-1",
+    "target": {
+      "slot": "c14"
+    },
+    "level": 1,
+    "text": "Fondé de pouvoir de la maison pendant trente-deux ans, dit l'opposition.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c14-2",
+    "target": {
+      "slot": "c14"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du mariage de 1928.",
+    "availableWhen": {
+      "unlocked": "ph-06"
+    }
+  },
+  {
+    "id": "c14-3",
+    "target": {
+      "slot": "c14"
+    },
+    "level": 3,
+    "text": "Le marié de 1928 a la moustache en trait de crayon et le sourcil droit levé ; on le retrouve en 1958 au mariage de sa fille.",
+    "availableWhen": {
+      "unlocked": "ph-14"
+    }
+  },
+  {
+    "id": "c15-1",
+    "target": {
+      "slot": "c15"
+    },
+    "level": 1,
+    "text": "La déclaration est une pièce comme une autre : recoupez-la. Deux champs déclarés ne tiennent pas.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c15-2",
+    "target": {
+      "slot": "c15"
+    },
+    "level": 2,
+    "text": "Pièces utiles : le procès-verbal d'arrestation de 1938 (signalement) et la liste de radiation n° 9 (qualité).",
+    "availableWhen": {
+      "unlocked": "rp-04"
+    }
+  },
+  {
+    "id": "c15-3",
+    "target": {
+      "slot": "c15"
+    },
+    "level": 3,
+    "text": "Yeux gris, épi, main droite brûlée : cherchez une photographie d'avant 1944 où son nom est écrit, celle de la grève de 1936 ou celle du concours de la Saint-Éloi.",
+    "availableWhen": {
+      "unlocked": "rg-11"
+    }
+  },
+  {
+    "id": "c16-1",
+    "target": {
+      "slot": "c16"
+    },
+    "level": 1,
+    "text": "La requête d'Agnès Neviot donne le nom de sa mère et son métier.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c16-2",
+    "target": {
+      "slot": "c16"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du mariage de 1947 à Vernezac.",
+    "availableWhen": {
+      "unlocked": "rg-08"
+    }
+  },
+  {
+    "id": "c16-3",
+    "target": {
+      "slot": "c16"
+    },
+    "level": 3,
+    "text": "La jeune femme à la tresse noire et au sifflet de corne : au refuge en 1937, mariée en 1947, sur l'affiche de 1962.",
+    "availableWhen": {
+      "unlocked": "ph-11"
+    }
+  },
+  {
+    "id": "c17-1",
+    "target": {
+      "slot": "c17"
+    },
+    "level": 1,
+    "text": "Le testament parle d'un enfant qui n'a pas porté le nom de son père ; la case est sous Honoré et sous une graveuse.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c17-2",
+    "target": {
+      "slot": "c17"
+    },
+    "level": 2,
+    "text": "Pièce utile : la réinscription de 1953 à Vernezac, avec sa photographie d'identité.",
+    "availableWhen": {
+      "unlocked": "rg-15"
+    }
+  },
+  {
+    "id": "c17-3",
+    "target": {
+      "slot": "c17"
+    },
+    "level": 3,
+    "text": "Avant 1944, deux photographies le montrent à côté du souffleur : sourcils droits et épais, yeux sombres, pas d'épi, tablier de cuir. C'est le même visage, plus jeune, que celui de la requête.",
+    "availableWhen": {
+      "unlocked": "rg-15"
+    }
+  },
+  {
+    "id": "c18-1",
+    "target": {
+      "slot": "c18"
+    },
+    "level": 1,
+    "text": "Cette case apparaît quand on lit son mariage, ou l'arrestation de 1938.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-10"
+        },
+        {
+          "read": "rp-04"
+        },
+        {
+          "read": "ph-11"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c18-2",
+    "target": {
+      "slot": "c18"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du mariage de 1947 (le marié en uniforme).",
+    "availableWhen": {
+      "unlocked": "rg-10"
+    }
+  },
+  {
+    "id": "c18-3",
+    "target": {
+      "slot": "c18"
+    },
+    "level": 3,
+    "text": "Le marié de 1947 est très grand, aux oreilles décollées ; ne le confondez pas avec le brigadier Fauvel, qui porte le même uniforme.",
+    "availableWhen": {
+      "unlocked": "ph-11"
+    }
+  },
+  {
+    "id": "c19-1",
+    "target": {
+      "slot": "c19"
+    },
+    "level": 1,
+    "text": "Guide comme son père et comme son fils : regardez les insignes numérotés.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c19-2",
+    "target": {
+      "slot": "c19"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'article de 1966 sur la cordée des guides de Vernezac.",
+    "availableWhen": {
+      "unlocked": "rg-09"
+    }
+  },
+  {
+    "id": "c19-3",
+    "target": {
+      "slot": "c19"
+    },
+    "level": 3,
+    "text": "Rémi porte l'insigne n° 19 ; son fils, le n° 31 ; son père, le n° 7.",
+    "availableWhen": {
+      "unlocked": "ph-11"
+    }
+  },
+  {
+    "id": "c20-1",
+    "target": {
+      "slot": "c20"
+    },
+    "level": 1,
+    "text": "Une institutrice, à Vernezac, qu'on appelle par son nom d'épouse.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c20-2",
+    "target": {
+      "slot": "c20"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie de la classe de 1947, rendue sur « école de Vernezac ».",
+    "availableWhen": {
+      "unlocked": "rg-09"
+    }
+  },
+  {
+    "id": "c20-3",
+    "target": {
+      "slot": "c20"
+    },
+    "level": 3,
+    "text": "« Mme Odette Neviot », chignon bas, lunettes rondes, blouse grise : son nom de naissance est dans le mariage de 1934.",
+    "availableWhen": {
+      "unlocked": "ph-12"
+    }
+  },
+  {
+    "id": "c21-1",
+    "target": {
+      "slot": "c21"
+    },
+    "level": 1,
+    "text": "L'opposition le nomme, avec sa qualité.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c21-2",
+    "target": {
+      "slot": "c21"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du mariage de 1960 (Studio Orlhac).",
+    "availableWhen": {
+      "unlocked": "ph-15"
+    }
+  },
+  {
+    "id": "c21-3",
+    "target": {
+      "slot": "c21"
+    },
+    "level": 3,
+    "text": "« M. Hugues Brossal, ingénieur aux Verreries » : yeux gris, fossette, nœud papillon.",
+    "availableWhen": {
+      "unlocked": "ph-15"
+    }
+  },
+  {
+    "id": "c22-1",
+    "target": {
+      "slot": "c22"
+    },
+    "level": 1,
+    "text": "Cette case apparaît avec une mention marginale du registre des Brossal.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-07"
+        },
+        {
+          "read": "ph-15"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c22-2",
+    "target": {
+      "slot": "c22"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du mariage de 1960, ou l'annuaire de 1972.",
+    "availableWhen": {
+      "unlocked": "rg-07"
+    }
+  },
+  {
+    "id": "c22-3",
+    "target": {
+      "slot": "c22"
+    },
+    "level": 3,
+    "text": "« Mlle Sabine Orlhac, du Studio Orlhac » : frange droite, anneaux aux oreilles. En 1974, on ne voit que son reflet dans une vitrine.",
+    "availableWhen": {
+      "unlocked": "ph-15"
+    }
+  },
+  {
+    "id": "c23-1",
+    "target": {
+      "slot": "c23"
+    },
+    "level": 1,
+    "text": "Journaliste à La Sentinelle ; l'opposition la nomme sous son nom d'épouse.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c23-2",
+    "target": {
+      "slot": "c23"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du mariage de 1958.",
+    "availableWhen": {
+      "unlocked": "ph-14"
+    }
+  },
+  {
+    "id": "c23-3",
+    "target": {
+      "slot": "c23"
+    },
+    "level": 3,
+    "text": "Son nom de naissance est dans le registre des Brossal ; elle signe l'article « Le Revenant de Hautcorvin ».",
+    "availableWhen": {
+      "unlocked": "rg-07"
+    }
+  },
+  {
+    "id": "c24-1",
+    "target": {
+      "slot": "c24"
+    },
+    "level": 1,
+    "text": "C'est lui qui transmet le testament d'Honoré.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c24-2",
+    "target": {
+      "slot": "c24"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du mariage de 1958.",
+    "availableWhen": {
+      "unlocked": "ph-14"
+    }
+  },
+  {
+    "id": "c24-3",
+    "target": {
+      "slot": "c24"
+    },
+    "level": 3,
+    "text": "Deux hommes au même nez sur la photographie de 1958 : le marié a la barbe courte et des lunettes en demi-lune ; son père, la moustache blanche.",
+    "availableWhen": {
+      "unlocked": "ph-14"
+    }
+  },
+  {
+    "id": "c25-1",
+    "target": {
+      "slot": "c25"
+    },
+    "level": 1,
+    "text": "Sa requête de 1974 donne son nom et son métier.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c25-2",
+    "target": {
+      "slot": "c25"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'article « Le Revenant de Hautcorvin » (photographie avec son demi-frère).",
+    "availableWhen": {
+      "unlocked": "pr-10"
+    }
+  },
+  {
+    "id": "c25-3",
+    "target": {
+      "slot": "c25"
+    },
+    "level": 3,
+    "text": "Yeux gris, fossette, épi au milieu du front, sifflet de corne : la même femme en 1974 à la fête de la neige.",
+    "availableWhen": {
+      "unlocked": "pr-10"
+    }
+  },
+  {
+    "id": "c26-1",
+    "target": {
+      "slot": "c26"
+    },
+    "level": 1,
+    "text": "Cette case apparaît avec le second mariage de sa mère.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-10"
+        },
+        {
+          "read": "ph-11"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c26-2",
+    "target": {
+      "slot": "c26"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'article de janvier 1976 sur le revenant, ou la fête de la neige de 1974.",
+    "availableWhen": {
+      "unlocked": "rg-10"
+    }
+  },
+  {
+    "id": "c26-3",
+    "target": {
+      "slot": "c26"
+    },
+    "level": 3,
+    "text": "Oreilles décollées, bonnet à pompon, lunettes de glacier : le moniteur de l'école de ski.",
+    "availableWhen": {
+      "unlocked": "pr-10"
+    }
+  },
+  {
+    "id": "c27-1",
+    "target": {
+      "slot": "c27"
+    },
+    "level": 1,
+    "text": "Guide comme son père : l'insigne n° 31.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c27-2",
+    "target": {
+      "slot": "c27"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'article de 1966 sur la cordée.",
+    "availableWhen": {
+      "unlocked": "rg-09"
+    }
+  },
+  {
+    "id": "c27-3",
+    "target": {
+      "slot": "c27"
+    },
+    "level": 3,
+    "text": "Barbe noire, bonnet de laine, piolet, insigne n° 31 : sur la cordée de 1966 et à la fête de la neige de 1974.",
+    "availableWhen": {
+      "unlocked": "an-02"
+    }
+  },
+  {
+    "id": "c28-1",
+    "target": {
+      "slot": "c28"
+    },
+    "level": 1,
+    "text": "Cette case apparaît avec les naissances de Vernezac de 1941, ou avec un télégramme.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-09"
+        },
+        {
+          "read": "tg-02"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c28-2",
+    "target": {
+      "slot": "c28"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'annuaire de 1972 (bureau de poste de Vernezac).",
+    "availableWhen": {
+      "unlocked": "an-02"
+    }
+  },
+  {
+    "id": "c28-3",
+    "target": {
+      "slot": "c28"
+    },
+    "level": 3,
+    "text": "« B. Neviot, receveuse » vise les télégrammes ; c'est elle qui a passé la nuit au télégraphe en 1966.",
+    "availableWhen": {
+      "unlocked": "tg-02"
+    }
+  },
+  {
+    "id": "g-revenant-1",
+    "target": {
+      "group": "g-revenant"
+    },
+    "level": 1,
+    "text": "Les trois cases s'établissent ensemble : la case revendiquée, la case « ? » et la fille. Un visage ne se pose qu'une fois.",
+    "availableWhen": {
+      "unlocked": "of-02"
+    }
+  }
+]

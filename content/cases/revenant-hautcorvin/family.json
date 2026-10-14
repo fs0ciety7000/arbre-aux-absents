@@ -1,0 +1,607 @@
+{
+  "persons": [
+    {
+      "id": "evariste-tessonnal",
+      "given": ["Évariste"],
+      "family": ["Tessonnal"],
+      "occupation": "directeur-verreries",
+      "portrait": "hc-portrait-d7e593",
+      "born": "1848-04-11",
+      "died": "1921",
+      "unions": ["clotilde-mervaux"],
+      "bibleNotes": "C01. Directeur des Verreries ; fossette Tessonnal."
+    },
+    {
+      "id": "clotilde-mervaux",
+      "given": ["Clotilde"],
+      "family": ["Mervaux", "Tessonnal"],
+      "occupation": "doreuse",
+      "portrait": "hc-portrait-6be089",
+      "born": "1856-02-02",
+      "died": "1930",
+      "unions": ["evariste-tessonnal"],
+      "bibleNotes": "C02. Doreuse sur verre ; marraine de Bastien (RG-04)."
+    },
+    {
+      "id": "dranko-dalvarin",
+      "given": ["Dranko"],
+      "family": ["Dalvarin"],
+      "occupation": "charbonnier",
+      "portrait": "hc-portrait-99f01e",
+      "born": "1856",
+      "died": "1931",
+      "bibleNotes": "C03 (cachée). Charbonnier de Dalvica ; sourcils Dalvarin."
+    },
+    {
+      "id": "barthelemy-neviot",
+      "given": ["Barthélemy"],
+      "family": ["Neviot"],
+      "occupation": "carrier",
+      "portrait": "hc-portrait-4b552c",
+      "born": "1847",
+      "died": "1919",
+      "unions": ["annette-combal"],
+      "bibleNotes": "C04. Carrier de la Combe-aux-Sables ; main gauche à trois doigts."
+    },
+    {
+      "id": "annette-combal",
+      "given": ["Annette"],
+      "family": ["Combal", "Neviot"],
+      "occupation": "sage-femme",
+      "portrait": "hc-portrait-88bd18",
+      "born": "1851",
+      "died": "1927",
+      "unions": ["barthelemy-neviot"],
+      "bibleNotes": "C05. Sage-femme ; déclarante de la naissance d'Andrin (RG-05)."
+    },
+    {
+      "id": "honore-tessonnal",
+      "given": ["Honoré"],
+      "family": ["Tessonnal"],
+      "nicknames": ["le maître"],
+      "occupation": "maitre-verrier",
+      "portrait": "hc-portrait-c57bab",
+      "born": "1880-08-15",
+      "died": "1975-12-19",
+      "parents": ["evariste-tessonnal", "clotilde-mervaux"],
+      "unions": ["eugenie-ravenel", "danela-dalvarin"],
+      "bibleNotes": "C06 (établie au départ). Père de Colombe, Bastien et Andrin (S3)."
+    },
+    {
+      "id": "eugenie-ravenel",
+      "given": ["Eugénie"],
+      "family": ["Ravenel", "Tessonnal"],
+      "occupation": "modiste",
+      "portrait": "hc-portrait-645993",
+      "born": "1883",
+      "died": "1931",
+      "unions": ["honore-tessonnal"],
+      "bibleNotes": "C07. Modiste, rue Haute ; yeux Ravenel."
+    },
+    {
+      "id": "danela-dalvarin",
+      "given": ["Danela"],
+      "family": ["Dalvarin"],
+      "nicknames": ["la Thalbère"],
+      "occupation": "graveur-sur-verre",
+      "portrait": "hc-portrait-a749e4",
+      "born": "1888",
+      "died": "1960-11-11",
+      "parents": ["dranko-dalvarin", null],
+      "unions": ["honore-tessonnal"],
+      "bibleNotes": "C08. Graveuse thalbère ; mère d'Andrin."
+    },
+    {
+      "id": "marguerite-tessonnal",
+      "given": ["Marguerite"],
+      "family": ["Tessonnal"],
+      "nicknames": ["sœur Agathe"],
+      "occupation": "religieuse",
+      "portrait": "hc-portrait-74c12f",
+      "born": "1883-03-06",
+      "died": "1964",
+      "parents": ["evariste-tessonnal", "clotilde-mervaux"],
+      "bibleNotes": "C09. En religion sœur Agathe (refusé comme nom) ; marraine d'Andrin."
+    },
+    {
+      "id": "leonce-tessonnal",
+      "given": ["Léonce"],
+      "family": ["Tessonnal"],
+      "occupation": "opticien",
+      "portrait": "hc-portrait-edb6ac",
+      "born": "1885-06-20",
+      "died": "1916-10-02",
+      "parents": ["evariste-tessonnal", "clotilde-mervaux"],
+      "bibleNotes": "C10. Opticien ; faux père d'Andrin (rumeur), alibi CP-01."
+    },
+    {
+      "id": "jules-neviot",
+      "given": ["Jules"],
+      "family": ["Neviot"],
+      "occupation": "guide-de-montagne",
+      "portrait": "hc-portrait-5434f7",
+      "born": "1877",
+      "died": "1944-02-12",
+      "parents": ["barthelemy-neviot", "annette-combal"],
+      "unions": ["philomene-ardouin"],
+      "bibleNotes": "C11. Guide n° 7 ; passeur du Pas (S2), tué en 1944."
+    },
+    {
+      "id": "philomene-ardouin",
+      "given": ["Philomène"],
+      "family": ["Ardouin", "Neviot"],
+      "occupation": "aubergiste",
+      "portrait": "hc-portrait-84d732",
+      "born": "1880",
+      "died": "1958",
+      "unions": ["jules-neviot"],
+      "bibleNotes": "C12. Auberge des Guides."
+    },
+    {
+      "id": "colombe-tessonnal",
+      "given": ["Colombe"],
+      "family": ["Tessonnal", "Brossal"],
+      "nicknames": ["Colo"],
+      "occupation": "directeur-verreries",
+      "portrait": "hc-portrait-6be051",
+      "born": "1906-07-23",
+      "parents": ["honore-tessonnal", "eugenie-ravenel"],
+      "unions": ["aime-brossal"],
+      "bibleNotes": "C13. Directrice des Verreries ; partie opposante."
+    },
+    {
+      "id": "aime-brossal",
+      "given": ["Aimé"],
+      "family": ["Brossal"],
+      "occupation": "fonde-de-pouvoir",
+      "portrait": "hc-portrait-698a96",
+      "born": "1899-02-17",
+      "died": "1958",
+      "unions": ["colombe-tessonnal"],
+      "bibleNotes": "C14. Fondé de pouvoir ; incendiaire (S1), délateur (S4)."
+    },
+    {
+      "id": "bastien-tessonnal",
+      "given": ["Bastien"],
+      "family": ["Tessonnal"],
+      "occupation": "souffleur",
+      "portrait": "hc-portrait-e57af4",
+      "born": "1910-05-14",
+      "died": "1944-03-09",
+      "parents": ["honore-tessonnal", "eugenie-ravenel"],
+      "unions": ["lucie-neviot"],
+      "bibleNotes": "C15 (revendiquée : visage et métier déclarés faux). Un seul âge de visage, voulu."
+    },
+    {
+      "id": "lucie-neviot",
+      "given": ["Lucie"],
+      "family": ["Neviot", "Sarrade"],
+      "nicknames": ["la gardienne de l'Ourse"],
+      "occupation": "gardien-de-refuge",
+      "portrait": "hc-portrait-8ebec4",
+      "born": "1914",
+      "died": "1969",
+      "parents": ["jules-neviot", "philomene-ardouin"],
+      "unions": ["bastien-tessonnal", "victorin-sarrade"],
+      "bibleNotes": "C16. Gardienne du refuge ; passeuse (S2)."
+    },
+    {
+      "id": "andrin-dalvarin",
+      "given": ["Andrin"],
+      "family": ["Dalvarin"],
+      "nicknames": ["le Thalbère"],
+      "occupation": "graveur-sur-verre",
+      "portrait": "hc-portrait-727348",
+      "altPortraits": ["hc-portrait-b193e0", "hc-portrait-afb200"],
+      "born": "1912-09-02",
+      "parents": ["honore-tessonnal", "danela-dalvarin"],
+      "bibleNotes": "C17 (« ? »). Le requérant. Trois âges acceptés (63, 27, 41)."
+    },
+    {
+      "id": "victorin-sarrade",
+      "given": ["Victorin"],
+      "family": ["Sarrade"],
+      "occupation": "douanier",
+      "portrait": "hc-portrait-cfb2f4",
+      "born": "1915",
+      "unions": ["lucie-neviot"],
+      "bibleNotes": "C18 (cachée). Douanier ; n'a pas reconnu Agnès."
+    },
+    {
+      "id": "remi-neviot",
+      "given": ["Rémi"],
+      "family": ["Neviot"],
+      "occupation": "guide-de-montagne",
+      "portrait": "hc-portrait-0bc7f4",
+      "born": "1908",
+      "died": "1971",
+      "parents": ["jules-neviot", "philomene-ardouin"],
+      "unions": ["odette-lamberge"],
+      "bibleNotes": "C19. Guide n° 19."
+    },
+    {
+      "id": "odette-lamberge",
+      "given": ["Odette"],
+      "family": ["Lamberge", "Neviot"],
+      "occupation": "institutrice",
+      "portrait": "hc-portrait-3e3f69",
+      "born": "1912",
+      "unions": ["remi-neviot"],
+      "bibleNotes": "C20. Institutrice à Vernezac."
+    },
+    {
+      "id": "hugues-brossal",
+      "given": ["Hugues"],
+      "family": ["Brossal"],
+      "occupation": "ingenieur-verrier",
+      "portrait": "hc-portrait-0fd2d1",
+      "born": "1931-04-30",
+      "parents": ["aime-brossal", "colombe-tessonnal"],
+      "unions": ["sabine-orlhac"],
+      "bibleNotes": "C21. Ingénieur aux Verreries."
+    },
+    {
+      "id": "sabine-orlhac",
+      "given": ["Sabine"],
+      "family": ["Orlhac", "Brossal"],
+      "occupation": "photographe",
+      "portrait": "hc-portrait-6bdeab",
+      "born": "1936-02-09",
+      "unions": ["hugues-brossal"],
+      "bibleNotes": "C22 (cachée). Studio Orlhac ; remet les négatifs PH-17 et PH-18."
+    },
+    {
+      "id": "isaure-brossal",
+      "given": ["Isaure"],
+      "family": ["Brossal", "Escande"],
+      "occupation": "journaliste",
+      "portrait": "hc-portrait-e5dba3",
+      "born": "1934-03-11",
+      "parents": ["aime-brossal", "colombe-tessonnal"],
+      "unions": ["julien-escande"],
+      "bibleNotes": "C23. Journaliste à La Sentinelle."
+    },
+    {
+      "id": "julien-escande",
+      "given": ["Julien"],
+      "family": ["Escande"],
+      "occupation": "notaire",
+      "portrait": "hc-portrait-57be9b",
+      "born": "1928-01-04",
+      "unions": ["isaure-brossal"],
+      "bibleNotes": "C24. Notaire ; leurre de visage : son père Léon."
+    },
+    {
+      "id": "agnes-neviot",
+      "given": ["Agnès"],
+      "family": ["Neviot"],
+      "occupation": "infirmiere",
+      "portrait": "hc-portrait-76ae76",
+      "born": "1939-02-14",
+      "parents": ["bastien-tessonnal", "lucie-neviot"],
+      "bibleNotes": "C25. Fille de Bastien (S5) ; épi Tessonnal."
+    },
+    {
+      "id": "pierre-sarrade",
+      "given": ["Pierre"],
+      "family": ["Sarrade"],
+      "occupation": "moniteur-de-ski",
+      "portrait": "hc-portrait-8c555b",
+      "born": "1948-12-03",
+      "parents": ["victorin-sarrade", "lucie-neviot"],
+      "bibleNotes": "C26 (cachée). Moniteur de ski."
+    },
+    {
+      "id": "gilles-neviot",
+      "given": ["Gilles"],
+      "family": ["Neviot"],
+      "occupation": "guide-de-montagne",
+      "portrait": "hc-portrait-21215f",
+      "born": "1936-06-02",
+      "parents": ["remi-neviot", "odette-lamberge"],
+      "bibleNotes": "C27. Guide n° 31."
+    },
+    {
+      "id": "brigitte-neviot",
+      "given": ["Brigitte"],
+      "family": ["Neviot"],
+      "occupation": "receveuse",
+      "portrait": "hc-portrait-fc120e",
+      "born": "1941-08-20",
+      "parents": ["remi-neviot", "odette-lamberge"],
+      "bibleNotes": "C28 (cachée). Receveuse ; autrice du billet anonyme (OF-08)."
+    }
+  ],
+  "occupations": [
+    {
+      "id": "directeur-verreries",
+      "label": "Directeur·rice des Verreries"
+    },
+    {
+      "id": "doreuse",
+      "label": "Doreuse sur verre"
+    },
+    {
+      "id": "charbonnier",
+      "label": "Charbonnier"
+    },
+    {
+      "id": "carrier",
+      "label": "Carrier"
+    },
+    {
+      "id": "sage-femme",
+      "label": "Sage-femme"
+    },
+    {
+      "id": "maitre-verrier",
+      "label": "Maître verrier"
+    },
+    {
+      "id": "modiste",
+      "label": "Modiste"
+    },
+    {
+      "id": "graveur-sur-verre",
+      "label": "Graveur·se sur verre"
+    },
+    {
+      "id": "religieuse",
+      "label": "Religieuse hospitalière"
+    },
+    {
+      "id": "opticien",
+      "label": "Opticien (lentilles de phare)"
+    },
+    {
+      "id": "guide-de-montagne",
+      "label": "Guide de montagne"
+    },
+    {
+      "id": "aubergiste",
+      "label": "Aubergiste"
+    },
+    {
+      "id": "fonde-de-pouvoir",
+      "label": "Fondé de pouvoir"
+    },
+    {
+      "id": "souffleur",
+      "label": "Souffleur de verre"
+    },
+    {
+      "id": "gardien-de-refuge",
+      "label": "Gardien·ne de refuge"
+    },
+    {
+      "id": "douanier",
+      "label": "Douanier"
+    },
+    {
+      "id": "institutrice",
+      "label": "Institutrice"
+    },
+    {
+      "id": "ingenieur-verrier",
+      "label": "Ingénieur verrier"
+    },
+    {
+      "id": "photographe",
+      "label": "Photographe"
+    },
+    {
+      "id": "journaliste",
+      "label": "Journaliste"
+    },
+    {
+      "id": "notaire",
+      "label": "Notaire"
+    },
+    {
+      "id": "infirmiere",
+      "label": "Infirmière"
+    },
+    {
+      "id": "moniteur-de-ski",
+      "label": "Moniteur de ski"
+    },
+    {
+      "id": "receveuse",
+      "label": "Receveuse des postes"
+    },
+    {
+      "id": "chef-de-nuit",
+      "label": "Chef de nuit"
+    },
+    {
+      "id": "passeur",
+      "label": "Passeur·se"
+    },
+    {
+      "id": "verrier",
+      "label": "Verrier"
+    }
+  ],
+  "portraits": [
+    {
+      "id": "hc-portrait-d7e593",
+      "file": "portraits/hc-portrait-d7e593.svg",
+      "alt": "Homme d'une quarantaine d'années, barbe en collier, raie au milieu, lunettes rondes relevées sur le front, une fossette à la joue gauche ; chaîne de montre et médaille au revers."
+    },
+    {
+      "id": "hc-portrait-6be089",
+      "file": "portraits/hc-portrait-6be089.svg",
+      "alt": "Femme d'une trentaine d'années aux sourcils fins et arqués, chignon haut, col montant fermé par une broche ronde de verre doré."
+    },
+    {
+      "id": "hc-portrait-99f01e",
+      "file": "portraits/hc-portrait-99f01e.svg",
+      "alt": "Homme de soixante ans aux sourcils droits et épais, moustache tombante, bonnet de feutre ; de la suie dans les rides."
+    },
+    {
+      "id": "hc-portrait-4b552c",
+      "file": "portraits/hc-portrait-4b552c.svg",
+      "alt": "Vieil homme à la barbe en fer à cheval, chapeau rond ; sa main gauche, à trois doigts, tient le manche d'une pelle."
+    },
+    {
+      "id": "hc-portrait-88bd18",
+      "file": "portraits/hc-portrait-88bd18.svg",
+      "alt": "Femme d'une soixantaine d'années au visage rond, bonnet noir à brides, lunettes de fer, une sacoche de cuir en bandoulière."
+    },
+    {
+      "id": "hc-portrait-c57bab",
+      "file": "portraits/hc-portrait-c57bab.svg",
+      "alt": "Vieillard à la crinière blanche et aux sourcils broussailleux, une fossette à la joue gauche ; ses mains brûlées reposent sur le pommeau d'une canne de souffleur."
+    },
+    {
+      "id": "hc-portrait-645993",
+      "file": "portraits/hc-portrait-645993.svg",
+      "alt": "Jeune femme aux yeux gris très clairs et au long cou, un ruban de velours noué au ras du cou, grand chapeau à plume couchée."
+    },
+    {
+      "id": "hc-portrait-a749e4",
+      "file": "portraits/hc-portrait-a749e4.svg",
+      "alt": "Jeune femme aux yeux noirs et aux sourcils droits et épais, tresse en couronne basse, foulard brodé, tablier de cuir."
+    },
+    {
+      "id": "hc-portrait-74c12f",
+      "file": "portraits/hc-portrait-74c12f.svg",
+      "alt": "Religieuse d'une trentaine d'années en cornette blanche à larges ailes, lunettes d'acier, une fossette à la joue gauche, une croix de verre bleu sur la poitrine."
+    },
+    {
+      "id": "hc-portrait-edb6ac",
+      "file": "portraits/hc-portrait-edb6ac.svg",
+      "alt": "Homme d'une trentaine d'années, cheveux en brosse, moustache fine, lunettes cerclées de fer, une fossette à la joue gauche ; une loupe ronde d'opticien pend à un cordon."
+    },
+    {
+      "id": "hc-portrait-5434f7",
+      "file": "portraits/hc-portrait-5434f7.svg",
+      "alt": "Homme d'une trentaine d'années à la moustache épaisse, chapeau à plume de tétras, une corde en bandoulière et un insigne numéroté sur la veste."
+    },
+    {
+      "id": "hc-portrait-84d732",
+      "file": "portraits/hc-portrait-84d732.svg",
+      "alt": "Femme d'une trentaine d'années aux joues rondes, chignon haut, tablier à carreaux, un trousseau de clés à la ceinture."
+    },
+    {
+      "id": "hc-portrait-6be051",
+      "file": "portraits/hc-portrait-6be051.svg",
+      "alt": "Femme âgée aux cheveux blancs coupés au carré, yeux gris derrière des lunettes à monture épaisse, une fossette à la joue gauche ; manteau noir fermé par une broche de verre en forme d'oiseau."
+    },
+    {
+      "id": "hc-portrait-698a96",
+      "file": "portraits/hc-portrait-698a96.svg",
+      "alt": "Homme d'une quarantaine d'années à la moustache en trait de crayon, cheveux gominés à la raie, col dur, pochette ; le sourcil droit levé."
+    },
+    {
+      "id": "hc-portrait-e57af4",
+      "file": "portraits/hc-portrait-e57af4.svg",
+      "alt": "Jeune homme aux joues larges et aux yeux gris clair, une mèche relevée en épi au milieu du front, une fossette à la joue gauche ; casquette de toile repoussée, la bouche entrouverte sur une incisive ébréchée."
+    },
+    {
+      "id": "hc-portrait-8ebec4",
+      "file": "portraits/hc-portrait-8ebec4.svg",
+      "alt": "Jeune femme aux yeux bruns, une tresse noire sur l'épaule, pull à col roulé, un sifflet de corne pendu au cou."
+    },
+    {
+      "id": "hc-portrait-727348",
+      "file": "portraits/hc-portrait-727348.svg",
+      "alt": "Homme maigre d'une soixantaine d'années, cheveux blancs coupés ras, sourcils noirs droits et épais, yeux noirs, une fossette à la joue gauche ; une loupe de graveur pend à un cordon sur un costume trop grand."
+    },
+    {
+      "id": "hc-portrait-b193e0",
+      "file": "portraits/hc-portrait-b193e0.svg",
+      "alt": "Jeune homme à l'ovale plein, yeux noirs sous des sourcils droits et épais, ligne de cheveux régulière, une fossette à la joue gauche ; tablier de cuir sur les épaules."
+    },
+    {
+      "id": "hc-portrait-afb200",
+      "file": "portraits/hc-portrait-afb200.svg",
+      "alt": "Homme d'une quarantaine d'années, maigre, tempes grises, sourcils noirs droits et épais, une fossette à la joue gauche ; une loupe pend à un cordon."
+    },
+    {
+      "id": "hc-portrait-cfb2f4",
+      "file": "portraits/hc-portrait-cfb2f4.svg",
+      "alt": "Homme très grand d'une trentaine d'années aux oreilles décollées, moustache courte, un képi de douanier sous le bras."
+    },
+    {
+      "id": "hc-portrait-0bc7f4",
+      "file": "portraits/hc-portrait-0bc7f4.svg",
+      "alt": "Homme d'une quarantaine d'années au visage tanné, barbe courte, bonnet à pompon plat, un insigne numéroté sur la veste."
+    },
+    {
+      "id": "hc-portrait-3e3f69",
+      "file": "portraits/hc-portrait-3e3f69.svg",
+      "alt": "Femme d'une trentaine d'années, chignon bas, lunettes rondes, blouse grise ; un bâton de craie à la main."
+    },
+    {
+      "id": "hc-portrait-0fd2d1",
+      "file": "portraits/hc-portrait-0fd2d1.svg",
+      "alt": "Homme d'une trentaine d'années aux yeux gris, le sommet du crâne dégarni, lunettes, nœud papillon, une fossette à la joue gauche."
+    },
+    {
+      "id": "hc-portrait-6bdeab",
+      "file": "portraits/hc-portrait-6bdeab.svg",
+      "alt": "Jeune femme à la frange droite et aux cheveux mi-longs, anneaux aux oreilles, sourire de travers."
+    },
+    {
+      "id": "hc-portrait-e5dba3",
+      "file": "portraits/hc-portrait-e5dba3.svg",
+      "alt": "Femme d'une quarantaine d'années aux yeux gris, chignon lâche, une fossette à la joue gauche ; imperméable au col relevé, un crayon glissé derrière l'oreille."
+    },
+    {
+      "id": "hc-portrait-57be9b",
+      "file": "portraits/hc-portrait-57be9b.svg",
+      "alt": "Homme d'une trentaine d'années à la barbe courte, lunettes en demi-lune, costume trois pièces, une chevalière à cachet."
+    },
+    {
+      "id": "hc-portrait-76ae76",
+      "file": "portraits/hc-portrait-76ae76.svg",
+      "alt": "Femme d'une trentaine d'années aux yeux gris et aux cheveux noirs courts, une mèche relevée en épi au milieu du front, une fossette à la joue gauche ; blouse d'infirmière, un sifflet de corne au cou."
+    },
+    {
+      "id": "hc-portrait-8c555b",
+      "file": "portraits/hc-portrait-8c555b.svg",
+      "alt": "Jeune homme bronzé aux oreilles décollées, bonnet à pompon, des lunettes de glacier relevées sur le front."
+    },
+    {
+      "id": "hc-portrait-21215f",
+      "file": "portraits/hc-portrait-21215f.svg",
+      "alt": "Homme d'une quarantaine d'années à la barbe noire, bonnet de laine, un piolet à l'épaule et un insigne numéroté sur la veste."
+    },
+    {
+      "id": "hc-portrait-fc120e",
+      "file": "portraits/hc-portrait-fc120e.svg",
+      "alt": "Femme d'une trentaine d'années aux cheveux crêpés, lunettes papillon, veste d'uniforme des postes, un crayon à la main."
+    },
+    {
+      "id": "hc-portrait-55e3f9",
+      "file": "portraits/hc-portrait-55e3f9.svg",
+      "alt": "Vieil ouvrier d'une soixantaine d'années, moustache grise, casquette, les mains bandées."
+    },
+    {
+      "id": "hc-portrait-c859c6",
+      "file": "portraits/hc-portrait-c859c6.svg",
+      "alt": "Homme d'une cinquantaine d'années à la moustache fine, col dur, cheveux plaqués."
+    },
+    {
+      "id": "hc-portrait-a4c325",
+      "file": "portraits/hc-portrait-a4c325.svg",
+      "alt": "Homme d'une quarantaine d'années en uniforme des douanes, moustache, képi sur la tête."
+    },
+    {
+      "id": "hc-portrait-775ac0",
+      "file": "portraits/hc-portrait-775ac0.svg",
+      "alt": "Homme d'une soixantaine d'années à la moustache blanche, lunettes, costume sombre ; le même nez fort que son voisin."
+    },
+    {
+      "id": "hc-portrait-6be6ce",
+      "file": "portraits/hc-portrait-6be6ce.svg",
+      "alt": "Femme d'une quarantaine d'années aux sourcils épais, un foulard noué sur la tête."
+    },
+    {
+      "id": "hc-portrait-77facd",
+      "file": "portraits/hc-portrait-77facd.svg",
+      "alt": "Prêtre d'une cinquantaine d'années en soutane noire, chapeau rond, le goupillon à la main."
+    }
+  ]
+}

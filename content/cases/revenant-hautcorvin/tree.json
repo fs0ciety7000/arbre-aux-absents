@@ -1,0 +1,282 @@
+{
+  "slots": [
+    {
+      "id": "c01",
+      "person": "evariste-tessonnal",
+      "generation": 1,
+      "column": 1
+    },
+    {
+      "id": "c02",
+      "person": "clotilde-mervaux",
+      "generation": 1,
+      "column": 2
+    },
+    {
+      "id": "c03",
+      "person": "dranko-dalvarin",
+      "generation": 1,
+      "column": 6,
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-05"
+          },
+          {
+            "read": "ph-05"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c04",
+      "person": "barthelemy-neviot",
+      "generation": 1,
+      "column": 10
+    },
+    {
+      "id": "c05",
+      "person": "annette-combal",
+      "generation": 1,
+      "column": 11
+    },
+    {
+      "id": "c06",
+      "person": "honore-tessonnal",
+      "generation": 2,
+      "column": 3,
+      "prefilled": true
+    },
+    {
+      "id": "c07",
+      "person": "eugenie-ravenel",
+      "generation": 2,
+      "column": 2
+    },
+    {
+      "id": "c08",
+      "person": "danela-dalvarin",
+      "generation": 2,
+      "column": 5
+    },
+    {
+      "id": "c09",
+      "person": "marguerite-tessonnal",
+      "generation": 2,
+      "column": 0
+    },
+    {
+      "id": "c10",
+      "person": "leonce-tessonnal",
+      "generation": 2,
+      "column": 1
+    },
+    {
+      "id": "c11",
+      "person": "jules-neviot",
+      "generation": 2,
+      "column": 10
+    },
+    {
+      "id": "c12",
+      "person": "philomene-ardouin",
+      "generation": 2,
+      "column": 11
+    },
+    {
+      "id": "c13",
+      "person": "colombe-tessonnal",
+      "generation": 3,
+      "column": 1
+    },
+    {
+      "id": "c14",
+      "person": "aime-brossal",
+      "generation": 3,
+      "column": 0
+    },
+    {
+      "id": "c15",
+      "person": "bastien-tessonnal",
+      "generation": 3,
+      "column": 3,
+      "claim": {
+        "given": "Bastien",
+        "family": "Tessonnal",
+        "portrait": "hc-portrait-727348",
+        "occupation": "chef-de-nuit"
+      }
+    },
+    {
+      "id": "c16",
+      "person": "lucie-neviot",
+      "generation": 3,
+      "column": 4
+    },
+    {
+      "id": "c17",
+      "person": "andrin-dalvarin",
+      "generation": 3,
+      "column": 6
+    },
+    {
+      "id": "c18",
+      "person": "victorin-sarrade",
+      "generation": 3,
+      "column": 5,
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-10"
+          },
+          {
+            "read": "ph-11"
+          },
+          {
+            "read": "rp-04"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c19",
+      "person": "remi-neviot",
+      "generation": 3,
+      "column": 10
+    },
+    {
+      "id": "c20",
+      "person": "odette-lamberge",
+      "generation": 3,
+      "column": 11
+    },
+    {
+      "id": "c21",
+      "person": "hugues-brossal",
+      "generation": 4,
+      "column": 0
+    },
+    {
+      "id": "c22",
+      "person": "sabine-orlhac",
+      "generation": 4,
+      "column": 1,
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-07"
+          },
+          {
+            "read": "ph-15"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c23",
+      "person": "isaure-brossal",
+      "generation": 4,
+      "column": 2
+    },
+    {
+      "id": "c24",
+      "person": "julien-escande",
+      "generation": 4,
+      "column": 3
+    },
+    {
+      "id": "c25",
+      "person": "agnes-neviot",
+      "generation": 4,
+      "column": 4
+    },
+    {
+      "id": "c26",
+      "person": "pierre-sarrade",
+      "generation": 4,
+      "column": 5,
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-10"
+          },
+          {
+            "read": "ph-11"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c27",
+      "person": "gilles-neviot",
+      "generation": 4,
+      "column": 10
+    },
+    {
+      "id": "c28",
+      "person": "brigitte-neviot",
+      "generation": 4,
+      "column": 11,
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-09"
+          },
+          {
+            "read": "tg-02"
+          }
+        ]
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "g-prologue",
+      "label": "Prologue — la requête et l'opposition",
+      "slots": ["c07", "c13", "c14"],
+      "threshold": 3
+    },
+    {
+      "id": "g-revenant",
+      "label": "Le revenant",
+      "slots": ["c15", "c17", "c25"],
+      "threshold": 3
+    },
+    {
+      "id": "g-verriers",
+      "label": "Les maîtres verriers",
+      "slots": ["c01", "c02", "c10"],
+      "threshold": 3
+    },
+    {
+      "id": "g-bapteme",
+      "label": "Le baptême de Vernezac",
+      "slots": ["c03", "c08", "c09"],
+      "threshold": 3
+    },
+    {
+      "id": "g-brossal",
+      "label": "La maison Brossal",
+      "slots": ["c21", "c22", "c23", "c24"],
+      "threshold": 3
+    },
+    {
+      "id": "g-combe",
+      "label": "Les gens de la Combe",
+      "slots": ["c04", "c05", "c11", "c12"],
+      "threshold": 3
+    },
+    {
+      "id": "g-ourse",
+      "label": "Le Pas de l'Ourse",
+      "slots": ["c16", "c18", "c26"],
+      "threshold": 3
+    },
+    {
+      "id": "g-vernezac",
+      "label": "Les guides de Vernezac",
+      "slots": ["c19", "c20", "c27", "c28"],
+      "threshold": 3
+    }
+  ]
+}

@@ -795,3 +795,26 @@ Prouve : C17 N ; C28 N (initiale), M.
 
 **Décision (validée)** : la Combe-aux-Sables est un **simple toponyme** de la carte, sans `PlaceId` ni
 fiche de lieu (`08-lieux.md` §2) ; CP-02 est classée à `vernezac`, comme le dit sa légende.
+
+## Contraintes du graphe (level design)
+
+Ajoutées par le level design (`docs/level/hautcorvin.md`, §11 et §13) ; à respecter à la rédaction
+intégrale, sous peine de casser la preuve de solvabilité. Chaque mention ci-dessous porte un mot-clé.
+
+- **OF-01** : nommer « Le Revenant de Hautcorvin » et les « tables des décès ».
+- **PV-01** : « gardienne de l'Ourse », « expulsion ».
+- **PV-03** : « pli cacheté », « registre des rondes », « Toussaint Mallet ».
+- **PV-04** : « boîte de Lucie » (sans l'accoler au nom complet « Lucie Neviot »).
+- **RG-09** : « école de Vernezac », « Odette Neviot ».
+- **RG-16** : « journal de sœur Agathe », « col de Corvenne », « Combe-aux-Sables ».
+- **CP-02** : « Barthélemy Neviot » (sinon C04 dépend d'une seule paire de registres).
+- **PB-01** : « avion postal », « fête de la neige ». **AN-02** : « fête de la neige ».
+- **PH-07** : « Mme C. Brossal » dans la légende.
+- Le contenu de la boîte de Lucie (PH-08, LT-05, LT-06, DV-02) se débloque par OB-03 **ou** PV-06 ;
+  LT-11 aussi par PV-04 ou OF-06 une fois la porte B franchie ; PH-18 n'arrive qu'en porte C, après
+  C22 ou PH-17.
+- **S5** se valide avec deux pièces sur trois parmi LT-05, LT-06, LT-11.
+- **OF-02** (exemple) : `::signature[…]` doit être seul sur sa ligne ; la ligne
+  « Signature du requérant : ::signature[…] » a été scindée en deux dans le squelette.
+- Les mots-clés réservés (`bastien-tessonnal`, `andrin-dalvarin`) ne se déclenchent que sur le nom
+  complet exact : ne pas l'abréger dans les pièces qui doivent les porter.

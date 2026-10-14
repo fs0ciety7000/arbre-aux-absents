@@ -1,0 +1,4600 @@
+{
+  "start": ["of-01", "of-02", "of-03", "of-04", "of-05", "of-06", "of-07", "of-08", "pv-01"],
+  "unlocks": {
+    "pv-02": {
+      "any": [
+        {
+          "groupLocked": "g-prologue"
+        },
+        {
+          "all": [
+            {
+              "read": "of-03"
+            },
+            {
+              "any": [
+                {
+                  "read": "rg-04"
+                },
+                {
+                  "read": "rg-05"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "pv-03": {
+      "any": [
+        {
+          "read": "pv-02"
+        },
+        {
+          "all": [
+            {
+              "any": [
+                {
+                  "groupLocked": "g-prologue"
+                },
+                {
+                  "lockedCount": {
+                    "gte": 6
+                  }
+                }
+              ]
+            },
+            {
+              "read": "of-03"
+            }
+          ]
+        }
+      ]
+    },
+    "lt-04": {
+      "read": "pv-03"
+    },
+    "ex-01": {
+      "any": [
+        {
+          "read": "rp-04"
+        },
+        {
+          "read": "pv-02"
+        },
+        {
+          "read": "pv-03"
+        }
+      ]
+    },
+    "pv-04": {
+      "any": [
+        {
+          "read": "rg-08"
+        },
+        {
+          "read": "pr-10"
+        }
+      ]
+    },
+    "ob-02": {
+      "read": "pv-04"
+    },
+    "lt-11": {
+      "all": [
+        {
+          "any": [
+            {
+              "groupLocked": "g-prologue"
+            },
+            {
+              "lockedCount": {
+                "gte": 6
+              }
+            }
+          ]
+        },
+        {
+          "any": [
+            {
+              "read": "pv-04"
+            },
+            {
+              "read": "of-06"
+            }
+          ]
+        }
+      ]
+    },
+    "pv-05": {
+      "any": [
+        {
+          "read": "rg-13"
+        },
+        {
+          "read": "rg-14"
+        }
+      ]
+    },
+    "pv-06": {
+      "any": [
+        {
+          "locked": "c18"
+        },
+        {
+          "all": [
+            {
+              "any": [
+                {
+                  "groupLocked": "g-bapteme"
+                },
+                {
+                  "groupLocked": "g-vernezac"
+                },
+                {
+                  "groupLocked": "g-ourse"
+                },
+                {
+                  "lockedCount": {
+                    "gte": 16
+                  }
+                }
+              ]
+            },
+            {
+              "read": "rp-04"
+            }
+          ]
+        }
+      ]
+    },
+    "ob-03": {
+      "read": "pv-06"
+    },
+    "ph-08": {
+      "any": [
+        {
+          "read": "ob-03"
+        },
+        {
+          "read": "pv-06"
+        }
+      ]
+    },
+    "lt-05": {
+      "any": [
+        {
+          "read": "ob-03"
+        },
+        {
+          "read": "pv-06"
+        }
+      ]
+    },
+    "lt-06": {
+      "any": [
+        {
+          "read": "ob-03"
+        },
+        {
+          "read": "pv-06"
+        }
+      ]
+    },
+    "dv-02": {
+      "any": [
+        {
+          "read": "ob-03"
+        },
+        {
+          "read": "pv-06"
+        }
+      ]
+    },
+    "ex-02": {
+      "all": [
+        {
+          "read": "lt-04"
+        },
+        {
+          "any": [
+            {
+              "read": "rg-15"
+            },
+            {
+              "read": "tg-02"
+            }
+          ]
+        }
+      ]
+    },
+    "ex-03": {
+      "all": [
+        {
+          "read": "ph-09"
+        },
+        {
+          "read": "ph-10"
+        },
+        {
+          "read": "ph-17"
+        }
+      ]
+    },
+    "ex-04": {
+      "all": [
+        {
+          "read": "ob-01"
+        },
+        {
+          "any": [
+            {
+              "read": "ob-02"
+            },
+            {
+              "read": "ct-02"
+            }
+          ]
+        }
+      ]
+    },
+    "ob-01": {
+      "read": "rp-05"
+    },
+    "pv-07": {
+      "any": [
+        {
+          "groupLocked": "g-revenant"
+        },
+        {
+          "all": [
+            {
+              "read": "ex-02"
+            },
+            {
+              "read": "ex-03"
+            },
+            {
+              "read": "ob-03"
+            }
+          ]
+        }
+      ]
+    },
+    "lt-10": {
+      "read": "lt-09"
+    },
+    "ph-17": {
+      "locked": "c22"
+    },
+    "ph-18": {
+      "all": [
+        {
+          "any": [
+            {
+              "groupLocked": "g-bapteme"
+            },
+            {
+              "groupLocked": "g-vernezac"
+            },
+            {
+              "groupLocked": "g-ourse"
+            },
+            {
+              "lockedCount": {
+                "gte": 16
+              }
+            }
+          ]
+        },
+        {
+          "read": "ph-17"
+        },
+        {
+          "read": "rg-17"
+        }
+      ]
+    },
+    "tg-01": {
+      "any": [
+        {
+          "read": "pv-05"
+        },
+        {
+          "read": "lt-08"
+        }
+      ]
+    },
+    "ep-01": {
+      "all": [
+        {
+          "all": [
+            {
+              "groupLocked": "g-prologue"
+            },
+            {
+              "groupLocked": "g-revenant"
+            },
+            {
+              "groupLocked": "g-verriers"
+            },
+            {
+              "groupLocked": "g-bapteme"
+            },
+            {
+              "groupLocked": "g-brossal"
+            },
+            {
+              "groupLocked": "g-combe"
+            },
+            {
+              "groupLocked": "g-ourse"
+            },
+            {
+              "groupLocked": "g-vernezac"
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "secret": "s1-le-feu-de-1937"
+            },
+            {
+              "secret": "s2-le-pas-de-l-ourse"
+            },
+            {
+              "secret": "s3-le-fils-de-la-thalbere"
+            },
+            {
+              "secret": "s4-la-coupe-du-regent"
+            },
+            {
+              "secret": "s5-la-fille-du-souffleur"
+            }
+          ]
+        },
+        {
+          "all": [
+            {
+              "unlocked": "of-01"
+            },
+            {
+              "unlocked": "of-02"
+            },
+            {
+              "unlocked": "of-03"
+            },
+            {
+              "unlocked": "of-04"
+            },
+            {
+              "unlocked": "of-05"
+            },
+            {
+              "unlocked": "of-06"
+            },
+            {
+              "unlocked": "of-07"
+            },
+            {
+              "unlocked": "of-08"
+            },
+            {
+              "unlocked": "pv-01"
+            },
+            {
+              "unlocked": "pv-02"
+            },
+            {
+              "unlocked": "pv-03"
+            },
+            {
+              "unlocked": "pv-04"
+            },
+            {
+              "unlocked": "pv-05"
+            },
+            {
+              "unlocked": "pv-06"
+            },
+            {
+              "unlocked": "pv-07"
+            },
+            {
+              "unlocked": "ex-01"
+            },
+            {
+              "unlocked": "ex-02"
+            },
+            {
+              "unlocked": "ex-03"
+            },
+            {
+              "unlocked": "ex-04"
+            },
+            {
+              "unlocked": "rp-01"
+            },
+            {
+              "unlocked": "rp-02"
+            },
+            {
+              "unlocked": "rp-03"
+            },
+            {
+              "unlocked": "rp-04"
+            },
+            {
+              "unlocked": "rp-05"
+            },
+            {
+              "unlocked": "rp-06"
+            },
+            {
+              "unlocked": "rg-01"
+            },
+            {
+              "unlocked": "rg-02"
+            },
+            {
+              "unlocked": "rg-03"
+            },
+            {
+              "unlocked": "rg-04"
+            },
+            {
+              "unlocked": "rg-05"
+            },
+            {
+              "unlocked": "rg-06"
+            },
+            {
+              "unlocked": "rg-07"
+            },
+            {
+              "unlocked": "rg-08"
+            },
+            {
+              "unlocked": "rg-09"
+            },
+            {
+              "unlocked": "rg-10"
+            },
+            {
+              "unlocked": "rg-11"
+            },
+            {
+              "unlocked": "rg-12"
+            },
+            {
+              "unlocked": "rg-13"
+            },
+            {
+              "unlocked": "rg-14"
+            },
+            {
+              "unlocked": "rg-15"
+            },
+            {
+              "unlocked": "rg-16"
+            },
+            {
+              "unlocked": "rg-17"
+            },
+            {
+              "unlocked": "rg-18"
+            },
+            {
+              "unlocked": "ph-01"
+            },
+            {
+              "unlocked": "ph-02"
+            },
+            {
+              "unlocked": "ph-03"
+            },
+            {
+              "unlocked": "ph-04"
+            },
+            {
+              "unlocked": "ph-05"
+            },
+            {
+              "unlocked": "ph-06"
+            },
+            {
+              "unlocked": "ph-07"
+            },
+            {
+              "unlocked": "ph-08"
+            },
+            {
+              "unlocked": "ph-09"
+            },
+            {
+              "unlocked": "ph-10"
+            },
+            {
+              "unlocked": "ph-11"
+            },
+            {
+              "unlocked": "ph-12"
+            },
+            {
+              "unlocked": "ph-13"
+            },
+            {
+              "unlocked": "ph-14"
+            },
+            {
+              "unlocked": "ph-15"
+            },
+            {
+              "unlocked": "ph-16"
+            },
+            {
+              "unlocked": "ph-17"
+            },
+            {
+              "unlocked": "ph-18"
+            },
+            {
+              "unlocked": "lt-01"
+            },
+            {
+              "unlocked": "lt-02"
+            },
+            {
+              "unlocked": "lt-03"
+            },
+            {
+              "unlocked": "lt-04"
+            },
+            {
+              "unlocked": "lt-05"
+            },
+            {
+              "unlocked": "lt-06"
+            },
+            {
+              "unlocked": "lt-07"
+            },
+            {
+              "unlocked": "lt-08"
+            },
+            {
+              "unlocked": "lt-09"
+            },
+            {
+              "unlocked": "lt-10"
+            },
+            {
+              "unlocked": "lt-11"
+            },
+            {
+              "unlocked": "pr-01"
+            },
+            {
+              "unlocked": "pr-02"
+            },
+            {
+              "unlocked": "pr-03"
+            },
+            {
+              "unlocked": "pr-04"
+            },
+            {
+              "unlocked": "pr-05"
+            },
+            {
+              "unlocked": "pr-06"
+            },
+            {
+              "unlocked": "pr-07"
+            },
+            {
+              "unlocked": "pr-08"
+            },
+            {
+              "unlocked": "pr-09"
+            },
+            {
+              "unlocked": "pr-10"
+            },
+            {
+              "unlocked": "cp-01"
+            },
+            {
+              "unlocked": "cp-02"
+            },
+            {
+              "unlocked": "ob-01"
+            },
+            {
+              "unlocked": "ob-02"
+            },
+            {
+              "unlocked": "ob-03"
+            },
+            {
+              "unlocked": "ct-01"
+            },
+            {
+              "unlocked": "ct-02"
+            },
+            {
+              "unlocked": "an-01"
+            },
+            {
+              "unlocked": "an-02"
+            },
+            {
+              "unlocked": "pb-01"
+            },
+            {
+              "unlocked": "dv-01"
+            },
+            {
+              "unlocked": "dv-02"
+            },
+            {
+              "unlocked": "tg-01"
+            },
+            {
+              "unlocked": "tg-02"
+            }
+          ]
+        }
+      ]
+    },
+    "ep-02": {
+      "read": "ep-01"
+    }
+  },
+  "keywords": [
+    {
+      "id": "evariste-tessonnal",
+      "label": "Évariste Tessonnal",
+      "kind": "person",
+      "terms": ["Évariste Tessonnal"],
+      "results": [
+        {
+          "documents": ["rg-01", "rg-02", "pr-01"]
+        }
+      ]
+    },
+    {
+      "id": "clotilde-mervaux",
+      "label": "Clotilde Mervaux",
+      "kind": "person",
+      "terms": ["Clotilde Mervaux"],
+      "results": [
+        {
+          "documents": ["rg-01", "rg-02", "rg-04"]
+        }
+      ]
+    },
+    {
+      "id": "honore-tessonnal",
+      "label": "Honoré Tessonnal",
+      "kind": "person",
+      "terms": ["Honoré Tessonnal"],
+      "results": [
+        {
+          "documents": ["rg-03", "pr-09"]
+        },
+        {
+          "documents": ["lt-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "eugenie-ravenel",
+      "label": "Eugénie Ravenel",
+      "kind": "person",
+      "terms": ["Eugénie Ravenel"],
+      "results": [
+        {
+          "documents": ["rg-03", "ph-04"]
+        }
+      ]
+    },
+    {
+      "id": "leonce-tessonnal",
+      "label": "Léonce Tessonnal",
+      "kind": "person",
+      "terms": ["Léonce Tessonnal"],
+      "results": [
+        {
+          "documents": ["rg-03", "lt-02"]
+        },
+        {
+          "documents": ["cp-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "marguerite-tessonnal",
+      "label": "Marguerite Tessonnal",
+      "kind": "person",
+      "terms": ["Marguerite Tessonnal"],
+      "results": [
+        {
+          "documents": ["rg-01", "rg-16"]
+        },
+        {
+          "documents": ["dv-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "soeur-agathe",
+      "label": "sœur Agathe",
+      "kind": "person",
+      "terms": ["sœur Agathe"],
+      "results": [
+        {
+          "documents": ["ph-04", "rg-16"]
+        },
+        {
+          "documents": ["dv-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "colombe-tessonnal",
+      "label": "Colombe Tessonnal",
+      "kind": "person",
+      "terms": ["Colombe Tessonnal"],
+      "results": [
+        {
+          "documents": ["rg-04", "rg-07", "ph-06"]
+        }
+      ]
+    },
+    {
+      "id": "colombe-brossal",
+      "label": "Colombe Brossal",
+      "kind": "person",
+      "terms": ["Colombe Brossal"],
+      "results": [
+        {
+          "documents": ["ph-06", "pr-09"]
+        },
+        {
+          "documents": ["pr-05"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "colo",
+      "label": "Colo",
+      "kind": "person",
+      "terms": ["Colo"],
+      "results": [
+        {
+          "documents": ["pv-03"],
+          "requires": {
+            "read": "pv-02"
+          }
+        },
+        {
+          "documents": ["lt-04"],
+          "requires": {
+            "read": "pv-03"
+          }
+        }
+      ]
+    },
+    {
+      "id": "aime-brossal",
+      "label": "Aimé Brossal",
+      "kind": "person",
+      "terms": ["Aimé Brossal", "A. Brossal"],
+      "results": [
+        {
+          "documents": ["rg-07", "ph-06", "rp-01"]
+        },
+        {
+          "documents": ["rp-05"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bastien-tessonnal",
+      "label": "Bastien Tessonnal",
+      "kind": "person",
+      "terms": ["Bastien Tessonnal"],
+      "results": [
+        {
+          "documents": ["rg-04", "rg-11", "rp-01"]
+        },
+        {
+          "documents": ["rg-13", "rp-06"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["pr-03", "ph-09"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "tessonnal-bastien",
+      "label": "Tessonnal Bastien",
+      "kind": "person",
+      "terms": ["Tessonnal Bastien"],
+      "results": [
+        {
+          "documents": ["rg-11", "rp-04"]
+        }
+      ]
+    },
+    {
+      "id": "andrin-dalvarin",
+      "label": "Andrin Dalvarin",
+      "kind": "person",
+      "terms": ["Andrin Dalvarin"],
+      "results": [
+        {
+          "documents": ["rg-05", "rg-12", "rg-15", "pr-07"]
+        },
+        {
+          "documents": ["rg-14"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["ph-10", "rp-05"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "dalvarin-andrin",
+      "label": "Dalvarin Andrin",
+      "kind": "person",
+      "terms": ["Dalvarin Andrin"],
+      "results": [
+        {
+          "documents": ["rp-03", "rg-12"]
+        }
+      ]
+    },
+    {
+      "id": "a-dalvarin",
+      "label": "A. Dalvarin",
+      "kind": "person",
+      "terms": ["A. Dalvarin"],
+      "results": [
+        {
+          "documents": ["pr-05", "ct-02"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "danela-dalvarin",
+      "label": "Danela Dalvarin",
+      "kind": "person",
+      "terms": ["Danela Dalvarin", "D. Dalvarin"],
+      "results": [
+        {
+          "documents": ["rg-05", "pr-07"]
+        },
+        {
+          "documents": ["ph-03", "rg-17", "ph-13"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "danela",
+      "label": "Danela",
+      "kind": "person",
+      "terms": ["Danela"],
+      "results": [
+        {
+          "documents": ["lt-01", "lt-03"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "dranko-dalvarin",
+      "label": "Dranko Dalvarin",
+      "kind": "person",
+      "terms": ["Dranko Dalvarin", "Dranko"],
+      "results": [
+        {
+          "documents": ["rg-05"]
+        },
+        {
+          "documents": ["ph-05", "pr-02"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "jadela-rovin",
+      "label": "Jadela Rovin",
+      "kind": "person",
+      "terms": ["Jadela Rovin"],
+      "results": [
+        {
+          "documents": ["tg-02"]
+        },
+        {
+          "documents": ["ph-13"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "barthelemy-neviot",
+      "label": "Barthélemy Neviot",
+      "kind": "person",
+      "terms": ["Barthélemy Neviot"],
+      "results": [
+        {
+          "documents": ["rg-06", "ph-02"]
+        }
+      ]
+    },
+    {
+      "id": "b-neviot",
+      "label": "B. Neviot",
+      "kind": "person",
+      "terms": ["B. Neviot"],
+      "results": [
+        {
+          "documents": ["ph-02", "tg-02"]
+        }
+      ]
+    },
+    {
+      "id": "annette-combal",
+      "label": "Annette Combal",
+      "kind": "person",
+      "terms": ["Annette Combal"],
+      "results": [
+        {
+          "documents": ["rg-06", "cp-02"]
+        }
+      ]
+    },
+    {
+      "id": "annette-neviot",
+      "label": "Annette Neviot",
+      "kind": "person",
+      "terms": ["Annette Neviot"],
+      "results": [
+        {
+          "documents": ["rg-05"]
+        },
+        {
+          "documents": ["lt-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "jules-neviot",
+      "label": "Jules Neviot",
+      "kind": "person",
+      "terms": ["Jules Neviot", "J. Neviot"],
+      "results": [
+        {
+          "documents": ["rg-06", "ph-02", "cp-02"]
+        },
+        {
+          "documents": ["pr-06"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "philomene-ardouin",
+      "label": "Philomène Ardouin",
+      "kind": "person",
+      "terms": ["Philomène Ardouin"],
+      "results": [
+        {
+          "documents": ["rg-06", "an-01"]
+        },
+        {
+          "documents": ["ph-11"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "lucie-neviot",
+      "label": "Lucie Neviot",
+      "kind": "person",
+      "terms": ["Lucie Neviot", "Neviot Lucie"],
+      "results": [
+        {
+          "documents": ["rg-06", "rg-08", "rp-03"]
+        },
+        {
+          "documents": ["ph-11", "pb-01", "lt-07"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "victorin-sarrade",
+      "label": "Victorin Sarrade",
+      "kind": "person",
+      "terms": ["Victorin Sarrade", "V. Sarrade"],
+      "results": [
+        {
+          "documents": ["rg-10", "rp-04"]
+        },
+        {
+          "documents": ["ph-11"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["pv-06"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "remi-neviot",
+      "label": "Rémi Neviot",
+      "kind": "person",
+      "terms": ["Rémi Neviot"],
+      "results": [
+        {
+          "documents": ["rg-06", "rg-09"]
+        },
+        {
+          "documents": ["pr-08", "lt-07"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "odette-lamberge",
+      "label": "Odette Lamberge",
+      "kind": "person",
+      "terms": ["Odette Lamberge"],
+      "results": [
+        {
+          "documents": ["rg-09"]
+        }
+      ]
+    },
+    {
+      "id": "odette-neviot",
+      "label": "Odette Neviot",
+      "kind": "person",
+      "terms": ["Odette Neviot"],
+      "results": [
+        {
+          "documents": ["ph-12"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "hugues-brossal",
+      "label": "Hugues Brossal",
+      "kind": "person",
+      "terms": ["Hugues Brossal"],
+      "results": [
+        {
+          "documents": ["rg-07", "ph-15", "an-02"]
+        }
+      ]
+    },
+    {
+      "id": "sabine-orlhac",
+      "label": "Sabine Orlhac",
+      "kind": "person",
+      "terms": ["Sabine Orlhac"],
+      "results": [
+        {
+          "documents": ["rg-07", "ph-15"]
+        }
+      ]
+    },
+    {
+      "id": "sabine-brossal",
+      "label": "Sabine Brossal",
+      "kind": "person",
+      "terms": ["Sabine Brossal", "S. Brossal"],
+      "results": [
+        {
+          "documents": ["an-02"]
+        },
+        {
+          "documents": ["ph-17"],
+          "requires": {
+            "any": [
+              {
+                "locked": "c22"
+              },
+              {
+                "any": [
+                  {
+                    "groupLocked": "g-bapteme"
+                  },
+                  {
+                    "groupLocked": "g-vernezac"
+                  },
+                  {
+                    "groupLocked": "g-ourse"
+                  },
+                  {
+                    "lockedCount": {
+                      "gte": 16
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "isaure-brossal",
+      "label": "Isaure Brossal",
+      "kind": "person",
+      "terms": ["Isaure Brossal"],
+      "results": [
+        {
+          "documents": ["rg-07", "ph-14", "pr-10"]
+        }
+      ]
+    },
+    {
+      "id": "isaure-escande",
+      "label": "Isaure Escande",
+      "kind": "person",
+      "terms": ["Isaure Escande"],
+      "results": [
+        {
+          "documents": ["pr-09", "pr-10"]
+        }
+      ]
+    },
+    {
+      "id": "julien-escande",
+      "label": "Julien Escande",
+      "kind": "person",
+      "terms": ["Julien Escande"],
+      "results": [
+        {
+          "documents": ["rg-07", "ph-14", "an-02"]
+        }
+      ]
+    },
+    {
+      "id": "leon-escande",
+      "label": "Léon Escande",
+      "kind": "person",
+      "terms": ["Léon Escande"],
+      "results": [
+        {
+          "documents": ["ph-14"]
+        },
+        {
+          "documents": ["lt-09"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "agnes-neviot",
+      "label": "Agnès Neviot",
+      "kind": "person",
+      "terms": ["Agnès Neviot"],
+      "results": [
+        {
+          "documents": ["rg-08", "pr-10"]
+        }
+      ]
+    },
+    {
+      "id": "pierre-sarrade",
+      "label": "Pierre Sarrade",
+      "kind": "person",
+      "terms": ["Pierre Sarrade"],
+      "results": [
+        {
+          "documents": ["rg-10", "pr-10"]
+        },
+        {
+          "documents": ["ph-16"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "gilles-neviot",
+      "label": "Gilles Neviot",
+      "kind": "person",
+      "terms": ["Gilles Neviot"],
+      "results": [
+        {
+          "documents": ["rg-09", "an-02"]
+        },
+        {
+          "documents": ["pr-08"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["ph-16"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "brigitte-neviot",
+      "label": "Brigitte Neviot",
+      "kind": "person",
+      "terms": ["Brigitte Neviot"],
+      "results": [
+        {
+          "documents": ["rg-09", "an-02"]
+        },
+        {
+          "documents": ["pr-08"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["ph-16"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "toussaint-mallet",
+      "label": "Toussaint Mallet",
+      "kind": "person",
+      "terms": ["Toussaint Mallet", "T. Mallet"],
+      "results": [
+        {
+          "documents": ["rp-01", "pr-04"]
+        },
+        {
+          "documents": ["rg-18"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["lt-10"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "teodor-haask",
+      "label": "Teodor Haask",
+      "kind": "person",
+      "terms": ["Teodor Haask", "T. Haask"],
+      "results": [
+        {
+          "documents": ["pv-05"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "achille-fauvel",
+      "label": "Achille Fauvel",
+      "kind": "person",
+      "terms": ["Achille Fauvel", "Fauvel"],
+      "results": [
+        {
+          "documents": ["rp-04", "rg-10"]
+        },
+        {
+          "documents": ["ph-11"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "pradeil",
+      "label": "abbé Pradeil",
+      "kind": "person",
+      "terms": ["Pradeil"],
+      "results": [
+        {
+          "documents": ["rg-05", "ph-02"]
+        }
+      ]
+    },
+    {
+      "id": "thalbere",
+      "label": "le Thalbère",
+      "kind": "person",
+      "terms": ["le Thalbère", "la Thalbère"],
+      "results": [
+        {
+          "documents": ["rp-03"]
+        },
+        {
+          "documents": ["lt-07"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["pv-06"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bastien",
+      "label": "Bastien",
+      "kind": "person",
+      "terms": ["Bastien"],
+      "results": [
+        {
+          "documents": ["ph-04"]
+        },
+        {
+          "documents": ["lt-03"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "andrin",
+      "label": "Andrin",
+      "kind": "person",
+      "terms": ["Andrin"],
+      "results": [
+        {
+          "documents": ["tg-01", "ph-13"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "leonce",
+      "label": "Léonce",
+      "kind": "person",
+      "terms": ["Léonce"],
+      "results": [
+        {
+          "documents": ["ph-04"]
+        },
+        {
+          "documents": ["cp-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "eugenie",
+      "label": "Eugénie",
+      "kind": "person",
+      "terms": ["Eugénie"],
+      "results": [
+        {
+          "documents": ["ph-04", "ph-06"]
+        }
+      ]
+    },
+    {
+      "id": "colombe",
+      "label": "Colombe",
+      "kind": "person",
+      "terms": ["Colombe"],
+      "results": [
+        {
+          "documents": ["ph-04", "ph-06"]
+        }
+      ]
+    },
+    {
+      "id": "agnes",
+      "label": "Agnès",
+      "kind": "person",
+      "terms": ["Agnès"],
+      "results": [
+        {
+          "documents": ["ph-11", "ph-12"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "lucie",
+      "label": "Lucie",
+      "kind": "person",
+      "terms": ["Lucie"],
+      "results": [
+        {
+          "documents": ["pb-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["ph-08"],
+          "requires": {
+            "read": "ob-03"
+          }
+        }
+      ]
+    },
+    {
+      "id": "verreries",
+      "label": "Verreries de Hautcorvin",
+      "kind": "organization",
+      "terms": ["Verreries de Hautcorvin"],
+      "results": [
+        {
+          "documents": ["an-01", "pr-01"]
+        },
+        {
+          "documents": ["rg-17", "ct-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "poste-de-vernezac",
+      "label": "Poste de Vernezac",
+      "kind": "organization",
+      "terms": ["poste de Vernezac"],
+      "results": [
+        {
+          "documents": ["tg-02"]
+        }
+      ]
+    },
+    {
+      "id": "telegramme",
+      "label": "Télégramme",
+      "kind": "object",
+      "terms": ["télégramme", "télégrammes"],
+      "results": [
+        {
+          "documents": ["tg-02"]
+        },
+        {
+          "documents": ["tg-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "guides-de-vernezac",
+      "label": "Compagnie des guides de Vernezac",
+      "kind": "organization",
+      "terms": ["Compagnie des guides de Vernezac", "guides de Vernezac"],
+      "results": [
+        {
+          "documents": ["ph-02", "an-01"]
+        },
+        {
+          "documents": ["pr-08"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "refuge-de-l-ourse",
+      "label": "Refuge de l'Ourse",
+      "kind": "place",
+      "terms": ["refuge de l'Ourse"],
+      "results": [
+        {
+          "documents": ["ph-02", "rp-03", "rg-08"]
+        },
+        {
+          "documents": ["pb-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "pas-de-l-ourse",
+      "label": "Pas de l'Ourse",
+      "kind": "place",
+      "terms": ["Pas de l'Ourse"],
+      "results": [
+        {
+          "documents": ["rp-04", "ph-02"]
+        }
+      ]
+    },
+    {
+      "id": "gardienne-de-l-ourse",
+      "label": "La gardienne de l'Ourse",
+      "kind": "person",
+      "terms": ["gardienne de l'Ourse"],
+      "results": [
+        {
+          "documents": ["pr-06"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "douanes-de-la-veze",
+      "label": "Douanes de la Vèze",
+      "kind": "organization",
+      "terms": ["douanes de la Vèze"],
+      "results": [
+        {
+          "documents": ["rp-04"]
+        },
+        {
+          "documents": ["pv-06"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "combe-aux-sables",
+      "label": "Combe-aux-Sables",
+      "kind": "place",
+      "terms": ["Combe-aux-Sables"],
+      "results": [
+        {
+          "documents": ["cp-02", "rg-16"]
+        }
+      ]
+    },
+    {
+      "id": "grande-exposition",
+      "label": "Grande Exposition",
+      "kind": "event",
+      "terms": ["Grande Exposition"],
+      "results": [
+        {
+          "documents": ["pr-01", "ph-01"]
+        }
+      ]
+    },
+    {
+      "id": "lentille-de-tennok",
+      "label": "Lentille de Tennok",
+      "kind": "object",
+      "terms": ["lentille de Tennok"],
+      "results": [
+        {
+          "documents": ["pr-01", "ph-01"]
+        },
+        {
+          "documents": ["ct-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "studio-orlhac",
+      "label": "Studio Orlhac",
+      "kind": "organization",
+      "terms": ["Studio Orlhac"],
+      "results": [
+        {
+          "documents": ["ph-06", "ph-14", "ph-15", "an-02"]
+        },
+        {
+          "documents": ["ph-17"],
+          "requires": {
+            "any": [
+              {
+                "locked": "c22"
+              },
+              {
+                "any": [
+                  {
+                    "groupLocked": "g-bapteme"
+                  },
+                  {
+                    "groupLocked": "g-vernezac"
+                  },
+                  {
+                    "groupLocked": "g-ourse"
+                  },
+                  {
+                    "lockedCount": {
+                      "gte": 16
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "incendie",
+      "label": "Incendie de 1937",
+      "kind": "event",
+      "terms": ["incendie"],
+      "results": [
+        {
+          "documents": ["rp-01", "pr-04", "rg-11"]
+        }
+      ]
+    },
+    {
+      "id": "halle-des-fours",
+      "label": "Halle des fours",
+      "kind": "place",
+      "terms": ["halle des fours"],
+      "results": [
+        {
+          "documents": ["rp-01"]
+        },
+        {
+          "documents": ["ph-07"],
+          "requires": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "groupLocked": "g-bapteme"
+                  },
+                  {
+                    "groupLocked": "g-vernezac"
+                  },
+                  {
+                    "groupLocked": "g-ourse"
+                  },
+                  {
+                    "lockedCount": {
+                      "gte": 16
+                    }
+                  }
+                ]
+              },
+              {
+                "any": [
+                  {
+                    "read": "rp-01"
+                  },
+                  {
+                    "read": "pr-04"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "four-n-2",
+      "label": "Four n° 2",
+      "kind": "place",
+      "terms": ["four n° 2"],
+      "results": [
+        {
+          "documents": ["ph-07"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "greve",
+      "label": "Grève de 1936",
+      "kind": "event",
+      "terms": ["grève"],
+      "results": [
+        {
+          "documents": ["pr-03"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "magasin-des-emballages",
+      "label": "Magasin des emballages",
+      "kind": "place",
+      "terms": ["magasin des emballages"],
+      "results": [
+        {
+          "documents": ["rp-02", "rg-18"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "l-egide",
+      "label": "L'Égide",
+      "kind": "organization",
+      "terms": ["L'Égide"],
+      "results": [
+        {
+          "documents": ["rp-02"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "registre-des-rondes",
+      "label": "Registre des rondes",
+      "kind": "object",
+      "terms": ["registre des rondes"],
+      "results": [
+        {
+          "documents": ["rg-18"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "pli-cachete",
+      "label": "Pli cacheté de 1958",
+      "kind": "object",
+      "terms": ["pli cacheté"],
+      "results": [
+        {
+          "documents": ["lt-09"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bulletin-d-ordre",
+      "label": "Bulletin d'Ordre",
+      "kind": "organization",
+      "terms": ["Bulletin d'Ordre"],
+      "results": [
+        {
+          "documents": ["rg-11", "rg-12"]
+        }
+      ]
+    },
+    {
+      "id": "coupe-du-regent",
+      "label": "Coupe du Régent",
+      "kind": "object",
+      "terms": ["Coupe du Régent"],
+      "results": [
+        {
+          "documents": ["pr-05"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["ob-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "saint-eloi",
+      "label": "Concours de la Saint-Éloi",
+      "kind": "event",
+      "terms": ["Saint-Éloi", "St-Éloi"],
+      "results": [
+        {
+          "documents": ["ph-18"],
+          "requires": {
+            "all": [
+              {
+                "any": [
+                  {
+                    "groupLocked": "g-bapteme"
+                  },
+                  {
+                    "groupLocked": "g-vernezac"
+                  },
+                  {
+                    "groupLocked": "g-ourse"
+                  },
+                  {
+                    "lockedCount": {
+                      "gte": 16
+                    }
+                  }
+                ]
+              },
+              {
+                "any": [
+                  {
+                    "locked": "c22"
+                  },
+                  {
+                    "read": "ph-17"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "atelier-de-gravure",
+      "label": "Atelier de gravure",
+      "kind": "place",
+      "terms": ["atelier de gravure"],
+      "results": [
+        {
+          "documents": ["ph-03", "lt-03"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "parrain",
+      "label": "Parrain",
+      "kind": "other",
+      "terms": ["parrain"],
+      "results": [
+        {
+          "documents": ["lt-02"]
+        },
+        {
+          "documents": ["lt-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "marraine",
+      "label": "Marraine",
+      "kind": "other",
+      "terms": ["marraine"],
+      "results": [
+        {
+          "documents": ["rg-04", "rg-05"]
+        }
+      ]
+    },
+    {
+      "id": "expulsion",
+      "label": "Expulsion de 1916",
+      "kind": "event",
+      "terms": ["expulsion"],
+      "results": [
+        {
+          "documents": ["pr-02"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "dalvica",
+      "label": "Dalvica (Dalvezac)",
+      "kind": "place",
+      "terms": ["Dalvica", "Dalvezac"],
+      "results": [
+        {
+          "documents": ["ph-05", "ph-13"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["lt-08"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "brenica",
+      "label": "Brénica (Brenzac)",
+      "kind": "place",
+      "terms": ["Brénica", "Brenzac"],
+      "results": [
+        {
+          "documents": ["pr-07"]
+        },
+        {
+          "documents": ["pr-06", "ct-02"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "verrerie-de-brenica",
+      "label": "Verrerie de Brénica",
+      "kind": "organization",
+      "terms": ["Verrerie de Brénica"],
+      "results": [
+        {
+          "documents": ["ct-02"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "messager-de-brenzac",
+      "label": "Le Messager de Brenzac",
+      "kind": "organization",
+      "terms": ["Messager de Brenzac"],
+      "results": [
+        {
+          "documents": ["pr-07"]
+        },
+        {
+          "documents": ["pr-06"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "kessaar",
+      "label": "Kessaar",
+      "kind": "place",
+      "terms": ["Kessaar"],
+      "results": [
+        {
+          "documents": ["rg-12"]
+        },
+        {
+          "documents": ["pv-05"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "matricule-214",
+      "label": "Matricule 214",
+      "kind": "other",
+      "terms": ["0214", "214"],
+      "results": [
+        {
+          "documents": ["pv-05"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "matricule-1171",
+      "label": "Matricule 1171",
+      "kind": "other",
+      "terms": ["1171"],
+      "results": [
+        {
+          "documents": ["pv-05"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "cellule-14",
+      "label": "Cellule 14",
+      "kind": "place",
+      "terms": ["cellule 14"],
+      "results": [
+        {
+          "documents": ["pv-05"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "revenant",
+      "label": "« Le Revenant de Hautcorvin »",
+      "kind": "other",
+      "terms": ["Le Revenant de Hautcorvin"],
+      "results": [
+        {
+          "documents": ["pr-10"]
+        }
+      ]
+    },
+    {
+      "id": "la-sentinelle",
+      "label": "La Sentinelle des Corvins",
+      "kind": "organization",
+      "terms": ["La Sentinelle des Corvins", "La Sentinelle"],
+      "results": [
+        {
+          "documents": ["pr-09", "pr-10"]
+        },
+        {
+          "documents": ["pr-08"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "documents": ["pr-03"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "fete-de-la-neige",
+      "label": "Fête de la neige",
+      "kind": "event",
+      "terms": ["fête de la neige"],
+      "results": [
+        {
+          "documents": ["ph-16"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "ecole-de-ski",
+      "label": "École de ski",
+      "kind": "organization",
+      "terms": ["école de ski"],
+      "results": [
+        {
+          "documents": ["an-02"]
+        },
+        {
+          "documents": ["ph-16"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "ecole-de-vernezac",
+      "label": "École de Vernezac",
+      "kind": "organization",
+      "terms": ["école de Vernezac"],
+      "results": [
+        {
+          "documents": ["ph-12"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "avion-postal",
+      "label": "Avion postal",
+      "kind": "event",
+      "terms": ["avion postal"],
+      "results": [
+        {
+          "documents": ["pr-08"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "auberge-des-guides",
+      "label": "Auberge des Guides",
+      "kind": "place",
+      "terms": ["Auberge des Guides"],
+      "results": [
+        {
+          "documents": ["an-01"]
+        }
+      ]
+    },
+    {
+      "id": "hospice-de-hautcorvin",
+      "label": "Hospice de Hautcorvin",
+      "kind": "organization",
+      "terms": ["hospice de Hautcorvin"],
+      "results": [
+        {
+          "documents": ["pv-04"]
+        }
+      ]
+    },
+    {
+      "id": "verre-grave",
+      "label": "Verre gravé",
+      "kind": "object",
+      "terms": ["verre gravé", "À la fille du souffleur"],
+      "results": [
+        {
+          "documents": ["ob-02"],
+          "requires": {
+            "read": "pv-04"
+          }
+        },
+        {
+          "documents": ["ct-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "boite-de-lucie",
+      "label": "Boîte de Lucie",
+      "kind": "object",
+      "terms": ["boîte de Lucie"],
+      "results": [
+        {
+          "documents": ["ob-03"],
+          "requires": {
+            "any": [
+              {
+                "read": "pv-06"
+              },
+              {
+                "all": [
+                  {
+                    "locked": "c18"
+                  },
+                  {
+                    "any": [
+                      {
+                        "groupLocked": "g-bapteme"
+                      },
+                      {
+                        "groupLocked": "g-vernezac"
+                      },
+                      {
+                        "groupLocked": "g-ourse"
+                      },
+                      {
+                        "lockedCount": {
+                          "gte": 16
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "carnet-des-moutons",
+      "label": "Carnet des moutons",
+      "kind": "object",
+      "terms": ["carnet des moutons", "moutons"],
+      "results": [
+        {
+          "documents": ["dv-02"],
+          "requires": {
+            "read": "ob-03"
+          }
+        }
+      ]
+    },
+    {
+      "id": "journal-de-soeur-agathe",
+      "label": "Journal de sœur Agathe",
+      "kind": "object",
+      "terms": ["journal de sœur Agathe"],
+      "results": [
+        {
+          "documents": ["dv-01"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "tables-des-deces",
+      "label": "Tables des décès",
+      "kind": "other",
+      "terms": ["tables des décès"],
+      "results": [
+        {
+          "documents": ["rg-16"]
+        }
+      ]
+    }
+  ],
+  "places": [
+    {
+      "place": "aubrelieu",
+      "documents": [
+        {
+          "id": "pr-01"
+        },
+        {
+          "id": "ph-01"
+        },
+        {
+          "id": "rg-11"
+        },
+        {
+          "id": "rg-12"
+        }
+      ]
+    },
+    {
+      "place": "hautcorvin",
+      "documents": [
+        {
+          "id": "rg-01"
+        },
+        {
+          "id": "rg-02"
+        },
+        {
+          "id": "rg-03"
+        },
+        {
+          "id": "rg-04"
+        },
+        {
+          "id": "rg-07"
+        },
+        {
+          "id": "rg-16"
+        },
+        {
+          "id": "pr-04"
+        },
+        {
+          "id": "pr-09"
+        },
+        {
+          "id": "an-01"
+        },
+        {
+          "id": "an-02"
+        },
+        {
+          "id": "ct-01",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "place": "vernezac",
+      "revealedBy": {
+        "any": [
+          {
+            "read": "of-01"
+          },
+          {
+            "read": "pv-01"
+          }
+        ]
+      },
+      "documents": [
+        {
+          "id": "rg-05"
+        },
+        {
+          "id": "rg-06"
+        },
+        {
+          "id": "rg-08"
+        },
+        {
+          "id": "rg-09"
+        },
+        {
+          "id": "rg-10"
+        },
+        {
+          "id": "rg-15"
+        },
+        {
+          "id": "cp-02"
+        },
+        {
+          "id": "rp-01"
+        },
+        {
+          "id": "ph-11",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ph-12",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "pb-01",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "rg-17",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ph-16",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "place": "pas-de-l-ourse",
+      "revealedBy": {
+        "any": [
+          {
+            "read": "pv-01"
+          },
+          {
+            "read": "of-06"
+          }
+        ]
+      },
+      "documents": [
+        {
+          "id": "ph-02"
+        },
+        {
+          "id": "rp-03"
+        },
+        {
+          "id": "rp-04"
+        }
+      ]
+    },
+    {
+      "place": "dalvezac",
+      "revealedBy": {
+        "any": [
+          {
+            "read": "of-02"
+          },
+          {
+            "read": "of-07"
+          }
+        ]
+      },
+      "documents": [
+        {
+          "id": "ph-05",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ph-13",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "lt-08",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "lockedCount": {
+                  "gte": 16
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "place": "brenzac",
+      "revealedBy": {
+        "any": [
+          {
+            "read": "of-07"
+          },
+          {
+            "read": "pr-07"
+          }
+        ]
+      },
+      "documents": [
+        {
+          "id": "pr-07"
+        },
+        {
+          "id": "pr-06",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "ct-02",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "place": "kessaar",
+      "revealedBy": {
+        "read": "of-01"
+      },
+      "documents": []
+    },
+    {
+      "place": "col-de-corvenne",
+      "revealedBy": {
+        "any": [
+          {
+            "read": "lt-02"
+          },
+          {
+            "read": "rg-16"
+          },
+          {
+            "read": "pr-02"
+          }
+        ]
+      },
+      "documents": [
+        {
+          "id": "lt-02"
+        },
+        {
+          "id": "pr-02",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "place": "tennok",
+      "revealedBy": {
+        "any": [
+          {
+            "read": "ph-01"
+          },
+          {
+            "read": "pr-01"
+          },
+          {
+            "read": "ct-01"
+          }
+        ]
+      },
+      "documents": [
+        {
+          "id": "cp-01",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "place": "vellaak",
+      "revealedBy": {
+        "any": [
+          {
+            "read": "pv-05"
+          },
+          {
+            "read": "rg-13"
+          }
+        ]
+      },
+      "documents": [
+        {
+          "id": "pv-05",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "place": "port-senane",
+      "revealedBy": {
+        "any": [
+          {
+            "read": "tg-01"
+          },
+          {
+            "read": "pv-05"
+          }
+        ]
+      },
+      "documents": [
+        {
+          "id": "tg-01",
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "lockedCount": {
+                  "gte": 6
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "occupationsUnlock": {
+    "directeur-verreries": {
+      "any": [
+        {
+          "read": "of-01"
+        },
+        {
+          "read": "of-03"
+        },
+        {
+          "read": "pv-03"
+        },
+        {
+          "read": "rg-01"
+        },
+        {
+          "read": "rg-02"
+        },
+        {
+          "read": "pr-01"
+        },
+        {
+          "read": "pr-09"
+        },
+        {
+          "read": "an-02"
+        }
+      ]
+    },
+    "doreuse": {
+      "any": [
+        {
+          "read": "rg-01"
+        },
+        {
+          "read": "rg-02"
+        },
+        {
+          "read": "pr-01"
+        }
+      ]
+    },
+    "charbonnier": {
+      "any": [
+        {
+          "read": "rg-05"
+        },
+        {
+          "read": "ph-05"
+        },
+        {
+          "read": "pr-02"
+        }
+      ]
+    },
+    "carrier": {
+      "any": [
+        {
+          "read": "rg-06"
+        },
+        {
+          "read": "rg-16"
+        },
+        {
+          "read": "cp-02"
+        }
+      ]
+    },
+    "sage-femme": {
+      "any": [
+        {
+          "read": "rg-05"
+        },
+        {
+          "read": "rg-06"
+        },
+        {
+          "read": "cp-02"
+        },
+        {
+          "read": "an-01"
+        }
+      ]
+    },
+    "maitre-verrier": {
+      "any": [
+        {
+          "read": "of-01"
+        },
+        {
+          "read": "of-04"
+        },
+        {
+          "read": "of-05"
+        },
+        {
+          "read": "rg-03"
+        },
+        {
+          "read": "pr-09"
+        },
+        {
+          "read": "ct-01"
+        },
+        {
+          "read": "an-01"
+        }
+      ]
+    },
+    "modiste": {
+      "any": [
+        {
+          "read": "rg-03"
+        },
+        {
+          "read": "an-01"
+        }
+      ]
+    },
+    "graveur-sur-verre": {
+      "any": [
+        {
+          "read": "pv-01"
+        },
+        {
+          "read": "ex-04"
+        },
+        {
+          "read": "rp-03"
+        },
+        {
+          "read": "rp-05"
+        },
+        {
+          "read": "rg-05"
+        },
+        {
+          "read": "rg-12"
+        },
+        {
+          "read": "rg-15"
+        },
+        {
+          "read": "rg-17"
+        },
+        {
+          "read": "ph-03"
+        },
+        {
+          "read": "ph-10"
+        },
+        {
+          "read": "ph-18"
+        },
+        {
+          "read": "pr-02"
+        },
+        {
+          "read": "pr-05"
+        },
+        {
+          "read": "pr-07"
+        },
+        {
+          "read": "ct-01"
+        },
+        {
+          "read": "ct-02"
+        }
+      ]
+    },
+    "religieuse": {
+      "any": [
+        {
+          "read": "pv-02"
+        },
+        {
+          "read": "rg-05"
+        },
+        {
+          "read": "rg-16"
+        },
+        {
+          "read": "dv-01"
+        }
+      ]
+    },
+    "opticien": {
+      "any": [
+        {
+          "read": "rg-03"
+        },
+        {
+          "read": "rg-05"
+        },
+        {
+          "read": "rg-16"
+        },
+        {
+          "read": "lt-02"
+        },
+        {
+          "read": "cp-01"
+        }
+      ]
+    },
+    "guide-de-montagne": {
+      "any": [
+        {
+          "read": "rg-06"
+        },
+        {
+          "read": "rg-09"
+        },
+        {
+          "read": "rg-16"
+        },
+        {
+          "read": "ph-02"
+        },
+        {
+          "read": "ph-16"
+        },
+        {
+          "read": "pr-06"
+        },
+        {
+          "read": "pr-08"
+        },
+        {
+          "read": "an-01"
+        },
+        {
+          "read": "an-02"
+        }
+      ]
+    },
+    "aubergiste": {
+      "any": [
+        {
+          "read": "rg-06"
+        },
+        {
+          "read": "an-01"
+        }
+      ]
+    },
+    "fonde-de-pouvoir": {
+      "any": [
+        {
+          "read": "of-03"
+        },
+        {
+          "read": "rp-01"
+        },
+        {
+          "read": "rg-07"
+        },
+        {
+          "read": "pr-03"
+        },
+        {
+          "read": "an-01"
+        }
+      ]
+    },
+    "souffleur": {
+      "any": [
+        {
+          "read": "of-06"
+        },
+        {
+          "read": "rp-01"
+        },
+        {
+          "read": "rp-04"
+        },
+        {
+          "read": "rg-11"
+        },
+        {
+          "read": "rg-17"
+        },
+        {
+          "read": "ph-09"
+        },
+        {
+          "read": "ph-18"
+        },
+        {
+          "read": "lt-11"
+        },
+        {
+          "read": "pr-03"
+        }
+      ]
+    },
+    "gardien-de-refuge": {
+      "any": [
+        {
+          "read": "of-06"
+        },
+        {
+          "read": "pv-01"
+        },
+        {
+          "read": "rp-03"
+        },
+        {
+          "read": "rg-08"
+        },
+        {
+          "read": "ph-08"
+        },
+        {
+          "read": "pr-06"
+        },
+        {
+          "read": "pb-01"
+        }
+      ]
+    },
+    "douanier": {
+      "any": [
+        {
+          "read": "pv-06"
+        },
+        {
+          "read": "rp-04"
+        },
+        {
+          "read": "rg-10"
+        }
+      ]
+    },
+    "institutrice": {
+      "any": [
+        {
+          "read": "rg-09"
+        },
+        {
+          "read": "ph-12"
+        }
+      ]
+    },
+    "ingenieur-verrier": {
+      "any": [
+        {
+          "read": "of-03"
+        },
+        {
+          "read": "ph-15"
+        },
+        {
+          "read": "pr-09"
+        },
+        {
+          "read": "an-02"
+        }
+      ]
+    },
+    "photographe": {
+      "any": [
+        {
+          "read": "ex-03"
+        },
+        {
+          "read": "ph-15"
+        },
+        {
+          "read": "ph-17"
+        },
+        {
+          "read": "an-02"
+        }
+      ]
+    },
+    "journaliste": {
+      "any": [
+        {
+          "read": "ph-14"
+        },
+        {
+          "read": "pr-09"
+        },
+        {
+          "read": "pr-10"
+        }
+      ]
+    },
+    "notaire": {
+      "any": [
+        {
+          "read": "of-04"
+        },
+        {
+          "read": "an-02"
+        }
+      ]
+    },
+    "infirmiere": {
+      "any": [
+        {
+          "read": "of-06"
+        },
+        {
+          "read": "pv-04"
+        },
+        {
+          "read": "pr-10"
+        }
+      ]
+    },
+    "moniteur-de-ski": {
+      "any": [
+        {
+          "read": "ph-16"
+        },
+        {
+          "read": "pr-10"
+        },
+        {
+          "read": "an-02"
+        }
+      ]
+    },
+    "receveuse": {
+      "any": [
+        {
+          "read": "ph-16"
+        },
+        {
+          "read": "pr-08"
+        },
+        {
+          "read": "an-02"
+        },
+        {
+          "read": "tg-02"
+        }
+      ]
+    },
+    "chef-de-nuit": {
+      "any": [
+        {
+          "read": "of-02"
+        },
+        {
+          "read": "rp-01"
+        },
+        {
+          "read": "pr-03"
+        },
+        {
+          "read": "pr-04"
+        }
+      ]
+    },
+    "passeur": {
+      "any": [
+        {
+          "read": "rp-03"
+        }
+      ]
+    },
+    "verrier": {
+      "any": [
+        {
+          "read": "pr-04"
+        },
+        {
+          "read": "pr-10"
+        }
+      ]
+    }
+  },
+  "secrets": [
+    {
+      "id": "s1-le-feu-de-1937",
+      "title": "Le feu de 1937",
+      "discoveredBy": {
+        "all": [
+          {
+            "read": "rg-18"
+          },
+          {
+            "read": "rp-02"
+          },
+          {
+            "read": "lt-10"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s2-le-pas-de-l-ourse",
+      "title": "Le Pas de l'Ourse",
+      "discoveredBy": {
+        "all": [
+          {
+            "read": "dv-02"
+          },
+          {
+            "read": "pr-06"
+          },
+          {
+            "read": "pv-06"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s3-le-fils-de-la-thalbere",
+      "title": "Le fils de la Thalbère",
+      "discoveredBy": {
+        "all": [
+          {
+            "read": "cp-01"
+          },
+          {
+            "read": "lt-01"
+          },
+          {
+            "read": "dv-01"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s4-la-coupe-du-regent",
+      "title": "La Coupe du Régent",
+      "discoveredBy": {
+        "all": [
+          {
+            "read": "ob-01"
+          },
+          {
+            "read": "ex-04"
+          }
+        ]
+      }
+    },
+    {
+      "id": "s5-la-fille-du-souffleur",
+      "title": "La fille du souffleur",
+      "discoveredBy": {
+        "any": [
+          {
+            "all": [
+              {
+                "read": "lt-05"
+              },
+              {
+                "read": "lt-06"
+              }
+            ]
+          },
+          {
+            "all": [
+              {
+                "read": "lt-05"
+              },
+              {
+                "read": "lt-11"
+              }
+            ]
+          },
+          {
+            "all": [
+              {
+                "read": "lt-06"
+              },
+              {
+                "read": "lt-11"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "endings": [
+    {
+      "id": "f1-chacun-son-nom",
+      "file": "endings/f1-chacun-son-nom.md",
+      "when": {
+        "all": [
+          {
+            "all": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "groupLocked": "g-revenant"
+              },
+              {
+                "groupLocked": "g-verriers"
+              },
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-brossal"
+              },
+              {
+                "groupLocked": "g-combe"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              }
+            ]
+          },
+          {
+            "answered": {
+              "question": "decision",
+              "option": "retablir-chacun"
+            }
+          }
+        ]
+      },
+      "priority": 4,
+      "sections": {
+        "s1": {
+          "answered": {
+            "question": "q1-incendie",
+            "option": "aime"
+          }
+        },
+        "s2": {
+          "answered": {
+            "question": "q2-passeurs",
+            "option": "lucie-et-jules"
+          }
+        },
+        "s3": {
+          "answered": {
+            "question": "q3-pere-d-andrin",
+            "option": "honore"
+          }
+        },
+        "s4": {
+          "answered": {
+            "question": "q4-radiation-d-andrin",
+            "option": "gravure"
+          }
+        },
+        "conclusion": {
+          "lockedCount": {
+            "gte": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "f2-le-revenant",
+      "file": "endings/f2-le-revenant.md",
+      "when": {
+        "all": [
+          {
+            "all": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "groupLocked": "g-revenant"
+              },
+              {
+                "groupLocked": "g-verriers"
+              },
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-brossal"
+              },
+              {
+                "groupLocked": "g-combe"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              }
+            ]
+          },
+          {
+            "answered": {
+              "question": "decision",
+              "option": "laisser-vivre"
+            }
+          }
+        ]
+      },
+      "priority": 3,
+      "sections": {
+        "s1": {
+          "answered": {
+            "question": "q1-incendie",
+            "option": "aime"
+          }
+        },
+        "s2": {
+          "answered": {
+            "question": "q2-passeurs",
+            "option": "lucie-et-jules"
+          }
+        },
+        "s3": {
+          "answered": {
+            "question": "q3-pere-d-andrin",
+            "option": "honore"
+          }
+        },
+        "s4": {
+          "answered": {
+            "question": "q4-radiation-d-andrin",
+            "option": "gravure"
+          }
+        },
+        "s1-non-prouve": {
+          "not": {
+            "answered": {
+              "question": "q1-incendie",
+              "option": "aime"
+            }
+          }
+        },
+        "conclusion": {
+          "lockedCount": {
+            "gte": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "f3-l-imposteur-la-fille-reconnue",
+      "file": "endings/f3-l-imposteur-la-fille-reconnue.md",
+      "when": {
+        "all": [
+          {
+            "all": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "groupLocked": "g-revenant"
+              },
+              {
+                "groupLocked": "g-verriers"
+              },
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-brossal"
+              },
+              {
+                "groupLocked": "g-combe"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              }
+            ]
+          },
+          {
+            "answered": {
+              "question": "decision",
+              "option": "denoncer"
+            }
+          },
+          {
+            "secret": "s5-la-fille-du-souffleur"
+          }
+        ]
+      },
+      "priority": 2,
+      "sections": {
+        "s1": {
+          "answered": {
+            "question": "q1-incendie",
+            "option": "aime"
+          }
+        },
+        "s2": {
+          "answered": {
+            "question": "q2-passeurs",
+            "option": "lucie-et-jules"
+          }
+        },
+        "s3": {
+          "answered": {
+            "question": "q3-pere-d-andrin",
+            "option": "honore"
+          }
+        },
+        "s4": {
+          "answered": {
+            "question": "q4-radiation-d-andrin",
+            "option": "gravure"
+          }
+        },
+        "conclusion": {
+          "lockedCount": {
+            "gte": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "f4-l-imposteur",
+      "file": "endings/f4-l-imposteur.md",
+      "when": {
+        "all": [
+          {
+            "all": [
+              {
+                "groupLocked": "g-prologue"
+              },
+              {
+                "groupLocked": "g-revenant"
+              },
+              {
+                "groupLocked": "g-verriers"
+              },
+              {
+                "groupLocked": "g-bapteme"
+              },
+              {
+                "groupLocked": "g-brossal"
+              },
+              {
+                "groupLocked": "g-combe"
+              },
+              {
+                "groupLocked": "g-ourse"
+              },
+              {
+                "groupLocked": "g-vernezac"
+              }
+            ]
+          },
+          {
+            "answered": {
+              "question": "decision",
+              "option": "denoncer"
+            }
+          },
+          {
+            "not": {
+              "secret": "s5-la-fille-du-souffleur"
+            }
+          }
+        ]
+      },
+      "priority": 1,
+      "sections": {
+        "s1": {
+          "answered": {
+            "question": "q1-incendie",
+            "option": "aime"
+          }
+        },
+        "s2": {
+          "answered": {
+            "question": "q2-passeurs",
+            "option": "lucie-et-jules"
+          }
+        },
+        "s3": {
+          "answered": {
+            "question": "q3-pere-d-andrin",
+            "option": "honore"
+          }
+        },
+        "s4": {
+          "answered": {
+            "question": "q4-radiation-d-andrin",
+            "option": "gravure"
+          }
+        },
+        "conclusion": {
+          "lockedCount": {
+            "gte": 0
+          }
+        }
+      }
+    }
+  ],
+  "report": [
+    {
+      "id": "q1-incendie",
+      "prompt": "Qui a mis le feu à la halle des fours en 1937 ?",
+      "kind": "question",
+      "options": [
+        {
+          "id": "bastien",
+          "label": "Bastien Tessonnal (liste de radiation de 1938)",
+          "availableWhen": {
+            "any": [
+              {
+                "read": "rg-11"
+              },
+              {
+                "read": "rp-01"
+              }
+            ]
+          }
+        },
+        {
+          "id": "aime",
+          "label": "Aimé Brossal",
+          "availableWhen": {
+            "secret": "s1-le-feu-de-1937"
+          }
+        },
+        {
+          "id": "non-etabli",
+          "label": "Non établi"
+        }
+      ]
+    },
+    {
+      "id": "q2-passeurs",
+      "prompt": "Qui faisait passer les radiés par le Pas de l'Ourse ?",
+      "kind": "question",
+      "options": [
+        {
+          "id": "andrin",
+          "label": "Andrin Dalvarin (soupçon de la Garde, 1938)",
+          "availableWhen": {
+            "read": "rp-03"
+          }
+        },
+        {
+          "id": "lucie-et-jules",
+          "label": "Lucie Neviot et son père, Jules Neviot",
+          "availableWhen": {
+            "secret": "s2-le-pas-de-l-ourse"
+          }
+        },
+        {
+          "id": "non-etabli",
+          "label": "Non établi"
+        }
+      ]
+    },
+    {
+      "id": "q3-pere-d-andrin",
+      "prompt": "De qui Andrin Dalvarin est-il le fils ?",
+      "kind": "question",
+      "options": [
+        {
+          "id": "leonce",
+          "label": "Léonce Tessonnal, son parrain",
+          "availableWhen": {
+            "any": [
+              {
+                "read": "rg-05"
+              },
+              {
+                "read": "pv-01"
+              }
+            ]
+          }
+        },
+        {
+          "id": "honore",
+          "label": "Honoré Tessonnal",
+          "availableWhen": {
+            "secret": "s3-le-fils-de-la-thalbere"
+          }
+        },
+        {
+          "id": "non-etabli",
+          "label": "Non établi"
+        }
+      ]
+    },
+    {
+      "id": "q4-radiation-d-andrin",
+      "prompt": "Pourquoi Andrin Dalvarin a-t-il été radié ?",
+      "kind": "question",
+      "options": [
+        {
+          "id": "outrage",
+          "label": "Outrage au Régent",
+          "availableWhen": {
+            "read": "rg-12"
+          }
+        },
+        {
+          "id": "gravure",
+          "label": "Il avait gravé le nom de son frère ; Aimé Brossal l'a dénoncé",
+          "availableWhen": {
+            "secret": "s4-la-coupe-du-regent"
+          }
+        },
+        {
+          "id": "non-etabli",
+          "label": "Non établi"
+        }
+      ]
+    },
+    {
+      "id": "decision",
+      "prompt": "Décision de l'Office",
+      "kind": "choice",
+      "options": [
+        {
+          "id": "denoncer",
+          "label": "Rejeter la requête et signaler l'usurpation d'identité."
+        },
+        {
+          "id": "retablir-chacun",
+          "label": "Réinscrire Bastien Tessonnal à titre posthume ; reconnaître Agnès Neviot, sa fille ; inscrire Andrin Dalvarin sous son nom.",
+          "availableWhen": {
+            "secret": "s5-la-fille-du-souffleur"
+          }
+        },
+        {
+          "id": "laisser-vivre",
+          "label": "Recevoir la requête : inscrire le requérant sous le nom de Bastien Tessonnal."
+        }
+      ]
+    }
+  ]
+}
