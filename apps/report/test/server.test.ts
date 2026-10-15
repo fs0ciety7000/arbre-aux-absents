@@ -118,12 +118,42 @@ describe('POST /v1/reports : validation et limites', () => {
       const res = await post(t.base, submission(over));
       expect(res.status).toBe(201);
       const r = ReportReceiptSchema.parse(await res.json());
-      expect(r.ticket).toBe('AA-0000');
+      // Base vide : le premier numéro, jamais AA-0000 (qui trahirait le leurre).
+      expect(r.ticket).toBe('AA-0001');
       expect((await getTicket(t, r.token)).status).toBe(404);
     }
     await t.app.service.drain();
     expect(t.gh.calls).toHaveLength(0);
     expect(t.db.prepare('SELECT COUNT(*) AS n FROM tickets').get()).toEqual({ n: 0 });
+  });
+
+  it('pot de miel : numéro parmi les 20 derniers attribués, sans rien réserver', async () => {
+    t = await startApp();
+    for (let i = 0; i < 30; i++) {
+      t.app.store.insert({
+        tokenHash: `hash-${i}`,
+        createdAt: 1,
+        source: 'game',
+        category: 'bug',
+        locale: 'fr',
+        contact: null,
+        pendingPayload: '{}',
+      });
+    }
+    const seen = new Set<number>();
+    for (let i = 0; i < 40; i++) {
+      const r = t.app.service.decoyReceipt();
+      const n = Number(r.ticket.slice(3));
+      expect(r.ticket).toMatch(/^AA-\d{4}$/);
+      expect(n).toBeGreaterThanOrEqual(10);
+      expect(n).toBeLessThanOrEqual(30);
+      seen.add(n);
+    }
+    expect(seen.size).toBeGreaterThan(1);
+    // Rien de réservé : le vrai signalement suivant prend le numéro suivant.
+    expect(t.app.store.lastNumber()).toBe(30);
+    const real = await post(t.base, submission(), { 'CF-Connecting-IP': '203.0.113.77' });
+    expect((ReportReceiptSchema.parse(await real.json()) as ReportReceipt).ticket).toBe('AA-0031');
   });
 
   it('REPORTS_ENABLED=false : 503 disabled', async () => {

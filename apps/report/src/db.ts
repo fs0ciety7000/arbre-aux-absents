@@ -236,6 +236,13 @@ export class TicketStore {
     });
   }
 
+  /** Dernier numéro attribué (supprimés compris, AUTOINCREMENT), 0 si aucun. Lecture seule. */
+  lastNumber(): number {
+    const r = this.db.prepare("SELECT seq FROM sqlite_sequence WHERE name = 'tickets'").get() as
+      Raw | undefined;
+    return r ? Number(r.seq) : 0;
+  }
+
   setPayload(id: number, payload: string): void {
     this.db.prepare('UPDATE tickets SET pending_payload = ? WHERE id = ?').run(payload, id);
   }

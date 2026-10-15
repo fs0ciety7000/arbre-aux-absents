@@ -652,7 +652,8 @@ webhook sans appel à l'API. Numéros AUTOINCREMENT, jamais réutilisés.
 du ticket GitHub ne contient aucun texte du joueur (`AA-0042 · bug (jeu)`, réécrit par l'équipe
 avant l'étiquette `public`) ; erreurs hors contrat renvoyées en `{ error: 'invalid' }` avec le
 statut HTTP adapté (400, 403, 404, 405, 401 pour une signature de webhook) ; pot de miel
-(`website` rempli ou `elapsedMs < 3000`) → 201 avec un faux reçu `AA-0000`. `/healthz` dit
+(`website` rempli ou `elapsedMs < 3000`) → 201 avec un faux reçu plausible (numéro tiré parmi les
+20 derniers attribués, rien de créé ni de réservé, jeton qui ne mène à rien). `/healthz` dit
 `degraded` sans jeton ou après un échec GitHub.
 
 **Conservation** (D13, tâche quotidienne) : contact effacé 30 jours après la clôture ; ticket

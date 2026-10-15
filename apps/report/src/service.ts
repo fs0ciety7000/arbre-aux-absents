@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, randomBytes, randomInt } from 'node:crypto';
 import type {
   KnownIssue,
   Locale,
@@ -59,6 +59,9 @@ export const isPermanentGitHubError = (e: unknown): e is GitHubError =>
   e.status >= 400 &&
   e.status < 500 &&
   ![401, 403, 408, 429].includes(e.status);
+
+/** Faux reçus du pot de miel : tirés parmi les `DECOY_SPREAD` derniers numéros attribués. */
+const DECOY_SPREAD = 20;
 
 export const hashToken = (token: string): string =>
   createHash('sha256').update(token).digest('hex');
@@ -143,10 +146,19 @@ export class ReportService {
     return { ticket: row.ticket, token, followUrl: `${this.followBase}${token}` };
   }
 
-  /** Reçu neutre du pot de miel : plausible, mais rien n'est créé. */
-  decoyReceipt(prefix: string): ReportReceipt {
+  /**
+   * Reçu neutre du pot de miel : plausible (un numéro parmi les 20 derniers attribués, jamais
+   * `-0000` qui trahirait le leurre), mais rien n'est créé ni réservé ; le jeton ne mène à rien.
+   */
+  decoyReceipt(): ReportReceipt {
     const token = newToken();
-    return { ticket: `${prefix}-0000`, token, followUrl: `${this.followBase}${token}` };
+    const last = this.store.lastNumber();
+    const n = Math.max(1, last - randomInt(0, DECOY_SPREAD));
+    return {
+      ticket: this.store.formatTicket(n),
+      token,
+      followUrl: `${this.followBase}${token}`,
+    };
   }
 
   /** Lance le traitement de la file sans attendre (un seul passage à la fois). */

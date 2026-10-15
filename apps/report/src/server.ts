@@ -115,7 +115,7 @@ export function createReportServer(deps: ServerDeps): ReportServer {
     if (s.website !== '' || s.elapsedMs < REPORT_LIMITS.minElapsedMs) {
       // Pot de miel : réponse neutre, rien n'est créé ; seul le plafond du client est consommé.
       limiter.hit(rules.filter((r) => r.key !== '*'));
-      return sendJson(res, 201, service.decoyReceipt(config.ticketPrefix));
+      return sendJson(res, 201, service.decoyReceipt());
     }
     const hit = limiter.hit(rules);
     if (!hit.ok) return tooMany(res, hit.retryAfterSec);
