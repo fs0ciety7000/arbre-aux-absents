@@ -151,6 +151,28 @@ jobs:
       - name: docker run + curl /healthz
         run: sh scripts/docker-smoke.sh arbre-site:ci 8080
 
+  docker-report:
+    name: docker (service de signalement, /healthz)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-buildx-action@v3
+      # Contexte = racine ; BuildKit lit apps/report/Dockerfile.dockerignore (liste blanche :
+      # manifestes racine, packages/contract, apps/report) à la place du .dockerignore du site.
+      - name: docker build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/report/Dockerfile
+          load: true
+          push: false
+          tags: arbre-report:ci
+          cache-from: type=gha,scope=report
+          cache-to: type=gha,mode=max,scope=report
+      - name: docker run + curl /healthz
+        run: sh scripts/docker-smoke.sh --report arbre-report:ci 8090
+
   rust-lint:
     name: rust-lint (cargo fmt, clippy)
     runs-on: ubuntu-24.04

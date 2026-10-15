@@ -1,0 +1,32 @@
+# Contexte Docker du service de signalement (docker build -f apps/report/Dockerfile .).
+# BuildKit lit ce fichier à la place du .dockerignore racine (qui, lui, sert au site et exclut
+# apps/report). Liste blanche : manifestes racine, contrat partagé, service. Rien d'autre.
+*
+
+!package.json
+!package-lock.json
+!tsconfig.base.json
+!packages/contract/
+!apps/report/
+
+# Jamais dans le contexte, même sous un dossier autorisé.
+**/node_modules
+**/dist
+**/coverage
+**/.data
+**/*.db
+**/*.db-*
+**/*.sqlite
+**/*.sqlite-*
+**/*.log
+**/.env
+**/.env.*
+**/.DS_Store
+**/*.test.ts
+**/*.spec.ts
+packages/contract/scripts
+packages/contract/schema
+packages/contract/test
+apps/report/test
+apps/report/Dockerfile
+apps/report/Dockerfile.dockerignore

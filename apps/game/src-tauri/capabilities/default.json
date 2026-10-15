@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Droits minimaux du jeu : fenêtre, sauvegardes sous $APPDATA/saves/, dialogues d'export/import.",
+  "description": "Droits minimaux du jeu : fenêtre, sauvegardes sous $APPDATA/saves/, dialogues d'export/import, liens externes limités au site et à la page itch.io (D11).",
   "windows": ["main"],
   "platforms": ["linux", "macOS", "windows", "android", "iOS"],
   "permissions": [
@@ -23,6 +23,13 @@
     {
       "identifier": "fs:scope",
       "allow": [{ "path": "$APPDATA/saves" }, { "path": "$APPDATA/saves/**" }]
+    },
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        { "url": "https://arbre.cardormedia.com/*" },
+        { "url": "https://cardorinteractive.itch.io/*" }
+      ]
     }
   ]
 }
