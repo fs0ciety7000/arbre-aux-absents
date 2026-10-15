@@ -1,0 +1,119 @@
+{
+  "premiere-piece": {
+    "title": "First Document",
+    "description": "Read your first document in file No. 74-0318."
+  },
+  "fiche-demandee": {
+    "title": "Card Requested",
+    "description": "Get your first card from the LX-2 Reader."
+  },
+  "deux-pieces": {
+    "title": "Two Documents",
+    "description": "Have the Commission establish a first set of slots."
+  },
+  "le-fil-est-tire": {
+    "title": "Pulling the Thread",
+    "description": "Establish the founders of Les Tilleuls (end of the prologue)."
+  },
+  "une-branche-entiere": {
+    "title": "A Whole Branch",
+    "description": "Establish every slot in a group after the prologue."
+  },
+  "une-generation": {
+    "title": "A Generation",
+    "description": "Establish every slot in a single generation."
+  },
+  "a-mi-chemin": {
+    "title": "Halfway There",
+    "description": "Establish fifteen slots in the tree."
+  },
+  "l-arbre-aux-absents": {
+    "title": "L’Arbre aux absents",
+    "description": "Establish all thirty slots."
+  },
+  "la-lavandiere-et-l-affiche": {
+    "title": "The Washerwoman and the Poster",
+    "description": "Establish the whole Studio branch."
+  },
+  "les-gens-du-cap": {
+    "title": "The People of the Cape",
+    "description": "Establish the whole Lighthouse branch, from the cape to Vellaak."
+  },
+  "ceux-que-nous-avons-rendus-absents": {
+    "title": "Those We Made Absent",
+    "description": "Establish the Absent branch."
+  },
+  "le-gardien-etait-une-femme": {
+    "title": "The Keeper Was a Woman",
+    "description": "Establish the woman who kept the lighthouse before the lifeboat coxswain."
+  },
+  "maask": {
+    "title": "Maask",
+    "description": "Search the Reader for the Gull’s Ostrian nickname."
+  },
+  "ce-que-l-arbre-ne-dit-pas": {
+    "title": "What the Tree Doesn’t Say",
+    "description": "Uncover a first secret."
+  },
+  "la-nouvelle-fougere": {
+    "title": "The New Fern",
+    "description": "Find out who the photographer of Vellaak is."
+  },
+  "celui-que-la-mer-voulait-garder": {
+    "title": "The Man the Sea Wanted to Keep",
+    "description": "Find out who the Albatros was carrying."
+  },
+  "la-vigilance-du-commissaire": {
+    "title": "The Commissioner’s Vigilance",
+    "description": "Find out who denounced the Fern network."
+  },
+  "plus-aucun-absent": { "title": "No One Left Absent", "description": "Uncover all six secrets." },
+  "le-faux-coupable": {
+    "title": "The False Culprit",
+    "description": "Submit a report that condemns Gaspard Varenque."
+  },
+  "les-deux-visages": {
+    "title": "The Two Faces",
+    "description": "Restore Gaspard Varenque’s good name."
+  },
+  "la-mere-et-la-fille": {
+    "title": "Mother and Daughter",
+    "description": "Reunite Lise with her mother."
+  },
+  "l-arbre-entier": {
+    "title": "The Whole Tree",
+    "description": "See the ending in which no one is left absent."
+  },
+  "absente": {
+    "title": "Absent",
+    "description": "Leave Nora Ilvess absent and tell no one but Lise."
+  },
+  "tout-le-papier": {
+    "title": "Every Last Sheet",
+    "description": "Reach the epilogue of file No. 74-0318."
+  },
+  "sans-le-fonds-restreint": {
+    "title": "Without the Restricted Collection",
+    "description": "Establish all thirty slots without opening a single document from the restricted collections."
+  },
+  "rien-qu-une-meche": {
+    "title": "Nothing but a Forelock",
+    "description": "Establish Lise without reading the Kessaar committal register."
+  },
+  "tout-lu": {
+    "title": "Read Everything",
+    "description": "Read every document in the collection."
+  },
+  "cartographe": {
+    "title": "The Great Wall Map",
+    "description": "Open every place on the case map."
+  },
+  "contre-la-montre": {
+    "title": "Against the Clock",
+    "description": "Timed mode: submit the report in under 3 hours."
+  },
+  "archiviste-eclair": {
+    "title": "Lightning Archivist",
+    "description": "Timed mode: submit the report in under 90 minutes."
+  }
+}
