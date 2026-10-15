@@ -6,6 +6,8 @@
  * l'anglais, son catalogue (chunk à part) est chargé avant le montage. Le profil peut ensuite
  * la changer (`AppController.init`), avant l'écran titre.
  */
+// En premier : configure zod avant tout module qui parse (CSP sans 'unsafe-eval').
+import './zod-config';
 import { mount } from 'svelte';
 import '@arbre/ui/styles/index.css';
 import App from './App.svelte';
