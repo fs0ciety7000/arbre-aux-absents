@@ -669,6 +669,34 @@ export const en = {
     },
   },
 
+  /** Installed game updates (D18, DESIGN §13.12): title screen prompt, Options › Data. */
+  update: {
+    kicker: 'Update',
+    title: (v: string) => `Version ${v} available`,
+    titleDownload: 'New version available',
+    versionDetail: (v: string) => `Version ${v}`,
+    notesLabel: 'What’s new',
+    install: 'Update',
+    download: 'Download',
+    later: 'Later',
+    installHint: 'The game closes to install, then restarts. Your saves are kept.',
+    downloadHint:
+      'The file opens in your browser; Android will ask you to confirm the installation. Your saves are kept.',
+    linkHint: 'This installation is updated from the game’s itch.io page.',
+    downloading: (pct: number | null) => (pct === null ? 'Downloading…' : `Downloading… ${pct}%`),
+    installing: 'Installing: the game will restart…',
+    progressLabel: 'Download progress',
+    failedInstall:
+      'The update could not be installed. Try again later, or download the new version from itch.io.',
+    failedOpen: 'The link could not be opened.',
+    section: 'Update',
+    installed: (v: string) => `Installed version: ${v}`,
+    check: 'Check for updates',
+    checking: 'Checking…',
+    upToDate: 'The game is up to date.',
+    checkFailed: 'Unable to check right now (offline?). Try again later.',
+    inGame: 'Return to the title screen to install it: the case in progress is never interrupted.',
+  },
   platform: {
     storageMemory:
       'This browser’s storage is unavailable: your game will be lost when you close it. Export it to keep it.',

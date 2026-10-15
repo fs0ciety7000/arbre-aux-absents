@@ -17,6 +17,7 @@
   import { combosOf, comboLabel, COMMANDS, keymap, type CommandId } from '../input/keymap.svelte';
   import { messages } from '../messages.fr';
   import ScreenFrame from './ScreenFrame.svelte';
+  import UpdateNotice from './UpdateNotice.svelte';
   import { restartTutorial } from '../tutorial/tutorial.svelte';
 
   /** E05 : Jeu, Aides, Affichage, Accessibilité, Audio, Contrôles, Langue, Données. */
@@ -342,6 +343,23 @@
           {/if}
         {:else if id === 'data'}
           <p class="muted">{app.storageWarning ?? m.storageNote}</p>
+          {#if app.updates.supported}
+            <!-- Mise à jour (D18, DESIGN §13.12) : desktop et Android seulement. -->
+            <h2>{messages.update.section}</h2>
+            <p class="muted num">{messages.update.installed(app.version)}</p>
+            <Button
+              iconName="search"
+              loading={app.updates.status === 'checking'}
+              disabled={app.updates.busy}
+              onclick={() => void app.updates.check(true)}>{messages.update.check}</Button
+            >
+            <p class="status" role="status">
+              {#if app.updates.status === 'checking'}{messages.update.checking}
+              {:else if app.updates.error === 'check'}{messages.update.checkFailed}
+              {:else if app.updates.status === 'current'}{messages.update.upToDate}{/if}
+            </p>
+            <UpdateNotice variant="options" />
+          {/if}
           {#if app.screen !== 'desk'}
             <Button iconName="archives" onclick={() => app.goto('slots')}>{m.manageSaves}</Button>
           {/if}

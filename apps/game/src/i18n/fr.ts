@@ -701,6 +701,36 @@ export const fr = {
   },
 
   /** Textes de la plateforme (avertissements de stockage, dialogues de fichier sous Tauri). */
+  /** Mise à jour du jeu installé (D18, DESIGN §13.12) : invite de l’écran titre, Options › Données. */
+  update: {
+    kicker: 'Mise à jour',
+    title: (v: string) => `Version ${v} disponible`,
+    titleDownload: 'Nouvelle version disponible',
+    versionDetail: (v: string) => `Version ${v}`,
+    notesLabel: 'Ce qui change',
+    install: 'Mettre à jour',
+    download: 'Télécharger',
+    later: 'Plus tard',
+    installHint: 'Le jeu se ferme pour s’installer, puis se relance. Vos parties sont conservées.',
+    downloadHint:
+      'Le fichier s’ouvre dans le navigateur ; Android vous demandera de confirmer l’installation. Vos parties sont conservées.',
+    linkHint: 'Cette installation se met à jour depuis la page itch.io du jeu.',
+    downloading: (pct: number | null) =>
+      pct === null ? 'Téléchargement…' : `Téléchargement… ${pct} %`,
+    installing: 'Installation : le jeu va redémarrer…',
+    progressLabel: 'Avancement du téléchargement',
+    failedInstall:
+      'La mise à jour n’a pas pu être installée. Réessayez plus tard, ou téléchargez la nouvelle version sur itch.io.',
+    failedOpen: 'Le lien n’a pas pu être ouvert.',
+    section: 'Mise à jour',
+    installed: (v: string) => `Version installée : ${v}`,
+    check: 'Rechercher une mise à jour',
+    checking: 'Recherche…',
+    upToDate: 'Le jeu est à jour.',
+    checkFailed: 'Vérification impossible pour l’instant (hors ligne ?). Réessayez plus tard.',
+    inGame:
+      'Revenez à l’écran titre pour l’installer : la partie en cours n’est jamais interrompue.',
+  },
   platform: {
     storageMemory:
       'Le stockage de ce navigateur est indisponible : votre partie sera perdue à la fermeture. Exportez-la pour la conserver.',

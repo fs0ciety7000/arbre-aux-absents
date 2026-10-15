@@ -17,6 +17,7 @@
   import { KEYART_NARROW, keyArtFrame, loadKeyArt, type KeyArtFrame } from '../lib/game/keyart';
   import type { ScreenId } from '../lib/game/types';
   import { messages } from '../messages.fr';
+  import UpdateNotice from './UpdateNotice.svelte';
 
   /**
    * E02 — écran titre (DESIGN §13.1) : l'art clé « Le bureau sous la lampe », vivant, plein
@@ -258,6 +259,11 @@
         {/if}
       </ul>
     </nav>
+
+    <!-- Mise à jour du jeu installé (D18, DESIGN §13.12) : jamais sur le web. -->
+    {#if app.updates.prompt}
+      <UpdateNotice variant="title" />
+    {/if}
 
     {#if last}
       <p class="save mv-rise" style:--i="8">

@@ -47,6 +47,7 @@ import { loadCase, loadCatalog, loadedCase, type CaseEntry } from './cases';
 import { loadPlatform } from './platform-loader';
 import { applySettings } from './settings-dom';
 import { GameStoreImpl, type StoreHost } from './store.svelte';
+import { loadUpdateSource, UpdateState } from './update.svelte';
 import type { ScreenId } from './types';
 import { viewport } from './viewport.svelte';
 
@@ -126,6 +127,8 @@ export class AppController implements StoreHost {
   saveError = $state(false);
   fatal = $state<FatalError | null>(null);
   ending = $state<EndingId | null>(null);
+  /** Mise à jour du jeu installé (D18) : invite sur l'écran titre, vérification dans Options. */
+  readonly updates = new UpdateState();
 
   #platform = $state.raw<GamePlatform | null>(null);
   #profileTimer: ReturnType<typeof setTimeout> | undefined;
@@ -204,6 +207,8 @@ export class AppController implements StoreHost {
       await this.applyLanguage(this.resolveLanguage());
       await this.refreshSaves();
       this.#backUnsub = loaded.platform.onBack(() => this.back());
+      // Vérification silencieuse (jamais sur le web) ; n'attend pas : l'écran titre s'affiche.
+      void this.updates.start(() => loadUpdateSource(loaded.platform.kind, this.version));
     } catch (err) {
       this.fail('INIT', messages.errors.caseLoad, err);
     }
