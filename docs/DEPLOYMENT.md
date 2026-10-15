@@ -120,8 +120,8 @@ certificat Let's Encrypt d'origine.
 
 ## 2. Jeu : builds natifs (Tauri 2)
 
-Configuration : `apps/game/src-tauri/` (Tauri ≥ 2.12, plugins `fs`, `dialog` et `opener`, aucune
-commande Rust).
+Configuration : `apps/game/src-tauri/` (Tauri ≥ 2.12, plugins `fs`, `dialog` et `opener`, plus
+`updater` et `process` sur desktop pour la mise à jour automatique, aucune commande Rust).
 
 | Élément | Valeur |
 |---|---|
@@ -130,8 +130,8 @@ commande Rust).
 | Version | celle de `apps/game/package.json` |
 | Frontend | `frontendDist: ../dist`, `devUrl: http://localhost:5173` |
 | Avant build | `npm run tauri:before-build` = `content:build` + `vite build --mode tauri` (`apps/game/.env.tauri` → `VITE_TARGET=tauri`) |
-| CSP | `default-src 'self'`, `script-src 'self'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob: https://arbre-api.cardormedia.com` (captures jointes, fiche de suivi), `media-src 'self' blob:`, `connect-src 'self' ipc: http://ipc.localhost https://arbre-api.cardormedia.com` (service de signalement, §5) ; aucun autre domaine distant. L'origine de l'API y est **figée** : si `VITE_REPORT_API` change, changer aussi ce `connect-src` et cet `img-src`. `vite build --mode tauri` **échoue** si elles divergent (`apps/game/vite/report-csp.ts`) |
-| Capabilities | `core:default`, plein écran, fermeture, `dialog` open/save, `fs` lecture/écriture/renommage/suppression **limités à `$APPDATA/saves/**`** (les chemins choisis dans un dialogue d'export/import sont ajoutés au scope par le plugin) ; `opener:allow-open-url` **limité à `https://arbre.cardormedia.com/*` et `https://cardorinteractive.itch.io/*`** (suivi des signalements, forum itch ; D11), sans `opener:default` |
+| CSP | `default-src 'self'`, `script-src 'self'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob: https://arbre-api.cardormedia.com` (captures jointes, fiche de suivi), `media-src 'self' blob:`, `connect-src 'self' ipc: http://ipc.localhost https://arbre-api.cardormedia.com https://api.github.com` (service de signalement, §5 ; dernière release lue par le jeu Android, D18) ; aucun autre domaine distant. L'origine de l'API y est **figée** : si `VITE_REPORT_API` change, changer aussi ce `connect-src` et cet `img-src`. `vite build --mode tauri` **échoue** si elles divergent (`apps/game/vite/report-csp.ts`) |
+| Capabilities | `core:default`, plein écran, fermeture, `dialog` open/save, `fs` lecture/écriture/renommage/suppression **limités à `$APPDATA/saves/**`** (les chemins choisis dans un dialogue d'export/import sont ajoutés au scope par le plugin) ; `opener:allow-open-url` **limité à `https://arbre.cardormedia.com/*` et `https://cardorinteractive.itch.io/*`** (suivi des signalements, forum itch ; D11) et `https://github.com/fs0ciety7000/arbre-aux-absents/releases/*` (APK Android d'une nouvelle version, D18), sans `opener:default`. `capabilities/desktop.json` (Linux, macOS, Windows seulement) : `updater:default`, `process:allow-restart` |
 | Linux | AppImage (`bundleMediaFramework: true`, GStreamer embarqué pour l'audio) + deb + rpm |
 | Windows | NSIS par utilisateur, bootstrapper WebView2 |
 | macOS | binaire universel (Intel + Apple Silicon), dmg, `minimumSystemVersion` 10.15 |
@@ -167,6 +167,41 @@ keytool -genkeypair -v -keystore arbre-release.jks -alias arbre -keyalg RSA -key
 base64 -w0 arbre-release.jks   # → secret ANDROID_KEYSTORE_B64
 ```
 
+### Mise à jour automatique (D18)
+
+Le jeu installé vérifie au lancement (et depuis Options › Données › « Rechercher une mise à jour ») la
+**dernière release publiée** du dépôt public. Hors ligne ou en échec : rien n'est montré (journal
+seulement). Une version plus récente s'annonce sur l'écran titre (« Version X.Y.Z disponible », notes
+FR/EN du journal, « Mettre à jour » / « Plus tard ») ; jamais pendant une partie. Rien sur le web.
+
+| Installation | Comportement |
+|---|---|
+| Windows (installeur NSIS, celui d'itch.io) | téléchargement avec progression, installeur en mode `passive` (fenêtre de progression, sans question), relance |
+| macOS (dmg) | remplacement de l'app, relance |
+| Linux AppImage | remplacement du fichier, relance |
+| Linux deb/rpm, Windows MSI | annonce seulement, « Télécharger » ouvre la page itch.io (paquets système : pas d'installation depuis le jeu) |
+| Android | annonce « Nouvelle version disponible », « Télécharger » ouvre l'APK signé de la release dans le navigateur ; Android demande de confirmer l'installation. Les parties sont conservées (même keystore). Le WebView ne peut pas lire `latest.json` (github.com n'envoie pas d'en-têtes CORS) : le jeu lit `https://api.github.com/repos/fs0ciety7000/arbre-aux-absents/releases/latest` (CORS ouvert, 60 requêtes/h par IP) |
+
+- **Manifeste** : `https://github.com/fs0ciety7000/arbre-aux-absents/releases/latest/download/latest.json`
+  (`plugins.updater.endpoints` de `tauri.conf.json`), produit par `tauri-action` puis réécrit par le
+  job `publish` (URLs du tag, notes `scripts/release-notes.mjs`, présence de Windows, macOS Intel et
+  Apple Silicon, Linux vérifiée).
+- **Signature** : chaque archive de mise à jour est signée (minisign) ; le jeu refuse toute archive
+  dont la signature ne correspond pas à la **clé publique** de `plugins.updater.pubkey`. La clé
+  privée et son mot de passe vivent **uniquement** dans les secrets GitHub
+  `TAURI_SIGNING_PRIVATE_KEY` et `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` (§4). Sans eux, la CI construit
+  sans artefacts de mise à jour et ne publie aucune release (`::notice::`).
+- **Sauvegarde de la clé** : garder la clé privée **et** son mot de passe hors ligne (gestionnaire de
+  mots de passe + copie chiffrée). **Les perdre, c'est ne plus jamais pouvoir mettre à jour les jeux
+  déjà installés** : il faudrait une nouvelle clé publique, donc une version téléchargée à la main
+  par chaque joueur. Une clé qui fuit se remplace de la même façon (nouvelle paire, nouvelle
+  `pubkey`, nouvelle version, ancienne clé retirée des secrets).
+- **Nouvelle paire** (en cas de perte ou de fuite) : `npx tauri signer generate -w arbre-updater.key`
+  dans `apps/game` (mot de passe demandé), contenu de `arbre-updater.key.pub` dans
+  `plugins.updater.pubkey`, contenu de `arbre-updater.key` et le mot de passe dans les deux secrets.
+- **Première version** : les joueurs en 1.3.1 ou avant n'ont pas l'updater ; ils téléchargent une
+  dernière fois la version qui l'apporte, ensuite tout est automatique.
+
 ### itch.io (préparé, rien de publié)
 
 Page prête à coller, canaux, visuels, thème et questions ouvertes : **`docs/ITCH.md`**.
@@ -200,7 +235,16 @@ Cache : npm (`setup-node`), cargo (`Swatinem/rust-cache`), couches Docker (`type
 
 ### `tauri.yml` — tag `v*`, lancement manuel ou commit « [tauri] »
 
-- Tag `v*` : release **brouillon** créée d'abord, complétée par chaque job, publiée à la main.
+- **Release GitHub** (D18) : sur un tag `v*` ou un commit de publication contenant `[itch]`, le job
+  `release` crée une release **brouillon** `vX.Y.Z` (version de `apps/game/package.json`, tag posé
+  sur le commit, notes FR/EN de `content/changelog.json` par `scripts/release-notes.mjs`) ; `desktop`
+  y joint les installeurs et, avec les secrets `TAURI_SIGNING_*`, les archives signées et
+  `latest.json` ; `android` y joint l'APK et l'AAB **signés** seulement ; `publish` vérifie
+  `latest.json`, le réécrit (URLs du tag, notes) et publie la release (`draft=false`, `latest`).
+  Builds desktop en échec ou `latest.json` incomplet : la release reste en brouillon. Release déjà
+  publiée pour cette version : rien n'y est ajouté. Sans les secrets `TAURI_SIGNING_*` : aucune
+  release sur un commit, et sur un tag un brouillon à publier à la main (comme avant). Le job `itch`
+  (butler) est inchangé.
   Lancement manuel : artefacts de workflow seulement (possible une fois le fichier sur `main`).
 - Avant la fusion : un commit poussé sur une branche `claude/**` dont le message contient
   `[tauri]` lance les mêmes builds, en artefacts seulement (les autres poussées sont sautées).
@@ -240,6 +284,8 @@ Les variables d'exécution du service de signalement (dont `GITHUB_TOKEN` et
 | `APPLE_CERTIFICATE_PASSWORD` | mot de passe du `.p12` |
 | `APPLE_SIGNING_IDENTITY` | ex. `Developer ID Application: … (TEAMID)` |
 | `APPLE_ID`, `APPLE_PASSWORD`, `APPLE_TEAM_ID` | notarisation (mot de passe d'application) |
+| `TAURI_SIGNING_PRIVATE_KEY` | clé privée de mise à jour (contenu du fichier `.key` de `tauri signer generate`, une ligne) : signe les archives de mise à jour (§2, Mise à jour automatique) |
+| `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | mot de passe de cette clé |
 | `BUTLER_API_KEY` | secret GitHub : publication itch.io sur tag `v*` (job `itch` de `tauri.yml`) ; en local, exportée dans le shell pour `scripts/itch-push.sh` |
 
 `GITHUB_TOKEN` (automatique) suffit pour les releases. Coolify et Cloudflare se configurent dans

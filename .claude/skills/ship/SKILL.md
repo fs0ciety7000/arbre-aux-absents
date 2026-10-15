@@ -13,7 +13,9 @@ description: Clôture d'une session ou d'un lot : vérifications finales, mise �
    tête de `content/changelog.json` l'entrée X.Y.Z, condensée depuis les commits depuis la version
    précédente (3 à 7 points pour les joueurs, FR + EN, rien d'interne ni de solution d'affaire ;
    WORKFLOW §6). `content:check` le vérifie (dernière entrée = version de `apps/game/package.json`).
-   Pas d'entrée par commit : le journal attend la publication.
+   Pas d'entrée par commit : le journal attend la publication. Ces notes deviennent aussi celles de
+   la release GitHub et de `latest.json` : le même commit publie la mise à jour automatique (D18,
+   DEPLOYMENT §3) si les secrets `TAURI_SIGNING_*` existent.
 5. Commits conventionnels petits et ciblés (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`,
    `test:`). Aucun nom de modèle d'IA dans les messages.
 6. `git push -u origin <branche de travail>` (jamais `main` sans demande explicite ;

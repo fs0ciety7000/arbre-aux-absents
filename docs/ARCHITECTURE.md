@@ -520,6 +520,15 @@ interface Platform { kind: 'web' | 'desktop' | 'android'; saves: SaveStore;
 - **Liens externes** : `openExternal` importe dynamiquement `@tauri-apps/plugin-opener` sous Tauri,
   capability `opener:allow-open-url` limitée à `https://arbre.cardormedia.com/*` et
   `https://cardorinteractive.itch.io/*` ; sur le web, `window.open(url, '_blank', 'noopener')`.
+- **Mise à jour du jeu installé** (D18) : `apps/game/src/platform/update.ts` (pur : semver,
+  `notesFor`, release GitHub → offre), `update-tauri.ts` (chargé par `import()` dans le build Tauri
+  seulement), état `UpdateState` (`lib/game/update.svelte.ts`, `app.updates`). Desktop :
+  `@tauri-apps/plugin-updater` lit `latest.json` de la dernière release GitHub (signature minisign
+  vérifiée côté Rust), `downloadAndInstall` puis `plugin-process` `relaunch` ; seuls NSIS, app macOS
+  et AppImage s'installent (`getBundleType()`), deb/rpm/MSI renvoient vers itch.io. Android : API
+  GitHub `releases/latest` (CORS), APK signé `arbre-aux-absents-<version>.apk` ouvert par `opener`.
+  Vérification silencieuse au lancement, invite sur l'écran titre seulement, rien sur le web
+  (branche éliminée du bundle). Notes : sections `<!-- fr -->` / `<!-- en -->` du corps de release.
 
 - **Tauri** : `$APPDATA/saves/<slot>.json`, écriture atomique (`.tmp` + renommage) et `.bak` ; capability
   limitée à `$APPDATA/saves/**` ; `plugin-dialog` pour export/import.
@@ -553,6 +562,9 @@ interface Platform { kind: 'web' | 'desktop' | 'android'; saves: SaveStore;
 - CSP `connect-src` complétée par `https://arbre-api.cardormedia.com` (service de signalement, §8) :
   `<meta>` du build web, `/jouer/` et site (nginx), `tauri.conf.json`. `Referrer-Policy: no-referrer`
   sur `/suivi/` et `/en/suivi/` (le jeton de suivi est dans le fragment).
+- Mise à jour (D18) : archives signées minisign, clé publique dans `tauri.conf.json`, clé privée en
+  secret GitHub seulement ; `connect-src` Tauri complété par `https://api.github.com` (Android) ;
+  `opener` limité aux fichiers des releases du dépôt pour l'APK.
 - CSP stricte du site (nginx). Aucun secret dans le repo (keystore Android, clés butler, signature :
   secrets GitHub Actions uniquement).
 - Les réponses sont hachées dans le contenu compilé (anti-spoiler léger, pas une protection).
@@ -598,7 +610,7 @@ tests/e2e/**                        qa-reviewer
 | Workflow | Déclencheur | Jobs |
 |---|---|---|
 | `ci.yml` | push / PR | check · build (web, zips itch complet et démo, site) · e2e (chromium + webkit + axe) · docker (site, `/healthz`) · rust-lint |
-| `tauri.yml` | tag `v*` + manuel | matrice Linux (AppImage, deb) / Windows (NSIS) / macOS (universel, dmg) + Android (APK/AAB, signés si secrets présents) → release brouillon |
+| `tauri.yml` | tag `v*`, commit `[tauri]` / `[itch]`, manuel | matrice Linux (AppImage, deb) / Windows (NSIS) / macOS (universel, dmg) + Android (APK/AAB, signés si secrets présents) → release brouillon, publiée « latest » avec `latest.json` signé si secrets `TAURI_SIGNING_*` (D18) |
 | `itch.yml` (plus tard) | release publiée | `butler push` par canal |
 
 ## 8. Service de signalement (`apps/report`)

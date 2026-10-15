@@ -101,6 +101,8 @@ de `content/changelog.json`** (ARCHITECTURE §3.8) :
 On n'écrit **pas** d'entrée par commit ni entre deux publications : le journal attend la version
 suivante. `npm run content:check` échoue tant que la dernière entrée ne porte pas la version de
 `apps/game/package.json`. Le jeu (écran Nouveautés) et le site (`/nouveautes/`) lisent ce fichier.
+Le commit `[tauri] [itch]` publie aussi la release GitHub `vX.Y.Z` et son `latest.json` (mise à jour
+automatique des jeux installés, D18) avec ces notes : ne jamais publier deux fois la même version.
 
 ## Definition of Done
 

@@ -1743,6 +1743,31 @@ nature (`Badge` : Nouveauté `accent` + `sparkle`, Amélioration `info` + `plus`
 de focus (`tabindex="0"`, nommée par son titre, anneau `--focus` 3 px) : clavier et manette font
 défiler la liste. Sous 40 rem, la pastille passe au-dessus de sa ligne. Pas de nouveau token.
 
+### 13.12 Mise à jour disponible (D18)
+
+Jeu installé seulement (desktop, Android ; jamais sur le web). Composant du jeu `UpdateNotice`
+(`apps/game/src/screens/UpdateNotice.svelte`), deux usages :
+
+- **Écran titre** : fiche non bloquante dans la colonne du menu, sous la navigation (`mv-rise`, rang
+  9), `max-width: 24rem`. Fond `--surface-2`, bord `--line-strong` et filet de tête `--accent` 3 px à
+  gauche, `--radius-m`, `--shadow-2`. Contenu : `Badge tone="accent" variant="solid"` + `sparkle`
+  « Mise à jour », titre `h2` `--font-display` `--step-1` « Version X.Y.Z disponible » (Android :
+  « Nouvelle version disponible » puis la version en Courier Prime), notes repliées dans un
+  `<details>` « Ce qui change » (texte brut `--font-read` `--step--1`, `white-space: pre-line`, 12 rem
+  au plus avec défilement), une phrase d'aide `--text-muted`, puis `Button primary` « Mettre à jour »
+  (`sparkle`) ou « Télécharger » (`external`, lien navigateur) et `Button ghost` « Plus tard ».
+- **Options › Données** : titre de section « Mise à jour », « Version installée : X.Y.Z » (`num`),
+  `Button` « Rechercher une mise à jour » (`search`, `loading` pendant la recherche), ligne
+  `role="status"` (Recherche… / Le jeu est à jour. / Vérification impossible…), puis la même fiche
+  sans ombre ni « Plus tard ». Partie ouverte (Options depuis la pause) : pas de bouton, la phrase
+  « Revenez à l'écran titre pour l'installer » ; la partie n'est jamais interrompue.
+- **Téléchargement** : `role="status"` « Téléchargement… 42 % » puis « Installation : le jeu va
+  redémarrer… » au-dessus d'un `<progress>` natif (`accent-color: --accent`, hauteur `--space-2`) ;
+  les boutons disparaissent. Échec : ligne `role="alert"` `--danger` avec l'icône `danger`.
+- **Focus** : jamais volé ; la fiche est atteinte au clavier, à la manette (navigation spatiale) et
+  au lecteur d'écran comme le reste du menu (`section` nommée par son titre). Mouvement réduit :
+  `mv-rise` suit `prefers-reduced-motion`. Pas de nouveau token.
+
 ---
 
 ## 14. Recettes du site

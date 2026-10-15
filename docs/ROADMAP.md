@@ -136,6 +136,12 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 - [x] Version 1.2.1 : bouton Signaler dans l’en-tête du bureau, dialogue plein écran sans débordement au téléphone ; page publique /tickets/ et lien Signaler dans l’en-tête du site.
 - [x] Version 1.3.0 (retours joueurs) : dispositions Enquête / Lecture / Arbre, fiche flottante et plein écran du document, taille du texte A− / A+, zoom du lecteur corrigé, signal « + » des lieux à rouvrir sur la carte ; site : erreur 500 de navigation corrigée. Audit : docs/level/AUDIT-2026-10-15.md.
 - [x] Version 1.3.1 : « Une conception de Nicolas Dessenius » aux crédits ; retour au titre pendant sa sortie (scène neuve, boutons accessibles).
+- [x] Mise à jour automatique (D18, devops) : `tauri-plugin-updater` + `process` sur desktop (NSIS,
+      macOS, AppImage ; deb/rpm/MSI → itch.io), APK signé de la release sur Android, invite sur
+      l'écran titre et « Rechercher une mise à jour » dans Options ; release GitHub publiée « latest »
+      avec `latest.json` signé par `tauri.yml` ; clé publique dans `tauri.conf.json`. **Reste** : créer
+      les secrets `TAURI_SIGNING_PRIVATE_KEY(_PASSWORD)` (DEPLOYMENT §4), puis publier la première
+      version qui embarque l'updater (les joueurs en 1.3.1 la téléchargent une dernière fois).
 - [x] Signalement v2.5 (frontend, jeu et site) : description en Markdown (`MarkdownField` : barre
       d'outils, Ctrl/⌘+B/I/K, aperçu sans HTML), captures d'écran (fichier, collage, dépôt ; réduites
       côté client au-delà de 2 Mio ; `AttachmentTray`, `AttachmentGallery` dans le suivi), « Informations
@@ -244,4 +250,5 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 | 15/10 | D14 · Termes de recherche anglais : *blaze* (incendie), *walkout* (grève), *woman engineer* (ingénieure) ; lieux de la carte jamais traduits ; titres « The Varenque Succession », « The Revenant of Hautcorvin » | Éviter les liens que le français n'a pas (*fire*, *strike* = *strike off*, *engineer* masculin) et garder les indices de genre. |
 | 15/10 | D15 · `TicketStatus` en quatre étapes (Reçu → Confirmé → En cours → Corrigé vX ou Classé) | `fixed` et `closed` sont deux fins exclusives : une cinquième étape attendrait toujours. |
 | 15/10 | D16 · Textes des panneaux du jeu chargés avec le bureau ; paquets `@arbre/*` sans effets de bord pour le découpage | Tenir le budget du premier affichage (+1,4 Ko gz contre +4 Ko permis). |
+| 15/10 | D18 · Mise à jour automatique : `tauri-plugin-updater` (desktop) sur les **releases GitHub** du dépôt public (`latest.json`, signature minisign), APK signé de la release ouvert dans le navigateur sur Android, deb/rpm/MSI renvoyés vers itch.io, rien sur le web | Demande de l'auteur (ne plus tout retélécharger sur itch.io) ; hébergement gratuit et déjà en place ; pas de mise à jour silencieuse hors Play Store ; les paquets système demandent des droits d'administrateur. |
 | 15/10 | D17 · Notes de version : **une entrée par version publiée** (`[tauri] [itch]`), condensée pour les joueurs, jamais une par commit ; `content:check` lie la dernière entrée à la version du jeu | Demande de l'auteur : ne pas polluer, regrouper aux « grosses » mises à jour ; l'oubli devient impossible. |
