@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { DESK_LAYOUTS, type DeskLayout } from '@arbre/contract';
   import { progress } from '@arbre/engine';
+  import { announcer } from '../lib/game/announcer.svelte';
   import { Button, DymoLabel, Icon, IconButton, Wordmark } from '@arbre/ui';
   import { getApp } from '../lib/game/context';
   import { formatClock } from '../lib/game/format';
@@ -26,6 +28,14 @@
   const phone = $derived(viewport.single);
   const wide = $derived(viewport.kind === 'desktop');
   const showTimer = $derived(game.state.mode === 'timed' || game.settings.showTimer);
+
+  /** Dispositions du Bureau (DESIGN §5.3) : Enquête, Lecture, Arbre ; Alt+1/2/3. */
+  const LAYOUT_ICONS = { investigate: 'layers', read: 'reader', tree: 'tree' } as const;
+  function chooseLayout(layout: DeskLayout) {
+    if (game.layout === layout) return;
+    game.setLayout(layout);
+    announcer.say(m.layoutChanged(m.layouts[layout]));
+  }
 </script>
 
 <header class="header" class:phone aria-label={m.headerLabel}>
@@ -64,6 +74,21 @@
     {/if}
   </div>
   <div class="actions">
+    {#if !phone}
+      <div class="layouts" role="group" aria-label={m.layoutLabel} data-tour="layouts">
+        {#each DESK_LAYOUTS as layout, i (layout)}
+          <IconButton
+            icon={LAYOUT_ICONS[layout]}
+            label={m.layoutHints[layout]}
+            pressed={game.layout === layout}
+            aria-keyshortcuts="Alt+{i + 1}"
+            tooltip
+            data-layout={layout}
+            onclick={() => chooseLayout(layout)}
+          />
+        {/each}
+      </div>
+    {/if}
     {#if game.reportAvailable}
       {#if phone}
         <IconButton
@@ -190,5 +215,19 @@
     display: flex;
     align-items: center;
     gap: var(--space-1);
+  }
+  /* Sélecteur de disposition : trois boutons à bascule réunis dans une réglette surpiquée. */
+  .layouts {
+    display: flex;
+    gap: var(--space-0-5);
+    padding: var(--space-0-5);
+    margin-inline-end: var(--space-2);
+    border: 1.5px dashed var(--stitch);
+    border-radius: var(--radius-m);
+  }
+  @media (forced-colors: active) {
+    .layouts {
+      border-color: CanvasText;
+    }
   }
 </style>

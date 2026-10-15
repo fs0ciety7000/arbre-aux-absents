@@ -1,4 +1,4 @@
-import { READ_SCALES, SIDE_WIDTH, type ReadScale } from '@arbre/contract';
+import { READ_SCALES, SIDE_WIDTH, type CardPosition, type ReadScale } from '@arbre/contract';
 
 /**
  * Confort de lecture (PROPOSITION-INTERFACE option 1) : crans de taille du texte du Lecteur
@@ -31,4 +31,27 @@ export function clampSideWidth(w: number): number {
 export function toggleSideWidth(w: number): number {
   const mid = (SIDE_WIDTH.standard + SIDE_WIDTH.wide) / 2;
   return w < mid ? SIDE_WIDTH.wide : SIDE_WIDTH.standard;
+}
+
+const unit = (v: number): number => (Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0);
+
+/** Position de la fiche flottante bornée à [0, 1] (arrondie au millième). */
+export function clampCardPosition(p: CardPosition): CardPosition {
+  return { x: Math.round(unit(p.x) * 1000) / 1000, y: Math.round(unit(p.y) * 1000) / 1000 };
+}
+
+/**
+ * Déplacement de la fiche : `dx`/`dy` en px, `free` = place libre (px) en largeur et hauteur.
+ * Sans place libre (fiche aussi grande que le Bureau), la position ne bouge pas sur cet axe.
+ */
+export function moveCard(
+  from: CardPosition,
+  dx: number,
+  dy: number,
+  free: { w: number; h: number },
+): CardPosition {
+  return clampCardPosition({
+    x: free.w > 0 ? from.x + dx / free.w : from.x,
+    y: free.h > 0 ? from.y + dy / free.h : from.y,
+  });
 }

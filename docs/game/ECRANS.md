@@ -105,6 +105,22 @@ Points de rupture (largeur de la fenêtre, pas de l'appareil) :
   **2 documents** comparés côte à côte (comparaison de signatures, d'écritures, de dates).
   *Reporté au backlog, hors 2.0 ; affaire 2, E04 et case revendiquée : `AFFAIRE-2.md`.*
 - Le Sélecteur de candidat P10 s'ouvre en **popover** ancré à la case (320 × max 480 px).
+- **Dispositions** (desktop et tablette paysage ; `Settings.layout`, mémorisée) : sélecteur à
+  trois boutons dans l'en-tête, `Alt+1/2/3` :
+  - **Enquête** (défaut) : arbre + volet côte à côte, poignée libre (largeur mémorisée).
+  - **Lecture** : le volet (Lecteur) prend ~60 % du Bureau, feuille centrée (~70 caractères),
+    texte un cran plus grand ; l'arbre reste visible en colonne étroite. « Vers l'arbre » (ou
+    toute navigation vers une case) repasse en Enquête.
+  - **Arbre** : l'arbre occupe tout le Bureau ; le volet devient une **fiche flottante**
+    (500 × 640 px au plus) posée sur l'arbre, déplaçable (poignée : souris, doigt, flèches,
+    `Maj` = plus loin), position bornée au Bureau et mémorisée (`Settings.cardPosition`),
+    repliable en onglet. Ouvrir un document l'y affiche. C'est une région dans l'ordre de
+    tabulation, pas une modale.
+- **Plein écran du document** : bouton « Plein écran » de la barre du Lecteur (et de la fiche,
+  `F` dans le Lecteur) ; le document occupe tout l'écran (feuille de 960 px au plus, A− / A+
+  actifs), le Bureau dessous est inerte. On revient par le bouton (« Revenir en fiche » en
+  disposition Arbre, « Quitter le plein écran » sinon), `Échap` ou B ; le focus revient au
+  bouton de départ. Disponible sur tous les formats.
 - Fenêtré minimum : 1024 × 640 (bascule en disposition tablette sous 1280).
 
 ### 3.2 Tablette (600–1279 px)
@@ -116,6 +132,8 @@ Points de rupture (largeur de la fenêtre, pas de l'appareil) :
   poignée de 24 px) pour le Lecteur et les onglets secondaires. Barre d'onglets en bas comme le
   téléphone.
 - Sélecteur de candidat : feuille modale centrée (480 px de large).
+- Paysage : mêmes trois dispositions qu'au desktop. Portrait (et téléphone) : pas de sélecteur
+  (un panneau à la fois) ; le plein écran du document reste disponible.
 
 ### 3.3 Téléphone (360 px)
 
@@ -205,6 +223,9 @@ Aucun geste à plusieurs doigts n'est indispensable (le pincement a toujours des
 | `F1` ou `?` | Aide (« Où chercher ? », indices de la case) |
 | `Alt+←` / `Alt+→` | Historique de navigation |
 | `Ctrl+[` / `Ctrl+]` | Rétrécir / élargir le volet latéral |
+| `Alt+1` / `Alt+2` / `Alt+3` | Disposition Enquête / Lecture / Arbre (desktop, tablette paysage) |
+| `Alt+=` / `Alt+-` | Lecteur : texte plus grand / plus petit (A+ / A−) |
+| `F` | Lecteur : plein écran du document (`Échap` pour revenir) |
 | `F11` | Plein écran (desktop) |
 | `Ctrl+S` | Sauvegarde manuelle (confirmation visuelle ; la sauvegarde auto existe déjà) |
 
@@ -237,6 +258,9 @@ surlignage : `Maj+flèches` en mode Transcription.
   → « Déposer » (A) sur un champ ; B annule.
 - Libellés d'aide en bas d'écran mis à jour selon le contexte et le périphérique actif (détection
   automatique au dernier périphérique utilisé).
+- Dispositions, A− / A+, plein écran, poignée du volet et de la fiche : boutons de l'en-tête et
+  des barres atteints à la croix, activés par A (sur la poignée du volet, A bascule standard ↔
+  large) ; B quitte le plein écran. Pas de bouton dédié aux dispositions dans le schéma.
 
 ### 4.5 Parité
 

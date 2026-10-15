@@ -1,7 +1,9 @@
 import type {
   AchievementId,
   Action,
+  CardPosition,
   CompiledCase,
+  DeskLayout,
   EndingId,
   GameEvent,
   GroupId,
@@ -44,7 +46,7 @@ import type {
   Split,
 } from './types';
 export type { RevealRecord, Split } from './types';
-import { clampSideWidth } from './reading';
+import { clampCardPosition, clampSideWidth } from './reading';
 import { viewport } from './viewport.svelte';
 
 /** Délai sans modification avant l'évaluation automatique d'un groupe (GAME_DESIGN §7.4 R1). */
@@ -150,6 +152,46 @@ export class GameStoreImpl implements GameStore {
   /** Fin du glissement : la largeur provisoire est enregistrée. */
   commitSideWidth(): void {
     if (this.#sideDrag !== null) this.sideWidth = this.#sideDrag;
+  }
+
+  // ── Dispositions du Bureau (Enquête / Lecture / Arbre) et plein écran du document ──
+
+  /** Document en plein écran (état d'interface, non mémorisé). */
+  readerFull = $state(false);
+  /** Position de la fiche flottante pendant un glissement (null : celle des réglages). */
+  #cardDrag = $state<CardPosition | null>(null);
+
+  /** Disposition effective : une seule zone au téléphone et en tablette portrait. */
+  get layout(): DeskLayout {
+    return viewport.single ? 'investigate' : this.#host.settings.layout;
+  }
+  /** Change de disposition (sélecteur, Alt+1/2/3) ; Lecture montre le Lecteur. */
+  setLayout(layout: DeskLayout): void {
+    if (viewport.single) return;
+    if (layout !== this.#host.settings.layout) this.#host.updateSettings({ layout });
+    if (layout === 'read') {
+      this.ui.side = 'reader';
+      this.sideCollapsed = false;
+    }
+  }
+
+  get cardPosition(): CardPosition {
+    return this.#cardDrag ?? this.#host.settings.cardPosition;
+  }
+  set cardPosition(p: CardPosition) {
+    this.#cardDrag = null;
+    this.#host.updateSettings({ cardPosition: clampCardPosition(p) });
+  }
+  previewCardPosition(p: CardPosition): void {
+    this.#cardDrag = clampCardPosition(p);
+  }
+  commitCardPosition(): void {
+    if (this.#cardDrag !== null) this.cardPosition = this.#cardDrag;
+  }
+
+  /** Plein écran du document (fiche, Lecteur, téléphone) : on le quitte par Échap ou B. */
+  setReaderFull(on: boolean): void {
+    this.readerFull = on;
   }
   /** Le joueur a passé le tutoriel (« J'ai déjà joué »). */
   skipTutorial = $state(false);
@@ -728,6 +770,7 @@ export class GameStoreImpl implements GameStore {
         this.showPanel('notebook');
         return;
       case 'slot':
+        this.#leaveReadLayout();
         this.ui.selectedSlot = target.id;
         this.ui.picking = target.field ? { slot: target.id, field: target.field } : null;
         this.showPanel('tree');
@@ -737,13 +780,24 @@ export class GameStoreImpl implements GameStore {
         this.showPanel('map');
         return;
       case 'panel':
+        if (target.id === 'tree') this.#leaveReadLayout();
         this.showPanel(target.id);
         return;
     }
   }
 
+  /** « Vers l'arbre » depuis la disposition Lecture : retour à Enquête (arbre à sa largeur). */
+  #leaveReadLayout(): void {
+    this.readerFull = false;
+    if (this.layout === 'read') this.setLayout('investigate');
+  }
+
   /** Retour (ECRANS §2) : modal, puis panneau secondaire, puis pause. */
   back(): void {
+    if (this.readerFull && this.modals.length === 0) {
+      this.setReaderFull(false);
+      return;
+    }
     if (this.ui.picking) {
       this.ui.picking = null;
       return;

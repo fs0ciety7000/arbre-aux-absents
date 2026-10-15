@@ -91,6 +91,9 @@ export interface GameStore {
   /** Abonnement aux événements du moteur (retourne la désinscription). */
   onEvents(listener: (events: GameEvent[]) => void): () => void;
   updateSettings(patch: Partial<Settings>): void;
+  /** Document en plein écran (couche posée par le Bureau). */
+  readonly readerFull: boolean;
+  setReaderFull(on: boolean): void;
   /** Ouvre un panneau (principal sur téléphone, latéral si pertinent sur grand écran). */
   showPanel(id: PanelId): void;
   /** Dernier mot-clé ciblé par `navigate` (le Carnet le met en avant). */

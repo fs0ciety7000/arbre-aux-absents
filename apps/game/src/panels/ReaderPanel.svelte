@@ -311,6 +311,11 @@
     status = pm.reader.textSizeValue(readScalePercent(next));
   }
 
+  // ── Plein écran du document (DESIGN §13.4) : la couche est posée par le Bureau ──
+  function toggleFull() {
+    game.setReaderFull(!game.readerFull);
+  }
+
   // ── Zoom, loupe ─────────────────────────────────────────────────
   const setZoom = (z: number) => (zoom = Math.round(Math.min(4, Math.max(1, z)) * 4) / 4);
 
@@ -357,6 +362,7 @@
       else if (cmd === 'reader.textUp') stepText(1);
       else if (cmd === 'reader.textDown') stepText(-1);
       else if (!ownsCommands(readerEl, 'reader', game.ui.main)) return false;
+      else if (cmd === 'reader.fullscreen') toggleFull();
       else if (cmd === 'pin') togglePin();
       else if (cmd === 'note') openNote();
       else if (cmd === 'highlight') {
@@ -568,6 +574,15 @@
             >
           </div>
           <div class="seg end">
+            <IconButton
+              icon="external"
+              label={game.readerFull ? pm.reader.fullscreenExit : pm.reader.fullscreen}
+              pressed={game.readerFull}
+              aria-keyshortcuts="F"
+              data-reader-full
+              tooltipPlacement="start"
+              onclick={toggleFull}
+            />
             <IconButton
               icon="pin"
               label={pinned ? pm.common.unpin : pm.common.pin}
@@ -1018,7 +1033,9 @@
   /* Corps de lecture des pièces : un cran au-dessus du texte courant (--read-boost), puis la
      taille choisie par le joueur (A− / A+, --read-scale). Le zoom agrandit la feuille entière. */
   .sheet {
-    --read-size: calc(var(--step-read) * var(--read-boost) * var(--read-scale, 1));
+    --read-size: calc(
+      var(--step-read) * var(--read-boost) * var(--read-scale, 1) * var(--read-layout, 1)
+    );
   }
   .sheet .reading {
     max-inline-size: none;

@@ -351,7 +351,8 @@ courant par défaut (`--read-boost: 1.1`, 19 → 21 px) puis la taille choisie p
 (`--read-scale`, réglage `readScale`, A− / A+ : 90 · 100 · 115 · 130 · 150 %). L'écriture manuscrite
 garde `× --hand-boost`. `--read-scale` est posé sur le Lecteur (style en ligne), pas sur `<html>` :
 il ne touche ni l'interface ni `--text-scale`, et reste distinct du zoom ×1–×4 (qui agrandit la
-feuille entière).
+feuille entière). En disposition Lecture, `--read-layout: var(--read-layout-boost)` (1,1) ajoute
+encore un cran (posé par le Bureau, multiplié dans le même calcul).
 
 Interlignes `--leading-tight|snug|ui|read|display` ; approches `--tracking-tight|display|caps|label|stamp|read`,
 chacune `+ var(--tracking-extra)` ; graisses `--weight-regular|medium|semibold|bold|display|display-black`.
@@ -447,7 +448,9 @@ de manette, lettres des sticks G/D → L/R), `LanguageSwitch`, `TicketStatus`. I
 - **Traits** `--border` 1, `--border-strong` 2. **Cibles** `--hit` 44, `--hit-l` 48, `--hit-row` 56.
 - **Bureau** : `--header-h` 48/56, `--rail-w` 64/56, `--tabbar-h` 64, volet `--side-min|default|max|step`
   360/440/640/40, `--mini-reader-h` 72, `--drawer-handle` 24, `--popover-w` 320 × `--popover-max-h` 480,
-  `--sheet-w` 480, case d'arbre `--slot-w` 144 × `--slot-h` 168, **`--tab-h` 34 (onglet de chemise)**.
+  `--sheet-w` 480, case d'arbre `--slot-w` 144 × `--slot-h` 168, **`--tab-h` 34 (onglet de chemise)**,
+  fiche flottante `--float-card-w` 500 × `--float-card-h` 640 (au plus), feuille plein écran
+  `--full-sheet-w` 960 (v2.5).
 - **Site** : `--site-header-h` 64, `--container` 76 rem, `--container-narrow` 44 rem.
 
 ### 5.2 Points de rupture
@@ -490,6 +493,39 @@ au relâcher), double-clic ou Entrée / Espace / A (manette) = bascule `--side-d
 (`Settings.sideWidth`) et réglable aussi dans Options › Affichage (Standard, Large, ou
 « Personnalisée (N px) »). `forced-colors` : encoche et trait en `CanvasText`. Téléphone et tablette
 portrait : pas de volet, donc pas de poignée.
+
+**Dispositions** (v2.5, desktop et tablette paysage ; `Settings.layout`) : sélecteur dans l'en-tête,
+avant les actions — trois `IconButton` à bascule (`aria-pressed`) dans une réglette surpiquée
+(`1.5px dashed var(--stitch)`, `--radius-m`), `role="group"` « Disposition du bureau » ; icônes
+`layers` (Enquête), `reader` (Lecture), `tree` (Arbre) ; nom accessible et infobulle
+« Enquête : arbre et documents côte à côte »… ; `aria-keyshortcuts` `Alt+1/2/3` ; changement
+annoncé (« Disposition : Lecture »). Absent en une seule zone (téléphone, tablette portrait).
+
+- **Enquête** : la grille ci-dessus.
+- **Lecture** : `grid-template-columns: minmax(0, 2fr) var(--space-3) minmax(0, 3fr)` (volet ~60 %),
+  colonne de poignée vide (la disposition fixe la largeur), feuille centrée (`margin-inline: auto`,
+  `--measure`), `--read-layout` (texte +1 cran).
+- **Arbre** : une colonne ; le volet devient la **fiche flottante** (`FloatingCard`, `shell/`) :
+  `aside` « Fiche des documents » `--surface-1`, `--radius-l`, `--shadow-3`, surpiqûre `--stitch`
+  comme le volet, `--float-card-w` × `--float-card-h` bornés par le Bureau, entrée `sheetPull`.
+  Tête `--hit-row` : poignée-bouton (icône `grip`, intitulé Oswald capitales `--step--1`
+  `--text-muted`, curseur `grab`/`grabbing`, survol `--accent`, focus `--focus` 3 px intérieur),
+  « Plein écran » et « Replier / Déplier la fiche » (`chevron-up/down`). Position posée en CSS :
+  `left: calc((100% - largeur) * x)`, `top: calc((100% - hauteur) * y)` dans une piste aux marges
+  du Bureau, avec `x`, `y` ∈ [0, 1] (`Settings.cardPosition`) : la fiche ne sort jamais de l'écran,
+  même après un redimensionnement. Glisser (souris, doigt : `touch-action: none`) ou flèches sur
+  la poignée (24 px, `Maj` 96 px). Repliée : la tête seule, à la même place. `forced-colors` :
+  bord `CanvasText`.
+
+**Plein écran du document** (v2.5, tous formats) : couche `position: fixed` `--z-drawer` sur
+`.desk-surface`, Bureau dessous `inert` ; barre avec `Button` « Quitter le plein écran » (ou
+« Revenir en fiche » en disposition Arbre, icône `back`), puis la feuille du Lecteur sur
+`--surface-1` (`--radius-l`, `--shadow-2`) centrée, `--full-sheet-w` au plus (barre d'outils non
+compacte au desktop). Un seul Lecteur est monté : sa place sur le Bureau est tenue par un renvoi
+(« Le document est affiché en plein écran »). Focus posé sur la couche à l'entrée (annonce
+« Échap pour revenir »), rendu au bouton de départ à la sortie (`Échap`, B, bouton). Icône du
+bouton : `external` faute d'icône « plein écran » dédiée (**demande au design-lead** : une icône
+`expand` encrée, distincte de `fit`).
 
 **Tablette 600–1279 px** — paysage : rail 56 px + zone principale 55 % + volet 45 % ; portrait :
 zone principale plein écran + **tiroir bas** (`Panel` dans une feuille à deux crans 40 % / 90 %,
@@ -1565,6 +1601,9 @@ Boutons désactivés au cran extrême ; chaque cran est annoncé dans le `role="
 pris par le zoom du navigateur. Réglage mémorisé (`Settings.readScale`), aussi dans Options ›
 Affichage. Présent sur tous les formats (téléphone et tablette portrait : c'est le seul réglage de
 confort de lecture, le Lecteur y est déjà plein écran).
+
+**Plein écran** (v2.5) : `IconButton` `external` en tête du groupe de droite (avant l'épingle),
+`aria-pressed` et libellé « Plein écran » / « Quitter le plein écran », touche `F` ; voir §5.3.
 
 ### 13.5 Catalogue (LX-2)
 

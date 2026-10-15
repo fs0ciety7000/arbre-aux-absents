@@ -150,6 +150,8 @@ export const frDesk = {
       textLarger: 'Texte plus grand',
       textSizeValue: (pct: number) => `Texte à ${pct} %`,
       textSizePct: (pct: number) => `${pct} %`,
+      fullscreen: 'Plein écran',
+      fullscreenExit: 'Quitter le plein écran',
       loupe: 'Loupe (maintenir Maj)',
       highlight: 'Surligner la sélection',
       highlightColor: 'Couleur du surlignage',

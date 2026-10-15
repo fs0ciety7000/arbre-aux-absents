@@ -150,6 +150,8 @@ export const enDesk = {
       textLarger: 'Larger text',
       textSizeValue: (pct: number) => `Text at ${pct}%`,
       textSizePct: (pct: number) => `${pct}%`,
+      fullscreen: 'Full screen',
+      fullscreenExit: 'Exit full screen',
       loupe: 'Magnifier (hold Shift)',
       highlight: 'Highlight the selection',
       highlightColor: 'Highlight colour',

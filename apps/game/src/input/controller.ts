@@ -1,8 +1,10 @@
+import type { DeskLayout } from '@arbre/contract';
 import { pushToast } from '@arbre/ui';
 import { tick } from 'svelte';
 import type { AppController } from '../lib/game/app.svelte';
 import { announcer } from '../lib/game/announcer.svelte';
 import type { PanelId } from '../lib/game/types';
+import { viewport } from '../lib/game/viewport.svelte';
 import { messages } from '../messages.fr';
 import { relayCommand } from './commands';
 import { input } from './device.svelte';
@@ -87,6 +89,7 @@ export function runCommand(
 
   const panel = TAB_COMMANDS[cmd];
   if (panel) {
+    if (g.readerFull) g.setReaderFull(false);
     g.showPanel(panel);
     announcer.say(messages.panels[panel]);
     return true;
@@ -99,6 +102,15 @@ export function runCommand(
       return g.historyGo(-1);
     case 'history.forward':
       return g.historyGo(1);
+    case 'layout.investigate':
+    case 'layout.read':
+    case 'layout.tree': {
+      if (viewport.single) return false;
+      const layout = cmd.slice('layout.'.length) as DeskLayout;
+      g.setLayout(layout);
+      announcer.say(messages.desk.layoutChanged(messages.desk.layouts[layout]));
+      return true;
+    }
     case 'side.narrower':
       g.sideWidth = Math.max(SIDE_MIN, g.sideWidth - SIDE_STEP);
       return true;

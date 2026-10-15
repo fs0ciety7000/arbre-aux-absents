@@ -27,6 +27,11 @@
   import DeskModals from './modals/DeskModals.svelte';
   import { PANEL_ICONS } from './panel-icons';
   import { CandidatePicker, PANELS } from './panels';
+  import FloatingCard from './FloatingCard.svelte';
+  import ReaderAway from './ReaderAway.svelte';
+  import type { Component } from 'svelte';
+  import { tick } from 'svelte';
+  import { announcer } from '../lib/game/announcer.svelte';
   import TutorialLayer from '../tutorial/TutorialLayer.svelte';
 
   /** Le Bureau (ECRANS §1.2, §3 ; DESIGN §5.3) : en-tête, zones et panneaux par format. */
@@ -46,6 +51,13 @@
   let menuOpen = $state(false);
 
   const single = $derived(viewport.single);
+  /** Disposition (Enquête / Lecture / Arbre) ; toujours Enquête en une seule zone. */
+  const layout = $derived(game.layout);
+
+  /** Un seul Lecteur monté : en plein écran, sa place sur le Bureau est tenue par un renvoi. */
+  function panelOf(id: PanelId): Component {
+    return id === 'reader' && game.readerFull ? ReaderAway : PANELS[id];
+  }
   // Un seul #contenu (lien d'évitement) : l'écran ouvert par-dessus le Bureau le porte alors.
   const contentId = $derived(app.overlay === null ? 'contenu' : undefined);
   const unread = $derived(
@@ -79,13 +91,14 @@
   });
   const drawerOpen = $derived(drawerMode && !MAIN_PANELS.includes(game.ui.main));
   /** Panneau de la chemise : en mode tiroir, la dernière chemise reste sous le tiroir. */
-  const MainPanel = $derived(PANELS[drawerOpen ? lastMain : game.ui.main]);
-  const DrawerPanel = $derived(PANELS[game.ui.main]);
+  const MainPanel = $derived(panelOf(drawerOpen ? lastMain : game.ui.main));
+  const DrawerPanel = $derived(panelOf(game.ui.main));
   const showMini = $derived(
     single &&
       !drawerOpen &&
       game.ui.openDocument !== null &&
       game.ui.main !== 'reader' &&
+      !game.readerFull &&
       !game.miniReaderHidden,
   );
 
@@ -206,6 +219,27 @@
     e.preventDefault();
   }
 
+  // ── Plein écran du document : focus posé dans la couche, rendu au bouton à la sortie ──
+  let fullLayer: HTMLElement | undefined = $state();
+  let wasFull = false;
+  $effect(() => {
+    const full = game.readerFull;
+    if (full === wasFull) return;
+    wasFull = full;
+    void tick().then(() => {
+      if (full) {
+        fullLayer?.focus();
+        announcer.say(m.fullscreenOn);
+      } else {
+        document
+          .querySelector<HTMLElement>('[data-reader-full]:not(:disabled), [data-card-full]')
+          ?.focus();
+      }
+    });
+  });
+  const ReaderFull = PANELS.reader;
+  const fullBack = $derived(layout === 'tree' ? m.fullscreenToCard : m.fullscreenExit);
+
   /** Cote du dossier à l'étiqueteuse (décor stable, tirée de l'empreinte de l'affaire). */
   const cote = $derived(
     `ORC 74-${(parseInt(game.content.contentHash.slice(0, 4), 16) % 900) + 100}`,
@@ -225,8 +259,11 @@
   class:single
   class:tablet={viewport.kind === 'tablet' && !single}
   class:collapsed={game.sideCollapsed}
+  class:layout-read={!single && layout === 'read'}
+  class:layout-tree={!single && layout === 'tree'}
   style:--side-w="{game.sideWidth}px"
-  inert={app.overlay !== null}
+  inert={app.overlay !== null || game.readerFull}
+  aria-hidden={game.readerFull ? 'true' : undefined}
 >
   <LampLight x={64} y={-6} dust={12} />
   <DeskHeader {game} onmenu={() => (menuOpen = true)} sideToggle={!single} />
@@ -361,54 +398,84 @@
           {/key}
         </div>
       </Folder>
-      {#if !game.sideCollapsed}
+      {#snippet sideTabs()}
+        <Tabs
+          items={sideItems}
+          value={game.ui.side ?? 'reader'}
+          label={m.sideLabel}
+          variant="line"
+          idPrefix="desk-side"
+          onchange={(id) => game.showPanel(id as PanelId)}
+        >
+          {#snippet children(id)}
+            {@const SidePanel = panelOf(id as PanelId)}
+            {#key id}
+              <div class="panel-in"><SidePanel /></div>
+            {/key}
+          {/snippet}
+        </Tabs>
+      {/snippet}
+      {#if layout === 'tree'}
+        <FloatingCard {game} title={messages.panels[game.ui.side ?? 'reader']}>
+          {@render sideTabs()}
+        </FloatingCard>
+      {:else if !game.sideCollapsed}
         <!-- Séparateur focalisable (motif ARIA « window splitter ») : interactif par conception. -->
         <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
-        <div
-          class="handle"
-          class:dragging
-          role="separator"
-          aria-orientation="vertical"
-          aria-label={m.sideResize}
-          aria-describedby="side-handle-hint"
-          aria-valuemin={SIDE_MIN}
-          aria-valuemax={SIDE_MAX}
-          aria-valuenow={game.sideWidth}
-          title={m.sideResizeHint}
-          tabindex="0"
-          data-testid="side-handle"
-          onpointerdown={onHandleDown}
-          onpointermove={onHandleMove}
-          onpointerup={onHandleUp}
-          onpointercancel={onHandleUp}
-          ondblclick={toggleSide}
-          onclick={onHandleClick}
-          onkeydown={onHandleKey}
-        >
-          <span class="grip" aria-hidden="true"><span></span><span></span><span></span></span>
-        </div>
-        <span id="side-handle-hint" class="visually-hidden">{m.sideResizeHint}</span>
-        <aside class="side" aria-label={m.sideLabel} in:sheetPull|global={{ delay: 120 }}>
-          <Tabs
-            items={sideItems}
-            value={game.ui.side ?? 'reader'}
-            label={m.sideLabel}
-            variant="line"
-            idPrefix="desk-side"
-            onchange={(id) => game.showPanel(id as PanelId)}
+        {#if layout === 'read'}
+          <!-- Lecture : la disposition fixe la largeur ; la colonne de la poignée reste vide. -->
+          <div class="handle-gap" aria-hidden="true"></div>
+        {:else}
+          <div
+            class="handle"
+            class:dragging
+            role="separator"
+            aria-orientation="vertical"
+            aria-label={m.sideResize}
+            aria-describedby="side-handle-hint"
+            aria-valuemin={SIDE_MIN}
+            aria-valuemax={SIDE_MAX}
+            aria-valuenow={game.sideWidth}
+            title={m.sideResizeHint}
+            tabindex="0"
+            data-testid="side-handle"
+            onpointerdown={onHandleDown}
+            onpointermove={onHandleMove}
+            onpointerup={onHandleUp}
+            onpointercancel={onHandleUp}
+            ondblclick={toggleSide}
+            onclick={onHandleClick}
+            onkeydown={onHandleKey}
           >
-            {#snippet children(id)}
-              {@const SidePanel = PANELS[id as PanelId]}
-              {#key id}
-                <div class="panel-in"><SidePanel /></div>
-              {/key}
-            {/snippet}
-          </Tabs>
+            <span class="grip" aria-hidden="true"><span></span><span></span><span></span></span>
+          </div>
+          <span id="side-handle-hint" class="visually-hidden">{m.sideResizeHint}</span>
+        {/if}
+        <aside class="side" aria-label={m.sideLabel} in:sheetPull|global={{ delay: 120 }}>
+          {@render sideTabs()}
         </aside>
       {/if}
     </main>
   {/if}
 </div>
+
+{#if game.readerFull}
+  <!-- Plein écran du document (fiche, Lecteur ou téléphone) : Échap / B ou le bouton reviennent. -->
+  <section
+    class="reader-full desk-surface"
+    aria-label={m.fullscreenLabel}
+    tabindex="-1"
+    bind:this={fullLayer}
+    data-testid="reader-full"
+  >
+    <div class="full-bar">
+      <Button iconName="back" onclick={() => game.setReaderFull(false)}>{fullBack}</Button>
+    </div>
+    <div class="full-sheet panel-host">
+      <ReaderFull />
+    </div>
+  </section>
+{/if}
 
 {#if game.ui.picking}
   <CandidatePicker />
@@ -473,6 +540,24 @@
       min(clamp(var(--side-min), var(--side-w), var(--side-max)), 60%);
     gap: var(--space-1);
     padding: var(--space-2) var(--space-3) var(--space-3);
+  }
+  /* Disposition Lecture : le volet (Lecteur) prend ~60 % ; la poignée ne règle plus rien. */
+  .layout-read .zones {
+    grid-template-columns: minmax(0, 2fr) var(--space-3) minmax(0, 3fr);
+  }
+  .tablet.layout-read .zones {
+    grid-template-columns: minmax(0, 2fr) var(--space-2) minmax(0, 3fr);
+  }
+  /* La feuille centrée, colonne de lecture (~70 caractères), texte un cran plus grand. */
+  .layout-read {
+    --read-layout: var(--read-layout-boost);
+  }
+  .layout-read .side :global(.sheet-wrap) {
+    margin-inline: auto;
+  }
+  /* Disposition Arbre : l'arbre occupe tout le Bureau, le volet devient la fiche flottante. */
+  .layout-tree .zones {
+    grid-template-columns: minmax(0, 1fr);
   }
   .collapsed .zones,
   .tablet.collapsed .zones {
@@ -643,6 +728,39 @@
   .handle:focus-visible {
     outline: 3px solid var(--focus);
     outline-offset: 2px;
+  }
+
+  /* ── Plein écran du document ── */
+  .reader-full {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-drawer);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: max(var(--space-2), env(safe-area-inset-top))
+      max(var(--space-3), env(safe-area-inset-right))
+      max(var(--space-3), env(safe-area-inset-bottom))
+      max(var(--space-3), env(safe-area-inset-left));
+    outline: none;
+  }
+  .full-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    inline-size: min(100%, var(--full-sheet-w));
+    margin-inline: auto;
+  }
+  .full-sheet {
+    inline-size: min(100%, var(--full-sheet-w));
+    margin-inline: auto;
+    background: var(--surface-1);
+    border-radius: var(--radius-l);
+    box-shadow: var(--shadow-2);
+  }
+  .full-sheet > :global(*) {
+    flex: 1;
+    min-height: 0;
   }
 
   /* ── Le volet : un sous-main surpiqué où l'on pose feuilles et fiches ── */

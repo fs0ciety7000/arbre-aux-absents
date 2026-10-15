@@ -29,6 +29,10 @@ export const COMMANDS = [
   'reader.flip',
   'reader.textUp',
   'reader.textDown',
+  'reader.fullscreen',
+  'layout.investigate',
+  'layout.read',
+  'layout.tree',
   'page.prev',
   'page.next',
   'zoom.in',
@@ -62,6 +66,9 @@ export const SHELL_COMMANDS: ReadonlySet<CommandId> = new Set([
   'side.wider',
   'fullscreen',
   'save',
+  'layout.investigate',
+  'layout.read',
+  'layout.tree',
 ]);
 
 export const DEFAULT_KEYMAP: Readonly<Record<CommandId, readonly string[]>> = {
@@ -87,6 +94,11 @@ export const DEFAULT_KEYMAP: Readonly<Record<CommandId, readonly string[]>> = {
   // Alt : Ctrl + / − est le zoom du navigateur. `code` en plus pour macOS (Alt change le caractère).
   'reader.textUp': ['Alt+=', 'Alt++', 'Alt+Equal', 'Alt+NumpadAdd'],
   'reader.textDown': ['Alt+-', 'Alt+Minus', 'Alt+NumpadSubtract'],
+  'reader.fullscreen': ['f'],
+  // Par position (`Digit1`…) aussi : en AZERTY, Alt+1 donne « & ».
+  'layout.investigate': ['Alt+1', 'Alt+Digit1'],
+  'layout.read': ['Alt+2', 'Alt+Digit2'],
+  'layout.tree': ['Alt+3', 'Alt+Digit3'],
   'page.prev': ['PageUp'],
   'page.next': ['PageDown'],
   'zoom.in': ['+', '='],

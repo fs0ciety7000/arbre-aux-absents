@@ -248,6 +248,8 @@
   /* Corps des pièces dans le Lecteur : un cran au-dessus du texte courant (×1,1), avant la
      taille choisie par le joueur (A− / A+, Settings.readScale → --read-scale). */
   --read-boost: 1.1;
+  /* Disposition Lecture : le texte des pièces gagne encore un cran (--read-layout). */
+  --read-layout-boost: 1.1;
 
   --leading-tight: 1.1;
   --leading-snug: 1.3;
@@ -314,6 +316,11 @@
   --side-default: 440px;
   --side-max: 640px;
   --side-step: 40px;
+  /* Fiche flottante (disposition Arbre) : largeur et hauteur au plus (bornées par le Bureau) */
+  --float-card-w: 500px;
+  --float-card-h: 640px;
+  /* Plein écran du document : largeur de la feuille au plus (barre d'outils non compacte) */
+  --full-sheet-w: 960px;
   --mini-reader-h: 72px;
   --drawer-handle: 24px;
   --popover-w: 320px;
