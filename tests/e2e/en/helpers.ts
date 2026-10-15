@@ -45,7 +45,7 @@ export const test = base.extend<{ consoleErrors: string[] }>({
       });
       await use(errors);
       // Toute violation fait échouer le test, dont « script-src eval » (sonde `allowsEval` de
-      // zod 4, coupée par `z.config({ jitless: true })` dans apps/game/src/zod-config.ts).
+      // zod 4, coupée par `jitless` posé dès le point d’entrée : apps/game/src/zod-config.ts).
       const csp = page.isClosed() ? [] : await cspViolations(page).catch(() => []);
       expect(csp, 'violations CSP').toEqual([]);
       expect(errors, 'erreurs JavaScript pendant le test').toEqual([]);
