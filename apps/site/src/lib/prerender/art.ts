@@ -5,6 +5,7 @@
  * Les fichiers absents (cartographe pas encore livré) donnent `null` : les pages ont un repli.
  */
 import { resolve } from '$app/paths';
+import type { Locale } from '@arbre/contract';
 import { parseSvg, type SvgNode } from '#lib/svg/parse';
 import { MAP_LAYERS } from '#lib/content/world';
 import { keyArtFiles } from '#lib/prerender/keyart';
@@ -17,6 +18,16 @@ import {
 } from '#lib/prerender/standalone';
 
 const mapFiles = import.meta.glob('../../../../../art/map/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+
+/**
+ * Surcharges de couche par langue (`art/map/locales/<loc>/<couche>.svg`, cartographe, lot T2) :
+ * en pratique la couche `labels` (cartouche, échelle, noms communs). Absentes : couche commune.
+ */
+const mapLocaleFiles = import.meta.glob('../../../../../art/map/locales/*/*.svg', {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -38,8 +49,11 @@ const PORTRAIT_IDS: Record<string, string> = Object.values(portraitIds)[0] ?? {}
 const base = (path: string) => path.slice(path.lastIndexOf('/') + 1).replace(/\.svg$/, '');
 
 /** Couches de la carte, une `<g data-map-layer>` chacune, dans l'ordre de dessin. */
-function mapLayers(): { viewBox: string; groups: SvgNode[] } | null {
+function mapLayers(lang: Locale): { viewBox: string; groups: SvgNode[] } | null {
   const byName = new Map(Object.entries(mapFiles).map(([p, src]) => [base(p), src]));
+  for (const [p, src] of Object.entries(mapLocaleFiles)) {
+    if (p.includes(`/locales/${lang}/`)) byName.set(base(p), src);
+  }
   const groups: SvgNode[] = [];
   let viewBox = '';
   for (const layer of MAP_LAYERS) {
@@ -60,18 +74,28 @@ interface MapParts {
   text: SvgNode[];
 }
 
-let mapCache: MapParts | null | undefined;
+const mapCache = new Map<Locale, MapParts | null>();
 
-function worldMapParts(): MapParts | null {
-  if (mapCache !== undefined) return mapCache;
-  const layers = mapLayers();
-  if (!layers) return (mapCache = null);
+/**
+ * Dessin et toponymes d'une langue. Le dessin (sans texte) est le même pour toutes : mêmes
+ * fichiers `/art/carte-velmarche-*` ; seuls les `<text>` inline suivent la langue.
+ */
+function worldMapParts(lang: Locale = 'fr'): MapParts | null {
+  if (mapCache.has(lang)) return mapCache.get(lang)!;
+  const parts = buildMapParts(lang);
+  mapCache.set(lang, parts);
+  return parts;
+}
+
+function buildMapParts(lang: Locale): MapParts | null {
+  const layers = mapLayers(lang);
+  if (!layers) return null;
   const { viewBox, groups } = layers;
   const [first, ...rest] = groups.map((g) => withoutText(g));
   const files = [standaloneSvg('carte-velmarche-fond', viewBox, [first!])];
   if (rest.length) files.push(standaloneSvg('carte-velmarche-detail', viewBox, rest));
   const text = groups.flatMap((g) => onlyText(g) ?? []);
-  return (mapCache = { viewBox, files, text });
+  return { viewBox, files, text };
 }
 
 /**
@@ -85,8 +109,11 @@ function worldMapParts(): MapParts | null {
  * gzip) est embarqué en URL `data:` ; la carte apparaît avec le HTML et le LCP mobile ne dépend
  * plus d'une requête concurrente des polices. Le détail, lourd, reste un fichier en cache.
  */
-export function worldMap({ inlineFond = false }: { inlineFond?: boolean } = {}): SvgNode | null {
-  const parts = worldMapParts();
+export function worldMap({
+  inlineFond = false,
+  lang = 'fr',
+}: { inlineFond?: boolean; lang?: Locale } = {}): SvgNode | null {
+  const parts = worldMapParts(lang);
   if (!parts) return null;
   const [x = 0, y = 0] = parts.viewBox.split(/[\s,]+/).map(Number);
   const images: SvgNode[] = parts.files.map((f, i) => ({
@@ -107,8 +134,10 @@ export function worldMap({ inlineFond = false }: { inlineFond?: boolean } = {}):
  * La carte en trois couches séparées, pour l'encrer couche par couche (InkReveal, DESIGN §13.6) :
  * fond et détail en images autonomes, toponymes en SVG inline (polices du site).
  */
-export function worldMapLayers(): { viewBox: string; images: ArtImage[]; text: SvgNode } | null {
-  const parts = worldMapParts();
+export function worldMapLayers(
+  lang: Locale = 'fr',
+): { viewBox: string; images: ArtImage[]; text: SvgNode } | null {
+  const parts = worldMapParts(lang);
   if (!parts) return null;
   return {
     viewBox: parts.viewBox,
@@ -167,7 +196,12 @@ export function portraitImage(person: string): ArtImage | null {
 /** Tous les SVG autonomes publiés sous `/art/` (entrées de la route prérendue). */
 export function artFiles(): StandaloneSvg[] {
   const out: StandaloneSvg[] = [...keyArtFiles()];
-  out.push(...(worldMapParts()?.files ?? []));
+  // Le dessin peut différer par langue si une surcharge porte autre chose que du texte.
+  for (const lang of ['fr', 'en'] as const) {
+    for (const f of worldMapParts(lang)?.files ?? []) {
+      if (!out.some((o) => o.file === f.file)) out.push(f);
+    }
+  }
   for (const { person } of PORTRAIT_PLATES) {
     const f = portraitFile(person);
     if (f && !out.some((o) => o.file === f.file)) out.push(f);

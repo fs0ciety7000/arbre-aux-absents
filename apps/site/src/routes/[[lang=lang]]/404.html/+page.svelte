@@ -3,15 +3,20 @@
   et retour à l'accueil. Servie par nginx pour toute adresse inconnue ; prérendue, sans JS.
 -->
 <script lang="ts">
-  import { resolve } from '$app/paths';
   import { Button, Stamp } from '@arbre/ui';
+  import { STRINGS } from '#lib/i18n/index';
+  import { currentLang, localHref } from '#lib/i18n/app';
+  import Rich from '#lib/i18n/Rich.svelte';
+  import { SITE_NAME } from '#lib/site';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
+  const lang = $derived(currentLang());
+  const t = $derived(STRINGS[lang]);
 </script>
 
 <svelte:head>
-  <title>Page introuvable · L’Arbre aux absents</title>
+  <title>{t.notFound.title} · {SITE_NAME}</title>
   <meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -26,7 +31,7 @@
       decoding="async"
     />
     <Stamp
-      text="Introuvable"
+      text={t.notFound.stamp}
       tone="danger"
       size="m"
       rotate={-12}
@@ -36,15 +41,15 @@
     />
   </div>
   <div class="copy">
-    <p class="kicker">Erreur 404</p>
-    <h1>Cette page est <em>absente des registres</em></h1>
-    <p class="lede">L’adresse demandée n’existe pas, ou plus. Le reste du dossier vous attend.</p>
+    <p class="kicker">{t.notFound.kicker}</p>
+    <h1><Rich text={t.notFound.heading} /></h1>
+    <p class="lede">{t.notFound.lede}</p>
     <div class="actions">
-      <Button variant="primary" size="l" href={resolve('/')} iconName="back"
-        >Retour à l’accueil</Button
+      <Button variant="primary" size="l" href={localHref(lang, '')} iconName="back"
+        >{t.common.backHome}</Button
       >
-      <Button variant="secondary" size="l" href={resolve('le-monde/')} iconName="map"
-        >Explorer la carte</Button
+      <Button variant="secondary" size="l" href={localHref(lang, 'le-monde/')} iconName="map"
+        >{t.common.exploreMap}</Button
       >
     </div>
   </div>
@@ -78,7 +83,7 @@
     letter-spacing: var(--tracking-display);
     text-wrap: balance;
   }
-  h1 em {
+  h1 :global(em) {
     font-style: italic;
     font-weight: var(--weight-display);
     color: var(--brand);

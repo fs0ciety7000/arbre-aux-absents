@@ -3,10 +3,18 @@
   la machine à écrire, signature CARDOR Media et ses divisions en monochrome, liens secondaires.
 -->
 <script lang="ts">
-  import { resolve } from '$app/paths';
   import { Icon, Ornament } from '@arbre/ui';
-  import { HOUSE_LOGOS } from '#lib/art/brand';
+  import { houseLogos } from '#lib/art/brand';
+  import { resolve } from '$app/paths';
+  import { localPath } from '#lib/i18n/app';
+  import type { ChromeStrings } from '#lib/i18n/index';
+  import Rich from '#lib/i18n/Rich.svelte';
   import BrandLogo from './BrandLogo.svelte';
+
+  /** Textes de l'habillage (load du layout). */
+  let { t }: { t: ChromeStrings } = $props();
+  const lang = $derived(t.lang);
+  const links = ['le-monde/', 'artbook/', 'presse/', 'charte/', 'credits/'] as const;
 </script>
 
 <footer class="site-footer">
@@ -14,27 +22,22 @@
   <div class="inner">
     <div class="sign">
       <p class="studios"><Icon name="fern" size="1.1rem" /> CM Interactive · CM Creative Lab</p>
-      <p class="type">Velmarche, 1974 — un monde imaginaire</p>
+      <p class="type">{t.footer.tagline}</p>
     </div>
-    <ul class="logos" aria-label="Une production CARDOR Media">
-      {#each HOUSE_LOGOS as logo (logo.id)}
+    <ul class="logos" aria-label={t.footer.logos}>
+      {#each houseLogos(t.brand) as logo (logo.id)}
         <li>
           <BrandLogo {logo} />
           <span class="role">{logo.role}</span>
         </li>
       {/each}
     </ul>
-    <nav class="links" aria-label="Pied de page">
-      <a href={resolve('le-monde/')}>Le monde</a>
-      <a href={resolve('artbook/')}>Artbook</a>
-      <a href={resolve('presse/')}>Presse</a>
-      <a href={resolve('charte/')}>Charte graphique</a>
-      <a href={resolve('credits/')}>Crédits</a>
+    <nav class="links" aria-label={t.footer.nav}>
+      {#each links as link (link)}
+        <a href={resolve(localPath(lang, link))}>{t.footer.links[link]}</a>
+      {/each}
     </nav>
-    <p class="legal">
-      © 2026 CARDOR Media. « L’Arbre aux absents » est un jeu de CM Interactive, écrit et illustré
-      par CM Creative Lab. Monde, lieux et personnages sont imaginaires.
-    </p>
+    <p class="legal"><Rich text={t.footer.legal} /></p>
   </div>
 </footer>
 

@@ -5,84 +5,60 @@
 -->
 <script lang="ts">
   import { DymoLabel, PaperSheet, Stamp } from '@arbre/ui';
-  import { HOUSE_LOGOS } from '#lib/art/brand';
+  import { houseLogos } from '#lib/art/brand';
   import BrandLogo from '#lib/components/BrandLogo.svelte';
   import Seo from '#lib/components/Seo.svelte';
+  import { STRINGS } from '#lib/i18n/index';
+  import { currentLang } from '#lib/i18n/app';
+  import Rich from '#lib/i18n/Rich.svelte';
   import ArtSvg from '#lib/svg/ArtSvg.svelte';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
+  const t = $derived(STRINGS[currentLang()]);
+  const c = $derived(t.credits);
+  const logos = $derived(houseLogos(t.brand));
 
-  const divisions: Record<string, string[]> = {
-    'cardor-monogram': ['Édition', 'Production'],
-    interactive: [
-      'Développement du jeu',
-      'Game design et level design',
-      'Interface et système de design',
-      'Site vitrine',
-    ],
-    creative: [
-      'Scénario et monde de la Velmarche',
-      'Documents d’archives',
-      'Portraits et illustrations',
-      'Carte gravée et aquarellée',
-    ],
-  };
-
-  /** Chaque police est montrée dans son propre dessin (familles des tokens). */
-  const fonts: { name: string; role: string; family: string }[] = [
-    { name: 'Fraunces', role: 'Titrage', family: 'var(--font-display)' },
-    { name: 'Oswald', role: 'Étiquettes et onglets', family: 'var(--font-label)' },
-    { name: 'Literata', role: 'Lecture des documents', family: 'var(--font-read)' },
-    { name: 'Instrument Sans', role: 'Interface', family: 'var(--font-ui)' },
-    { name: 'Courier Prime', role: 'Machine à écrire', family: 'var(--font-type)' },
-    { name: 'Caveat', role: 'Écriture à la main', family: 'var(--font-hand)' },
-    {
-      name: 'Atkinson Hyperlegible Next',
-      role: 'Option de lisibilité',
-      family: 'var(--font-legible)',
-    },
-  ];
-  const tools = ['Svelte et SvelteKit', 'Vite', 'Tauri', 'TypeScript', 'zod', 'svgo'];
+  /** Chaque police est montrée dans son propre dessin (familles des tokens) ; rôle au catalogue. */
+  const FONTS = [
+    { name: 'Fraunces', family: 'var(--font-display)' },
+    { name: 'Oswald', family: 'var(--font-label)' },
+    { name: 'Literata', family: 'var(--font-read)' },
+    { name: 'Instrument Sans', family: 'var(--font-ui)' },
+    { name: 'Courier Prime', family: 'var(--font-type)' },
+    { name: 'Caveat', family: 'var(--font-hand)' },
+    { name: 'Atkinson Hyperlegible Next', family: 'var(--font-legible)' },
+  ] as const;
+  const fonts = $derived(FONTS.map((f) => ({ ...f, role: c.fonts.roles[f.name] })));
   const tilts = [-1, 0.8, -0.5];
 </script>
 
-<Seo
-  title="Crédits"
-  description="Crédits de L’Arbre aux absents : CARDOR Media, CM Interactive et CM Creative Lab, polices et outils libres."
-  path="/credits/"
-/>
+<Seo title={c.seoTitle} description={c.seoDescription} path="credits/" />
 
 <header class="container page-head">
-  <p class="kicker">Crédits</p>
-  <h1>Une production <em>CARDOR Media</em></h1>
-  <p class="lede">
-    <em>L’Arbre aux absents</em> est imaginé, écrit, dessiné et développé par les divisions de CARDOR
-    Media.
-  </p>
+  <p class="kicker">{c.kicker}</p>
+  <h1><Rich text={c.title} /></h1>
+  <p class="lede"><Rich text={c.lede} /></p>
 </header>
 
 <section class="container" aria-labelledby="maison-title">
-  <h2 id="maison-title" class="visually-hidden">La maison</h2>
+  <h2 id="maison-title" class="visually-hidden">{c.houseHeading}</h2>
   <div class="emblem-row" data-sr>
     {#if data.emblem?.node}
       <ArtSvg node={data.emblem.node} art={false} label="CARDOR Media" class="emblem logo-mono" />
     {/if}
-    <p>
-      CARDOR Media réunit des studios de création : jeux, écriture, illustration. Chaque division
-      signe ici sa part du travail.
-    </p>
+    <p>{c.house}</p>
   </div>
 
   <ul class="divisions">
-    {#each HOUSE_LOGOS as logo, i (logo.id)}
+    {#each logos as logo, i (logo.id)}
       <li data-sr style:--i={i} style:--reveal-tilt="{tilts[i]! * 4}deg">
         <PaperSheet tone={i === 1 ? 'new' : 'paper'} tilt={tilts[i]} fastener="pin" as="article">
           <div class="division">
             <BrandLogo {logo} />
             <h3>{logo.name}</h3>
             <ul class="roles">
-              {#each divisions[logo.id] ?? [] as role (role)}<li>{role}</li>{/each}
+              {#each c.divisions[logo.id] ?? [] as role (role)}<li>{role}</li>{/each}
             </ul>
           </div>
         </PaperSheet>
@@ -94,9 +70,9 @@
 <section class="band" aria-labelledby="polices-title">
   <div class="container">
     <div class="section-head" data-sr>
-      <p class="kicker">Polices</p>
-      <h2 id="polices-title" class="section-title">Sept dessins <em>de lettres</em></h2>
-      <p class="lede">Sous licence SIL Open Font License 1.1, merci à leurs auteurs.</p>
+      <p class="kicker">{c.fonts.kicker}</p>
+      <h2 id="polices-title" class="section-title"><Rich text={c.fonts.title} /></h2>
+      <p class="lede">{c.fonts.lede}</p>
     </div>
     <ul class="fonts">
       {#each fonts as f, i (f.name)}
@@ -112,12 +88,14 @@
 <section class="band tools-band" aria-labelledby="outils-title">
   <div class="container tools">
     <div class="section-head" data-sr>
-      <p class="kicker">Outils libres</p>
-      <h2 id="outils-title" class="section-title">Faits <em>avec</em></h2>
-      <p class="lede">Le jeu et ce site reposent sur des logiciels libres.</p>
+      <p class="kicker">{c.tools.kicker}</p>
+      <h2 id="outils-title" class="section-title"><Rich text={c.tools.title} /></h2>
+      <p class="lede">{c.tools.lede}</p>
     </div>
     <ul class="labels" data-sr style:--i="1">
-      {#each tools as t, i (t)}<li><DymoLabel text={t} tilt={i % 2 ? 1.2 : -1} /></li>{/each}
+      {#each c.tools.list as tool, i (tool)}<li>
+          <DymoLabel text={tool} tilt={i % 2 ? 1.2 : -1} />
+        </li>{/each}
     </ul>
   </div>
 </section>
@@ -126,13 +104,10 @@
   <PaperSheet tone="aged" tilt={-0.4} fastener="tape" as="div">
     <div class="notice-body">
       <div>
-        <h2 id="fiction-title">Avertissement</h2>
-        <p>
-          La Velmarche, ses villes, ses institutions, ses journaux et ses habitants sont
-          imaginaires. Toute ressemblance avec des personnes ou des lieux existants serait fortuite.
-        </p>
+        <h2 id="fiction-title">{c.notice.title}</h2>
+        <p>{c.notice.text}</p>
       </div>
-      <Stamp text="Fiction" tone="danger" size="s" rotate={-10} />
+      <Stamp text={c.notice.stamp} tone="danger" size="s" rotate={-10} />
     </div>
   </PaperSheet>
 </section>

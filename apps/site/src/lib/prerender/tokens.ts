@@ -69,100 +69,78 @@ export interface SwatchGroup {
   swatches: Swatch[];
 }
 
-function swatch(token: string, name: string, usage: string): Swatch {
+/** Textes de la palette dans une langue (`STRINGS[lang].palette`). */
+export interface PaletteTexts {
+  groups: { title: string; intro: string }[];
+  swatches: Record<string, [name: string, usage: string]>;
+}
+
+/** Familles de la charte v2 (DESIGN §3 et §10.3) : tokens, dans l'ordre d'affichage. */
+const GROUPS: string[][] = [
+  ['--canvas', '--surface-1', '--surface-2', '--line-strong', '--text', '--text-muted'],
+  [
+    '--accent',
+    '--accent-edge',
+    '--brand',
+    '--brand-fill',
+    '--fern',
+    '--fern-deep',
+    '--established',
+  ],
+  [
+    '--paper-new',
+    '--paper',
+    '--paper-aged',
+    '--paper-stain',
+    '--ink',
+    '--ink-muted',
+    '--ink-hand',
+    '--paper-accent',
+  ],
+  [
+    '--kraft',
+    '--kraft-shade',
+    '--manila',
+    '--card',
+    '--card-rule',
+    '--card-margin',
+    '--label-tape',
+    '--label-tape-red',
+  ],
+  [
+    '--wood',
+    '--wood-lit',
+    '--velvet',
+    '--dusk-rose',
+    '--dusk-lilac',
+    '--dusk-peach',
+    '--scrim-art',
+  ],
+  [
+    '--art-wash-safran',
+    '--art-wash-carmin',
+    '--art-wash-indigo',
+    '--art-wash-sienne',
+    '--art-wash-sauge',
+    '--art-wash-lilas',
+    '--art-wash-celadon',
+    '--art-wash-ardoise',
+    '--art-water',
+    '--art-water-deep',
+  ],
+];
+
+function swatch(token: string, texts: PaletteTexts): Swatch {
+  const [name, usage] = texts.swatches[token] ?? [token, ''];
   const value = tokenValue(token) ?? '';
   return { token, name, usage, value, hex: oklchToHex(value) };
 }
 
-/** Palette de la charte v2, par familles (DESIGN §3 et §10.3). */
-export function paletteGroups(): SwatchGroup[] {
-  return [
-    {
-      title: 'L’encre de nuit',
-      intro:
-        'Le bureau plongé dans le bleu de la nuit : un bleu d’encre profond qui se fond dans le mur de l’art clé, et le texte vélin.',
-      swatches: [
-        swatch('--canvas', 'Encre de nuit', 'Fond du bureau'),
-        swatch('--surface-1', 'Nuit', 'Panneaux'),
-        swatch('--surface-2', 'Nuit claire', 'Champs, survols'),
-        swatch('--line-strong', 'Ardoise', 'Bordures de contrôles'),
-        swatch('--text', 'Vélin', 'Texte'),
-        swatch('--text-muted', 'Vélin passé', 'Texte secondaire'),
-      ],
-    },
-    {
-      title: 'Safran, vermillon, céladon',
-      intro:
-        'Trois couleurs, trois rôles : le safran pour l’action (une seule par écran), le vermillon pour la marque, le céladon pour la fougère. Le violet de tampon marque ce qui est établi.',
-      swatches: [
-        swatch('--accent', 'Safran', 'Action, lien, focus'),
-        swatch('--accent-edge', 'Safran bruni', 'Tranche du bouton'),
-        swatch('--brand', 'Vermillon', 'Titres, surtitres, filets'),
-        swatch('--brand-fill', 'Vermillon foncé', 'Étiquette rouge'),
-        swatch('--fern', 'Céladon', 'Fougère, ornements'),
-        swatch('--fern-deep', 'Céladon profond', 'Fougère sur papier'),
-        swatch('--established', 'Encre de tampon', 'Case « Établi »'),
-      ],
-    },
-    {
-      title: 'Papiers et encres',
-      intro: 'Tout ce qui se lit est du papier sous la lumière, écrit à l’encre ferro-gallique.',
-      swatches: [
-        swatch('--paper-new', 'Papier neuf', 'Fiches, lettres'),
-        swatch('--paper', 'Papier', 'Documents, carte'),
-        swatch('--paper-aged', 'Papier vieilli', 'Coupures, annuaires'),
-        swatch('--paper-stain', 'Papier piqué', 'Creux, taches'),
-        swatch('--ink', 'Encre ferro-gallique', 'Texte sur papier'),
-        swatch('--ink-muted', 'Encre diluée', 'Texte secondaire'),
-        swatch('--ink-hand', 'Encre de plume', 'Manuscrit'),
-        swatch('--paper-accent', 'Laiton bruni', 'Action sur papier'),
-      ],
-    },
-    {
-      title: 'Les matières du bureau',
-      intro:
-        'Chemises de kraft, fiches bristol à réglure bleue et ligne de tête rouge, bandes d’étiqueteuse.',
-      swatches: [
-        swatch('--kraft', 'Kraft', 'Chemise'),
-        swatch('--kraft-shade', 'Kraft ombré', 'Dos de chemise'),
-        swatch('--manila', 'Manille', 'Étiquettes, intérieur'),
-        swatch('--card', 'Bristol', 'Fiche'),
-        swatch('--card-rule', 'Réglure', 'Lignes de la fiche'),
-        swatch('--card-margin', 'Ligne de tête', 'Filet rouge de la fiche'),
-        swatch('--label-tape', 'Bande bleue', 'Étiqueteuse'),
-        swatch('--label-tape-red', 'Bande rouge', 'Étiqueteuse, annonce'),
-      ],
-    },
-    {
-      title: 'Le décor de l’art clé',
-      intro:
-        'Le bois de la lampe, le velours du rideau, le crépuscule à la fenêtre. Décor seulement : jamais un texte.',
-      swatches: [
-        swatch('--wood', 'Bois ombré', 'Bureau, lampe'),
-        swatch('--wood-lit', 'Bois éclairé', 'Dans la flaque de lumière'),
-        swatch('--velvet', 'Velours', 'Rideau'),
-        swatch('--dusk-rose', 'Crépuscule rose', 'Ciel'),
-        swatch('--dusk-lilac', 'Crépuscule lilas', 'Ciel'),
-        swatch('--dusk-peach', 'Crépuscule pêche', 'Ciel'),
-        swatch('--scrim-art', 'Voile de zone calme', 'Sous un titre posé sur l’art'),
-      ],
-    },
-    {
-      title: 'Les lavis du coloriste',
-      intro:
-        'Huit pigments transparents posés sur la gravure, plus deux eaux. Ils ne portent jamais de texte seuls.',
-      swatches: [
-        swatch('--art-wash-safran', 'Safran', 'Places, édifices civiques'),
-        swatch('--art-wash-carmin', 'Carmin', 'Demeures, tuiles'),
-        swatch('--art-wash-indigo', 'Indigo', 'Administrations, uniformes'),
-        swatch('--art-wash-sienne', 'Sienne', 'Ateliers, terres'),
-        swatch('--art-wash-sauge', 'Sauge', 'Forêts, jardins'),
-        swatch('--art-wash-lilas', 'Lilas', 'Chapelles, deuil'),
-        swatch('--art-wash-celadon', 'Céladon', 'Marais, verre'),
-        swatch('--art-wash-ardoise', 'Ardoise', 'Toits, pierre'),
-        swatch('--art-water', 'Eau', 'Mer, lacs'),
-        swatch('--art-water-deep', 'Eau profonde', 'Chenaux'),
-      ],
-    },
-  ];
+/** Palette de la charte, par familles, avec les textes d'une langue. */
+export function paletteGroups(texts: PaletteTexts): SwatchGroup[] {
+  return GROUPS.map((tokens, i) => ({
+    title: texts.groups[i]?.title ?? '',
+    intro: texts.groups[i]?.intro ?? '',
+    swatches: tokens.map((token) => swatch(token, texts)),
+  }));
 }

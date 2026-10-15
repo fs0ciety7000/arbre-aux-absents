@@ -5,62 +5,79 @@
 -->
 <script lang="ts">
   import { page } from '$app/state';
+  import { Button, Icon, LanguageSwitch, Wordmark } from '@arbre/ui';
   import { resolve } from '$app/paths';
-  import { Button, Icon, Wordmark } from '@arbre/ui';
+  import { localHref, localPath } from '#lib/i18n/app';
+  import { SITE_LOCALES, parsePagePath, type SitePath } from '#lib/i18n/pages';
+  import type { ChromeStrings } from '#lib/i18n/index';
 
-  const links = [
-    { path: 'le-monde/', label: 'Le monde' },
-    { path: 'artbook/', label: 'Artbook' },
-    { path: 'charte/', label: 'Charte' },
-    { path: 'presse/', label: 'Presse' },
-    { path: 'credits/', label: 'Crédits' },
-  ] as const;
+  /** Textes de l'habillage (load du layout). */
+  let { t }: { t: ChromeStrings } = $props();
 
-  const current = (path: string) => page.url.pathname === `/${path}`;
-  const home = $derived(page.url.pathname === '/');
+  // Place réservée aux pages de signalement (lot B4) : ajouter leur slug à SITE_PAGES puis ici.
+  const links = ['le-monde/', 'artbook/', 'charte/', 'presse/', 'credits/'] as const;
+
+  const lang = $derived(t.lang);
+  /** Page localisée en cours ; ailleurs (404, /design/), le sélecteur mène à l'accueil. */
+  const here = $derived<SitePath>(
+    page.route.id?.startsWith('/[[lang=lang]]')
+      ? (parsePagePath(page.url.pathname)?.path ?? '')
+      : '',
+  );
+  const hrefs = $derived(Object.fromEntries(SITE_LOCALES.map((l) => [l, localHref(l, here)])));
+  const current = (path: SitePath) => page.url.pathname === localHref(lang, path);
+  const home = $derived(current(''));
 </script>
 
 <header class="site-header" class:over-art={home}>
   <div class="inner">
-    <a class="home" href={resolve('/')} aria-current={home ? 'page' : undefined}>
+    <a class="home" href={resolve(localPath(lang, ''))} aria-current={home ? 'page' : undefined}>
       <Wordmark size="header" as="span" />
-      <span class="visually-hidden">, accueil</span>
+      <span class="visually-hidden">{t.header.homeSuffix}</span>
     </a>
 
-    <nav class="wide" aria-label="Navigation principale">
-      <ul>
-        {#each links as link (link.path)}
-          <li>
-            <a href={resolve(link.path)} aria-current={current(link.path) ? 'page' : undefined}
-              >{link.label}</a
-            >
-          </li>
-        {/each}
-      </ul>
-      <Button variant="primary" href={resolve('le-monde/')} iconName="map">Explorer la carte</Button
-      >
-    </nav>
-
-    <details class="narrow">
-      <summary>
-        <Icon name="menu" size="1.25rem" />
-        <span>Menu</span>
-      </summary>
-      <nav class="sheet blotter" aria-label="Navigation principale">
+    <div class="tools">
+      <nav class="wide" aria-label={t.header.nav}>
         <ul>
-          {#each links as link (link.path)}
+          {#each links as link (link)}
             <li>
-              <a href={resolve(link.path)} aria-current={current(link.path) ? 'page' : undefined}
-                >{link.label}</a
+              <a
+                href={resolve(localPath(lang, link))}
+                aria-current={current(link) ? 'page' : undefined}>{t.header.links[link]}</a
               >
             </li>
           {/each}
         </ul>
-        <Button variant="primary" block href={resolve('le-monde/')} iconName="map"
-          >Explorer la carte</Button
+        <Button variant="primary" href={localHref(lang, 'le-monde/')} iconName="map"
+          >{t.header.exploreMap}</Button
         >
       </nav>
-    </details>
+
+      <details class="narrow">
+        <summary>
+          <Icon name="menu" size="1.25rem" />
+          <span class="menu-label">{t.header.menu}</span>
+        </summary>
+        <nav class="sheet blotter" aria-label={t.header.nav}>
+          <ul>
+            {#each links as link (link)}
+              <li>
+                <a
+                  href={resolve(localPath(lang, link))}
+                  aria-current={current(link) ? 'page' : undefined}>{t.header.links[link]}</a
+                >
+              </li>
+            {/each}
+          </ul>
+          <Button variant="primary" block href={localHref(lang, 'le-monde/')} iconName="map"
+            >{t.header.exploreMap}</Button
+          >
+        </nav>
+      </details>
+
+      <!-- Changer de langue, c'est changer de page : même slug sous /en/ (DESIGN §9.35, §14.6). -->
+      <LanguageSwitch value={lang} locales={SITE_LOCALES} {hrefs} short class="lang-switch" />
+    </div>
   </div>
 </header>
 
@@ -94,6 +111,11 @@
   }
   .home :global(.wordmark) {
     gap: 0;
+  }
+  .tools {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
   }
   .wide {
     display: flex;
@@ -180,6 +202,21 @@
     }
     .narrow {
       display: block;
+    }
+  }
+  /* Téléphone : titre, menu et langue tiennent sur une ligne ; « Menu » reste le nom du bouton. */
+  @media (max-width: 29.9375rem) {
+    .inner,
+    .tools {
+      gap: var(--space-2);
+    }
+    .menu-label {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
     }
   }
 </style>

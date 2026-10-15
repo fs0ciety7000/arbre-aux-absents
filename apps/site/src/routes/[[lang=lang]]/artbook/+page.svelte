@@ -9,59 +9,31 @@
   import PortraitPlate from '#lib/components/PortraitPlate.svelte';
   import Seo from '#lib/components/Seo.svelte';
   import VineDivider from '#lib/components/VineDivider.svelte';
+  import { STRINGS } from '#lib/i18n/index';
+  import { currentLang } from '#lib/i18n/app';
+  import Rich from '#lib/i18n/Rich.svelte';
   import SvgTree from '#lib/svg/SvgTree.svelte';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
+  const t = $derived(STRINGS[currentLang()]);
+  const a = $derived(t.artbook);
 
-  /** Détails de la carte : recadrages (unités du viewBox 1350 × 1000). */
-  const details = [
-    {
-      id: 'cartouche',
-      title: 'Le cartouche',
-      viewBox: '20 815 370 180',
-      text: 'Double filet, titre en capitales, mention du graveur : la carte se présente comme un document officiel de 1974.',
-    },
-    {
-      id: 'rose',
-      title: 'La rose des vents',
-      viewBox: '25 185 125 140',
-      text: 'Cercles à la plume, aiguille pleine au nord : le seul ornement de la marge ouest.',
-    },
-    {
-      id: 'tennok',
-      title: 'Le cap de Tennok',
-      viewBox: '150 15 270 170',
-      text: 'Un phare blanc à bande rouge sur la pointe nord-ouest, et les courbes de niveau de la mer Grise.',
-    },
-    {
-      id: 'aubrelieu',
-      title: 'Aubrelieu',
-      viewBox: '560 470 270 190',
-      text: 'La capitale en vignette : dôme, remparts et toits au lavis carmin, l’Orvelle en ruban céladon.',
-    },
-    {
-      id: 'moulinvert',
-      title: 'La Clairette et le lac d’Aulne',
-      viewBox: '730 600 280 280',
-      text: 'Cheminées, roues à aubes et un lac aux eaux claires : la vallée de la Clairette au pied des collines.',
-    },
-    {
-      id: 'corvins',
-      title: 'Les monts Corvins',
-      viewBox: '1000 640 350 360',
-      text: 'Le relief est gravé à la hachure, la frontière thalbère tracée en lavis carmin.',
-    },
-  ];
+  /** Détails de la carte : recadrages (unités du viewBox 1350 × 1000) ; textes au catalogue. */
+  const DETAILS = [
+    { id: 'cartouche', viewBox: '20 815 370 180' },
+    { id: 'rose', viewBox: '25 185 125 140' },
+    { id: 'tennok', viewBox: '150 15 270 170' },
+    { id: 'aubrelieu', viewBox: '560 470 270 190' },
+    { id: 'moulinvert', viewBox: '730 600 280 280' },
+    { id: 'corvins', viewBox: '1000 640 350 360' },
+  ] as const;
+  const details = $derived(DETAILS.map((d) => ({ ...d, ...a.map.details[d.id] })));
 
   const spotTilts = [-1.2, 0.9, -0.5, 1.3, -0.8, 0.6, -1.4, 1, -0.4, 0.8];
 </script>
 
-<Seo
-  title="Artbook"
-  description="Les planches de L’Arbre aux absents : l’art clé, les vignettes d’aquarelle, les portraits gravés, les détails de la carte de la Velmarche, et l’intention artistique du jeu."
-  path="/artbook/"
-/>
+<Seo title={a.seoTitle} description={a.seoDescription} path="artbook/" />
 
 {#if data.map}
   <!-- La carte n'est rendue qu'une fois ; chaque détail la réutilise par <use>. -->
@@ -73,23 +45,19 @@
 {/if}
 
 <header class="container page-head">
-  <p class="kicker">Artbook</p>
-  <h1>Gravure <em>et aquarelle</em></h1>
-  <p class="lede">
-    Un trait d’encre bleu-noir gravé, des hachures pour le volume, puis quelques lavis transparents
-    posés par un coloriste. Toute l’illustration du jeu suit ce procédé ancien, dans une interface
-    nette et contemporaine.
-  </p>
+  <p class="kicker">{a.kicker}</p>
+  <h1><Rich text={a.title} /></h1>
+  <p class="lede">{a.lede}</p>
 </header>
 
 <!-- ── L'art clé, en grand tirage ── -->
 <section class="container keyart-section" aria-labelledby="keyart-title">
-  <h2 id="keyart-title" class="visually-hidden">L’art clé</h2>
+  <h2 id="keyart-title" class="visually-hidden">{a.keyArtHeading}</h2>
   <div class="keyart-wrap" data-sr>
     <PaperSheet tone="new" tilt={-0.4} fastener="tape" padded={false} as="div">
       <figure class="sheet-fig">
         <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- URL d'image déjà résolue au prérendu -->
-        <a class="plate-link" href={data.keyart.wide.src} aria-label="Agrandir l’art clé">
+        <a class="plate-link" href={data.keyart.wide.src} aria-label={a.enlargeKeyArt}>
           <picture>
             <source
               media="(max-width: 47.4375rem)"
@@ -108,8 +76,8 @@
           </picture>
         </a>
         <figcaption class="keyart-cap">
-          <span class="cap-title">« Le bureau sous la lampe »</span>
-          <span>Art clé, 16:9 et 4:5 recomposé pour le téléphone. Écran titre du jeu.</span>
+          <span class="cap-title">{a.keyArtTitle}</span>
+          <span>{a.keyArtCaption}</span>
         </figcaption>
       </figure>
     </PaperSheet>
@@ -122,10 +90,8 @@
 <section class="band" aria-labelledby="intention-title">
   <div class="container split">
     <div class="section-head" data-sr>
-      <p class="kicker">Intention</p>
-      <h2 id="intention-title" class="section-title">
-        «&nbsp;Le bureau <em>sous la lampe</em>&nbsp;»
-      </h2>
+      <p class="kicker">{a.intention.kicker}</p>
+      <h2 id="intention-title" class="section-title"><Rich text={a.intention.title} /></h2>
       <img
         class="art-img seal mv-parallax"
         src={data.seal.src}
@@ -139,23 +105,9 @@
     <div data-sr style:--i="1" style:--reveal-tilt="2deg">
       <PaperSheet tone="paper" tilt={0.6} fastener="clip" edge="torn" as="article">
         <div class="prose letter">
-          <p>
-            Il est tard. Sur un bureau d’enquêteur plongé dans le bleu de la nuit, une lampe de
-            laiton éclaire des archives : lettres, registres, photographies, une carte dépliée. Tout
-            ce qui se lit est du papier dans la lumière ; tout ce qui sert d’outil reste dans
-            l’ombre, net et discret.
-          </p>
-          <p>
-            L’illustration est une <strong>taille-douce à l’encre ferro-gallique</strong>, rehaussée
-            d’<strong>aquarelle</strong>. Le trait hiérarchise : contours appuyés, détails plus
-            fins, ombres et courbes de niveau à peine posées. Les lavis restent transparents, jamais
-            plus de deux couches, et débordent un peu du trait, comme la main d’un coloriste.
-          </p>
-          <p>
-            Les portraits sont des bustes de trois-quarts, reconnaissables en vignette comme en
-            grand : chaque personne a sa silhouette de coiffure, son accessoire et sa couleur de
-            vêtement.
-          </p>
+          {#each a.intention.prose as para, i (i)}
+            <p><Rich text={para} /></p>
+          {/each}
         </div>
       </PaperSheet>
     </div>
@@ -168,12 +120,9 @@
 <section class="band" aria-labelledby="spots-title">
   <div class="container">
     <div class="section-head center" data-sr>
-      <p class="kicker">Vignettes</p>
-      <h2 id="spots-title" class="section-title">Les objets <em>du bureau</em></h2>
-      <p class="lede">
-        Dix vignettes peintes pour l’interface : chacune ouvre un geste du jeu, sur une tache de
-        lavis.
-      </p>
+      <p class="kicker">{a.spots.kicker}</p>
+      <h2 id="spots-title" class="section-title"><Rich text={a.spots.title} /></h2>
+      <p class="lede">{a.spots.lede}</p>
     </div>
     <ul class="masonry">
       {#each data.spots as spot, i (spot.name)}
@@ -197,7 +146,7 @@
                     loading="lazy"
                     decoding="async"
                   />
-                  <span class="visually-hidden">Agrandir : {spot.title}</span>
+                  <span class="visually-hidden">{a.spots.enlarge(spot.title)}</span>
                 </a>
                 <figcaption class="spot-cap">{spot.title}</figcaption>
               </figure>
@@ -215,23 +164,25 @@
 <section class="band" aria-labelledby="portraits-title">
   <div class="container">
     <div class="section-head center" data-sr>
-      <p class="kicker">Portraits</p>
-      <h2 id="portraits-title" class="section-title">Galerie <em>des visages</em></h2>
-      <p class="lede">
-        Quelques planches parmi la trentaine de portraits du jeu. Les noms restent dans les archives
-        : à vous de les y retrouver.
-      </p>
+      <p class="kicker">{a.portraits.kicker}</p>
+      <h2 id="portraits-title" class="section-title"><Rich text={a.portraits.title} /></h2>
+      <p class="lede">{a.portraits.lede}</p>
     </div>
     {#if data.plates.some((p) => p.image)}
       <ul class="gallery">
         {#each data.plates as plate, i (plate.plate)}
           <li data-sr style:--i={i % 4} style:--reveal-tilt="{i % 2 ? 6 : -6}deg">
-            <PortraitPlate {plate} tilt={i % 3 === 0 ? -1.4 : i % 3 === 1 ? 1 : -0.5} />
+            <PortraitPlate
+              {plate}
+              tilt={i % 3 === 0 ? -1.4 : i % 3 === 1 ? 1 : -0.5}
+              cote={t.common.plate(plate.plate)}
+              missing={t.common.portraitSoon}
+            />
           </li>
         {/each}
       </ul>
     {:else}
-      <p class="empty"><Icon name="photo" size="1.1rem" /> Les portraits arrivent bientôt.</p>
+      <p class="empty"><Icon name="photo" size="1.1rem" /> {a.portraits.empty}</p>
     {/if}
   </div>
 </section>
@@ -242,12 +193,9 @@
 <section class="band" aria-labelledby="carte-title">
   <div class="container">
     <div class="section-head center" data-sr>
-      <p class="kicker">La carte</p>
-      <h2 id="carte-title" class="section-title">Détails <em>de la Velmarche</em></h2>
-      <p class="lede">
-        Une seule grande planche, découpée en couches : fond, relief, eaux, lieux et toponymes. Dans
-        le jeu, chaque lieu s’éclaire quand on le visite.
-      </p>
+      <p class="kicker">{a.map.kicker}</p>
+      <h2 id="carte-title" class="section-title"><Rich text={a.map.title} /></h2>
+      <p class="lede">{a.map.lede}</p>
     </div>
     {#if data.map}
       <ul class="details">
@@ -265,7 +213,7 @@
                     class="art"
                     viewBox={d.viewBox}
                     role="img"
-                    aria-label="Détail de la carte : {d.title}"
+                    aria-label={a.map.detailLabel(d.title)}
                   >
                     <use href="#artbook-map" />
                   </svg>
@@ -281,13 +229,11 @@
       </ul>
     {:else}
       <p class="empty">
-        <Icon name="map" size="1.1rem" /> Les planches de la carte arrivent bientôt.
+        <Icon name="map" size="1.1rem" />
+        {a.map.empty}
       </p>
     {/if}
-    <p class="note">
-      Les illustrations des documents (photographies, cartes postales, coupures de presse)
-      rejoindront l’artbook à la sortie du jeu.
-    </p>
+    <p class="note">{a.map.note}</p>
   </div>
 </section>
 

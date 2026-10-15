@@ -74,3 +74,14 @@ export const PORTRAIT_PLATES: PortraitPlate[] = [
 
 /** Les quatre planches de l'accueil. */
 export const HOME_PLATES = PORTRAIT_PLATES.slice(0, 4);
+
+/**
+ * Planches dans une langue : légende et texte alternatif traduits (`STRINGS[lang].portraits`,
+ * par numéro de planche), sinon ceux d'origine. Les ids de personne restent au prérendu.
+ */
+export function localizePlates<P extends { plate: string; caption: string; alt: string }>(
+  plates: P[],
+  texts: Record<string, { caption: string; alt: string }> | null,
+): P[] {
+  return plates.map((p) => ({ ...p, ...(texts?.[p.plate] ?? {}) }));
+}

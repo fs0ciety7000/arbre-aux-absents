@@ -21,161 +21,98 @@
     Wordmark,
     type IconName,
   } from '@arbre/ui';
-  import { HOUSE_LOGOS } from '#lib/art/brand';
+  import { houseLogos } from '#lib/art/brand';
   import BrandLogo from '#lib/components/BrandLogo.svelte';
   import Seo from '#lib/components/Seo.svelte';
+  import { STRINGS } from '#lib/i18n/index';
+  import { currentLang, localPath } from '#lib/i18n/app';
+  import Rich from '#lib/i18n/Rich.svelte';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
+  const lang = $derived(currentLang());
+  const t = $derived(STRINGS[lang]);
+  const c = $derived(t.charte);
+  const logos = $derived(houseLogos(t.brand));
 
-  const fonts = [
-    {
-      token: '--font-display',
-      name: 'Fraunces',
-      role: 'Titrage d’affiche, « old style » aux axes doux et bancals',
-      sample: 'Une famille effacée des registres.',
-    },
-    {
-      token: '--font-label',
-      name: 'Oswald',
-      role: 'Étiquettes, onglets, boutons, tampons (capitales)',
-      sample: 'ORC 74 · DIFFUSION · ARCHIVES',
-    },
-    {
-      token: '--font-read',
-      name: 'Literata',
-      role: 'Lecture : documents imprimés, textes longs',
-      sample: 'Reconstituez l’arbre d’une famille, pièce par pièce.',
-    },
-    {
-      token: '--font-ui',
-      name: 'Instrument Sans',
-      role: 'Interface : panneaux, navigation, réglages',
-      sample: 'Archives · Carnet · Carte · 12 / 30 identifiés',
-    },
-    {
-      token: '--font-type',
-      name: 'Courier Prime',
-      role: 'Machine à écrire : rapports, télégrammes, fiches',
-      sample: 'OFFICE DE RÉINSCRIPTION CIVILE — DOSSIER N° 74-0112',
-    },
-    {
-      token: '--font-hand',
-      name: 'Caveat',
-      role: 'Manuscrit : lettres, dos de photographies (remplaçable)',
-      sample: 'Bons baisers des Bains-de-Mérande…',
-    },
-    {
-      token: '--font-legible',
-      name: 'Atkinson Hyperlegible Next',
-      role: 'Option de lisibilité du jeu',
-      sample: 'Une police pensée pour la lecture facile.',
-    },
-  ];
+  /** Les sept polices (familles des tokens) ; rôle et spécimen au catalogue. */
+  const FONTS = [
+    { token: '--font-display', name: 'Fraunces' },
+    { token: '--font-label', name: 'Oswald' },
+    { token: '--font-read', name: 'Literata' },
+    { token: '--font-ui', name: 'Instrument Sans' },
+    { token: '--font-type', name: 'Courier Prime' },
+    { token: '--font-hand', name: 'Caveat' },
+    { token: '--font-legible', name: 'Atkinson Hyperlegible Next' },
+  ] as const;
+  const fonts = $derived(FONTS.map((f) => ({ ...f, ...c.type.fonts[f.token] })));
 
   /** Une sélection d'icônes encrées, avec leur lavis. */
-  const icons: { name: IconName; label: string; wash?: string }[] = [
-    { name: 'tree', label: 'Arbre', wash: 'var(--fern)' },
-    { name: 'archives', label: 'Archives', wash: 'var(--kraft)' },
-    { name: 'reader', label: 'Lecteur' },
-    { name: 'catalog', label: 'Catalogue', wash: 'var(--kraft)' },
-    { name: 'notebook', label: 'Carnet' },
-    { name: 'map', label: 'Carte', wash: 'var(--fern)' },
-    { name: 'pinboard', label: 'Tableau' },
-    { name: 'faces', label: 'Visages', wash: 'var(--brand)' },
-    { name: 'search', label: 'Chercher' },
-    { name: 'stamp', label: 'Tampon', wash: 'var(--established)' },
-    { name: 'lamp', label: 'Lampe', wash: 'var(--accent)' },
-    { name: 'quill', label: 'Plume' },
-    { name: 'envelope', label: 'Lettre', wash: 'var(--brand)' },
-    { name: 'photo', label: 'Photo' },
-    { name: 'compass', label: 'Boussole', wash: 'var(--accent)' },
-    { name: 'typewriter', label: 'Machine' },
-    { name: 'fern', label: 'Fougère', wash: 'var(--fern)' },
-    { name: 'lock', label: 'Verrou' },
+  const ICONS: { name: IconName & keyof typeof c.icons.names; wash?: string }[] = [
+    { name: 'tree', wash: 'var(--fern)' },
+    { name: 'archives', wash: 'var(--kraft)' },
+    { name: 'reader' },
+    { name: 'catalog', wash: 'var(--kraft)' },
+    { name: 'notebook' },
+    { name: 'map', wash: 'var(--fern)' },
+    { name: 'pinboard' },
+    { name: 'faces', wash: 'var(--brand)' },
+    { name: 'search' },
+    { name: 'stamp', wash: 'var(--established)' },
+    { name: 'lamp', wash: 'var(--accent)' },
+    { name: 'quill' },
+    { name: 'envelope', wash: 'var(--brand)' },
+    { name: 'photo' },
+    { name: 'compass', wash: 'var(--accent)' },
+    { name: 'typewriter' },
+    { name: 'fern', wash: 'var(--fern)' },
+    { name: 'lock' },
   ];
-
-  const ornamentLabels: Record<string, string> = {
-    corner: 'Coin',
-    fern: 'Fougère',
-    divider: 'Filet',
-    seal: 'Sceau',
-    clip: 'Trombone',
-    pin: 'Punaise',
-    flourish: 'Volute',
-  };
-
-  const dos = [
-    'Le titre du jeu sur la nuit du bureau, en vélin et vermillon, ou sur papier, à l’encre.',
-    'Sur l’art clé, seulement dans sa zone calme, sur le voile prévu.',
-    'Les illustrations sur leur papier, sans recadrage qui coupe un visage.',
-    'Le safran pour une seule action par écran ; le vermillon pour la marque.',
-  ];
-  const donts = [
-    'Recolorer le titre, le déformer ou lui ajouter une ombre ou un contour.',
-    'Poser le titre sur une illustration chargée ou sur la carte.',
-    'Employer une police pixel art ou une typographie de fantaisie.',
-    'Révéler un nom, un secret ou une fin de l’enquête dans une communication.',
-  ];
+  const icons = $derived(ICONS.map((ic) => ({ ...ic, label: c.icons.names[ic.name] })));
 </script>
 
-<Seo
-  title="Charte graphique"
-  description="La charte graphique de L’Arbre aux absents pour la presse et les partenaires : titre du jeu, palette, typographies, matières, icônes, mouvement, illustration, règles d’usage et ressources."
-  path="/charte/"
-/>
+<Seo title={c.seoTitle} description={c.seoDescription} path="charte/" />
 
 <header class="container page-head">
-  <p class="kicker">Charte graphique</p>
-  <h1>Le dossier <em>vivant</em></h1>
-  <p class="lede">
-    Pour la presse et les partenaires : comment présenter <em>L’Arbre aux absents</em>. Un bureau
-    d’enquêteur la nuit, du papier sous la lampe, des gestes d’archiviste. Toutes les valeurs de
-    cette page sont lues dans le système de design du jeu.
-  </p>
+  <p class="kicker">{c.kicker}</p>
+  <h1><Rich text={c.title} /></h1>
+  <p class="lede"><Rich text={c.lede} /></p>
 </header>
 
 <!-- ── Le titre du jeu ── -->
 <section class="band" aria-labelledby="logo-title">
   <div class="container">
     <div class="section-head" data-sr>
-      <p class="kicker">Titre</p>
-      <h2 id="logo-title" class="section-title">Le titre <em>du jeu</em></h2>
-      <p class="lede">
-        Fraunces noir, «&nbsp;absents&nbsp;» en italique vermillon, une volute de fougère. Trois
-        tailles : affiche, écran titre, en-tête.
-      </p>
+      <p class="kicker">{c.logo.kicker}</p>
+      <h2 id="logo-title" class="section-title"><Rich text={c.logo.title} /></h2>
+      <p class="lede">{c.logo.lede}</p>
     </div>
     <div class="logo-grid">
       <figure class="logo-card wide" data-sr>
-        <div class="logo-stage desk-surface" role="img" aria-label="Titre du jeu, taille affiche">
+        <div class="logo-stage desk-surface" role="img" aria-label={c.logo.posterLabel}>
           <span class="wm" aria-hidden="true"
-            ><Wordmark size="hero" as="span" glow kicker="Un jeu d’enquête généalogique" /></span
+            ><Wordmark size="hero" as="span" glow kicker={c.logo.posterKicker} /></span
           >
         </div>
-        <figcaption>Affiche, sur la nuit du bureau (usage principal)</figcaption>
+        <figcaption>{c.logo.posterCaption}</figcaption>
       </figure>
       <figure class="logo-card" data-sr style:--i="1">
         <div
           class="logo-stage paper mat-paper"
           data-surface="paper"
           role="img"
-          aria-label="Titre du jeu, taille écran titre"
+          aria-label={c.logo.titleLabel}
         >
           <span class="wm" aria-hidden="true"><Wordmark size="title" as="span" /></span>
         </div>
-        <figcaption>Écran titre, sur papier</figcaption>
+        <figcaption>{c.logo.titleCaption}</figcaption>
       </figure>
       <figure class="logo-card" data-sr style:--i="2">
-        <div
-          class="logo-stage night"
-          role="img"
-          aria-label="Titre du jeu, taille en-tête, et emblème"
-        >
+        <div class="logo-stage night" role="img" aria-label={c.logo.headerLabel}>
           <span class="wm" aria-hidden="true"><Wordmark size="header" as="span" /></span>
           <img class="favicon" src={asset('favicon.svg')} width="64" height="64" alt="" />
         </div>
-        <figcaption>En-tête et emblème : icône, avatar, favicon</figcaption>
+        <figcaption>{c.logo.headerCaption}</figcaption>
       </figure>
     </div>
   </div>
@@ -185,12 +122,9 @@
 <section class="band" aria-labelledby="palette-title">
   <div class="container">
     <div class="section-head" data-sr>
-      <p class="kicker">Couleurs</p>
-      <h2 id="palette-title" class="section-title">Palette <em>d’encre et de papier</em></h2>
-      <p class="lede">
-        Valeurs en OKLCH (source) et leur équivalent hexadécimal approché, pour l’impression et les
-        outils qui n’en ont pas.
-      </p>
+      <p class="kicker">{c.palette.kicker}</p>
+      <h2 id="palette-title" class="section-title"><Rich text={c.palette.title} /></h2>
+      <p class="lede">{c.palette.lede}</p>
     </div>
     {#each data.palette as group (group.title)}
       <div class="palette-group" data-sr>
@@ -216,11 +150,9 @@
 <section class="band" aria-labelledby="type-title">
   <div class="container">
     <div class="section-head" data-sr>
-      <p class="kicker">Typographie</p>
-      <h2 id="type-title" class="section-title">Sept polices <em>libres</em></h2>
-      <p class="lede">
-        Toutes sous licence SIL Open Font License, auto-hébergées. Aucune police pixel art.
-      </p>
+      <p class="kicker">{c.type.kicker}</p>
+      <h2 id="type-title" class="section-title"><Rich text={c.type.title} /></h2>
+      <p class="lede">{c.type.lede}</p>
     </div>
     <ul class="fonts">
       {#each fonts as f, i (f.token)}
@@ -244,44 +176,39 @@
 <section class="band desk-band" aria-labelledby="mat-title">
   <div class="container">
     <div class="section-head" data-sr>
-      <p class="kicker">Matières</p>
-      <h2 id="mat-title" class="section-title">Le bureau <em>en matières</em></h2>
-      <p class="lede">
-        Rien n’est une «&nbsp;carte&nbsp;» abstraite : chaque surface est un objet du bureau, posé,
-        épinglé, scotché.
-      </p>
+      <p class="kicker">{c.materials.kicker}</p>
+      <h2 id="mat-title" class="section-title"><Rich text={c.materials.title} /></h2>
+      <p class="lede">{c.materials.lede}</p>
     </div>
     <ul class="materials">
       <li data-sr>
         <PaperSheet tone="paper" tilt={-1.2} fastener="tape" as="div">
-          <p class="mat-sample">La feuille</p>
-          <p class="mat-caption">
-            Papier, bords droits, déchirés ou perforés ; ruban, trombone, punaise.
-          </p>
+          <p class="mat-sample">{c.materials.sheet}</p>
+          <p class="mat-caption">{c.materials.sheetCaption}</p>
         </PaperSheet>
       </li>
       <li data-sr style:--i="1">
-        <Folder title="La chemise" cote="ORC 74-118" headingLevel={3}>
-          <p class="mat-note">Kraft ou manille, une cote à l’étiqueteuse, un onglet.</p>
+        <Folder title={c.materials.folder} cote="ORC 74-118" headingLevel={3}>
+          <p class="mat-note">{c.materials.folderNote}</p>
         </Folder>
       </li>
       <li data-sr style:--i="2">
-        <IndexCard title="La fiche" cote="RG-09" tilt={1.2}>
-          <p class="mat-note card-note">Bristol, réglure bleue, ligne de tête vermillon.</p>
+        <IndexCard title={c.materials.card} cote="RG-09" tilt={1.2}>
+          <p class="mat-note card-note">{c.materials.cardNote}</p>
         </IndexCard>
       </li>
       <li class="small-mats" data-sr style:--i="3">
         <div class="mat-row">
-          <DymoLabel text="Étiqueteuse" tilt={-2} />
-          <DymoLabel text="Annonce" tone="red" tilt={1.5} />
+          <DymoLabel text={c.materials.dymo} tilt={-2} />
+          <DymoLabel text={c.materials.dymoRed} tone="red" tilt={1.5} />
         </div>
         <div class="mat-row tape-row">
           <Tape length="9rem" rotate={-6} />
-          <span class="mat-cap">Ruban adhésif</span>
+          <span class="mat-cap">{c.materials.tape}</span>
         </div>
         <div class="mat-row">
-          <Stamp text="Établi" size="m" label="Tampon «&nbsp;Établi&nbsp;»" />
-          <span class="mat-cap">Le tampon violet marque ce que le joueur a établi.</span>
+          <Stamp text={c.materials.stamp} size="m" label={c.materials.stampLabel} />
+          <span class="mat-cap">{c.materials.stampCaption}</span>
         </div>
       </li>
     </ul>
@@ -292,12 +219,9 @@
 <section class="band" aria-labelledby="icons-title">
   <div class="container">
     <div class="section-head" data-sr>
-      <p class="kicker">Icônes</p>
-      <h2 id="icons-title" class="section-title">Encrées <em>à la plume</em></h2>
-      <p class="lede">
-        Un tracé principal irrégulier, un second passage d’encre fin, et parfois un lavis
-        d’aquarelle derrière. Les mêmes formes, nettes, sous 14 pixels.
-      </p>
+      <p class="kicker">{c.icons.kicker}</p>
+      <h2 id="icons-title" class="section-title"><Rich text={c.icons.title} /></h2>
+      <p class="lede">{c.icons.lede}</p>
     </div>
     <ul class="icons">
       {#each icons as ic, i (ic.name)}
@@ -307,12 +231,12 @@
         </li>
       {/each}
     </ul>
-    <h3 class="sub-title" data-sr>Ornements</h3>
+    <h3 class="sub-title" data-sr>{c.icons.ornaments}</h3>
     <ul class="ornaments">
       {#each ORNAMENT_NAMES as name, i (name)}
         <li data-sr style:--i={i % 4}>
           <span class="orn"><Ornament {name} size={name === 'divider' ? '9rem' : '4rem'} /></span>
-          <span>{ornamentLabels[name] ?? name}</span>
+          <span>{c.icons.ornamentNames[name] ?? name}</span>
         </li>
       {/each}
     </ul>
@@ -323,25 +247,21 @@
 <section class="band" aria-labelledby="motion-title">
   <div class="container">
     <div class="section-head" data-sr>
-      <p class="kicker">Mouvement</p>
-      <h2 id="motion-title" class="section-title">Des gestes <em>d’archiviste</em></h2>
-      <p class="lede">
-        Tout bouge comme du papier dans une main : on distribue, on pose, on encre, on tamponne.
-        Courbes douces, rebond léger, jamais de rebond de dessin animé. En mouvement réduit, tout
-        apparaît en fondu, et l’ambiance se fige.
-      </p>
+      <p class="kicker">{c.motion.kicker}</p>
+      <h2 id="motion-title" class="section-title"><Rich text={c.motion.title} /></h2>
+      <p class="lede">{c.motion.lede}</p>
     </div>
     <ul class="motions">
       <li data-play>
         <div class="motion-stage deal-stage">
-          {#each [-6, 2, 8] as t, i (t)}
-            <IndexCard cote="N° {i + 1}" tilt={t / 4} deal={i} class="deal-card">
+          {#each [-6, 2, 8] as tilt, i (tilt)}
+            <IndexCard cote={c.motion.card(i + 1)} tilt={tilt / 4} deal={i} class="deal-card">
               <span class="deal-line"></span>
             </IndexCard>
           {/each}
         </div>
-        <p class="motion-name">Distribuer</p>
-        <p class="motion-text">Les fiches arrivent en cascade et se calent de biais.</p>
+        <p class="motion-name">{c.motion.deal.name}</p>
+        <p class="motion-text">{c.motion.deal.text}</p>
       </li>
       <li data-play>
         <div class="motion-stage ink-stage">
@@ -349,15 +269,15 @@
             <span class="ink-word">Velmarche</span>
           </InkReveal>
         </div>
-        <p class="motion-name">Encrer</p>
-        <p class="motion-text">Le trait se dépose de gauche à droite, l’encre sèche.</p>
+        <p class="motion-name">{c.motion.ink.name}</p>
+        <p class="motion-text">{c.motion.ink.text}</p>
       </li>
       <li data-play>
         <div class="motion-stage stamp-stage">
-          <Stamp text="Établi" size="l" animate label="Tampon «&nbsp;Établi&nbsp;»" />
+          <Stamp text={c.materials.stamp} size="l" animate label={c.materials.stampLabel} />
         </div>
-        <p class="motion-name">Tamponner</p>
-        <p class="motion-text">Le tampon frappe, l’encre s’étale, la case encaisse.</p>
+        <p class="motion-name">{c.motion.stamp.name}</p>
+        <p class="motion-text">{c.motion.stamp.text}</p>
       </li>
       <li data-play>
         <div class="motion-stage sway-stage">
@@ -366,8 +286,8 @@
             <span class="deal-line short"></span>
           </PaperSheet>
         </div>
-        <p class="motion-name">Respirer</p>
-        <p class="motion-text">Une feuille épinglée se balance, la lampe vacille.</p>
+        <p class="motion-name">{c.motion.sway.name}</p>
+        <p class="motion-text">{c.motion.sway.text}</p>
       </li>
     </ul>
   </div>
@@ -377,14 +297,10 @@
 <section class="band" aria-labelledby="illu-title">
   <div class="container split">
     <div class="section-head" data-sr>
-      <p class="kicker">Illustration</p>
-      <h2 id="illu-title" class="section-title">Gravure <em>rehaussée d’aquarelle</em></h2>
+      <p class="kicker">{c.illustration.kicker}</p>
+      <h2 id="illu-title" class="section-title"><Rich text={c.illustration.title} /></h2>
       <div class="prose">
-        <p>
-          Un trait d’encre ferro-gallique bleu-noir, des hachures pour le volume, puis des lavis
-          transparents qui débordent un peu, comme la main d’un coloriste. Les documents du jeu sont
-          du papier dans la lumière ; l’interface autour reste sombre, nette et discrète.
-        </p>
+        <p>{c.illustration.text}</p>
       </div>
     </div>
     <ul class="illus">
@@ -411,23 +327,23 @@
 <section class="band" aria-labelledby="usage-title">
   <div class="container">
     <div class="section-head" data-sr>
-      <p class="kicker">Usage</p>
-      <h2 id="usage-title" class="section-title">À faire, <em>à éviter</em></h2>
+      <p class="kicker">{c.usage.kicker}</p>
+      <h2 id="usage-title" class="section-title"><Rich text={c.usage.title} /></h2>
     </div>
     <div class="do-dont">
       <div data-sr>
         <PaperSheet tone="new" tilt={-0.6} fastener="clip" as="div">
-          <h3 class="do-title"><Icon name="check" /> À faire</h3>
+          <h3 class="do-title"><Icon name="check" /> {c.usage.do}</h3>
           <ul class="rules">
-            {#each dos as d (d)}<li>{d}</li>{/each}
+            {#each c.usage.dos as d (d)}<li>{d}</li>{/each}
           </ul>
         </PaperSheet>
       </div>
       <div data-sr style:--i="1">
         <PaperSheet tone="aged" tilt={0.6} fastener="clip" as="div">
-          <h3 class="dont-title"><Icon name="close" /> À éviter</h3>
+          <h3 class="dont-title"><Icon name="close" /> {c.usage.dont}</h3>
           <ul class="rules">
-            {#each donts as d (d)}<li>{d}</li>{/each}
+            {#each c.usage.donts as d (d)}<li>{d}</li>{/each}
           </ul>
         </PaperSheet>
       </div>
@@ -439,15 +355,12 @@
 <section class="band" aria-labelledby="partners-title">
   <div class="container">
     <div class="section-head" data-sr>
-      <p class="kicker">Signature</p>
-      <h2 id="partners-title" class="section-title">Logos <em>de la maison</em></h2>
-      <p class="lede">
-        Dans cet ordre, sur une même ligne de base : CARDOR Media, CM Interactive, CM Creative Lab.
-        Monochromes sur le site et dans le jeu ; couleurs d’origine ci-dessous, pour la presse.
-      </p>
+      <p class="kicker">{c.partners.kicker}</p>
+      <h2 id="partners-title" class="section-title"><Rich text={c.partners.title} /></h2>
+      <p class="lede">{c.partners.lede}</p>
     </div>
     <ul class="partners">
-      {#each HOUSE_LOGOS as logo, i (logo.id)}
+      {#each logos as logo, i (logo.id)}
         <li data-sr style:--i={i}>
           <BrandLogo {logo} mono={false} />
           <span class="partner-name">{logo.name}</span>
@@ -462,8 +375,8 @@
 <section class="band" aria-labelledby="dl-title">
   <div class="container dl-grid">
     <div class="section-head" data-sr>
-      <p class="kicker">Ressources</p>
-      <h2 id="dl-title" class="section-title">À <em>télécharger</em></h2>
+      <p class="kicker">{c.downloads.kicker}</p>
+      <h2 id="dl-title" class="section-title"><Rich text={c.downloads.title} /></h2>
       <img
         class="art-img seal"
         src={data.seal.src}
@@ -475,29 +388,38 @@
       />
     </div>
     <ul class="downloads" data-sr style:--i="1">
-      {#each HOUSE_LOGOS as l (l.id)}
+      {#each logos as l (l.id)}
         <li>
           <!-- Fichiers servis depuis apps/site/static/brand/ (copie de static/brand/). -->
-          <a href={asset(`brand/${l.id}.svg`)} download><Icon name="save" /> Logo {l.name}</a>
-          <span class="dl-detail">SVG, couleurs d’origine</span>
+          <a href={asset(`brand/${l.id}.svg`)} download
+            ><Icon name="save" /> {c.downloads.logo(l.name)}</a
+          >
+          <span class="dl-detail">{c.downloads.logoDetail}</span>
         </li>
       {/each}
       <li>
-        <a href="{resolve('presse/')}#kit-logos"><Icon name="save" /> Titre du jeu et emblème</a>
-        <span class="dl-detail">SVG et PNG, quatre teintes</span>
-      </li>
-      <li>
-        <a href="{resolve('presse/')}#kit-affiches"><Icon name="save" /> Affiches et bannières</a>
-        <span class="dl-detail">PDF A3, PNG, JPEG</span>
-      </li>
-      <li>
-        <a href="{resolve('presse/')}#kit-documents"><Icon name="save" /> Artbook et fiche presse</a
+        <a href={resolve(localPath(lang, 'presse/', 'kit-logos'))}
+          ><Icon name="save" /> {c.downloads.titleEmblem}</a
         >
-        <span class="dl-detail">PDF</span>
+        <span class="dl-detail">{c.downloads.titleEmblemDetail}</span>
       </li>
       <li>
-        <a href="{resolve('presse/')}#captures"><Icon name="save" /> Captures d’écran</a>
-        <span class="dl-detail">PNG, 1440 px</span>
+        <a href={resolve(localPath(lang, 'presse/', 'kit-affiches'))}
+          ><Icon name="save" /> {c.downloads.posters}</a
+        >
+        <span class="dl-detail">{c.downloads.postersDetail}</span>
+      </li>
+      <li>
+        <a href={resolve(localPath(lang, 'presse/', 'kit-documents'))}
+          ><Icon name="save" /> {c.downloads.documents}</a
+        >
+        <span class="dl-detail">{c.downloads.documentsDetail}</span>
+      </li>
+      <li>
+        <a href={resolve(localPath(lang, 'presse/', 'captures'))}
+          ><Icon name="save" /> {c.downloads.captures}</a
+        >
+        <span class="dl-detail">{c.downloads.capturesDetail}</span>
       </li>
     </ul>
   </div>

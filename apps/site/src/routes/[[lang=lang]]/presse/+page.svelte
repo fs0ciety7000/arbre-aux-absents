@@ -4,19 +4,23 @@
   télécharger (généré par `npm run presskit`, manifeste lu au prérendu). Prérendu, sans JS.
 -->
 <script lang="ts">
-  import { asset, resolve } from '$app/paths';
+  import { asset } from '$app/paths';
   import { Button, Folder, Icon, IndexCard, Ornament, PaperSheet, Stamp } from '@arbre/ui';
   import Seo from '#lib/components/Seo.svelte';
-  import { PRESS_FACTS as facts } from '#lib/content/press';
-  import {
-    KIT_CAPTURES,
-    KIT_FEATURES,
-    KIT_GROUPS,
-    KIT_ZIP,
-    type KitRow,
-  } from '#lib/content/presskit';
+  import { PRESS_FACTS } from '#lib/content/press';
+  import { presskit, type KitRow } from '#lib/content/presskit';
+  import { STRINGS } from '#lib/i18n/index';
+  import { currentLang, localHref } from '#lib/i18n/app';
+  import Rich from '#lib/i18n/Rich.svelte';
   import { ITCH_URL } from '#lib/site';
   import type { AssetPath } from '$app/types';
+
+  const lang = $derived(currentLang());
+  const t = $derived(STRINGS[lang]);
+  const p = $derived(t.presse);
+  /** Fiche technique : celle du kit presse (press.ts) en français, traduite ailleurs. */
+  const facts = $derived(p.facts ?? PRESS_FACTS);
+  const kit = $derived(presskit(t.presskit));
 
   const tilts = [-1.2, 0.8, -0.5, 1, -0.7];
 </script>
@@ -40,37 +44,24 @@
   </ul>
 {/snippet}
 
-<Seo
-  title="Presse"
-  description="Dossier de presse de L’Arbre aux absents : fiche technique, présentation courte et longue, contact."
-  path="/presse/"
-/>
+<Seo title={p.seoTitle} description={p.seoDescription} path="presse/" />
 
 <header class="container page-head">
-  <p class="kicker">Presse</p>
-  <h1>Dossier <em>de presse</em></h1>
-  <p class="lede">
-    Tout ce qu’il faut pour présenter le jeu. Les éléments visuels et leurs règles d’usage sont sur
-    la <a href={resolve('charte/')}>charte graphique</a>, les planches dans l’<a
-      href={resolve('artbook/')}>artbook</a
-    >.
-  </p>
+  <p class="kicker">{p.kicker}</p>
+  <h1><Rich text={p.title} /></h1>
+  <p class="lede"><Rich text={p.lede} /></p>
 </header>
 
 <section class="container pitch-block" aria-labelledby="court-title" data-sr>
-  <h2 id="court-title" class="kicker">En une phrase</h2>
-  <p class="pitch">
-    Un jeu d’enquête généalogique en solo : reconstituez l’arbre d’une famille sur quatre
-    générations en croisant lettres, registres, photographies et coupures de presse, dans un pays
-    imaginaire, <em>la Velmarche</em>.
-  </p>
+  <h2 id="court-title" class="kicker">{p.oneLine}</h2>
+  <p class="pitch"><Rich text={p.pitch} /></p>
   <span class="pitch-fern" aria-hidden="true"><Ornament name="fern" size="8rem" /></span>
 </section>
 
-<section class="band" aria-label="Fiche et présentation">
+<section class="band" aria-label={p.factsLabel}>
   <div class="container layout">
     <div class="fiche" data-sr style:--reveal-tilt="-3deg">
-      <IndexCard title="Fiche technique" cote="ORC 74 · PR" tilt={-0.8} headingLevel={2}>
+      <IndexCard title={p.factSheet} cote="ORC 74 · PR" tilt={-0.8} headingLevel={2}>
         <dl>
           {#each facts as f (f.term)}
             <div class="row">
@@ -79,7 +70,7 @@
             </div>
           {/each}
           <div class="row">
-            <dt>Téléchargement</dt>
+            <dt>{p.download}</dt>
             <dd><a href={ITCH_URL} rel="external">cardorinteractive.itch.io</a></dd>
           </div>
         </dl>
@@ -89,49 +80,29 @@
     <div class="texts">
       <div data-sr style:--i="1" style:--reveal-tilt="2deg">
         <PaperSheet tone="paper" tilt={0.5} fastener="clip" as="section" class="presentation">
-          <h2 id="long-title" class="sheet-title">Présentation</h2>
+          <h2 id="long-title" class="sheet-title">{p.presentation}</h2>
           <div class="prose">
-            <p>
-              Velmarche, octobre 1974. Vingt ans après la chute de la Régence, qui rayait des
-              registres les citoyens jugés indésirables, une loi permet enfin de réinscrire ceux
-              qu’on appelait les «&nbsp;absents&nbsp;». Rapporteur à l’Office de Réinscription
-              civile, le joueur reçoit une succession à instruire : un arbre généalogique presque
-              vide et des cartons d’archives.
-            </p>
-            <p>
-              Lettres, actes, photographies de groupe, annuaires, cartes postales, articles de
-              presse et un lecteur de fiches d’époque qui répond aux mots-clés : rien n’est imposé
-              dans l’ordre. Le joueur tire le fil qu’il veut, note, épingle et recoupe, puis remplit
-              chaque case de l’arbre (nom, visage, métier). Les réponses ne se valident que par
-              groupes : on ne devine pas, on déduit.
-            </p>
-            <p>
-              Une carte gravée et aquarellée du pays ouvre les archives de chaque lieu. Des secrets
-              annexes changent le dénouement ; succès et mode chronométré invitent à rejouer.
-            </p>
-            <p>
-              <em>L’Arbre aux absents</em> est développé par CM Interactive, écrit et illustré par CM
-              Creative Lab, et édité par CARDOR Media.
-            </p>
+            {#each p.long as para, i (i)}
+              <p><Rich text={para} /></p>
+            {/each}
           </div>
         </PaperSheet>
       </div>
 
       <div data-sr style:--i="2">
-        <Folder title="Contact presse" cote="ORC 74 · CONTACT" tone="manila" headingLevel={2}>
+        <Folder title={p.contact} cote="ORC 74 · CONTACT" tone="manila" headingLevel={2}>
           <div class="contact">
-            <p>
-              Le jeu est gratuit sur itch.io : aucune clé n’est nécessaire pour le tester. Le
-              contact presse sera publié ici prochainement.
-            </p>
-            <Stamp text="À venir" tone="ink" size="s" rotate={-8} />
+            <p>{p.contactText}</p>
+            <Stamp text={p.contactStamp} tone="ink" size="s" rotate={-8} />
           </div>
         </Folder>
       </div>
 
       <div class="kit" data-sr style:--i="3">
-        <Button variant="secondary" href="#kit-title" iconName="save">Kit presse</Button>
-        <Button variant="ghost" href={resolve('charte/')} iconName="photo">Charte graphique</Button>
+        <Button variant="secondary" href="#kit-title" iconName="save">{p.kitButton}</Button>
+        <Button variant="ghost" href={localHref(lang, 'charte/')} iconName="photo"
+          >{p.charteButton}</Button
+        >
       </div>
     </div>
   </div>
@@ -141,26 +112,24 @@
 <section class="band kit-band" aria-labelledby="kit-title">
   <div class="container">
     <div class="section-head" data-sr>
-      <p class="kicker">À télécharger</p>
-      <h2 id="kit-title" class="section-title">Le kit <em>presse</em></h2>
-      <p class="lede kit-lede">
-        Logos, affiches, bannières, artbook et fiche, tirés de l’art du jeu et de son système de
-        design. Libres d’usage pour parler du jeu, dans le respect de la <a
-          href={resolve('charte/')}>charte</a
-        > : aucun nom, secret ni dénouement de l’enquête.
-      </p>
-      {#if KIT_ZIP}
+      <p class="kicker">{p.kit.kicker}</p>
+      <h2 id="kit-title" class="section-title"><Rich text={p.kit.title} /></h2>
+      <p class="lede kit-lede"><Rich text={p.kit.lede} /></p>
+      {#if p.kit.filesNote}
+        <p class="kit-files-note">{p.kit.filesNote}</p>
+      {/if}
+      {#if kit.zip}
         <div class="zip">
-          <Button variant="primary" size="l" href={asset(KIT_ZIP.href as AssetPath)} iconName="save"
-            >Tout télécharger <span class="zip-meta">ZIP, {KIT_ZIP.size}</span></Button
+          <Button variant="primary" size="l" href={asset(kit.zip.href as AssetPath)} iconName="save"
+            >{p.kit.all} <span class="zip-meta">{p.kit.zip(kit.zip.size)}</span></Button
           >
-          <span class="zip-note">{KIT_ZIP.label}</span>
+          <span class="zip-note">{kit.zip.label}</span>
         </div>
       {/if}
     </div>
 
     <ul class="features">
-      {#each KIT_FEATURES as f, i (f.href)}
+      {#each kit.features as f, i (f.href)}
         <li data-sr style:--i={i % 5} style:--reveal-tilt="{tilts[i % 5]! * 2}deg">
           <a
             class="feature"
@@ -187,7 +156,7 @@
       {/each}
     </ul>
 
-    {#each KIT_GROUPS as g (g.id)}
+    {#each kit.groups as g (g.id)}
       <div class="group" id="kit-{g.id}" data-sr>
         <h3 class="group-title">{g.title}</h3>
         <p class="group-intro">{g.intro}</p>
@@ -195,11 +164,9 @@
       </div>
     {/each}
     <div class="group" id="captures" data-sr>
-      <h3 class="group-title">Captures d’écran</h3>
-      <p class="group-intro">
-        Le jeu en 1440 pixels de large, et la couverture de la page itch.io.
-      </p>
-      {@render rowList(KIT_CAPTURES, 'Captures d’écran')}
+      <h3 class="group-title">{p.kit.captures}</h3>
+      <p class="group-intro">{p.kit.capturesIntro}</p>
+      {@render rowList(kit.captures, p.kit.captures)}
     </div>
   </div>
 </section>
@@ -220,7 +187,7 @@
     line-height: var(--leading-snug);
     text-wrap: pretty;
   }
-  .pitch em {
+  .pitch :global(em) {
     font-style: italic;
     color: var(--brand);
   }
@@ -290,6 +257,12 @@
   /* Kit presse */
   .kit-lede {
     max-inline-size: var(--measure);
+  }
+  .kit-files-note {
+    max-inline-size: var(--measure);
+    margin-block-start: var(--space-3);
+    font-size: var(--step--1);
+    color: var(--text-muted);
   }
   .zip {
     display: flex;

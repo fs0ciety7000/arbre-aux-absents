@@ -8,73 +8,21 @@
   import VineDivider from '#lib/components/VineDivider.svelte';
   import Seo from '#lib/components/Seo.svelte';
   import WorldMapExplorer from '#lib/components/WorldMapExplorer.svelte';
-  import { PLACES } from '#lib/content/world';
+  import Rich from '#lib/i18n/Rich.svelte';
   import type { PageProps } from './$types';
 
+  // Page hydratée : les textes arrivent par `data` (une langue), jamais par les catalogues.
   let { data }: PageProps = $props();
-
-  const history: { date: string; text: string }[] = [
-    { date: '1214', text: 'Fondation d’Aubrelieu, ville-pont sur l’Orvelle.' },
-    { date: '1488', text: 'Les seigneuries de la vallée forment le duché de Velmarche.' },
-    { date: '1602', text: 'Traité de Vellaak : l’Ostrie, au nord, est rattachée à la Velmarche.' },
-    {
-      date: '1811',
-      text: 'Charte de Velmarche : Grand-Duché constitutionnel et création de l’état civil communal.',
-    },
-    { date: '1848', text: 'Liberté de la presse ; fondation du Courrier d’Aubrelieu.' },
-    {
-      date: '1889',
-      text: 'Grande Exposition d’Aubrelieu : le pays se montre moderne, verre, papier, savon et navires.',
-    },
-    {
-      date: '1916–1919',
-      text: 'Guerre des Cols contre la Thalberie voisine, pour le col de Corvenne.',
-    },
-    { date: '1929', text: 'Krach de la banque Sorbelle, la plus vieille du pays.' },
-    {
-      date: '1937',
-      text: 'Coup d’État du général Destrade : le Grand-Duc abdique, la Régence commence.',
-    },
-    {
-      date: '1938',
-      text: 'Loi sur la pureté des registres : des citoyens sont radiés de l’état civil et déclarés «\u00a0absents\u00a0».',
-    },
-    { date: '1952', text: 'Journées d’avril : soulèvement d’Aubrelieu et fin de la Régence.' },
-    { date: '1953', text: 'Constitution de la République.' },
-    {
-      date: '1973',
-      text: 'Loi de réinscription civile : un Office est chargé de rendre leur nom aux absents.',
-    },
-    { date: '1974', text: 'Octobre. Une succession arrive sur votre bureau.' },
-  ];
-
-  const lexicon: [string, string][] = [
-    ['vel', 'mer'],
-    ['tenn', 'feu, lumière'],
-    ['ok', 'cap, pointe'],
-    ['laak', 'abri, eau calme'],
-    ['kess', 'pierre'],
-    ['aar', 'île'],
-    ['vik', 'baie'],
-    ['taalik', 'messager'],
-  ];
+  const t = $derived(data.t);
 </script>
 
-<Seo
-  title="Le monde"
-  description="La Velmarche, petit pays imaginaire entre mer Grise et monts Corvins : sa carte gravée et aquarellée, son histoire, ses langues et ses lieux."
-  path="/le-monde/"
-/>
+<Seo title={data.seo.title} description={data.seo.description} path="le-monde/" />
 
 <header class="container page-head world-head">
   <div class="head-copy">
-    <p class="kicker">Le monde</p>
-    <h1>La <em>Velmarche</em></h1>
-    <p class="lede">
-      Un petit pays de vallée et de côtes, inventé pour le jeu : la vallée de l’Orvelle et sa
-      capitale Aubrelieu au centre, le plateau et les fjords de l’Ostrie au nord, le golfe d’Ambre à
-      l’ouest et, au sud-est, les monts Corvins qui le séparent de la Thalberie.
-    </p>
+    <p class="kicker">{t.kicker}</p>
+    <h1><Rich text={t.title} /></h1>
+    <p class="lede">{t.lede}</p>
   </div>
   <img
     class="art-img head-spot mv-rise"
@@ -87,18 +35,15 @@
 </header>
 
 <section class="container map-section" aria-labelledby="carte-title">
-  <h2 id="carte-title" class="visually-hidden">Carte interactive</h2>
+  <h2 id="carte-title" class="visually-hidden">{t.mapHeading}</h2>
   <div class="map-pinned">
     <Tape class="tape-a" length="7rem" rotate={-8} />
     <Tape class="tape-b" length="7rem" rotate={6} />
-    <WorldMapExplorer />
+    <WorldMapExplorer places={data.places} title={data.mapTitle} t={data.mapText} />
   </div>
   <p class="map-note">
     <Icon name="compass" size="1.1rem" />
-    <span
-      >Flèches : se déplacer · + et − : zoomer · 0 : vue d’ensemble · Tab : passer de lieu en lieu.
-      Au doigt : glisser, pincer, toucher un lieu.</span
-    >
+    <span>{t.mapKeys}</span>
   </p>
 </section>
 
@@ -107,12 +52,9 @@
 <section class="band" aria-labelledby="histoire-title">
   <div class="container split">
     <div class="section-head" data-sr>
-      <p class="kicker">Histoire</p>
-      <h2 id="histoire-title" class="section-title">Sept siècles <em>en quelques dates</em></h2>
-      <p class="lede">
-        Un Grand-Duché devenu République, une Régence de quinze ans qui effaçait les gens des
-        registres, et une loi qui, en 1973, promet de les y réinscrire.
-      </p>
+      <p class="kicker">{t.history.kicker}</p>
+      <h2 id="histoire-title" class="section-title"><Rich text={t.history.title} /></h2>
+      <p class="lede">{t.history.lede}</p>
       <img
         class="art-img side-spot mv-parallax"
         src={data.spots.register.src}
@@ -125,9 +67,9 @@
     </div>
     <div data-sr style:--i="1" style:--reveal-tilt="1.5deg">
       <PaperSheet tone="aged" tilt={-0.5} fastener="pin" as="article" class="register">
-        <p class="register-head">Registre chronologique · Archives d’Aubrelieu</p>
+        <p class="register-head">{t.history.register}</p>
         <ol class="timeline">
-          {#each history as h (h.date)}
+          {#each t.history.events as h (h.date)}
             <li>
               <span class="date num">{h.date}</span>
               <span class="event">{h.text}</span>
@@ -144,26 +86,18 @@
 <section class="band" aria-labelledby="langues-title">
   <div class="container split">
     <div class="section-head" data-sr>
-      <p class="kicker">Langues</p>
-      <h2 id="langues-title" class="section-title">Trois langues, <em>une carte</em></h2>
+      <p class="kicker">{t.languages.kicker}</p>
+      <h2 id="langues-title" class="section-title"><Rich text={t.languages.title} /></h2>
       <div class="prose">
-        <p>
-          Le <strong>velmarchois</strong>, langue officielle, est rendu en français dans le jeu,
-          avec ses tournures d’époque : la «&nbsp;maison commune&nbsp;» des vieux actes, la lieue,
-          le florin.
-        </p>
-        <p>
-          Au nord, l’<strong>ostrien</strong> a ses voyelles doublées et ses noms de lieux qui se
-          lisent comme des paysages ; le nom d’une femme y prend le suffixe <em>-essa</em>. Plus
-          loin, la <strong>Thalberie</strong> parle une langue étrangère, aux noms en <em>-in</em>
-          et <em>-ko</em>.
-        </p>
+        {#each t.languages.prose as para, i (i)}
+          <p><Rich text={para} /></p>
+        {/each}
       </div>
     </div>
     <div class="lexicon-wrap">
-      <h3 class="lexicon-title" data-sr>Petit lexique ostrien</h3>
+      <h3 class="lexicon-title" data-sr>{t.languages.lexiconTitle}</h3>
       <ul class="lexicon">
-        {#each lexicon as [word, meaning], i (word)}
+        {#each t.languages.lexicon as [word, meaning], i (word)}
           <li class="word-card" data-sr style:--i={i % 4} style:--reveal-tilt="{i % 2 ? 4 : -4}deg">
             <IndexCard tilt={[-1.2, 0.8, -0.4, 1.4][i % 4]}>
               <span class="word">{word}</span>
@@ -173,10 +107,7 @@
           </li>
         {/each}
       </ul>
-      <p class="lexicon-note" data-sr>
-        D’où <em>Tennok</em>, «&nbsp;cap du feu&nbsp;», et <em>Kessaar</em>, «&nbsp;île de
-        pierre&nbsp;».
-      </p>
+      <p class="lexicon-note" data-sr><Rich text={t.languages.lexiconNote} /></p>
     </div>
   </div>
 </section>
@@ -186,13 +117,13 @@
 <section class="band" aria-labelledby="lieux-title">
   <div class="container">
     <div class="section-head center" data-sr>
-      <p class="kicker">Lieux</p>
-      <h2 id="lieux-title" class="section-title">Les lieux <em>de la carte</em></h2>
-      <p class="lede">D’ouest en est. Chacun, dans le jeu, ouvre ses propres archives.</p>
+      <p class="kicker">{t.places.kicker}</p>
+      <h2 id="lieux-title" class="section-title"><Rich text={t.places.title} /></h2>
+      <p class="lede">{t.places.lede}</p>
     </div>
-    {#if PLACES.length}
+    {#if data.places.length}
       <ul class="places">
-        {#each PLACES as p, i (p.id)}
+        {#each data.places as p, i (p.id)}
           <li data-sr style:--i={i % 3} style:--reveal-tilt="{i % 2 ? 5 : -5}deg">
             <IndexCard title={p.name} cote={p.kindLabel} tilt={[-1, 0.6, -0.3, 1.1][i % 4]}>
               <p class="place-desc">{p.description}</p>
@@ -202,7 +133,8 @@
       </ul>
     {:else}
       <p class="empty">
-        <Icon name="map" size="1.1rem" /> Les lieux de la carte seront bientôt décrits ici.
+        <Icon name="map" size="1.1rem" />
+        {t.places.empty}
       </p>
     {/if}
   </div>

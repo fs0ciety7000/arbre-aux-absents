@@ -6,119 +6,81 @@
   ligne de hooks.server.ts (data-sr, data-play, data-tilt), sans effet en mouvement réduit.
 -->
 <script lang="ts">
-  import { resolve } from '$app/paths';
   import { Button, DymoLabel, Folder, Icon, PaperSheet, Wordmark } from '@arbre/ui';
   import HeroArt from '#lib/components/HeroArt.svelte';
   import MapSheet from '#lib/components/MapSheet.svelte';
   import PortraitPlate from '#lib/components/PortraitPlate.svelte';
   import Seo from '#lib/components/Seo.svelte';
   import VineDivider from '#lib/components/VineDivider.svelte';
+  import { STRINGS } from '#lib/i18n/index';
+  import { resolve } from '$app/paths';
+  import { currentLang, localHref, localPath } from '#lib/i18n/app';
+  import Rich from '#lib/i18n/Rich.svelte';
   import {
     ITCH_EMBED,
     ITCH_URL,
-    SITE_DESCRIPTION,
     SITE_NAME,
     SITE_URL,
-    TRAILER_DESCRIPTION,
     TRAILER_DURATION,
     TRAILER_EMBED_URL,
     TRAILER_POSTER,
-    TRAILER_TITLE,
     TRAILER_UPLOAD_DATE,
     TRAILER_WATCH_URL,
   } from '#lib/site';
   import type { PageProps } from './$types';
 
   let { data }: PageProps = $props();
+  const lang = $derived(currentLang());
+  const t = $derived(STRINGS[lang]);
+  const h = $derived(t.home);
   const s = $derived(data.spots);
+  /** Version web du jeu (hors SvelteKit) : `?lang=en` sert d'indice de langue (D6). */
+  const playHref = $derived(lang === 'fr' ? '/jouer/' : `/jouer/?lang=${lang}`);
 
   type Fastener = 'tape' | 'pin' | 'clip';
-  const features = $derived<
-    {
-      spot: typeof s.tree;
-      kicker: string;
-      title: string;
-      text: string;
-      tilt: number;
-      fastener: Fastener;
-    }[]
-  >([
-    {
-      spot: s.tree,
-      kicker: 'Reconstituer',
-      title: 'Un arbre sur quatre générations',
-      text: 'Une trentaine de cases à remplir : prénom, nom, visage et métier. Chaque nom se gagne pièce par pièce.',
-      tilt: -1.4,
-      fastener: 'tape',
-    },
-    {
-      spot: s.archives,
-      kicker: 'Fouiller',
-      title: 'Des archives qui se contredisent',
-      text: 'Lettres, registres, coupures de presse, annuaires, photographies sans légende : croisez-les, surlignez, épinglez.',
-      tilt: 0.8,
-      fastener: 'pin',
-    },
-    {
-      spot: s.map,
-      kicker: 'Voyager',
-      title: 'La carte de la Velmarche',
-      text: 'Une carte gravée et aquarellée du pays : chaque lieu ouvre ses archives, du port de pêche à la capitale.',
-      tilt: -0.6,
-      fastener: 'tape',
-    },
-    {
-      spot: s.catalogue,
-      kicker: 'Interroger',
-      title: 'Un catalogue qui répond aux mots-clés',
-      text: 'Le meuble à fiches de l’Office : tapez un nom, un lieu, une date, et tirez le tiroir.',
-      tilt: 1,
-      fastener: 'clip',
-    },
-    {
-      spot: s.stamp,
-      kicker: 'Établir',
-      title: 'Des réponses validées par groupes',
-      text: 'Impossible de deviner au hasard : une branche ne se tamponne «\u00a0Établi\u00a0» que lorsqu’elle tient entière.',
-      tilt: -0.9,
-      fastener: 'tape',
-    },
-    {
-      spot: s.magnifier,
-      kicker: 'Déduire',
-      title: 'Une enquête sans rail',
-      text: 'Aucun ordre imposé : vous tirez le fil que vous voulez. Plusieurs fins selon les secrets mis au jour.',
-      tilt: 0.6,
-      fastener: 'pin',
-    },
-  ]);
+  /** Mise en page des six gestes (textes : catalogue, même ordre). */
+  const FEATURE_LAYOUT: { spot: keyof typeof s; tilt: number; fastener: Fastener }[] = [
+    { spot: 'tree', tilt: -1.4, fastener: 'tape' },
+    { spot: 'archives', tilt: 0.8, fastener: 'pin' },
+    { spot: 'map', tilt: -0.6, fastener: 'tape' },
+    { spot: 'catalogue', tilt: 1, fastener: 'clip' },
+    { spot: 'stamp', tilt: -0.9, fastener: 'tape' },
+    { spot: 'magnifier', tilt: 0.6, fastener: 'pin' },
+  ];
+  const features = $derived(
+    FEATURE_LAYOUT.map((f, i) => ({ ...f, ...h.game.features[i]!, spot: s[f.spot] })),
+  );
 
   const platforms = ['Windows', 'macOS', 'Linux', 'Android'];
 
-  const shots = $derived([
-    { spot: s.tree, title: 'L’arbre et le lecteur d’archives', tilt: -1.2 },
-    { spot: s.map, title: 'La carte et ses lieux', tilt: 0.9 },
-    { spot: s.letter, title: 'Le carnet d’enquête', tilt: -0.5 },
-  ]);
+  const SHOT_LAYOUT: { spot: keyof typeof s; tilt: number }[] = [
+    { spot: 'tree', tilt: -1.2 },
+    { spot: 'map', tilt: 0.9 },
+    { spot: 'letter', tilt: -0.5 },
+  ];
+  const shots = $derived(
+    SHOT_LAYOUT.map((sh, i) => ({ ...sh, spot: s[sh.spot], title: h.shots.items[i]! })),
+  );
 
   /** Bande-annonce : données structurées (VideoObject) et lecteur `og:video`. */
-  const trailerLd = {
+  const trailerLd = $derived({
     '@type': 'VideoObject',
-    name: TRAILER_TITLE,
-    description: TRAILER_DESCRIPTION,
+    name: t.meta.trailerTitle,
+    description: t.meta.trailerDescription,
     thumbnailUrl: [new URL(TRAILER_POSTER.jpg, SITE_URL).href],
     uploadDate: TRAILER_UPLOAD_DATE,
     duration: TRAILER_DURATION,
     contentUrl: TRAILER_WATCH_URL,
     embedUrl: TRAILER_EMBED_URL,
+    // La vidéo elle-même (cartons) est en français, quelle que soit la langue de la page.
     inLanguage: 'fr',
-  };
+  });
 </script>
 
 <Seo
   title={SITE_NAME}
-  description={SITE_DESCRIPTION}
-  path="/"
+  description={t.meta.description}
+  path=""
   video={{
     embedUrl: TRAILER_EMBED_URL,
     width: TRAILER_POSTER.width,
@@ -146,33 +108,32 @@
 </svelte:head>
 
 <!-- ── Héros : l'art clé vivant, le titre sur le voile de la zone calme ───────────── -->
-<section class="hero" aria-label="L’Arbre aux absents">
-  <HeroArt images={data.hero.images} live={data.hero.live} alt={data.hero.alt} class="hero-bg" />
+<section class="hero" aria-label={h.heroLabel}>
+  <HeroArt
+    images={data.hero.images}
+    live={data.hero.live}
+    alt={t.meta.keyArtAlt ?? data.hero.alt}
+    class="hero-bg"
+  />
   <div class="hero-copy">
     <div>
-      <Wordmark
-        size="hero"
-        animate
-        glow
-        kicker="Un jeu d’enquête généalogique"
-        tagline="Une famille effacée des registres. Un bureau, une lampe, et tout l’automne pour lui rendre ses noms."
-      />
+      <Wordmark size="hero" animate glow kicker={h.kicker} tagline={h.tagline} />
     </div>
     <div class="cta mv-rise" style:--i="7">
-      <Button variant="primary" size="l" href="/jouer/" rel="external" iconName="forward"
-        >Jouer dans le navigateur</Button
+      <Button variant="primary" size="l" href={playHref} rel="external" iconName="forward"
+        >{h.play}</Button
       >
-      <Button variant="secondary" size="l" href={resolve('le-monde/')} iconName="map"
-        >Explorer la Velmarche</Button
+      <Button variant="secondary" size="l" href={localHref(lang, 'le-monde/')} iconName="map"
+        >{h.exploreWorld}</Button
       >
-      <Button variant="secondary" size="l" href={resolve('artbook/')} iconName="photo"
-        >Voir l’artbook</Button
+      <Button variant="secondary" size="l" href={localHref(lang, 'artbook/')} iconName="photo"
+        >{h.seeArtbook}</Button
       >
     </div>
     <div class="platforms-line mv-rise" style:--i="8">
-      <DymoLabel text="Windows · macOS · Linux · Android" tilt={-1} />
+      <DymoLabel text={h.platformsLine} tilt={-1} />
       <a class="demo-note" href={ITCH_URL} rel="external"
-        ><Icon name="save" size="1rem" /> Gratuit · à télécharger sur itch.io</a
+        ><Icon name="save" size="1rem" /> {h.free}</a
       >
     </div>
   </div>
@@ -184,12 +145,9 @@
 <section class="band premise" aria-labelledby="principe-title">
   <div class="container premise-grid">
     <div class="section-head" data-sr>
-      <p class="kicker">Le principe</p>
-      <h2 id="principe-title" class="section-title">Velmarche, <em>octobre</em> 1974</h2>
-      <p class="lede">
-        La Régence est tombée depuis vingt ans. Une loi nouvelle permet enfin de rendre leur nom aux
-        «&nbsp;absents&nbsp;».
-      </p>
+      <p class="kicker">{h.premise.kicker}</p>
+      <h2 id="principe-title" class="section-title"><Rich text={h.premise.title} /></h2>
+      <p class="lede">{h.premise.lede}</p>
       <img
         class="art-img premise-spot mv-parallax"
         src={s.register.src}
@@ -203,23 +161,15 @@
     <div class="letter-wrap" data-sr style:--i="1" style:--reveal-tilt="2deg">
       <PaperSheet tone="new" tilt={0.8} fastener="clip" edge="torn" as="article" class="letter">
         <header class="letter-head">
-          <p class="letter-office">Office de Réinscription civile</p>
-          <p class="letter-ref num">Ordre de mission · Aubrelieu, le 7 octobre 1974</p>
+          <p class="letter-office">{h.premise.office}</p>
+          <p class="letter-ref num">{h.premise.ref}</p>
         </header>
         <div class="letter-body">
-          <p>
-            Pendant quinze ans, les bureaux de la Régence ont rayé des registres des milliers de
-            citoyens : sans état civil, sans droits, on les appelait les «&nbsp;absents&nbsp;».
-          </p>
-          <p>
-            Vous êtes rapporteur à l’Office. Sur votre bureau : une succession à instruire, un arbre
-            généalogique presque vide et des cartons d’archives.
-          </p>
-          <p>
-            Reconstituez la famille, pièce par pièce, et comprenez ce que les papiers ont effacé.
-          </p>
+          {#each h.premise.body as para, i (i)}
+            <p>{para}</p>
+          {/each}
         </div>
-        <p class="letter-sign ink-hand">Le Directeur de l’Office</p>
+        <p class="letter-sign ink-hand">{h.premise.sign}</p>
       </PaperSheet>
     </div>
   </div>
@@ -231,8 +181,8 @@
 <section class="band" aria-labelledby="bande-annonce-title">
   <div class="container trailer-wrap">
     <div class="section-head center" data-sr>
-      <p class="kicker">Bande-annonce</p>
-      <h2 id="bande-annonce-title" class="section-title">Une minute <em>sous la lampe</em></h2>
+      <p class="kicker">{h.trailer.kicker}</p>
+      <h2 id="bande-annonce-title" class="section-title"><Rich text={h.trailer.title} /></h2>
     </div>
     <div class="trailer" data-sr>
       <a
@@ -240,7 +190,7 @@
         href={TRAILER_WATCH_URL}
         rel="external"
         data-yt-embed="{TRAILER_EMBED_URL}?autoplay=1&rel=0"
-        data-yt-title={TRAILER_TITLE}
+        data-yt-title={t.meta.trailerTitle}
         data-yt-class="trailer-frame"
       >
         <picture>
@@ -260,13 +210,12 @@
           />
         </picture>
         <span class="trailer-play" aria-hidden="true"></span>
-        <span class="trailer-label">Lire la bande-annonce <span class="num">1 min</span></span>
+        <span class="trailer-label"
+          >{h.trailer.play} <span class="num">{h.trailer.duration}</span></span
+        >
       </a>
     </div>
-    <p class="trailer-note">
-      Vidéo hébergée sur YouTube : rien n’est chargé depuis YouTube avant que vous lanciez la
-      lecture.
-    </p>
+    <p class="trailer-note">{h.trailer.note}</p>
   </div>
 </section>
 
@@ -276,8 +225,8 @@
 <section id="jeu" class="band" aria-labelledby="jeu-title">
   <div class="container">
     <div class="section-head center" data-sr>
-      <p class="kicker">Le jeu</p>
-      <h2 id="jeu-title" class="section-title">Six gestes <em>d’archiviste</em></h2>
+      <p class="kicker">{h.game.kicker}</p>
+      <h2 id="jeu-title" class="section-title"><Rich text={h.game.title} /></h2>
     </div>
     <ul class="features">
       {#each features as f, i (f.title)}
@@ -310,22 +259,16 @@
 <section class="band" aria-labelledby="carte-title">
   <div class="container map-grid">
     <div class="section-head map-copy" data-sr>
-      <p class="kicker">Le monde</p>
-      <h2 id="carte-title" class="section-title">Un pays qui <em>n’existe pas</em></h2>
-      <p class="lede">
-        La vallée de l’Orvelle et sa capitale Aubrelieu, les fjords de l’Ostrie, le golfe d’Ambre,
-        les monts Corvins. Chaque lieu, dans le jeu, ouvre ses propres archives.
-      </p>
-      <Button variant="secondary" href={resolve('le-monde/')} iconName="compass"
-        >Ouvrir la carte interactive</Button
+      <p class="kicker">{h.world.kicker}</p>
+      <h2 id="carte-title" class="section-title"><Rich text={h.world.title} /></h2>
+      <p class="lede">{h.world.lede}</p>
+      <Button variant="secondary" href={localHref(lang, 'le-monde/')} iconName="compass"
+        >{h.world.open}</Button
       >
     </div>
     <div class="map-wrap">
-      <MapSheet
-        map={data.map}
-        label="Carte de la Velmarche, gravure rehaussée d’aquarelle : la vallée de l’Orvelle et sa capitale Aubrelieu au centre, l’Ostrie et ses fjords au nord, le golfe d’Ambre à l’ouest, les monts Corvins au sud-est."
-      />
-      <p class="map-credit">Dressée et gravée par CM Creative Lab.</p>
+      <MapSheet map={data.map} label={h.world.mapLabel} fallback={t.common.mapTitle} />
+      <p class="map-credit">{h.world.credit}</p>
     </div>
   </div>
 </section>
@@ -336,67 +279,66 @@
 <section class="band" aria-labelledby="faces-title">
   <div class="container">
     <div class="section-head center" data-sr>
-      <p class="kicker">Les visages</p>
-      <h2 id="faces-title" class="section-title">Des portraits <em>à reconnaître</em></h2>
-      <p class="lede">
-        Chacun a sa silhouette, son accessoire, sa couleur. Sur une photo de groupe ou au dos d’une
-        carte postale, à vous de le retrouver.
-      </p>
+      <p class="kicker">{h.faces.kicker}</p>
+      <h2 id="faces-title" class="section-title"><Rich text={h.faces.title} /></h2>
+      <p class="lede">{h.faces.lede}</p>
     </div>
     <ul class="plates">
       {#each data.plates as plate, i (plate.plate)}
         <li data-sr style:--i={i} style:--reveal-tilt="{i % 2 ? 6 : -6}deg">
-          <PortraitPlate {plate} tilt={i % 2 ? 1.5 : -1.5} />
+          <PortraitPlate
+            {plate}
+            tilt={i % 2 ? 1.5 : -1.5}
+            cote={t.common.plate(plate.plate)}
+            missing={t.common.portraitSoon}
+          />
         </li>
       {/each}
     </ul>
     <p class="more">
-      <a class="more-link" href={resolve('artbook/')}
-        >Toutes les planches de l’artbook <Icon name="forward" size="1rem" /></a
+      <a class="more-link" href={resolve(localPath(lang, 'artbook/'))}
+        >{h.faces.more} <Icon name="forward" size="1rem" /></a
       >
     </p>
   </div>
 </section>
 
 <!-- ── Plateformes : une chemise kraft ──────────────────────────────────────────── -->
-<section class="band" id="plateformes" aria-label="Plateformes" tabindex="-1">
+<section class="band" id="plateformes" aria-label={h.platforms.label} tabindex="-1">
   <div class="container folder-wrap" data-sr>
     <Folder
       id="folder-plateformes"
-      title="Plateformes"
+      title={h.platforms.title}
       cote="ORC 74 · DIFFUSION"
       tabAlign="start"
       headingLevel={2}
     >
       <div class="folder-body">
         <p class="folder-lede">
-          Sur ordinateur, sur téléphone et dans le navigateur. Gratuit, sur <a
-            href={ITCH_URL}
-            rel="external">itch.io</a
-          >.
+          <Rich text={h.platforms.lede} /><a href={ITCH_URL} rel="external">itch.io</a>{h.platforms
+            .ledeEnd}
         </p>
         <ul class="platforms">
           {#each platforms as p, i (p)}
             <li>
               <DymoLabel text={p} tilt={i % 2 ? 1 : -1} />
-              <span class="status">Disponible</span>
+              <span class="status">{h.platforms.available}</span>
             </li>
           {/each}
           <li class="demo">
-            <DymoLabel text="Navigateur" tone="red" tilt={-1.5} />
-            <a class="status" href="/jouer/" rel="external">Jouer ici</a>
+            <DymoLabel text={h.platforms.browser} tone="red" tilt={-1.5} />
+            <a class="status" href={playHref} rel="external">{h.platforms.playHere}</a>
           </li>
         </ul>
         <iframe
           class="itch-embed"
           src={ITCH_EMBED}
-          title="L’Arbre aux absents sur itch.io"
+          title={h.platforms.itchTitle}
           width="552"
           height="167"
-          loading="lazy"
-          ><a href={ITCH_URL} rel="external">L’Arbre aux absents sur itch.io</a></iframe
+          loading="lazy"><a href={ITCH_URL} rel="external">{h.platforms.itchTitle}</a></iframe
         >
-        <p class="folder-note">Jeu en français, en solo, de six à dix heures. Gratuit.</p>
+        <p class="folder-note">{h.platforms.note}</p>
       </div>
     </Folder>
   </div>
@@ -406,8 +348,8 @@
 <section class="band" aria-labelledby="shots-title">
   <div class="container">
     <div class="section-head center" data-sr>
-      <p class="kicker">Captures</p>
-      <h2 id="shots-title" class="section-title">Le bureau <em>de l’enquêteur</em></h2>
+      <p class="kicker">{h.shots.kicker}</p>
+      <h2 id="shots-title" class="section-title"><Rich text={h.shots.title} /></h2>
     </div>
     <ul class="shots">
       {#each shots as shot, i (shot.title)}
@@ -424,7 +366,7 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <span class="shot-soon"><Icon name="photo" size="1rem" /> Capture à venir</span>
+                <span class="shot-soon"><Icon name="photo" size="1rem" /> {h.shots.soon}</span>
               </div>
               <figcaption>{shot.title}</figcaption>
             </figure>

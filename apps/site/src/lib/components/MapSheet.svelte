@@ -14,8 +14,10 @@
     map: { viewBox: string; images: ArtImage[]; text: SvgNode } | null;
     label: string;
     tilt?: number;
+    /** Titre affiché tant que la carte manque (cartographe pas encore livré). */
+    fallback?: string;
   }
-  let { map, label, tilt = -0.6 }: Props = $props();
+  let { map, label, tilt = -0.6, fallback = 'La Velmarche' }: Props = $props();
 </script>
 
 <div data-play>
@@ -41,7 +43,7 @@
       </div>
     {:else}
       <div class="missing" role="img" aria-label={label}>
-        <span aria-hidden="true">La Velmarche</span>
+        <span aria-hidden="true">{fallback}</span>
       </div>
     {/if}
   </PaperSheet>
