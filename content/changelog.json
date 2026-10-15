@@ -1,5 +1,29 @@
 [
   {
+    "version": "1.4.5",
+    "date": "2026-10-15",
+    "title": {
+      "fr": "Choix des portraits repensé",
+      "en": "Redesigned portrait choice"
+    },
+    "items": [
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Le choix d’un portrait s’ouvre en grande grille : portraits plus grands, descriptions repliées (un interrupteur les affiche), aperçu en grand du visage survolé.",
+          "en": "Choosing a portrait opens a large grid: bigger portraits, collapsed descriptions (a switch shows them), and a large preview of the hovered face."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Recherche d’un visage par description ou par document, et filtre « Seulement le document ouvert ».",
+          "en": "Search faces by description or document, and an “Only the open document” filter."
+        }
+      }
+    ]
+  },
+  {
     "version": "1.4.4",
     "date": "2026-10-15",
     "title": {
