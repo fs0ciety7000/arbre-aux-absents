@@ -960,6 +960,22 @@ export const fr = {
     knownLink: 'Problèmes connus',
   },
 
+  changelog: {
+    seoTitle: 'Nouveautés',
+    seoDescription:
+      'Les nouveautés et corrections de chaque version de L’Arbre aux absents, du jeu comme du site, regroupées par version publiée.',
+    kicker: 'Journal des versions',
+    title: 'Nouveautés',
+    lede: 'Ce qui change à chaque version publiée du jeu. Les petites retouches sont regroupées avec la version qui les apporte.',
+    /** Avant le numéro : « Version actuelle : 1.3.1 ». */
+    current: `Version actuelle${NB}:`,
+    versionLabel: 'Version',
+    listLabel: 'Versions, de la plus récente à la plus ancienne',
+    kinds: { new: 'Nouveauté', improved: 'Amélioration', fixed: 'Correction' },
+    knownLink: 'Problèmes connus',
+    reportLink: 'Signaler un problème',
+  },
+
   privacy: {
     seoTitle: 'Confidentialité',
     seoDescription:
@@ -987,22 +1003,6 @@ export const fr = {
         id: 'pourquoi',
         heading: 'Pourquoi',
         body: [
-  changelog: {
-    seoTitle: 'Nouveautés',
-    seoDescription:
-      'Les nouveautés et corrections de chaque version de L’Arbre aux absents, du jeu comme du site, regroupées par version publiée.',
-    kicker: 'Journal des versions',
-    title: 'Nouveautés',
-    lede: 'Ce qui change à chaque version publiée du jeu. Les petites retouches sont regroupées avec la version qui les apporte.',
-    /** Avant le numéro : « Version actuelle : 1.3.1 ». */
-    current: `Version actuelle${NB}:`,
-    versionLabel: 'Version',
-    listLabel: 'Versions, de la plus récente à la plus ancienne',
-    kinds: { new: 'Nouveauté', improved: 'Amélioration', fixed: 'Correction' },
-    knownLink: 'Problèmes connus',
-    reportLink: 'Signaler un problème',
-  },
-
           [
             'Comprendre et corriger le problème. Le contact sert uniquement à vous répondre ; il n’est jamais publié.',
           ],
