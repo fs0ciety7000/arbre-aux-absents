@@ -69,6 +69,18 @@ describe('POST /v1/reports : validation et limites', () => {
     expect((await submit(t)).ticket).toBe('AA-0002');
   });
 
+  it('followUrl dans la langue du signalement (/en/suivi/ en anglais), pot de miel compris', async () => {
+    t = await startApp();
+    const en = await submit(t, { locale: 'en' });
+    expect(en.followUrl).toBe(`https://arbre.cardormedia.com/en/suivi/#${en.token}`);
+    const decoy = await post(t.base, submission({ locale: 'en', website: 'x' }));
+    const d = ReportReceiptSchema.parse(await decoy.json());
+    expect(d.followUrl).toBe(`https://arbre.cardormedia.com/en/suivi/#${d.token}`);
+    expect(t.app.service.followUrl(en.token, 'fr')).toBe(
+      `https://arbre.cardormedia.com/suivi/#${en.token}`,
+    );
+  });
+
   it.each([
     ['JSON illisible', '{nope'],
     ['champ inconnu', { ...submission(), extra: 1 }],
@@ -142,7 +154,7 @@ describe('POST /v1/reports : validation et limites', () => {
     }
     const seen = new Set<number>();
     for (let i = 0; i < 40; i++) {
-      const r = t.app.service.decoyReceipt();
+      const r = t.app.service.decoyReceipt('fr');
       const n = Number(r.ticket.slice(3));
       expect(r.ticket).toMatch(/^AA-\d{4}$/);
       expect(n).toBeGreaterThanOrEqual(10);

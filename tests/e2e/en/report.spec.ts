@@ -44,11 +44,11 @@ async function mockApi(page: Page, handler: (req: Request) => Reply): Promise<Re
   return seen;
 }
 
-// Le service renvoie toujours le lien français : le jeu le remplace par /en/suivi/ en anglais.
+// Signalement en anglais : le service renvoie la page de suivi anglaise (ARCHITECTURE §8).
 const receipt = {
   ticket: 'AA-0108',
   token: TOKEN,
-  followUrl: `https://arbre.cardormedia.com/suivi/#${TOKEN}`,
+  followUrl: `https://arbre.cardormedia.com/en/suivi/#${TOKEN}`,
 };
 
 const ticketView = {

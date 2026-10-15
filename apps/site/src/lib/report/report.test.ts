@@ -410,6 +410,8 @@ describe('vérification des réponses (mêmes verdicts que les schémas du contr
       [receipt, true],
       [{ ...receipt, ticket: 'aa-1' }, false],
       [{ ...receipt, token: 'court' }, false],
+      [{ ...receipt, followUrl: 'javascript:alert(1)' }, false],
+      [{ ...receipt, followUrl: `https://arbre.cardormedia.com/en/suivi/#${receipt.token}` }, true],
     ];
     for (const [v, ok] of cases) {
       expect(isReceipt(v)).toBe(ok);

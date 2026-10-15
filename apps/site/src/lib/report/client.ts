@@ -150,7 +150,8 @@ export function isReceipt(v: unknown): v is ReportReceipt {
     TICKET_NUMBER.test(v.ticket) &&
     typeof v.token === 'string' &&
     REPORT_TOKEN.test(v.token) &&
-    typeof v.followUrl === 'string'
+    typeof v.followUrl === 'string' &&
+    /^https?:\/\/[^\s]+$/.test(v.followUrl)
   );
 }
 

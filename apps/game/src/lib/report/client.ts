@@ -34,9 +34,11 @@ export function reportApiBase(value: string | undefined = import.meta.env.VITE_R
 }
 
 /**
- * Lien de suivi sur le site, dans la langue du joueur (le service renvoie toujours la page
- * française) : `…/suivi/#<jeton>` ou `…/en/suivi/#<jeton>`. Le jeton est dans le fragment : ni
- * journaux ni Referer (D10).
+ * Lien de suivi sur le site, dans la langue du joueur : `…/suivi/#<jeton>` ou `…/en/suivi/#<jeton>`.
+ * Le jeton est dans le fragment : ni journaux ni Referer (D10). Même forme que le `followUrl` du
+ * service (langue du signalement), mais reconstruit ici : « Mes signalements » ne garde que le
+ * jeton (`ReportRef`), et l'ouverture externe est limitée à `SITE_URL` quel que soit le
+ * `PUBLIC_SITE_URL` du service (préproduction).
  */
 export function followUrlFor(token: string, lang: Locale): string {
   return `${SITE_URL}${lang === 'en' ? '/en' : ''}/suivi/#${token}`;

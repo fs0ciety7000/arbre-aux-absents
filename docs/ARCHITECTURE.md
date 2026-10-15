@@ -593,8 +593,11 @@ neutre, rien n'est créé.
 
 **Ticket** : numéro propre au service (`AA-0042`, préfixe `TICKET_PREFIX`), sans lien avec le
 numéro du ticket GitHub. Jeton de suivi de 128 bits (22 caractères base64url), stocké **haché**
-(SHA-256), jamais journalisé. Lien de suivi `https://arbre.cardormedia.com/suivi/#<jeton>` (fragment :
-ni journaux ni Referer) (D10). Le jeu garde `ReportRef` dans `Profile.reports` (≤ 20).
+(SHA-256), jamais journalisé. Lien de suivi `followUrl` dans la langue du signalement (`locale`) :
+`https://arbre.cardormedia.com/suivi/#<jeton>`, ou `…/en/suivi/#<jeton>` en anglais (fragment : ni
+journaux ni Referer) (D10). Le jeu le reconstruit quand même (`followUrlFor`) : « Mes signalements »
+ne garde que le jeton (`ReportRef`) et l'ouverture externe est limitée au site public. Le site
+affiche et copie `followUrl` tel quel ; « Ouvrir le suivi » y reste un lien relatif (même origine). Le jeu garde `ReportRef` dans `Profile.reports` (≤ 20).
 
 **Correspondance des statuts** :
 

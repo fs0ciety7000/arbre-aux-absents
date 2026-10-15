@@ -20,7 +20,6 @@
   import type { ReportCategory, ReportReceipt, ReportSubmission } from '@arbre/contract';
   import Seo from '#lib/components/Seo.svelte';
   import { localHref } from '#lib/i18n/app';
-  import { pagePath } from '#lib/i18n/pages';
   import Rich from '#lib/i18n/Rich.svelte';
   import { submitReport, type ApiFailure } from '#lib/report/client';
   import { FORUM_URL } from '#lib/report/config';
@@ -33,7 +32,6 @@
     reportText,
     siteDiagnostics,
   } from '#lib/report/payload';
-  import { SITE_URL } from '#lib/site';
   import type { PageProps } from './$types';
 
   // Page hydratée : les textes arrivent par `data` (une langue), jamais par les catalogues.
@@ -111,9 +109,9 @@
     }),
   );
 
-  const followUrl = $derived(
-    receipt ? `${new URL(pagePath(lang, 'suivi/'), SITE_URL).href}#${receipt.token}` : '',
-  );
+  // Lien affiché et copié : celui du service, déjà dans la langue du signalement (ARCHITECTURE §8).
+  // « Ouvrir le suivi » reste un lien relatif (même origine, préproduction comprise).
+  const followUrl = $derived(receipt?.followUrl ?? '');
 
   /** Raison d'un échec, en clair (429 : délai de `Retry-After`). */
   function reason(f: ApiFailure): string {

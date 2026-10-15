@@ -187,7 +187,10 @@ test.describe('/signaler/', () => {
   });
 
   test('anglais : textes, lien de suivi sous /en/', async ({ page }) => {
-    const seen = await mockApi(page, () => ({ status: 201, body: receipt }));
+    const seen = await mockApi(page, () => ({
+      status: 201,
+      body: { ...receipt, followUrl: `https://arbre.cardormedia.com/en/suivi/#${TOKEN}` },
+    }));
     await page.goto('/en/signaler/');
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
     await expect(page.locator('h1')).toHaveText('Report a problem');

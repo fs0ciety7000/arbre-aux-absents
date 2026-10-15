@@ -105,7 +105,7 @@ export class ReportService {
   private readonly github: GitHubClient;
   private readonly now: () => number;
   private readonly log: Logger;
-  private readonly followBase: string;
+  private readonly siteUrl: string;
   /** Créations GitHub en cours (une suppression pendant ce temps devient un remplacement). */
   private readonly creating = new Set<number>();
   private readonly refreshing = new Map<number, Promise<void>>();
@@ -119,7 +119,7 @@ export class ReportService {
     this.github = deps.github;
     this.now = deps.now;
     this.log = deps.logger ?? silentLogger;
-    this.followBase = `${deps.publicSiteUrl}/suivi/#`;
+    this.siteUrl = deps.publicSiteUrl.replace(/\/+$/, '');
   }
 
   // ---------------------------------------------------------------------------------- création
@@ -143,22 +143,30 @@ export class ReportService {
     this.store.setPayload(row.id, JSON.stringify(draft));
     this.log.info('report.created', { ticket: row.ticket, category: s.category, source: s.source });
     this.kick();
-    return { ticket: row.ticket, token, followUrl: `${this.followBase}${token}` };
+    return { ticket: row.ticket, token, followUrl: this.followUrl(token, s.locale) };
   }
 
   /**
    * Reçu neutre du pot de miel : plausible (un numéro parmi les 20 derniers attribués, jamais
    * `-0000` qui trahirait le leurre), mais rien n'est créé ni réservé ; le jeton ne mène à rien.
    */
-  decoyReceipt(): ReportReceipt {
+  decoyReceipt(locale: Locale): ReportReceipt {
     const token = newToken();
     const last = this.store.lastNumber();
     const n = Math.max(1, last - randomInt(0, DECOY_SPREAD));
     return {
       ticket: this.store.formatTicket(n),
       token,
-      followUrl: `${this.followBase}${token}`,
+      followUrl: this.followUrl(token, locale),
     };
+  }
+
+  /**
+   * Lien de suivi dans la langue du signalement (D8, mêmes slugs sous `/en/`) :
+   * `…/suivi/#<jeton>` ou `…/en/suivi/#<jeton>`. Jeton dans le fragment (D10).
+   */
+  followUrl(token: string, locale: Locale): string {
+    return `${this.siteUrl}${locale === 'en' ? '/en' : ''}/suivi/#${token}`;
   }
 
   /** Lance le traitement de la file sans attendre (un seul passage à la fois). */

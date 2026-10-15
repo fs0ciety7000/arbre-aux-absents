@@ -93,6 +93,10 @@ export interface ReportReceipt {
   ticket: string;
   /** 22 caractères base64url. */
   token: string;
+  /**
+   * Page de suivi dans la langue du signalement (`locale`) : `<site>/suivi/#<jeton>` en français,
+   * `<site>/en/suivi/#<jeton>` en anglais. Jeton dans le fragment (ni journaux ni Referer).
+   */
   followUrl: string;
 }
 
