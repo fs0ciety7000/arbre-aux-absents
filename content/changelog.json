@@ -1,5 +1,57 @@
 [
   {
+    "version": "1.4.3",
+    "date": "2026-10-15",
+    "title": {
+      "fr": "Arbre et documents plus confortables",
+      "en": "A more comfortable tree and documents"
+    },
+    "items": [
+      {
+        "kind": "new",
+        "text": {
+          "fr": "L’arbre passe en plein écran (bouton à côté du zoom, ou touche F).",
+          "en": "The tree can go full screen (button next to the zoom, or the F key)."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Dans le navigateur, la fiche des documents s’ouvre dans une fenêtre à part, que vous pouvez placer sur un deuxième écran.",
+          "en": "In the browser, the documents card opens in its own window, which you can move to a second screen."
+        }
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Le panneau des documents s’élargit beaucoup plus, avec un nouveau réglage « Très large ».",
+          "en": "The documents panel can be made much wider, with a new “Extra wide” setting."
+        }
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Les personnes établies se repèrent d’un coup d’œil dans l’arbre : bordure, bandeau et sceau coché.",
+          "en": "Established people stand out in the tree at a glance: border, band and ticked seal."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Les boutons de génération et les vues Arbre, Générations et Liste ne reviennent plus en arrière toutes seules.",
+          "en": "The generation buttons and the Tree, Generations and List views no longer jump back on their own."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Plus de barre de défilement parasite sur les onglets des documents.",
+          "en": "No more stray scrollbar on the document tabs."
+        }
+      }
+    ]
+  },
+  {
     "version": "1.4.2",
     "date": "2026-10-15",
     "title": {
