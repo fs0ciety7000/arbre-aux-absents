@@ -1,13 +1,12 @@
 /**
- * npm run content:build [-- --edition full|demo] [-- --root <dossier> --out <dossier>] [-- --no-legacy]
+ * npm run content:build [-- --edition full|demo] [-- --root <dossier> --out <dossier>]
  *
  * Compile le contenu (éditions complète et démo, langue source et langues `ready`) et écrit
  * apps/game/src/generated/ et apps/site/src/generated/ (ARCHITECTURE §3.3). `--edition` choisit
  * l'édition importée par le jeu (défaut : full ; aussi via ARBRE_EDITION). Avec `--root` hors
  * dépôt, rien n'est écrit sans `--out` (le jeu dans <out>/game, le site dans <out>/site). Refuse
- * d'écrire si content:check échoue. Jusqu'à la vague C1, l'ancien format FR (`cases.ts`,
- * `cases.<éd>.json`) est écrit en plus et le nouveau module s'appelle `cases.i18n.ts` ;
- * `--no-legacy` écrit le nouveau format seul (`cases.ts` = module par langue).
+ * d'écrire si content:check échoue. Le module généré `cases.ts` charge à la demande catalogues,
+ * affaires et illustrations par langue et par édition.
  */
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -26,9 +25,7 @@ const { values } = parseArgs({
     root: { type: 'string' },
     out: { type: 'string' },
     edition: { type: 'string', default: process.env.ARBRE_EDITION ?? 'full' },
-    legacy: { type: 'boolean', default: true },
   },
-  allowNegative: true,
 });
 if (values.edition !== 'full' && values.edition !== 'demo') {
   console.error(`content:build — --edition attend full ou demo (reçu : ${values.edition})`);
@@ -64,7 +61,7 @@ if (values.out) {
   );
   process.exit(0);
 }
-const changed = await writeGenerated(result, targets, edition, { legacy: values.legacy });
+const changed = await writeGenerated(result, targets, edition);
 console.log(
   `content:build — ${result.cases.length} affaire(s), langue(s) ${result.locales.compiled.join(', ')}, jeu en édition ${edition}, ${changed.length} fichier(s) mis à jour.`,
 );

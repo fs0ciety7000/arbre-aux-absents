@@ -8,7 +8,7 @@
  */
 import type { Locale, MapLayer, Place, WorldMap } from '@arbre/contract';
 import { SvelteMap } from 'svelte/reactivity';
-import { loadWorldText, type WorldLocaleOverride } from '../../generated/cases.i18n';
+import { loadWorldText, type WorldLocaleOverride } from '../../generated/cases';
 import { world } from '../../generated/world';
 
 export interface LocalizedWorld {

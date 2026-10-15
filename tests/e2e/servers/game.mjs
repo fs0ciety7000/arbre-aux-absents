@@ -60,8 +60,6 @@ function buildContent() {
   mkdirSync(game, { recursive: true });
   cpSync(parts[0], game, { recursive: true });
   for (const edition of ['full', 'demo']) {
-    const cases = parts.flatMap((dir) => readJson(resolve(dir, `cases.${edition}.json`)));
-    writeFileSync(resolve(game, `cases.${edition}.json`), JSON.stringify(cases.sort(byOrder)));
     const assets = Object.assign(
       {},
       ...parts.map((dir) => readJson(resolve(dir, `assets.${edition}.json`))),
@@ -72,12 +70,12 @@ function buildContent() {
 }
 
 /**
- * Arborescence par langue (`cases.i18n.ts`, docs/i18n/PLAN.md) : catalogues et surcharges
+ * Arborescence par langue (module `cases.ts`, docs/i18n/PLAN.md) : catalogues et surcharges
  * d'illustrations réunis, affaires `case.<éd>.<loc>.<id>.json` copiées, et la table
  * `caseLoaders` du module généré réécrite pour toutes les affaires.
  */
 function mergeLocalized(parts, game) {
-  const loader = resolve(game, 'cases.i18n.ts');
+  const loader = resolve(game, 'cases.ts');
   if (!existsSync(loader)) return;
   let code = readFileSync(loader, 'utf8');
   const edition = /export const edition = '([a-z]+)'/.exec(code)?.[1];

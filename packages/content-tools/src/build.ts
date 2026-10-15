@@ -8,12 +8,12 @@
  *   assets.<éd>.<loc>.json           surcharges de la langue seulement ({} pour la source)
  *   world.json                       monde de la langue source (couches communes)
  *   world.<loc>.json                 texte du monde et couche `labels` de la langue ({} pour la source)
- *   cases.ts                         loadCatalog(loc), loadCase(loc, id), assetLoader(loc, caseId, key)
+ *   world.ts                         `world` (monde de la langue source, typé)
+ *   cases.ts                         loadCatalog(loc), loadCase(loc, id), assetLoader(loc, caseId, key),
+ *                                    loadWorldText(loc), edition, locales
  *
- * Transition (jusqu'à la vague C1) : `legacy` (défaut) écrit aussi l'ancien format FR,
- * `cases.<éd>.json` + `cases.ts` (affaires et illustrations de l'édition importée) + `world.ts`,
- * et le nouveau module sous le nom `cases.i18n.ts`. Sans `legacy`, le nouveau module devient
- * `cases.ts` et l'ancien format n'est plus écrit.
+ * L'ancien format FR (`cases.<éd>.json`, `cases.i18n.ts`) n'est plus écrit depuis la vague C1 ;
+ * ses restes éventuels sont supprimés à la compilation suivante.
  *
  * Jeu (`apps/game/src/generated/`) : les deux éditions ; les modules n'importent QUE l'édition
  * choisie (le bundle démo ne contient donc pas l'édition complète).
@@ -53,18 +53,6 @@ export function bundleFor(r: CheckResult, edition: Edition, locale?: Locale): Bu
 }
 
 const HEADER = '// Généré par `npm run content:build`. Ne pas modifier.\n';
-
-function casesModule(edition: Edition): string {
-  return `${HEADER}import type { CompiledCase } from '@arbre/contract';
-import data from './cases.${edition}.json';
-import assets from './assets.${edition}.json';
-
-export const edition = '${edition}' as const;
-export const cases = data as unknown as CompiledCase[];
-/** Illustrations optimisées : affaire → \`illustrations/<nom>.svg\` → SVG. */
-export const illustrations = assets as unknown as Record<string, Record<string, string>>;
-`;
-}
 
 const WORLD_MODULE = `${HEADER}import type { MapLayer, Place, WorldMap } from '@arbre/contract';
 import data from './world.json';
@@ -221,23 +209,19 @@ export function loaderModule(
   return lines.join('\n');
 }
 
-/** Fichiers générés gérés par le nouvel écrivain (nettoyage des restes). */
+/**
+ * Fichiers générés gérés par l'écrivain (nettoyage des restes), dont ceux de l'ancien format
+ * (`cases.<éd>.json`, `cases.i18n.ts`) retiré à la vague C1.
+ */
 const MANAGED =
   /^(catalog\.[a-z]+\.[a-z]+\.json|case\.[a-z]+\.[a-z]+\.[a-z0-9-]+\.json|assets\.[a-z]+\.[a-z]+\.json|world\.[a-z]+\.json|cases\.(full|demo)\.json|cases(\.i18n)?\.ts)$/;
-
-export interface WriteOptions {
-  /** Écrit aussi l'ancien format FR (défaut : vrai jusqu'à la vague C1). */
-  legacy?: boolean;
-}
 
 /** Écrit les fichiers générés. Renvoie la liste des fichiers modifiés. */
 export async function writeGenerated(
   r: CheckResult,
   targets: BuildTargets,
   gameEdition: Edition = 'full',
-  options: WriteOptions = {},
 ): Promise<string[]> {
-  const legacy = options.legacy ?? true;
   const changed: string[] = [];
   const src = r.locales.source;
   const locales = r.locales.compiled.filter(
@@ -268,7 +252,6 @@ export async function writeGenerated(
         );
         if (edition === moduleEdition) caseIds[loc] = b.cases.map((c) => c.id);
       }
-      if (legacy) await write(`cases.${edition}.json`, JSON.stringify(base.cases));
     }
     await write('world.json', JSON.stringify(sourceWorld));
     for (const loc of locales) {
@@ -279,11 +262,7 @@ export async function writeGenerated(
       );
     }
     await write('world.ts', WORLD_MODULE);
-    const loader = loaderModule(moduleEdition, locales, caseIds);
-    if (legacy) {
-      await write('cases.ts', casesModule(moduleEdition));
-      await write('cases.i18n.ts', loader);
-    } else await write('cases.ts', loader);
+    await write('cases.ts', loaderModule(moduleEdition, locales, caseIds));
     // Restes d'une compilation précédente (affaire ou langue retirée).
     for (const name of await readdir(dir)) {
       if (MANAGED.test(name) && !written.has(name)) await rm(join(dir, name), { force: true });

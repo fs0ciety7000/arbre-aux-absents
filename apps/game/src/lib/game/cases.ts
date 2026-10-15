@@ -1,6 +1,6 @@
 import type { CaseCatalogEntry, CompiledCase, Locale } from '@arbre/contract';
 import { DEFAULT_LOCALE } from '@arbre/contract';
-import type * as GeneratedModule from '../../generated/cases.i18n';
+import type * as GeneratedModule from '../../generated/cases';
 
 /**
  * Contenu compilé par `npm run content:build`, chargé en morceaux (ARCHITECTURE §3.3) :
@@ -35,7 +35,7 @@ let generatedLoad: Promise<Generated> | null = null;
 
 /** Module de chargement généré (petit, à part : le premier affichage ne l'attend pas). */
 function generated(): Promise<Generated> {
-  generatedLoad ??= import('../../generated/cases.i18n').catch((err: unknown) => {
+  generatedLoad ??= import('../../generated/cases').catch((err: unknown) => {
     generatedLoad = null;
     throw err;
   });

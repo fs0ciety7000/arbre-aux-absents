@@ -431,7 +431,7 @@ describe('content:i18n : périmètre', () => {
 });
 
 describe('content:build : arborescence par langue', () => {
-  it('catalogues, affaires, surcharges, monde ; ancien format FR en plus (legacy)', async () => {
+  it('catalogues, affaires, surcharges, monde ; plus d’ancien format FR', async () => {
     const out = await mkdtemp(join(tmpdir(), 'arbre-gen-'));
     temps.push(out);
     const game = join(out, 'game');
@@ -449,9 +449,6 @@ describe('content:build : arborescence par langue', () => {
       'case.demo.fr.mini.json',
       'case.full.en.mini.json',
       'case.full.fr.mini.json',
-      'cases.demo.json',
-      'cases.full.json',
-      'cases.i18n.ts',
       'cases.ts',
       'catalog.demo.en.json',
       'catalog.demo.fr.json',
@@ -482,9 +479,7 @@ describe('content:build : arborescence par langue', () => {
       map: { title: 'Map of the Ysel Marches' },
       places: { 'val-dormant': { description: 'Ferry village on the banks of the Lisse.' } },
     });
-    // Ancien format : FR seulement.
-    expect((await json('cases.full.json'))[0].locale).toBe('fr');
-    const loader = await readFile(join(game, 'cases.i18n.ts'), 'utf8');
+    const loader = await readFile(join(game, 'cases.ts'), 'utf8');
     expect(loader).toContain("export const locales: readonly Locale[] = ['fr', 'en'];");
     expect(loader).toContain("'mini': () => import('./case.full.en.mini.json'),");
     expect(loader).not.toContain('case.demo.');
@@ -495,8 +490,10 @@ describe('content:build : arborescence par langue', () => {
     // Site : démo seulement.
     expect((await readdir(site)).filter((f) => f.includes('full'))).toEqual([]);
 
-    // Sans legacy : `cases.ts` est le module par langue, l'ancien format disparaît.
-    await writeGenerated(base, { game }, 'demo', { legacy: false });
+    // Restes de l'ancien format (avant C1) : supprimés à la compilation suivante.
+    await writeFile(join(game, 'cases.full.json'), '[]');
+    await writeFile(join(game, 'cases.i18n.ts'), '');
+    await writeGenerated(base, { game }, 'demo');
     const next = await readdir(game);
     expect(next).not.toContain('cases.full.json');
     expect(next).not.toContain('cases.i18n.ts');
@@ -514,6 +511,6 @@ describe('content:build : arborescence par langue', () => {
     await writeGenerated(r, { game: out });
     const files = await readdir(out);
     expect(files.filter((f) => f.includes('.en.'))).toEqual([]);
-    expect(await readFile(join(out, 'cases.i18n.ts'), 'utf8')).toContain("= ['fr'];");
+    expect(await readFile(join(out, 'cases.ts'), 'utf8')).toContain("= ['fr'];");
   });
 });

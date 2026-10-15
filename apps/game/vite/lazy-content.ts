@@ -1,8 +1,8 @@
 /**
  * Plugin Vite : contenu compilé chargé en morceaux (perf du premier affichage).
  *
- * `content:build` écrit dans `src/generated/` un module de chargement (`cases.i18n.ts` jusqu'à
- * la vague C1, puis `cases.ts`) qui importe à la demande, par langue et par édition
+ * `content:build` écrit dans `src/generated/` un module de chargement (`cases.ts`) qui importe
+ * à la demande, par langue et par édition
  * (ARCHITECTURE §3.3) : `catalog.<éd>.<loc>.json`, `case.<éd>.<loc>.<id>.json`,
  * `assets.<éd>.json` (illustrations communes) et `assets.<éd>.<loc>.json` (surcharges de la
  * langue). Ce plugin intercepte ces imports, et seulement ceux du module de chargement :
@@ -28,7 +28,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import type { Plugin } from 'vite';
 
-const LOADER_MODULE = /[\\/]cases(?:\.i18n)?\.ts$/;
+const LOADER_MODULE = /[\\/]cases\.ts$/;
 const CASE_IMPORT = /^\.\/case\.(full|demo)\.([a-z]{2,3})\.([a-z0-9-]+)\.json$/;
 const ASSETS_IMPORT = /^\.\/assets\.(full|demo)(?:\.([a-z]{2,3}))?\.json$/;
 const INDEX_PREFIX = '\0arbre-content:';

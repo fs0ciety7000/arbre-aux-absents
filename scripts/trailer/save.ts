@@ -27,11 +27,14 @@ const { values } = parseArgs({
   options: { out: { type: 'string' }, verbose: { type: 'boolean' } },
 });
 
-const cases = JSON.parse(
-  readFileSync(join(REPO, 'apps/game/src/generated/cases.full.json'), 'utf8'),
-) as CompiledCase[];
-const c = cases.find((k) => k.id === CASE);
-if (!c) throw new Error(`affaire ${CASE} introuvable (npm run content:build ?)`);
+const casePath = join(REPO, `apps/game/src/generated/case.full.fr.${CASE}.json`);
+const c = ((): CompiledCase => {
+  try {
+    return JSON.parse(readFileSync(casePath, 'utf8')) as CompiledCase;
+  } catch {
+    throw new Error(`affaire ${CASE} introuvable (npm run content:build ?)`);
+  }
+})();
 
 interface Person {
   id: string;

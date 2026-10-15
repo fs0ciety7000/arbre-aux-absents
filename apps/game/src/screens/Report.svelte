@@ -28,7 +28,7 @@
   } from '@arbre/ui';
   import { onMount } from 'svelte';
   import { version } from '../../package.json';
-  import { edition as builtEdition } from '../generated/cases.i18n';
+  import { edition as builtEdition } from '../generated/cases';
   import { intlLocale, messages } from '../i18n/index.svelte';
   import { announcer } from '../lib/game/announcer.svelte';
   import type { ReportRequest } from '../lib/game/app.svelte';
