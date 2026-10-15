@@ -1,5 +1,36 @@
 [
   {
+    "version": "1.4.1",
+    "date": "2026-10-15",
+    "title": {
+      "fr": "Corrections de la 1.4.0",
+      "en": "1.4.0 fixes"
+    },
+    "items": [
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "La démo ne montre plus, dans ses Nouveautés, des notes réservées à l’édition complète.",
+          "en": "The demo’s “What’s new” no longer shows notes meant for the full edition."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Le formulaire de signalement du site respecte les règles de sécurité strictes du navigateur, sans alerte.",
+          "en": "The website’s report form now runs cleanly under the browser’s strict security rules."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Les mises à jour automatiques sont désormais publiées à chaque version.",
+          "en": "Automatic updates are now published with every version."
+        }
+      }
+    ]
+  },
+  {
     "version": "1.4.0",
     "date": "2026-10-15",
     "title": {
