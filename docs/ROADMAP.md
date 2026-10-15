@@ -133,6 +133,7 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       `admin.js healthcheck`). Jeton, webhook, étiquettes et jalon `v1.2.0` posés par Nicolas ; test de
       bout en bout réussi (ticket de test AA-0001 : créé, puis « Confirmé » via le webhook).
 - [x] Version 1.2.0 du jeu (anglais + signalement en jeu) envoyée sur itch.io par la CI.
+- [x] Version 1.2.1 : bouton Signaler dans l’en-tête du bureau, dialogue plein écran sans débordement au téléphone ; page publique /tickets/ et lien Signaler dans l’en-tête du site.
 - [x] Liste publique des tickets ouverts : `GET /v1/tickets` (contrat `OpenTicket`, sans texte du
       joueur, titre seulement si `public`) et page `/tickets/` (FR/EN, sitemap, pied de page, liens
       depuis signaler/suivi/problèmes connus) ; lien « Signaler » dans l'en-tête du site.
