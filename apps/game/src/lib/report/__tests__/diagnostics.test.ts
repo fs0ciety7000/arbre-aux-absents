@@ -1,4 +1,5 @@
 import {
+  REPORT_LIMITS,
   REPORT_REF_LIMITS,
   ReportDiagnosticsSchema,
   ReportSubmissionSchema,
@@ -10,7 +11,9 @@ import { makeSave } from '../../../platform/__tests__/fixtures';
 import { anonymiseSave } from '../anonymise';
 import {
   addReportRef,
+  bodyBytes,
   buildSubmission,
+  fitSubmission,
   formatDelay,
   gameDiagnostics,
   missingChars,
@@ -107,6 +110,40 @@ describe('diagnostics du jeu', () => {
     expect(buildSubmission({ ...base, contact: ' moi@exemple.test ' }).contact).toBe(
       'moi@exemple.test',
     );
+  });
+
+  it('corps borné en octets UTF-8 : sauvegarde retirée si elle fait dépasser 64 Ko', () => {
+    const form = (save: unknown) =>
+      buildSubmission({
+        category: 'bug',
+        description: 'La carte ne se déplie plus après la loupe, deux fois de suite.',
+        contact: '',
+        locale: 'fr',
+        diagnostics: gameDiagnostics({ ...env, save }),
+        website: '',
+        elapsedMs: 5000,
+      });
+    // Sous 48 Ko en caractères (accepté par le contrat), mais au-delà de 64 Ko en octets :
+    // « é » pèse deux octets, « 𝔄 » quatre (deux unités UTF-16).
+    const heavy = { names: 'é'.repeat(30_000) + '𝔄'.repeat(8_000) };
+    expect(JSON.stringify(heavy).length).toBeLessThanOrEqual(REPORT_LIMITS.saveJson);
+    const big = form(heavy);
+    expect(ReportSubmissionSchema.safeParse(big).success).toBe(true);
+    expect(bodyBytes(big)).toBeGreaterThan(REPORT_LIMITS.body);
+    const fitted = fitSubmission(big);
+    expect(fitted.saveDropped).toBe(true);
+    expect(fitted.submission.diagnostics.save).toBeUndefined();
+    expect(fitted.submission.description).toBe(big.description);
+    expect(bodyBytes(fitted.submission)).toBeLessThanOrEqual(REPORT_LIMITS.body);
+    expect(big.diagnostics.save).toBe(heavy); // l'original n'est pas modifié
+
+    // Même nombre de caractères en ASCII : tient, la sauvegarde reste.
+    const light = form({ names: 'e'.repeat(24_000) });
+    expect(fitSubmission(light)).toEqual({ submission: light, saveDropped: false });
+    // Sans sauvegarde : inchangé.
+    const none = form(undefined);
+    expect(fitSubmission(none, 10)).toEqual({ submission: none, saveDropped: false });
+    expect(bodyBytes(none)).toBe(new TextEncoder().encode(JSON.stringify(none)).length);
   });
 
   it('description : 20 caractères au moins', () => {

@@ -40,6 +40,7 @@
   import {
     addReportRef,
     buildSubmission,
+    fitSubmission,
     formatDelay,
     gameDiagnostics,
     missingChars,
@@ -119,7 +120,8 @@
   );
   const missing = $derived(missingChars(description));
 
-  const submission = $derived.by(() => {
+  /** Corps borné en octets UTF-8 : sauvegarde retirée si elle fait dépasser 64 Ko. */
+  const fitted = $derived.by(() => {
     const game = app.game?.content;
     const joined = attach ? sourceSave : null;
     const diagnostics = gameDiagnostics({
@@ -136,16 +138,19 @@
       settings: app.settings,
       save: anonymised?.save,
     });
-    return buildSubmission({
-      category,
-      description,
-      contact,
-      locale: app.lang,
-      diagnostics,
-      website,
-      elapsedMs: now - openedAt,
-    });
+    return fitSubmission(
+      buildSubmission({
+        category,
+        description,
+        contact,
+        locale: app.lang,
+        diagnostics,
+        website,
+        elapsedMs: now - openedAt,
+      }),
+    );
   });
+  const submission = $derived(fitted.submission);
   const preview = $derived(JSON.stringify(submission, null, 2));
 
   /** Ligne lisible au-dessus de l'aperçu : « Version 1.1.0 · Démo · Android · English · … ». */
@@ -167,6 +172,7 @@
     if (!attach) return null;
     if (!sourceSave) return m.attachSaveNone;
     if (!anonymised) return m.saveTooLarge;
+    if (fitted.saveDropped) return m.saveDroppedForSize;
     const parts = [m.saveStripped(anonymised.notes, anonymised.queries)];
     if (anonymised.trimmedSearches > 0 || anonymised.droppedHighlights > 0) {
       parts.push(m.saveTrimmed);
@@ -349,6 +355,7 @@
         <!-- Zone défilante (16rem) : atteignable au clavier pour la lire en entier. -->
         <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
         <pre class="ink-type json" tabindex="0" aria-label={m.previewSummary}>{preview}</pre>
+        {#if fitted.saveDropped}<p class="note">{m.saveDroppedForSize}</p>{/if}
         <p class="note">{m.previewNote}</p>
       </details>
 

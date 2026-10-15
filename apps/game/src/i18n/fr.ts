@@ -570,6 +570,8 @@ export const fr = {
       `Retirés de la sauvegarde : le texte de ${notes} ${plural(notes, 'note', 'notes')} et ${queries} ${plural(queries, 'recherche tapée', 'recherches tapées')}. L’arbre et la progression restent.`,
     saveTrimmed: 'Sauvegarde raccourcie pour tenir dans la limite (anciennes recherches).',
     saveTooLarge: 'Sauvegarde trop volumineuse : elle ne sera pas jointe.',
+    saveDroppedForSize:
+      'Sauvegarde retirée : avec elle, le signalement dépasserait la taille d’envoi permise (64 Ko). Le reste part tel quel.',
     honeypot: 'Site web (laisser vide)',
     previewSummary: 'Voir exactement ce qui sera envoyé',
     previewNote:

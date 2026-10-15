@@ -97,6 +97,28 @@ export function buildSubmission(input: FormInput): ReportSubmission {
   };
 }
 
+/** Taille du corps envoyé (`JSON.stringify`, comme `submitReport`), en octets UTF-8. */
+export function bodyBytes(submission: ReportSubmission): number {
+  return new TextEncoder().encode(JSON.stringify(submission)).length;
+}
+
+/**
+ * Corps borné à `REPORT_LIMITS.body` octets UTF-8 (le service refuse au-delà, 413) : si la
+ * sauvegarde jointe fait dépasser, elle est retirée (`saveDropped`) et l'écran le dit. La limite
+ * de la sauvegarde est en caractères (48 Ko) : des noms accentués peuvent doubler son poids.
+ */
+export function fitSubmission(
+  submission: ReportSubmission,
+  maxBytes: number = REPORT_LIMITS.body,
+): { submission: ReportSubmission; saveDropped: boolean } {
+  if (submission.diagnostics.save === undefined || bodyBytes(submission) <= maxBytes) {
+    return { submission, saveDropped: false };
+  }
+  const diagnostics: ReportDiagnostics = { ...submission.diagnostics };
+  delete diagnostics.save;
+  return { submission: { ...submission, diagnostics }, saveDropped: true };
+}
+
 /** Caractères qui manquent à la description pour être envoyée (0 : prête). */
 export function missingChars(description: string): number {
   return Math.max(0, REPORT_LIMITS.descriptionMin - description.trim().length);

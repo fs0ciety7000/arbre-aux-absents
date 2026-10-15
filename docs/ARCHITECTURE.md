@@ -638,7 +638,8 @@ reste lisible par le joueur (statut `received`) et `admin.js retry AA-0042` le r
 **Limitation de débit** : en mémoire seulement. Clé = HMAC de `CF-Connecting-IP` avec un secret
 aléatoire tiré en mémoire et renouvelé chaque jour ; jamais écrite ni journalisée. Plafonds :
 5 signalements par heure et 20 par jour par clé, 60 par heure au total, 60 lectures de ticket par
-minute. Corps limité à 64 Ko. Interrupteur `REPORTS_ENABLED`. Délais d'attente sur chaque appel
+minute. Corps limité à 64 Ko (octets UTF-8) ; le jeu borne le sien avant l'envoi (`fitSubmission` :
+sauvegarde jointe retirée, avec un message dans l'aperçu, si elle fait dépasser). Interrupteur `REPORTS_ENABLED`. Délais d'attente sur chaque appel
 GitHub, concurrence bornée de la file `pending`.
 
 **Schéma SQLite**, table `tickets` : `id`, `ticket` UNIQUE, `token_hash` UNIQUE (SHA-256),

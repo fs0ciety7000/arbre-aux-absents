@@ -544,6 +544,8 @@ export const en = {
       `Removed from the save: the text of ${notes} ${plural(notes, 'note', 'notes')} and ${queries} typed ${plural(queries, 'search', 'searches')}. The tree and your progress remain.`,
     saveTrimmed: 'Save shortened to fit the limit (older searches).',
     saveTooLarge: 'The save is too large: it will not be attached.',
+    saveDroppedForSize:
+      'Save removed: with it, the report would exceed the size allowed for sending (64 KB). Everything else is sent as shown.',
     honeypot: 'Website (leave empty)',
     previewSummary: 'See exactly what will be sent',
     previewNote:
