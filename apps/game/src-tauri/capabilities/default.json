@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Droits minimaux du jeu : fenêtre, sauvegardes sous $APPDATA/saves/, dialogues d'export/import, liens externes limités au site et à la page itch.io (D11).",
+  "description": "Droits minimaux du jeu : fenêtre, sauvegardes sous $APPDATA/saves/, dialogues d'export/import, liens externes limités au site, à la page itch.io (D11) et aux releases GitHub du jeu (APK Android d'une nouvelle version, D18).",
   "windows": ["main"],
   "platforms": ["linux", "macOS", "windows", "android", "iOS"],
   "permissions": [
@@ -28,7 +28,8 @@
       "identifier": "opener:allow-open-url",
       "allow": [
         { "url": "https://arbre.cardormedia.com/*" },
-        { "url": "https://cardorinteractive.itch.io/*" }
+        { "url": "https://cardorinteractive.itch.io/*" },
+        { "url": "https://github.com/fs0ciety7000/arbre-aux-absents/releases/*" }
       ]
     }
   ]

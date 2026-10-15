@@ -34,7 +34,7 @@
         "img-src": "'self' data: blob: https://arbre-api.cardormedia.com",
         "font-src": "'self'",
         "media-src": "'self' blob:",
-        "connect-src": "'self' ipc: http://ipc.localhost https://arbre-api.cardormedia.com",
+        "connect-src": "'self' ipc: http://ipc.localhost https://arbre-api.cardormedia.com https://api.github.com",
         "object-src": "'none'",
         "base-uri": "'self'",
         "form-action": "'none'",
@@ -84,6 +84,17 @@
     },
     "android": {
       "minSdkVersion": 24
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDFENTU4MDdFRDRDOEQ0OEUKUldTTzFNalVmb0JWSGZFYldtN0dRRFhQOXNINWlNSHByUi9lUkZlSEJkQXJPN1ZFY21UdlNpUkQK",
+      "endpoints": [
+        "https://github.com/fs0ciety7000/arbre-aux-absents/releases/latest/download/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
     }
   }
 }

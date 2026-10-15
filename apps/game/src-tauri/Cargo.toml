@@ -18,11 +18,20 @@ tauri-build = { version = "2.7", features = [] }
 
 [dependencies]
 # Aucune commande Rust maison (ARCHITECTURE §2) : le shell n'expose que les plugins fs, dialog et
-# opener (liens externes limités au site et à la page itch.io, capabilities/default.json, D11).
+# opener (liens externes limités au site, à la page itch.io et aux APK des releases GitHub,
+# capabilities/default.json, D11), plus updater et process sur desktop (mise à jour, D18).
 tauri = { version = "2.12", features = [] }
 tauri-plugin-fs = "2.7"
 tauri-plugin-dialog = "2.8"
 tauri-plugin-opener = "2.7"
+# `generate_context!` sérialise la section `plugins` de tauri.conf.json (config de l'updater).
+serde_json = "1"
+
+# Mise à jour automatique (Windows NSIS, macOS, AppImage) : desktop seulement, Android passe par
+# l'APK signé de la release GitHub (ARCHITECTURE §4, DEPLOYMENT §2).
+[target.'cfg(any(target_os = "macos", windows, target_os = "linux"))'.dependencies]
+tauri-plugin-updater = "2.14"
+tauri-plugin-process = "2.4"
 
 [profile.release]
 codegen-units = 1
