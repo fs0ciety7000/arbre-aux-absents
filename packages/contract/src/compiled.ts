@@ -78,8 +78,7 @@ export interface CompiledCase {
    * Langue du texte compilé. Le sel, les réponses et la structure sont identiques d'une langue
    * à l'autre (D4) : seule cette donnée et les champs traduisibles changent.
    */
-  // TODO: required after wave C1 (docs/i18n/PLAN.md §3) ; facultatif tant que A1/A2 ne l'émettent pas.
-  locale?: Locale;
+  locale: Locale;
   /**
    * 8 hex. Empreinte **structurelle** : calculée sur les sources FR hors `locales/` (ids,
    * conditions, structure), identique pour toutes les langues d'une même édition.
