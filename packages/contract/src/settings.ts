@@ -20,6 +20,20 @@ export const READ_SCALES = [0.9, 1, 1.15, 1.3, 1.5] as const;
 export type ReadScale = (typeof READ_SCALES)[number];
 /** Largeur du volet latéral (Lecteur, Archives…) en px CSS : bornes, standard et large. */
 export const SIDE_WIDTH = Object.freeze({ min: 360, standard: 440, wide: 640, max: 640 });
+/**
+ * Disposition du Bureau (desktop et tablette paysage) : Enquête (arbre + volet côte à côte),
+ * Lecture (Lecteur ~60 %), Arbre (arbre plein Bureau, volet en fiche flottante).
+ */
+export const DESK_LAYOUTS = ['investigate', 'read', 'tree'] as const;
+export type DeskLayout = (typeof DESK_LAYOUTS)[number];
+/**
+ * Position de la fiche flottante (disposition Arbre) : fractions [0, 1] de la place libre
+ * (0 = bord gauche / haut, 1 = bord droit / bas), donc toujours à l'écran quelle que soit la taille.
+ */
+export interface CardPosition {
+  x: number;
+  y: number;
+}
 
 export interface Volume {
   /** [0, 1] */
@@ -47,6 +61,10 @@ export interface Settings {
   readScale: ReadScale;
   /** Largeur mémorisée du volet latéral (px, `SIDE_WIDTH`). Absent des anciens profils : 440. */
   sideWidth: number;
+  /** Disposition du Bureau. Absent des anciens profils : 'investigate'. */
+  layout: DeskLayout;
+  /** Position mémorisée de la fiche flottante. Absent des anciens profils : en haut à droite. */
+  cardPosition: CardPosition;
   readingFont: 'default' | 'hyperlegible' | 'dyslexic';
   lineSpacing: 'default' | 'wide' | 'wider';
   letterSpacing: boolean;
@@ -115,6 +133,8 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   textScale: 1,
   readScale: 1,
   sideWidth: SIDE_WIDTH.standard,
+  layout: 'investigate',
+  cardPosition: Object.freeze({ x: 1, y: 0 }),
   readingFont: 'default',
   lineSpacing: 'default',
   letterSpacing: false,
@@ -142,6 +162,7 @@ export function defaultSettings(): Settings {
     ...DEFAULT_SETTINGS,
     hints: { ...DEFAULT_SETTINGS.hints },
     volume: { ...DEFAULT_SETTINGS.volume },
+    cardPosition: { ...DEFAULT_SETTINGS.cardPosition },
   };
 }
 
@@ -151,6 +172,11 @@ export function defaultProfile(): Profile {
 }
 
 const VolumeLevelSchema = z.number().min(0).max(1);
+
+export const CardPositionSchema = z.strictObject({
+  x: z.number().min(0).max(1),
+  y: z.number().min(0).max(1),
+});
 
 export const VolumeSchema = z.strictObject({
   master: VolumeLevelSchema,
@@ -175,6 +201,8 @@ export const SettingsSchema = z.strictObject({
   // Migration douce : champs ajoutés après coup, valeur par défaut pour les profils antérieurs.
   readScale: z.literal(READ_SCALES).default(1),
   sideWidth: z.number().int().min(SIDE_WIDTH.min).max(SIDE_WIDTH.max).default(SIDE_WIDTH.standard),
+  layout: z.enum(DESK_LAYOUTS).default('investigate'),
+  cardPosition: CardPositionSchema.default({ x: 1, y: 0 }),
   readingFont: z.enum(['default', 'hyperlegible', 'dyslexic']),
   lineSpacing: z.enum(['default', 'wide', 'wider']),
   letterSpacing: z.boolean(),

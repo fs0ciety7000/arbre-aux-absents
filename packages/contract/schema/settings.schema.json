@@ -29,6 +29,39 @@
       "minimum": 360,
       "maximum": 640
     },
+    "layout": {
+      "default": "investigate",
+      "type": "string",
+      "enum": [
+        "investigate",
+        "read",
+        "tree"
+      ]
+    },
+    "cardPosition": {
+      "default": {
+        "x": 1,
+        "y": 0
+      },
+      "type": "object",
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "additionalProperties": false
+    },
     "readingFont": {
       "type": "string",
       "enum": [
