@@ -21,25 +21,65 @@ env:
   NPM_CONFIG_FUND: false
 
 jobs:
-  # Sur un tag v* : une release BROUILLON, complétée par les jobs suivants, publiée à la main.
+  # Release GitHub (D18, DEPLOYMENT §3) : sur un tag v*, ou sur un commit de publication
+  # « [itch] » (une session Claude ne peut pas pousser de tag). Créée en BROUILLON (tag vX.Y.Z
+  # = version du jeu, notes tirées de content/changelog.json), complétée par desktop et android,
+  # puis publiée « latest » par le job `publish` : c'est elle que lit la mise à jour automatique
+  # (…/releases/latest/download/latest.json). Sans les secrets TAURI_SIGNING_* : aucune release
+  # sur un commit, brouillon à publier à la main sur un tag (comme avant), builds sans updater.
   # En lancement manuel : pas de release, seulement des artefacts de workflow.
   release:
-    name: release brouillon
-    if: startsWith(github.ref, 'refs/tags/v')
+    name: release (brouillon)
+    if: >-
+      ${{ startsWith(github.ref, 'refs/tags/v') ||
+      contains(github.event.head_commit.message, '[itch]') }}
     runs-on: ubuntu-latest
     outputs:
       id: ${{ steps.create.outputs.id }}
+      tag: ${{ steps.meta.outputs.tag }}
+      updater: ${{ steps.meta.outputs.updater }}
     steps:
+      - uses: actions/checkout@v5
+      - id: meta
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          version=$(node -p "require('./apps/game/package.json').version")
+          tag="v$version"
+          if [ "$GITHUB_REF_TYPE" = tag ] && [ "$GITHUB_REF_NAME" != "$tag" ]; then
+            echo "::error::Le tag $GITHUB_REF_NAME ne correspond pas à la version du jeu ($tag)."
+            exit 1
+          fi
+          if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ] && [ -n "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" ]; then
+            updater=true
+          else
+            updater=false
+            echo "::notice::Secrets TAURI_SIGNING_PRIVATE_KEY / TAURI_SIGNING_PRIVATE_KEY_PASSWORD absents : builds sans mise à jour automatique, aucune release publiée."
+          fi
+          { echo "version=$version"; echo "tag=$tag"; echo "updater=$updater"; } >> "$GITHUB_OUTPUT"
       - id: create
+        if: steps.meta.outputs.updater == 'true' || github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ steps.meta.outputs.tag }}
+          VERSION: ${{ steps.meta.outputs.version }}
         run: |
-          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
-            || gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --draft \
-                 --title "L'Arbre aux absents $TAG" --generate-notes
-          id=$(gh api "repos/$GITHUB_REPOSITORY/releases" --jq ".[] | select(.tag_name == \"$TAG\") | .id" | head -n 1)
-          echo "id=$id" >> "$GITHUB_OUTPUT"
+          node scripts/release-notes.mjs "$VERSION" > "$RUNNER_TEMP/notes.md"
+          # Brouillons compris (l'API par tag ne les voit pas).
+          found=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+            --jq "[.[] | select(.tag_name == \"$TAG\")][0] // empty | \"\(.id) \(.draft)\"")
+          if [ -n "$found" ] && [ "${found#* }" != true ]; then
+            echo "::notice::Release $TAG déjà publiée : rien n'y est ajouté (changer la version pour publier)."
+            exit 0
+          fi
+          if [ -z "$found" ]; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --draft --target "$GITHUB_SHA" \
+              --title "L'Arbre aux absents $TAG" --notes-file "$RUNNER_TEMP/notes.md"
+            found=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+              --jq "[.[] | select(.tag_name == \"$TAG\")][0] // empty | \"\(.id) \(.draft)\"")
+          fi
+          echo "id=${found%% *}" >> "$GITHUB_OUTPUT"
 
   desktop:
     name: desktop (${{ matrix.name }})
@@ -113,6 +153,29 @@ jobs:
           else
             echo "::notice::Secrets Apple absents : build macOS non signé."
           fi
+      # Mise à jour automatique (D18) : artefacts signés (minisign) seulement si les deux secrets
+      # existent ; sinon build normal, sans latest.json (même schéma que la signature macOS).
+      - name: Signature des mises à jour (optionnelle)
+        id: updater
+        shell: bash
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ] && [ -n "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD" ]; then
+            {
+              echo "TAURI_SIGNING_PRIVATE_KEY<<__ARBRE_KEY__"
+              echo "$TAURI_SIGNING_PRIVATE_KEY"
+              echo "__ARBRE_KEY__"
+              echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD<<__ARBRE_KEY__"
+              echo "$TAURI_SIGNING_PRIVATE_KEY_PASSWORD"
+              echo "__ARBRE_KEY__"
+            } >> "$GITHUB_ENV"
+            echo "args=--config '{\"bundle\":{\"createUpdaterArtifacts\":true}}'" >> "$GITHUB_OUTPUT"
+            echo "Artefacts de mise à jour signés."
+          else
+            echo "::notice::Secrets TAURI_SIGNING_* absents : pas d'artefacts de mise à jour."
+          fi
       - run: npm ci
       - name: Build Tauri
         id: tauri
@@ -124,8 +187,12 @@ jobs:
           # Sans « -- » final : tauri-action insère lui-même « -- » avant `args` avec npm
           # (sinon `--target` partirait à cargo au lieu de la CLI Tauri).
           tauriScript: npm run tauri
-          args: ${{ matrix.args }}
+          args: ${{ matrix.args }} ${{ steps.updater.outputs.args }}
           releaseId: ${{ needs.release.outputs.id }}
+          # latest.json (fusionné par chaque job de la matrice) : l'installeur NSIS pour Windows,
+          # celui d'itch.io (le MSI renvoie vers itch.io, D18).
+          includeUpdaterJson: true
+          updaterJsonPreferNsis: true
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-${{ matrix.name }}
@@ -247,11 +314,86 @@ jobs:
           path: android-out/
           if-no-files-found: error
           retention-days: 14
+      # APK et AAB signés seulement : l'APK est celui que le jeu propose sur Android (D18) ; jamais
+      # d'APK debug ou non signé dans une release publique.
       - name: Ajout à la release brouillon
-        if: needs.release.result == 'success'
+        if: needs.release.outputs.id != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload "${{ github.ref_name }}" android-out/* --repo "$GITHUB_REPOSITORY" --clobber
+          SIGNED: ${{ steps.signing.outputs.signed }}
+          TAG: ${{ needs.release.outputs.tag }}
+        run: |
+          if [ "$SIGNED" = true ]; then
+            gh release upload "$TAG" android-out/* --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            echo "::notice::APK non signé : rien n'est ajouté à la release $TAG."
+          fi
+
+  # Publication de la release (D18) : seulement avec les secrets TAURI_SIGNING_*, si les trois
+  # builds desktop ont réussi et si latest.json couvre Windows, macOS (Intel et Apple Silicon) et
+  # Linux. Réécrit latest.json (URLs du tag, notes FR/EN du journal), puis draft=false + latest.
+  # Android en échec n'empêche pas la publication (le jeu Android renvoie alors vers itch.io).
+  publish:
+    name: release publiée (mise à jour)
+    needs: [release, desktop, android]
+    if: >-
+      ${{ !cancelled() && needs.release.outputs.updater == 'true' &&
+      needs.release.outputs.id != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Builds desktop réussis ?
+        env:
+          DESKTOP: ${{ needs.desktop.result }}
+          ANDROID: ${{ needs.android.result }}
+        run: |
+          if [ "$DESKTOP" != success ]; then
+            echo "::error::Builds desktop en échec ($DESKTOP) : la release reste en brouillon."
+            exit 1
+          fi
+          [ "$ANDROID" = success ] || echo "::warning::Build Android en échec : release publiée sans APK."
+      - name: latest.json (URLs, notes) puis publication
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ID: ${{ needs.release.outputs.id }}
+          TAG: ${{ needs.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+          api="repos/$GITHUB_REPOSITORY/releases"
+          gh api "$api/$ID" --jq '.assets[] | "\(.id) \(.name)"' > "$RUNNER_TEMP/assets.txt"
+          asset=$(awk '$2 == "latest.json" { print $1 }' "$RUNNER_TEMP/assets.txt")
+          if [ -z "$asset" ]; then
+            echo "::error::latest.json absent de la release $TAG : elle reste en brouillon."
+            exit 1
+          fi
+          gh api -H 'Accept: application/octet-stream' "$api/assets/$asset" > "$RUNNER_TEMP/in.json"
+          node scripts/release-notes.mjs "$TAG" > "$RUNNER_TEMP/notes.md"
+          mkdir -p "$RUNNER_TEMP/out"
+          node - "$RUNNER_TEMP/in.json" "$RUNNER_TEMP/notes.md" "$RUNNER_TEMP/assets.txt" "$RUNNER_TEMP/out/latest.json" <<'NODE'
+          const fs = require('node:fs');
+          const [input, notesFile, assetsFile, output] = process.argv.slice(2);
+          const { TAG, GITHUB_REPOSITORY } = process.env;
+          const manifest = JSON.parse(fs.readFileSync(input, 'utf8'));
+          const names = new Set(
+            fs.readFileSync(assetsFile, 'utf8').split('\n').map((l) => l.slice(l.indexOf(' ') + 1)),
+          );
+          const required = ['windows-x86_64', 'darwin-aarch64', 'darwin-x86_64', 'linux-x86_64'];
+          const missing = required.filter((k) => !manifest.platforms?.[k]);
+          if (missing.length) throw new Error(`latest.json incomplet : ${missing.join(', ')}`);
+          for (const [key, p] of Object.entries(manifest.platforms)) {
+            const name = decodeURIComponent(new URL(p.url).pathname.split('/').pop());
+            if (!names.has(name)) throw new Error(`${key} : ${name} absent de la release`);
+            if (!p.signature) throw new Error(`${key} : signature vide`);
+            p.url = `https://github.com/${GITHUB_REPOSITORY}/releases/download/${TAG}/${encodeURIComponent(name)}`;
+          }
+          manifest.version = TAG.replace(/^v/, '');
+          manifest.notes = fs.readFileSync(notesFile, 'utf8');
+          fs.writeFileSync(output, `${JSON.stringify(manifest, null, 2)}\n`);
+          console.log(`latest.json : ${Object.keys(manifest.platforms).join(', ')}`);
+          NODE
+          gh release upload "$TAG" "$RUNNER_TEMP/out/latest.json" --repo "$GITHUB_REPOSITORY" --clobber
+          gh api -X PATCH "$api/$ID" -F draft=false -f make_latest=true \
+            -F body=@"$RUNNER_TEMP/notes.md" --jq '"Publiée : \(.html_url)"'
 
   # Sur un tag v*, ou un commit dont le message contient « [itch] » (une session Claude ne peut
   # pas pousser de tag) : envoi sur itch.io avec butler (docs/ITCH.md §7). Sauté sans le secret
