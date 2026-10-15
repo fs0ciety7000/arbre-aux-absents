@@ -253,6 +253,17 @@
         transform: translateY(calc(var(--rise) * 4));
       }
     }
+    /* Pleine largeur : la fiche se pose sans pivoter ni grossir. Rotation et `scale(1.03)` de
+       l'entrée débordaient de la fenêtre le temps de l'animation (défilement horizontal
+       transitoire, 391 px pour 390 px à la fin de l'amorti). Translation verticale seule. */
+    .dialog.m-fullscreen:not([open]) {
+      transform: translateY(calc(var(--rise) * 2));
+    }
+    @starting-style {
+      .dialog.m-fullscreen[open] {
+        transform: translateY(calc(var(--rise) * -3));
+      }
+    }
     .dialog.m-fullscreen {
       width: 100vw;
       max-width: 100vw;

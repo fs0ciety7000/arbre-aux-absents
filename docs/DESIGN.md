@@ -1060,7 +1060,7 @@ lus dans `UiStrings` (§4.4), jamais en dur.
 | 9.3 | `Tabs` | `items` · `value` · `label` · `variant: line\|bar\|rail\|folder` · `compact` · `activation` · snippet | **`folder`** (v2) : onglets de chemise kraft, actif monté et lié au carton, trait vermillon ; Oswald capitales ; `line` et `folder` passent en icônes seules quand ça déborde | Motif ARIA tabs complet |
 | 9.4 | `Panel` | `title` · `kicker` · `surface: desk\|paper\|kraft` · `enter: sheet\|settle\|false` · … | Sous-main surpiqué (desk), feuille (paper), **carton** (kraft) ; titre Fraunces `--step-2`, surtitre `.kicker` | `<section aria-labelledby>` |
 | 9.5 | `Card` | `variant: fiche\|document\|photo\|index` · `deal` · … | **`index`** : fiche bristol réglée ; `deal` = rang de distribution ; survol soulevé `--shadow-lifted` | Titre = lien/bouton |
-| 9.6 | `Dialog` | inchangée | se pose, sort escamotée ; surpiqûre ; surtitre Oswald ; titre `--step-3` | `<dialog>` modal |
+| 9.6 | `Dialog` | inchangée | se pose, sort escamotée ; surpiqûre ; surtitre Oswald ; titre `--step-3` ; au téléphone, `m-sheet` et `m-fullscreen` (pleine largeur) entrent et sortent en translation verticale seule, sans rotation ni échelle (jamais de défilement horizontal, même pendant l'animation) | `<dialog>` modal |
 | 9.7 | `TextField` | inchangée | trait d'encre au focus | |
 | 9.8–9.9 | `Select`, `Combobox` | inchangées | | |
 | 9.10 | `Toggle` | inchangée | curseur qui claque (`--ease-snap`) | `role="switch"` |
