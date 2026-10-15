@@ -279,6 +279,8 @@ export interface HintSettings { preset: 0 | 1 | 2 | 3 | 'custom'; unreadBadges: 
   placeCounters: boolean; whereToLook: boolean; groupCounter: boolean; progressiveHints: boolean } // GAME_DESIGN §10
 export interface Settings {
   textScale: 0.875 | 1 | 1.25 | 1.5 | 2; readingFont: 'default' | 'hyperlegible' | 'dyslexic';
+  readScale: 0.9 | 1 | 1.15 | 1.3 | 1.5; // READ_SCALES : texte du Lecteur (A− / A+), ≠ textScale et ≠ zoom
+  sideWidth: number; // SIDE_WIDTH : px entier 360–640, standard 440, large 640 (poignée du volet)
   lineSpacing: 'default' | 'wide' | 'wider'; letterSpacing: boolean; transcriptByDefault: boolean;
   replaceHandwriting: boolean; highContrast: boolean; reducePaperTexture: boolean;
   colorVision: 'default' | 'protanopia' | 'deuteranopia' | 'tritanopia'; motion: 'system' | 'reduced' | 'full';
@@ -288,6 +290,8 @@ export interface Settings {
   confirmClear: boolean; inputGlyphs: 'auto' | 'keyboard' | 'gamepad';
   language?: 'system' | Locale; // facultatif : anciens profils valides ; absent = 'system'
 }
+// readScale et sideWidth (« Confort de lecture », PROPOSITION-INTERFACE option 1) : migration
+// douce, `SettingsSchema` les complète par défaut (1, 440) quand un profil antérieur ne les a pas.
 export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>; completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] }>;
   tutorial?: { done: boolean; seen: string[] }; // tutoriel en bulles : optionnel (anciens profils valides), seen ≤ 32 ids kebab-case
   reports?: ReportRef[] } // « Mes signalements », ≤ 20 (§8)

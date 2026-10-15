@@ -11,6 +11,15 @@ export type TextScale = (typeof TEXT_SCALES)[number];
 export const HINT_PRESETS = [0, 1, 2, 3, 'custom'] as const;
 export type HintPreset = (typeof HINT_PRESETS)[number];
 export const LONG_PRESS_MS = [300, 400, 600] as const;
+/**
+ * Taille du texte du Lecteur (A− / A+), relative au corps de lecture des pièces (déjà un cran
+ * au-dessus du texte courant, DESIGN §4.2). Distincte de `textScale` (tout le jeu) et du zoom
+ * du Lecteur (qui agrandit la feuille entière).
+ */
+export const READ_SCALES = [0.9, 1, 1.15, 1.3, 1.5] as const;
+export type ReadScale = (typeof READ_SCALES)[number];
+/** Largeur du volet latéral (Lecteur, Archives…) en px CSS : bornes, standard et large. */
+export const SIDE_WIDTH = Object.freeze({ min: 360, standard: 440, wide: 640, max: 640 });
 
 export interface Volume {
   /** [0, 1] */
@@ -34,6 +43,10 @@ export interface HintSettings {
 
 export interface Settings {
   textScale: TextScale;
+  /** Taille du texte du Lecteur (A− / A+). Absent des anciens profils : 1. */
+  readScale: ReadScale;
+  /** Largeur mémorisée du volet latéral (px, `SIDE_WIDTH`). Absent des anciens profils : 440. */
+  sideWidth: number;
   readingFont: 'default' | 'hyperlegible' | 'dyslexic';
   lineSpacing: 'default' | 'wide' | 'wider';
   letterSpacing: boolean;
@@ -100,6 +113,8 @@ export interface Profile {
 /** Réglages par défaut (docs/game/GAME_DESIGN.md §10, §16, §17). */
 export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   textScale: 1,
+  readScale: 1,
+  sideWidth: SIDE_WIDTH.standard,
   readingFont: 'default',
   lineSpacing: 'default',
   letterSpacing: false,
@@ -157,6 +172,9 @@ export const HintSettingsSchema = z.strictObject({
 
 export const SettingsSchema = z.strictObject({
   textScale: z.literal(TEXT_SCALES),
+  // Migration douce : champs ajoutés après coup, valeur par défaut pour les profils antérieurs.
+  readScale: z.literal(READ_SCALES).default(1),
+  sideWidth: z.number().int().min(SIDE_WIDTH.min).max(SIDE_WIDTH.max).default(SIDE_WIDTH.standard),
   readingFont: z.enum(['default', 'hyperlegible', 'dyslexic']),
   lineSpacing: z.enum(['default', 'wide', 'wider']),
   letterSpacing: z.boolean(),
