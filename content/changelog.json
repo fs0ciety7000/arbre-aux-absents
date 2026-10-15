@@ -1,5 +1,22 @@
 [
   {
+    "version": "1.4.4",
+    "date": "2026-10-15",
+    "title": {
+      "fr": "Arbre sans sélection de texte",
+      "en": "Tree without text selection"
+    },
+    "items": [
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Cliquer ou glisser dans l’arbre ne sélectionne plus le texte des fiches (et n’ouvre plus le menu de sélection du navigateur, dans Edge par exemple).",
+          "en": "Clicking or dragging in the tree no longer selects the cards’ text (nor opens the browser’s selection menu, in Edge for instance)."
+        }
+      }
+    ]
+  },
+  {
     "version": "1.4.3",
     "date": "2026-10-15",
     "title": {
