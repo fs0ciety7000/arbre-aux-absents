@@ -2,7 +2,8 @@
   import { Badge, DymoLabel, Icon, PaperSheet, type IconName } from '@arbre/ui';
   import { ChangelogSchema, type ChangeKind } from '@arbre/contract';
   import { onMount } from 'svelte';
-  import raw from '../../../../content/changelog.json';
+  // Notes de l'édition construite (`content:build`) : la démo n'embarque rien de l'édition complète.
+  import raw from '../generated/changelog.json';
   import { uiLang } from '../i18n/index.svelte';
   import { getApp } from '../lib/game/context';
   import { messages } from '../messages.fr';

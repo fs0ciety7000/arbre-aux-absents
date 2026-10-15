@@ -11,6 +11,8 @@
  *   world.ts                         `world` (monde de la langue source, typé)
  *   cases.ts                         loadCatalog(loc), loadCase(loc, id), assetLoader(loc, caseId, key),
  *                                    loadWorldText(loc), edition, locales
+ *   changelog.json                   jeu seulement : notes de version de l'édition importée
+ *                                    (`changelogForEdition`, ARCHITECTURE §3.8)
  *
  * L'ancien format FR (`cases.<éd>.json`, `cases.i18n.ts`) n'est plus écrit depuis la vague C1 ;
  * ses restes éventuels sont supprimés à la compilation suivante.
@@ -21,7 +23,16 @@
  */
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { CompiledCase, Edition, Locale, MapLayer, Place, WorldMap } from '@arbre/contract';
+import {
+  changelogForEdition,
+  type Changelog,
+  type CompiledCase,
+  type Edition,
+  type Locale,
+  type MapLayer,
+  type Place,
+  type WorldMap,
+} from '@arbre/contract';
 import { catalogFor, compareCases } from './catalog';
 import type { CheckResult, CompiledWorld } from './check';
 
@@ -214,13 +225,18 @@ export function loaderModule(
  * (`cases.<éd>.json`, `cases.i18n.ts`) retiré à la vague C1.
  */
 const MANAGED =
-  /^(catalog\.[a-z]+\.[a-z]+\.json|case\.[a-z]+\.[a-z]+\.[a-z0-9-]+\.json|assets\.[a-z]+\.[a-z]+\.json|world\.[a-z]+\.json|cases\.(full|demo)\.json|cases(\.i18n)?\.ts)$/;
+  /^(catalog\.[a-z]+\.[a-z]+\.json|case\.[a-z]+\.[a-z]+\.[a-z0-9-]+\.json|assets\.[a-z]+\.[a-z]+\.json|world\.[a-z]+\.json|changelog\.json|cases\.(full|demo)\.json|cases(\.i18n)?\.ts)$/;
 
-/** Écrit les fichiers générés. Renvoie la liste des fichiers modifiés. */
+/**
+ * Écrit les fichiers générés. Renvoie la liste des fichiers modifiés. `changelog` (journal des
+ * versions validé) : ses notes pour l'édition du jeu, dans `changelog.json` du jeu (la démo
+ * n'embarque ainsi aucun texte de l'édition complète).
+ */
 export async function writeGenerated(
   r: CheckResult,
   targets: BuildTargets,
   gameEdition: Edition = 'full',
+  changelog?: Changelog,
 ): Promise<string[]> {
   const changed: string[] = [];
   const src = r.locales.source;
@@ -229,7 +245,12 @@ export async function writeGenerated(
   );
   const sourceWorld = r.worlds[src] ?? r.world;
 
-  const writeDir = async (dir: string, editions: Edition[], moduleEdition: Edition) => {
+  const writeDir = async (
+    dir: string,
+    editions: Edition[],
+    moduleEdition: Edition,
+    notes?: Changelog,
+  ) => {
     await mkdir(dir, { recursive: true });
     const written = new Set<string>();
     const write = async (name: string, content: string) => {
@@ -263,13 +284,15 @@ export async function writeGenerated(
     }
     await write('world.ts', WORLD_MODULE);
     await write('cases.ts', loaderModule(moduleEdition, locales, caseIds));
+    if (notes)
+      await write('changelog.json', JSON.stringify(changelogForEdition(notes, moduleEdition)));
     // Restes d'une compilation précédente (affaire ou langue retirée).
     for (const name of await readdir(dir)) {
       if (MANAGED.test(name) && !written.has(name)) await rm(join(dir, name), { force: true });
     }
   };
 
-  if (targets.game) await writeDir(targets.game, ['full', 'demo'], gameEdition);
+  if (targets.game) await writeDir(targets.game, ['full', 'demo'], gameEdition, changelog);
   if (targets.site) await writeDir(targets.site, ['demo'], 'demo');
   return changed;
 }

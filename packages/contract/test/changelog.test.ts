@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import {
   ChangelogSchema,
   ProfileSchema,
+  changelogEditionLeaks,
+  changelogForEdition,
   changelogVersionIssues,
   compareVersions,
   defaultProfile,
@@ -67,6 +69,49 @@ describe('journal des versions (Nouveautés)', () => {
     const log = [release('1.3.1', '2026-10-15'), release('1.3.0', '2026-10-15')];
     expect(changelogVersionIssues(log, '1.3.1')).toEqual([]);
     expect(changelogVersionIssues(log, '1.4.0')).toHaveLength(1);
+  });
+
+  it('notes par édition : la démo perd les points de l’édition complète et prend demoTitle', () => {
+    const full: ChangelogRelease = {
+      ...release('1.1.0', '2026-10-10'),
+      title: { fr: 'Le Revenant', en: 'The Revenant' },
+      demoTitle: { fr: 'Tampons', en: 'Stamps' },
+      items: [
+        { kind: 'new', text: { fr: 'Le Revenant.', en: 'The Revenant.' }, edition: 'full' },
+        { kind: 'new', text: { fr: 'Tampons.', en: 'Stamps.' } },
+      ],
+    };
+    const onlyFull: ChangelogRelease = {
+      ...release('1.0.1', '2026-10-01'),
+      items: [{ kind: 'new', text: { fr: 'Le Revenant.', en: 'The Revenant.' }, edition: 'full' }],
+    };
+    const log = [release('1.2.0', '2026-10-15'), full, onlyFull];
+    expect(ChangelogSchema.safeParse(log).success).toBe(true);
+
+    expect(changelogForEdition(log, 'full').map((r) => r.items.length)).toEqual([1, 2, 1]);
+    expect(changelogForEdition(log, 'full')[1]!.title.fr).toBe('Le Revenant');
+    const demo = changelogForEdition(log, 'demo');
+    expect(demo.map((r) => r.version)).toEqual(['1.2.0', '1.1.0']);
+    expect(demo[1]).toEqual({
+      version: '1.1.0',
+      date: '2026-10-10',
+      title: { fr: 'Tampons', en: 'Stamps' },
+      items: [{ kind: 'new', text: { fr: 'Tampons.', en: 'Stamps.' } }],
+    });
+    // Les champs d'édition ne partent pas dans le jeu.
+    expect(JSON.stringify(changelogForEdition(log, 'full'))).not.toMatch(/demoTitle|edition/);
+    expect(ChangelogSchema.safeParse(demo).success).toBe(true);
+
+    expect(changelogEditionLeaks(log, ['The Revenant', 'Le Revenant'])).toEqual([]);
+    const leaky = [
+      release('1.2.0', '2026-10-15'),
+      { ...release('1.1.0', '2026-10-10'), title: full.title, items: full.items },
+    ];
+    expect(changelogEditionLeaks(leaky, ['The Revenant', 'Le Revenant'])).toHaveLength(2);
+    expect(
+      ChangelogSchema.safeParse([{ ...full, items: [{ ...full.items[0], edition: 'demo' }] }])
+        .success,
+    ).toBe(false);
   });
 
   it('profil : changelogSeen facultatif, semver', () => {

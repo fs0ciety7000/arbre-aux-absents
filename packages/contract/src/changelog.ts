@@ -20,6 +20,11 @@ export interface ChangelogText {
 export interface ChangelogItem {
   kind: ChangeKind;
   text: ChangelogText;
+  /**
+   * `'full'` : point propre à l'édition complète (il nomme une affaire, une pièce ou une fin
+   * absente de la démo). Retiré des notes embarquées dans la démo (`changelogForEdition`).
+   */
+  edition?: 'full';
 }
 
 export interface ChangelogRelease {
@@ -28,6 +33,11 @@ export interface ChangelogRelease {
   /** Date de publication, AAAA-MM-JJ. */
   date: string;
   title: ChangelogText;
+  /**
+   * Titre montré dans la démo quand `title` nomme un contenu de l'édition complète (règle :
+   * `changelogEditionLeaks`, contrôlée par `content:check`).
+   */
+  demoTitle?: ChangelogText;
   /** 1 à 8 points, écrits pour les joueurs (aucun détail interne, aucune solution d'affaire). */
   items: ChangelogItem[];
 }
@@ -48,12 +58,14 @@ const text = (max: number) =>
 export const ChangelogItemSchema = z.strictObject({
   kind: z.enum(CHANGE_KINDS),
   text: text(CHANGELOG_LIMITS.text),
+  edition: z.literal('full').optional(),
 });
 
 export const ChangelogReleaseSchema = z.strictObject({
   version: z.string().regex(SEMVER, { error: 'Version semver attendue (ex. 1.4.0)' }),
   date: z.string().regex(ISO_DAY, { error: 'Date attendue : AAAA-MM-JJ' }),
   title: text(CHANGELOG_LIMITS.title),
+  demoTitle: text(CHANGELOG_LIMITS.title).optional(),
   items: z.array(ChangelogItemSchema).min(1).max(CHANGELOG_LIMITS.items),
 });
 
@@ -121,4 +133,50 @@ export function changelogVersionIssues(changelog: Changelog, appVersion: string)
   return [
     `La dernière entrée du journal (${latest ?? 'aucune'}) ne correspond pas à la version du jeu (${appVersion}) : ajoutez l'entrée ${appVersion}, condensée depuis les commits de la version précédente.`,
   ];
+}
+
+/**
+ * Notes embarquées dans le jeu d'une édition (ARCHITECTURE §3.8). Édition complète : le journal
+ * tel quel. Démo : sans les points `edition: 'full'`, avec `demoTitle` à la place du titre quand il
+ * existe, et sans les versions dont il ne reste aucun point. Les champs propres aux éditions
+ * (`edition`, `demoTitle`) ne sont jamais recopiés : seul le texte montré part dans le jeu.
+ */
+export function changelogForEdition(changelog: Changelog, edition: 'full' | 'demo'): Changelog {
+  const out: Changelog = [];
+  for (const r of changelog) {
+    const items = r.items
+      .filter((i) => edition === 'full' || i.edition !== 'full')
+      .map((i) => ({ kind: i.kind, text: i.text }));
+    if (items.length === 0) continue;
+    const title = edition === 'demo' && r.demoTitle ? r.demoTitle : r.title;
+    out.push({ version: r.version, date: r.date, title, items });
+  }
+  return out;
+}
+
+/**
+ * Textes interdits dans les notes de la démo trouvés dans sa projection : chaque chaîne de
+ * `forbidden` (titres d'affaires, de pièces ou de fins absentes de la démo, dans toutes les
+ * langues) qui apparaît dans un titre ou un point. Vide si tout va bien.
+ */
+export function changelogEditionLeaks(changelog: Changelog, forbidden: Iterable<string>): string[] {
+  const demo = changelogForEdition(changelog, 'demo');
+  const texts = demo.flatMap((r) => [
+    { where: `${r.version} (titre)`, value: `${r.title.fr}\n${r.title.en}` },
+    ...r.items.map((i, n) => ({
+      where: `${r.version} (point ${n + 1})`,
+      value: `${i.text.fr}\n${i.text.en}`,
+    })),
+  ]);
+  const issues: string[] = [];
+  for (const f of new Set(forbidden)) {
+    for (const t of texts) {
+      if (t.value.includes(f)) {
+        issues.push(
+          `${t.where} nomme « ${f} », absent de la démo : marquez le point \`"edition": "full"\` ou donnez à la version un \`demoTitle\`.`,
+        );
+      }
+    }
+  }
+  return issues;
 }

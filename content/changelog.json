@@ -196,13 +196,18 @@
       "fr": "Deuxième affaire : Le Revenant de Hautcorvin",
       "en": "Second case: The Revenant of Hautcorvin"
     },
+    "demoTitle": {
+      "fr": "Cases revendiquées, chemises et tampons",
+      "en": "Claimed slots, case folders and stamps"
+    },
     "items": [
       {
         "kind": "new",
         "text": {
           "fr": "Une nouvelle affaire, « Le Revenant de Hautcorvin », avec sa propre carte, ses portraits et ses pièces illustrées.",
           "en": "A new case, “The Revenant of Hautcorvin”, with its own map, portraits and illustrated documents."
-        }
+        },
+        "edition": "full"
       },
       {
         "kind": "new",

@@ -484,8 +484,10 @@ Source : `packages/contract/src/changelog.ts` ; données : `content/changelog.js
 ```ts
 type ChangeKind = 'new' | 'improved' | 'fixed';            // Nouveauté, Amélioration, Correction
 interface ChangelogRelease { version: string /* semver */; date: string /* AAAA-MM-JJ */;
-  title: { fr: string; en: string }; items: { kind: ChangeKind; text: { fr: string; en: string } }[] /* 1–8 */ }
+  title: { fr: string; en: string }; demoTitle?: { fr: string; en: string } /* titre montré dans la démo */;
+  items: { kind: ChangeKind; text: { fr: string; en: string }; edition?: 'full' /* hors démo */ }[] /* 1–8 */ }
 type Changelog = ChangelogRelease[];                         // la plus récente d'abord
+changelogForEdition(log, 'full' | 'demo'): Changelog         // notes embarquées dans le jeu
 ```
 
 - **Une entrée par version publiée** (`[tauri] [itch]`), jamais une par commit : la publication est le
@@ -495,8 +497,17 @@ type Changelog = ChangelogRelease[];                         // la plus récente
   uniques, triées de la plus récente à la plus ancienne (dates non croissantes), **dernière entrée =
   version de `apps/game/package.json`**. Un changement de version sans son entrée fait donc échouer
   `check` (procédure : WORKFLOW › Publication, skill `/ship`).
-- Lecture : le jeu importe le fichier dans l'écran **Nouveautés** (chunk à la demande, `ChangelogSchema`
-  au chargement) ; le site le lit au prérendu (`/nouveautes/`, `/en/nouveautes/`), aucun JS client.
+- **Édition démo** (règle 10, canaris de la démo) : un point qui nomme une affaire, une pièce ou une fin
+  absente de la démo porte `"edition": "full"`, et une version dont le titre en nomme une a un
+  `demoTitle`. `changelogForEdition(log, 'demo')` retire ces points (et les versions qui n'en ont plus),
+  prend `demoTitle`, et ne recopie jamais ces deux champs. `content:check` (`changelogEditionLeaks`,
+  `fullOnlyTexts`) refuse des notes de démo qui contiendraient un titre d'affaire hors démo, de pièce
+  hors démo ou de fin (≥ 12 caractères), en français comme en anglais.
+- Lecture : `content:build` écrit `apps/game/src/generated/changelog.json`, les notes de **l'édition
+  construite** (`--edition`) ; le jeu l'importe dans l'écran **Nouveautés** (chunk à la demande,
+  `ChangelogSchema` au chargement). Le site lit `content/changelog.json` tel quel au prérendu
+  (`/nouveautes/`, `/en/nouveautes/`, texte complet), aucun JS client ; la release GitHub
+  (`scripts/release-notes.mjs`, jeux installés : édition complète) aussi.
 - `Profile.changelogSeen` (semver, facultatif) : dernière version dont l'écran a été ouvert ; sert à la
   marque « Nouveau » du menu titre.
 
@@ -699,7 +710,9 @@ majeure : « Firefox 131 », « Safari 18 », « Edge 129 », « WebView Android
 dans Tauri, `browserFamily(ua, { tauri: true })` : « Tauri (WebView2 129) », « Tauri (WebKitGTK) »,
 « Tauri (WKWebView) », « Tauri (WebView Android 129) »). Fonctions pures du contrat
 (`packages/contract/src/user-agent.ts`), partagées par le jeu et le site ; jamais l'User-Agent
-complet. Depuis le site seulement (`platform: 'site'`, refusé sinon) : `gameVersion` (semver choisi
+complet. Le code client du site les importe par le sous-chemin sans zod `@arbre/contract/user-agent` :
+l'entrée du contrat construit ses schémas au chargement, et zod 4 y sonde `Function('')`, refusé par
+la CSP du site (le jeu, lui, pose `jitless` à son point d'entrée). Depuis le site seulement (`platform: 'site'`, refusé sinon) : `gameVersion` (semver choisi
 dans le formulaire) et `gamePlatform` (`web` | `desktop` | `android`), facultatifs.
 
 **Captures d'écran** (`POST /v1/attachments`, 3 au plus par signalement) :
