@@ -3,29 +3,42 @@
   sur une feuille, diagnostics du site seulement (plateforme `site`, langue, fenêtre). Page
   hydratée : le formulaire reste désactivé tant que le JS n'a pas pris la main ; sans JS, le
   `<noscript>` renvoie vers le forum itch.io. Le texte saisi n'est jamais perdu en cas d'échec.
+  Description en Markdown (barre d'outils, aperçu, §9.37) ; captures d'écran (fichier, collage,
+  dépôt ; envoyées une à une avant le signalement, §9.38) ; version et plateforme du jeu
+  déclarées (facultatives) ; « Informations envoyées » en clair.
 -->
 <script lang="ts">
   import { onMount, tick } from 'svelte';
   import {
+    AttachmentTray,
     Button,
     DymoLabel,
     Icon,
+    MarkdownField,
     PaperSheet,
     Select,
     Stamp,
     TextField,
     ToastRegion,
+    imageFiles,
     pushToast,
+    type AttachmentItem,
   } from '@arbre/ui';
   import type { ReportCategory, ReportReceipt, ReportSubmission } from '@arbre/contract';
   import Seo from '#lib/components/Seo.svelte';
   import { localHref } from '#lib/i18n/app';
   import Rich from '#lib/i18n/Rich.svelte';
+  import {
+    LIMITS as ATTACHMENTS,
+    createAttachmentQueue,
+    missingAttachments,
+  } from '#lib/report/attachments';
   import { submitReport, type ApiFailure } from '#lib/report/client';
   import { FORUM_URL } from '#lib/report/config';
-  import { CATEGORIES, LIMITS } from '#lib/report/constants';
+  import { CATEGORIES, GAME_PLATFORMS, LIMITS } from '#lib/report/constants';
   import {
     buildSubmission,
+    declaredVersion,
     fill,
     formatDelay,
     missingChars,
@@ -42,6 +55,10 @@
   const categoryOptions = $derived(
     CATEGORIES.map((value) => ({ value, label: data.categories[value] })),
   );
+  const platformOptions = $derived([
+    { value: '', label: t.gamePlatforms.unknown },
+    ...GAME_PLATFORMS.map((value) => ({ value, label: t.gamePlatforms[value] })),
+  ]);
 
   let ready = $state(false);
   let openedAt = 0;
@@ -50,6 +67,24 @@
   let description = $state('');
   let contact = $state('');
   let website = $state('');
+  /** Version et plateforme du jeu déclarées (facultatives) : version préremplie, la dernière. */
+  let gameVersion = $state('');
+  let gamePlatform = $state('');
+  /** Captures d'écran : file d'envoi (une requête par image, avant le signalement). */
+  let attachments = $state.raw<AttachmentItem[]>([]);
+  let tray: ReturnType<typeof AttachmentTray> | undefined = $state();
+  let attachmentsMissing = $state(0);
+  const queue = createAttachmentQueue({
+    website: () => website,
+    onchange: (items) => (attachments = items),
+  });
+  const attachmentIds = $derived(
+    attachments.flatMap((a) => (a.status === 'ready' && a.receipt ? [a.receipt.id] : [])),
+  );
+  const uploading = $derived(
+    attachments.some((a) => a.status === 'preparing' || a.status === 'uploading'),
+  );
+  const versionInvalid = $derived(gameVersion.trim() !== '' && !declaredVersion(gameVersion));
   let sending = $state(false);
   let failure = $state<ApiFailure | null>(null);
   let receipt = $state<ReportReceipt | null>(null);
@@ -66,7 +101,10 @@
     openedAt = Date.now();
     now = openedAt;
     userAgent = navigator.userAgent;
+    gameVersion = data.appVersion;
     ready = true;
+    // Page quittée sans envoi : les captures déjà envoyées sont supprimées du service.
+    return () => queue.dispose(receipt === null);
   });
 
   // L'aperçu montre aussi le temps passé (`elapsedMs`) : rafraîchi chaque seconde, aperçu ouvert.
@@ -86,6 +124,8 @@
       width: innerWidth,
       height: innerHeight,
       dpr: devicePixelRatio,
+      gameVersion,
+      gamePlatform: gamePlatform as (typeof GAME_PLATFORMS)[number] | '',
     }),
   );
   const build = (elapsedMs: number): ReportSubmission =>
@@ -97,6 +137,7 @@
       diagnostics,
       website,
       elapsedMs,
+      attachments: attachmentIds,
     });
   /** Le JSON réel qui partira (DESIGN §13.8 : aperçu exact, recalculé à chaque saisie). */
   const preview = $derived(JSON.stringify(build(Math.max(0, now - openedAt)), null, 2));
@@ -108,6 +149,23 @@
       h: diagnostics.viewport.h,
     }),
   );
+
+  /** « Informations envoyées » : ce qui part avec le signalement, en clair. */
+  const sentInfo = $derived.by(() => {
+    const d = diagnostics;
+    const s = t.sentInfo;
+    return [
+      { label: s.gameVersion, value: d.gameVersion ?? s.unset },
+      {
+        label: s.gamePlatform,
+        value: d.gamePlatform ? t.gamePlatforms[d.gamePlatform] : s.unset,
+      },
+      { label: s.os, value: d.os ?? s.unknown },
+      { label: s.browser, value: d.browser ?? s.unknown },
+      { label: s.language, value: data.languageName },
+      { label: s.screen, value: `${d.viewport.w} × ${d.viewport.h}` },
+    ];
+  });
 
   // Lien affiché et copié : celui du service, déjà dans la langue du signalement (ARCHITECTURE §8).
   // « Ouvrir le suivi » reste un lien relatif (même origine, préproduction comprise).
@@ -140,17 +198,25 @@
 
   async function onsubmit(event: SubmitEvent) {
     event.preventDefault();
-    if (!ready || sending || missing > 0) return;
+    if (!ready || sending || missing > 0 || uploading || versionInvalid) return;
     sending = true;
     failure = null;
     copyFallback = null;
+    // Captures expirées (plus d'une heure) ou sur le point de l'être : renvoyées d'abord.
+    if (attachments.length) await queue.fresh();
     // Le service ignore un envoi plus rapide que 3 s (anti-robot) : on attend ce délai au besoin.
     const wait = LIMITS.minElapsedMs + 100 - (Date.now() - openedAt);
     if (wait > 0) await new Promise((r) => setTimeout(r, wait));
-    const result = await submitReport(build(Date.now() - openedAt));
+    const body = build(Date.now() - openedAt);
+    const result = await submitReport(body);
     sending = false;
     if (result.ok) {
       receipt = result.value;
+      attachmentsMissing = missingAttachments(
+        body.attachments?.length ?? 0,
+        result.value.attachments,
+      );
+      queue.clear();
       await tick();
       receiptHeading?.focus();
       return;
@@ -177,6 +243,14 @@
     }
   }
 
+  /** Une image collée (capture d'écran) est jointe ; du texte se colle normalement. */
+  function onpaste(e: ClipboardEvent) {
+    const files = imageFiles(e.clipboardData);
+    if (files.length === 0) return;
+    if (!Array.from(e.clipboardData?.types ?? []).includes('text/plain')) e.preventDefault();
+    tray?.addFiles(files);
+  }
+
   function selectAll(event: FocusEvent) {
     const range = document.createRange();
     range.selectNodeContents(event.currentTarget as Node);
@@ -190,6 +264,7 @@
     description = '';
     contact = '';
     failure = null;
+    attachmentsMissing = 0;
     openedAt = Date.now();
   }
 </script>
@@ -224,6 +299,14 @@
             <DymoLabel text={receipt.ticket} tone="red" tilt={-1.5} />
           </p>
           <p class="keep">{t.receipt.keep}</p>
+          {#if attachmentsMissing > 0}
+            <p class="warn" role="status">
+              <Icon name="warning" size="1.1rem" />
+              {attachmentsMissing > 1
+                ? fill(t.receipt.attachmentsMissingMany, { n: attachmentsMissing })
+                : t.receipt.attachmentsMissingOne}
+            </p>
+          {/if}
           <p class="follow">
             <span class="label">{t.receipt.followLabel}</span>
             <span class="ink-type url">{followUrl}</span>
@@ -245,7 +328,7 @@
           </div>
         </div>
       {:else}
-        <form {onsubmit} novalidate>
+        <form {onsubmit} {onpaste} novalidate>
           <fieldset disabled={!ready}>
             <legend class="visually-hidden">{t.title}</legend>
             <Select
@@ -254,15 +337,46 @@
               options={categoryOptions}
               bind:value={category}
             />
-            <TextField
+            <MarkdownField
               id="report-description"
               label={t.descriptionLabel}
               hint={t.descriptionHint}
-              multiline
-              rows={4}
+              rows={5}
               maxlength={LIMITS.descriptionMax}
+              disabled={!ready}
+              describedby={missing > 0 ? 'report-missing' : undefined}
               bind:value={description}
             />
+            <AttachmentTray
+              bind:this={tray}
+              items={attachments}
+              max={ATTACHMENTS.max}
+              disabled={!ready || sending}
+              onadd={(files) => queue.add(files)}
+              onremove={(key) => queue.remove(key)}
+              onretry={(key) => queue.retry(key)}
+            />
+            <div class="game">
+              <TextField
+                id="report-game-version"
+                label={t.gameVersionLabel}
+                hint={fill(t.gameVersionHint, { version: data.appVersion })}
+                error={versionInvalid
+                  ? fill(t.gameVersionInvalid, { version: data.appVersion })
+                  : undefined}
+                maxlength={40}
+                inputmode="decimal"
+                autocomplete="off"
+                spellcheck={false}
+                bind:value={gameVersion}
+              />
+              <Select
+                id="report-game-platform"
+                label={t.gamePlatformLabel}
+                options={platformOptions}
+                bind:value={gamePlatform}
+              />
+            </div>
             <div class="contact">
               <TextField
                 id="report-contact"
@@ -287,6 +401,18 @@
               />
             </div>
 
+            <section class="sent-info" aria-labelledby="report-sent-info">
+              <h2 id="report-sent-info">{t.sentInfo.title}</h2>
+              <dl>
+                {#each sentInfo as row (row.label)}
+                  <div>
+                    <dt>{row.label}</dt>
+                    <dd class="ink-type">{row.value}</dd>
+                  </div>
+                {/each}
+              </dl>
+            </section>
+
             <details class="preview" bind:open={previewOpen}>
               <summary>{t.previewSummary}</summary>
               <p class="preview-line">{previewLine}</p>
@@ -302,15 +428,23 @@
                 variant="primary"
                 iconName="envelope"
                 loading={sending}
-                disabled={missing > 0}
-                aria-describedby={missing > 0 ? 'report-missing' : undefined}
-                >{sending ? t.sending : t.submit}</Button
+                disabled={missing > 0 || uploading || versionInvalid}
+                aria-describedby={missing > 0
+                  ? 'report-missing'
+                  : uploading
+                    ? 'report-busy'
+                    : versionInvalid
+                      ? 'report-game-version-error'
+                      : undefined}>{sending ? t.sending : t.submit}</Button
               >
             </div>
             {#if missing > 0}
               <p id="report-missing" class="missing">
                 {fill(t.descriptionMissing, { n: missing })}
               </p>
+            {/if}
+            {#if uploading}
+              <p id="report-busy" class="missing">{t.attachmentsBusy}</p>
             {/if}
           </fieldset>
         </form>
@@ -401,6 +535,53 @@
   .preview {
     display: grid;
     gap: var(--space-3);
+  }
+  .game {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--space-4);
+    align-items: start;
+  }
+  .sent-info {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border: var(--border) dashed var(--line-strong);
+    border-radius: var(--radius-s);
+  }
+  .sent-info h2 {
+    margin: 0;
+    font-family: var(--font-label);
+    font-size: var(--step--1);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .sent-info dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: var(--space-1) var(--space-4);
+    margin: 0;
+    font-size: var(--step--1);
+  }
+  .sent-info dl > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-2);
+    min-inline-size: 0;
+  }
+  .sent-info dt {
+    color: var(--text-muted);
+  }
+  .sent-info dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  .warn {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
   }
   .preview summary {
     display: flex;

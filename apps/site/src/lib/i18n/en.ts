@@ -799,6 +799,29 @@ export const en = {
       { link: 'confidentialite/', text: 'Privacy' },
     ] as Rich,
     honeypot: 'Website (leave empty)',
+    gameVersionLabel: 'Game version (optional)',
+    gameVersionHint:
+      'In the game: “Report a problem”, under “Information sent with the report” (the latest is {version}). Leave empty if you are not sure.',
+    gameVersionInvalid: 'Expected format: three numbers separated by dots, such as {version}.',
+    gamePlatformLabel: 'Game platform (optional)',
+    gamePlatforms: {
+      unknown: 'Not sure',
+      web: 'Browser (itch.io or this site)',
+      desktop: 'Computer (Windows, macOS, Linux)',
+      android: 'Android',
+    },
+    sentInfo: {
+      title: 'Information sent with the report',
+      gameVersion: 'Game version',
+      gamePlatform: 'Game platform',
+      os: 'System',
+      browser: 'Browser',
+      language: 'Language',
+      screen: 'Window',
+      unknown: 'Unknown',
+      unset: 'Not specified',
+    },
+    attachmentsBusy: 'Screenshots are still uploading: please wait a moment.',
     previewSummary: 'See exactly what will be sent',
     previewLine: 'Version {version} · site · {language} · window {w} × {h}',
     previewNote:
@@ -816,6 +839,10 @@ export const en = {
       linkCopied: 'Follow-up link copied',
       another: 'Report another problem',
       announce: 'Report received, number {ticket}.',
+      attachmentsMissingOne:
+        '1 screenshot could not be attached (expired or rejected): the report itself was received.',
+      attachmentsMissingMany:
+        '{n} screenshots could not be attached (expired or rejected): the report itself was received.',
     },
     failure: {
       toast: 'Report not sent',

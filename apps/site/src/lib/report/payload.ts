@@ -2,12 +2,18 @@
  * Ce que le formulaire du site envoie (DESIGN §14.6 : plateforme `site`, langue, fenêtre ; aucun
  * diagnostic de partie), son texte de repli à copier et quelques mises en forme. Module pur.
  */
-import type { Locale, ReportCategory, ReportDiagnostics, ReportSubmission } from '@arbre/contract';
-import { osFamily } from '@arbre/contract';
-import { LIMITS } from './constants';
+import type {
+  GamePlatform,
+  Locale,
+  ReportCategory,
+  ReportDiagnostics,
+  ReportSubmission,
+} from '@arbre/contract';
+import { browserFamily, osFamily } from '@arbre/contract';
+import { GAME_PLATFORMS, GAME_VERSION, LIMITS } from './constants';
 
-/** Famille grossière du système : déplacée dans le contrat (partagée jeu/site). */
-export { osFamily };
+/** Familles grossières du système et du navigateur : dans le contrat (partagées jeu/site). */
+export { browserFamily, osFamily };
 
 export interface SiteEnvironment {
   appVersion: string;
@@ -16,17 +22,35 @@ export interface SiteEnvironment {
   width: number;
   height: number;
   dpr: number;
+  /** Version du jeu déclarée par le joueur (semver), omise si vide ou mal formée. */
+  gameVersion?: string;
+  /** Plateforme du jeu déclarée par le joueur, omise si « je ne sais pas ». */
+  gamePlatform?: GamePlatform | '';
+}
+
+/** Version déclarée valable pour le service (semver, ≤ 40 caractères), sinon `undefined`. */
+export function declaredVersion(value: string | undefined): string | undefined {
+  const v = (value ?? '').trim().replace(/^v(?=\d)/i, '');
+  return v && v.length <= 40 && GAME_VERSION.test(v) ? v : undefined;
 }
 
 /** Diagnostics d'un signalement envoyé depuis le site. */
 export function siteDiagnostics(env: SiteEnvironment): ReportDiagnostics {
   const os = osFamily(env.userAgent);
+  const browser = browserFamily(env.userAgent);
+  const gameVersion = declaredVersion(env.gameVersion);
+  const gamePlatform = (GAME_PLATFORMS as readonly string[]).includes(env.gamePlatform ?? '')
+    ? (env.gamePlatform as GamePlatform)
+    : undefined;
   const clamp = (n: number) => Math.max(0, Math.min(100_000, Math.round(n) || 0));
   return {
     appVersion: env.appVersion.slice(0, 40),
     edition: 'full',
     platform: 'site',
     ...(os ? { os } : {}),
+    ...(browser ? { browser: browser.slice(0, 40) } : {}),
+    ...(gameVersion ? { gameVersion } : {}),
+    ...(gamePlatform ? { gamePlatform } : {}),
     locale: env.locale,
     viewport: {
       w: clamp(env.width),
@@ -45,9 +69,11 @@ export interface FormInput {
   /** Pot de miel. */
   website: string;
   elapsedMs: number;
+  /** Captures déjà envoyées (`POST /v1/attachments`), dans l'ordre ; omises si aucune. */
+  attachments?: readonly string[];
 }
 
-/** Corps exact du POST /v1/reports (contact omis s'il est vide). */
+/** Corps exact du POST /v1/reports (contact et captures omis s'ils sont vides). */
 export function buildSubmission(input: FormInput): ReportSubmission {
   const contact = input.contact.trim().slice(0, LIMITS.contact);
   return {
@@ -59,6 +85,7 @@ export function buildSubmission(input: FormInput): ReportSubmission {
     diagnostics: input.diagnostics,
     website: input.website,
     elapsedMs: Math.max(0, Math.round(input.elapsedMs)),
+    ...(input.attachments?.length ? { attachments: [...input.attachments] } : {}),
   };
 }
 

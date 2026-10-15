@@ -27,7 +27,7 @@ const nginxVar = (name) => new RegExp(`set \\$${name} "([^"]*)";`).exec(confText
 const CSP =
   `default-src 'self'; script-src 'self' ${nginxVar('csp_script_hashes')}; ` +
   `style-src 'self' ${nginxVar('csp_style_hashes')}; ` +
-  "style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; " +
+  "style-src-attr 'unsafe-inline'; img-src 'self' data: blob: https://arbre-api.cardormedia.com; font-src 'self'; media-src 'self'; " +
   "connect-src 'self' https://arbre-api.cardormedia.com; manifest-src 'self'; worker-src 'self'; " +
   'frame-src https://itch.io https://www.youtube-nocookie.com; ' +
   "object-src 'none'; " +
@@ -36,7 +36,7 @@ const CSP =
 // /jouer/ (jeu web, s'il est copié à côté du site) : politique propre, comme dans nginx.conf.
 const CSP_PLAY =
   `default-src 'self'; script-src 'self'; style-src 'self' ${nginxVar('csp_style_hashes')}; ` +
-  "style-src-attr 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob:; " +
+  "style-src-attr 'unsafe-inline'; img-src 'self' data: blob: https://arbre-api.cardormedia.com; font-src 'self'; media-src 'self' blob:; " +
   "connect-src 'self' https://arbre-api.cardormedia.com; manifest-src 'self'; worker-src 'self'; " +
   "object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'";
 

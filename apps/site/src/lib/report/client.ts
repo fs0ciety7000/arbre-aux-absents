@@ -7,6 +7,7 @@
  * aucun cookie (`credentials: 'omit'`), aucun Referer (`referrerPolicy: 'no-referrer'`).
  */
 import type {
+  AttachmentReceipt,
   KnownIssue,
   Locale,
   OpenTicket,
@@ -16,6 +17,9 @@ import type {
 } from '@arbre/contract';
 import { REPORT_API, REQUEST_TIMEOUT_MS } from './config';
 import {
+  ATTACHMENT_ID,
+  ATTACHMENT_LIMITS,
+  ATTACHMENT_TYPES,
   CATEGORIES,
   CLOSED_REASONS,
   ERROR_CODES,
@@ -37,6 +41,8 @@ export type ApiFailure =
   /** 400 et autres refus. */
   | { kind: 'invalid' }
   | { kind: 'tooLarge' }
+  /** 415 : type d'image refusé (captures : PNG, JPEG ou WebP seulement). */
+  | { kind: 'unsupported' }
   /** 404 : jeton inconnu, supprimé ou expiré. */
   | { kind: 'notFound' }
   /** Réseau injoignable (hors ligne, DNS, CORS refusé, CSP). */
@@ -81,6 +87,8 @@ async function failureOf(res: Response): Promise<ApiFailure> {
       return { kind: 'notFound' };
     case 413:
       return { kind: 'tooLarge' };
+    case 415:
+      return { kind: 'unsupported' };
     case 429:
       return {
         kind: 'rateLimited',
@@ -147,6 +155,44 @@ const isShort = (v: unknown, max: number) => typeof v === 'string' && v.length <
 const oneOf = <T extends string>(list: readonly T[], v: unknown): v is T =>
   (list as readonly unknown[]).includes(v);
 
+const isSide = (v: unknown) =>
+  Number.isInteger(v) && (v as number) >= 1 && (v as number) <= ATTACHMENT_LIMITS.side;
+const isHttpUrl = (v: unknown) => typeof v === 'string' && /^https?:\/\/[^\s]+$/.test(v);
+
+export function isAttachmentReceipt(v: unknown): v is AttachmentReceipt {
+  return (
+    isObj(v) &&
+    typeof v.id === 'string' &&
+    ATTACHMENT_ID.test(v.id) &&
+    oneOf(ATTACHMENT_TYPES, v.type) &&
+    isSide(v.width) &&
+    isSide(v.height) &&
+    Number.isInteger(v.bytes) &&
+    (v.bytes as number) >= 1 &&
+    (v.bytes as number) <= ATTACHMENT_LIMITS.bytes &&
+    isTime(v.expiresAt)
+  );
+}
+
+/** `TicketView.attachments` : absent, ou 3 captures au plus aux URL http(s). */
+function isTicketAttachments(v: unknown): boolean {
+  return (
+    v === undefined ||
+    (Array.isArray(v) &&
+      v.length <= ATTACHMENT_LIMITS.perReport &&
+      v.every(
+        (a) =>
+          isObj(a) &&
+          typeof a.id === 'string' &&
+          ATTACHMENT_ID.test(a.id) &&
+          isHttpUrl(a.url) &&
+          oneOf(ATTACHMENT_TYPES, a.type) &&
+          isSide(a.width) &&
+          isSide(a.height),
+      ))
+  );
+}
+
 export function isReceipt(v: unknown): v is ReportReceipt {
   return (
     isObj(v) &&
@@ -155,7 +201,11 @@ export function isReceipt(v: unknown): v is ReportReceipt {
     typeof v.token === 'string' &&
     REPORT_TOKEN.test(v.token) &&
     typeof v.followUrl === 'string' &&
-    /^https?:\/\/[^\s]+$/.test(v.followUrl)
+    /^https?:\/\/[^\s]+$/.test(v.followUrl) &&
+    (v.attachments === undefined ||
+      (Number.isInteger(v.attachments) &&
+        (v.attachments as number) >= 0 &&
+        (v.attachments as number) <= ATTACHMENT_LIMITS.perReport))
   );
 }
 
@@ -171,7 +221,8 @@ export function isTicketView(v: unknown): v is TicketView {
     isTime(v.createdAt) &&
     isTime(v.updatedAt) &&
     Array.isArray(v.replies) &&
-    v.replies.every((r) => isObj(r) && isTime(r.at) && typeof r.text === 'string')
+    v.replies.every((r) => isObj(r) && isTime(r.at) && typeof r.text === 'string') &&
+    isTicketAttachments(v.attachments)
   );
 }
 
@@ -309,6 +360,36 @@ export function getOpenTickets(
     },
     opts,
   );
+}
+
+/** Envoi d'une capture (2 Mio au plus, réseau mobile lent) : le service attend 60 s. */
+export const ATTACHMENT_TIMEOUT_MS = 60_000;
+
+/**
+ * POST /v1/attachments → 201 `AttachmentReceipt` : une capture, corps binaire brut, envoyée avant
+ * le signalement. `website` : valeur du pot de miel (vide pour un humain).
+ */
+export function uploadAttachment(
+  image: Blob,
+  website: string,
+  opts: ClientOptions = {},
+): Promise<ApiResult<AttachmentReceipt>> {
+  return call(
+    `/v1/attachments?website=${encodeURIComponent(website)}`,
+    { method: 'POST', headers: { 'Content-Type': image.type }, body: image },
+    201,
+    async (res) => {
+      const body = await json(res);
+      return isAttachmentReceipt(body) ? body : null;
+    },
+    { timeoutMs: ATTACHMENT_TIMEOUT_MS, ...opts },
+  );
+}
+
+/** DELETE /v1/attachments/<id> → 204 : capture retirée du formulaire (encore libre). */
+export function deleteAttachment(id: string, opts: ClientOptions = {}): Promise<ApiResult<true>> {
+  if (!ATTACHMENT_ID.test(id)) return Promise.resolve(fail({ kind: 'notFound' }));
+  return call(`/v1/attachments/${id}`, { method: 'DELETE' }, 204, async () => true as const, opts);
 }
 
 /** Jeton de suivi lu dans un fragment d'URL (`#<jeton>`), `null` s'il est absent ou mal formé. */

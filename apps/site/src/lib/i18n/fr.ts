@@ -760,6 +760,29 @@ export const fr = {
       { link: 'confidentialite/', text: 'Confidentialité' },
     ] as Rich,
     honeypot: 'Site web (laisser vide)',
+    gameVersionLabel: 'Version du jeu (facultatif)',
+    gameVersionHint:
+      'Dans le jeu : « Signaler un problème », rubrique « Informations envoyées avec le signalement » (la dernière est {version}). Laissez vide si vous ne savez pas.',
+    gameVersionInvalid: 'Format attendu : trois nombres séparés par des points, comme {version}.',
+    gamePlatformLabel: 'Plateforme du jeu (facultatif)',
+    gamePlatforms: {
+      unknown: 'Je ne sais pas',
+      web: 'Navigateur (itch.io ou ce site)',
+      desktop: 'Ordinateur (Windows, macOS, Linux)',
+      android: 'Android',
+    },
+    sentInfo: {
+      title: 'Informations envoyées avec le signalement',
+      gameVersion: 'Version du jeu',
+      gamePlatform: 'Plateforme du jeu',
+      os: 'Système',
+      browser: 'Navigateur',
+      language: 'Langue',
+      screen: 'Fenêtre',
+      unknown: 'Inconnu',
+      unset: 'Non précisée',
+    },
+    attachmentsBusy: 'Envoi des captures en cours : patientez un instant.',
     previewSummary: 'Voir exactement ce qui sera envoyé',
     previewLine: 'Version {version} · site · {language} · fenêtre {w} × {h}',
     previewNote:
@@ -777,6 +800,10 @@ export const fr = {
       linkCopied: 'Lien de suivi copié',
       another: 'Signaler un autre problème',
       announce: 'Signalement reçu, numéro {ticket}.',
+      attachmentsMissingOne:
+        '1 capture n’a pas pu être jointe (expirée ou refusée) : le signalement est bien reçu.',
+      attachmentsMissingMany:
+        '{n} captures n’ont pas pu être jointes (expirées ou refusées) : le signalement est bien reçu.',
     },
     failure: {
       toast: 'Signalement non envoyé',

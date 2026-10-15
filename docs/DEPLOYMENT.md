@@ -46,7 +46,8 @@ Trois livrables, trois chaînes :
   `$csp_style_hashes`), et le serveur e2e (`tests/e2e/servers/static.mjs`) réutilise ce script.
   `style-src-attr 'unsafe-inline'` reste pour les attributs `style` du HTML prérendu (variables CSS
   posées par les composants : une empreinte ne les couvrirait qu'avec `'unsafe-hashes'`) ;
-  `img-src 'self' data:` (fond de la carte d'accueil embarqué en `data:`) ; `object-src 'none'` ;
+  `img-src 'self' data: blob: https://arbre-api.cardormedia.com` (fond de la carte d'accueil embarqué
+  en `data:`, vignettes des captures avant envoi en `blob:`, captures jointes affichées par le suivi) ; `object-src 'none'` ;
   `connect-src 'self' https://arbre-api.cardormedia.com` (service de signalement, §5 ; aussi sur
   `/jouer/`) ;
   `frame-src https://itch.io https://www.youtube-nocookie.com` (widget itch.io ; lecteur de la
@@ -129,7 +130,7 @@ commande Rust).
 | Version | celle de `apps/game/package.json` |
 | Frontend | `frontendDist: ../dist`, `devUrl: http://localhost:5173` |
 | Avant build | `npm run tauri:before-build` = `content:build` + `vite build --mode tauri` (`apps/game/.env.tauri` → `VITE_TARGET=tauri`) |
-| CSP | `default-src 'self'`, `script-src 'self'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob:`, `media-src 'self' blob:`, `connect-src 'self' ipc: http://ipc.localhost https://arbre-api.cardormedia.com` (service de signalement, §5) ; aucun autre domaine distant. L'origine de l'API y est **figée** : si `VITE_REPORT_API` change, changer aussi ce `connect-src`. `vite build --mode tauri` **échoue** si elles divergent (`apps/game/vite/report-csp.ts`) |
+| CSP | `default-src 'self'`, `script-src 'self'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob: https://arbre-api.cardormedia.com` (captures jointes, fiche de suivi), `media-src 'self' blob:`, `connect-src 'self' ipc: http://ipc.localhost https://arbre-api.cardormedia.com` (service de signalement, §5) ; aucun autre domaine distant. L'origine de l'API y est **figée** : si `VITE_REPORT_API` change, changer aussi ce `connect-src` et cet `img-src`. `vite build --mode tauri` **échoue** si elles divergent (`apps/game/vite/report-csp.ts`) |
 | Capabilities | `core:default`, plein écran, fermeture, `dialog` open/save, `fs` lecture/écriture/renommage/suppression **limités à `$APPDATA/saves/**`** (les chemins choisis dans un dialogue d'export/import sont ajoutés au scope par le plugin) ; `opener:allow-open-url` **limité à `https://arbre.cardormedia.com/*` et `https://cardorinteractive.itch.io/*`** (suivi des signalements, forum itch ; D11), sans `opener:default` |
 | Linux | AppImage (`bundleMediaFramework: true`, GStreamer embarqué pour l'audio) + deb + rpm |
 | Windows | NSIS par utilisateur, bootstrapper WebView2 |

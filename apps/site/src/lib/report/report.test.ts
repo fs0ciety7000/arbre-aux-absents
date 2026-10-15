@@ -4,11 +4,18 @@
  * constantes recopiées identiques à celles du contrat.
  */
 import {
+  ATTACHMENT_ID as CONTRACT_ATTACHMENT_ID,
+  ATTACHMENT_LIMITS as CONTRACT_ATTACHMENT_LIMITS,
+  ATTACHMENT_TYPES as CONTRACT_ATTACHMENT_TYPES,
+  AttachmentReceiptSchema,
+  GAME_PLATFORMS as CONTRACT_GAME_PLATFORMS,
+  GAME_VERSION as CONTRACT_GAME_VERSION,
   KnownIssuesSchema,
   OPEN_TICKET_STATUSES,
   OpenTicketSchema,
   OpenTicketsSchema,
   REPORT_SOURCES,
+  ReportDiagnosticsSchema,
   REPORT_CATEGORIES,
   REPORT_ERROR_CODES,
   REPORT_LIMITS,
@@ -21,11 +28,14 @@ import {
   TicketViewSchema,
 } from '@arbre/contract';
 import { describe, expect, it, vi } from 'vitest';
+import { attachmentError, createAttachmentQueue } from './attachments';
 import {
+  deleteAttachment,
   deleteTicket,
   getKnownIssues,
   getOpenTickets,
   getTicket,
+  isAttachmentReceipt,
   isKnownIssue,
   isOpenTicket,
   isReceipt,
@@ -33,12 +43,18 @@ import {
   parseRetryAfter,
   submitReport,
   tokenFromHash,
+  uploadAttachment,
 } from './client';
 import { DEFAULT_REPORT_API, reportApiBase } from './config';
 import {
+  ATTACHMENT_ID,
+  ATTACHMENT_LIMITS,
+  ATTACHMENT_TYPES,
   CATEGORIES,
   CLOSED_REASONS,
   ERROR_CODES,
+  GAME_PLATFORMS,
+  GAME_VERSION,
   LIMITS,
   OPEN_STATUSES,
   REPORT_TOKEN,
@@ -48,6 +64,7 @@ import {
 } from './constants';
 import {
   buildSubmission,
+  declaredVersion,
   fill,
   formatDelay,
   missingChars,
@@ -86,15 +103,16 @@ const diagnostics = siteDiagnostics({
   dpr: 2,
 });
 
-const submission = buildSubmission({
-  category: 'blocked',
+const submissionInput = {
+  category: 'blocked' as const,
   description: '   I cannot open the parish register after the hearing.   ',
   contact: '  ',
-  locale: 'en',
+  locale: 'en' as const,
   diagnostics,
   website: '',
   elapsedMs: 12_345.6,
-});
+};
+const submission = buildSubmission(submissionInput);
 
 const receipt = {
   ticket: 'AA-0042',
@@ -125,6 +143,11 @@ describe('constantes recopiées du contrat', () => {
     }
     expect(REPORT_TOKEN.source).toBe(CONTRACT_TOKEN.source);
     expect(TICKET_NUMBER.source).toBe(CONTRACT_TICKET.source);
+    expect(ATTACHMENT_TYPES).toEqual(CONTRACT_ATTACHMENT_TYPES);
+    expect(ATTACHMENT_LIMITS).toEqual(CONTRACT_ATTACHMENT_LIMITS);
+    expect(ATTACHMENT_ID.source).toBe(CONTRACT_ATTACHMENT_ID.source);
+    expect(GAME_PLATFORMS).toEqual(CONTRACT_GAME_PLATFORMS);
+    expect(GAME_VERSION.source).toBe(CONTRACT_GAME_VERSION.source);
   });
 
   it('URL du service : variable publique, sinon la production, sans barre finale', () => {
@@ -149,9 +172,32 @@ describe('corps envoyé', () => {
       edition: 'full',
       platform: 'site',
       os: 'Windows',
+      browser: 'Chrome 141',
       locale: 'en',
       viewport: { w: 1440, h: 900, dpr: 2 },
     });
+  });
+
+  it('version et plateforme du jeu déclarées : gardées si valables, sinon omises', () => {
+    const base = {
+      appVersion: '1.3.1',
+      locale: 'fr' as const,
+      userAgent: 'Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0',
+      width: 390,
+      height: 844,
+      dpr: 3,
+    };
+    const d = siteDiagnostics({ ...base, gameVersion: ' v1.2.0 ', gamePlatform: 'android' });
+    expect(d).toMatchObject({
+      gameVersion: '1.2.0',
+      gamePlatform: 'android',
+      browser: 'Firefox 131',
+    });
+    expect(ReportDiagnosticsSchema.safeParse(d).success).toBe(true);
+    const none = siteDiagnostics({ ...base, gameVersion: '1.2', gamePlatform: '' });
+    expect('gameVersion' in none || 'gamePlatform' in none).toBe(false);
+    expect(declaredVersion('1.4.0-beta.2')).toBe('1.4.0-beta.2');
+    expect(declaredVersion('dernière')).toBeUndefined();
   });
 
   it('contact gardé (tronqué à 200), jamais de User-Agent complet', () => {
@@ -165,7 +211,8 @@ describe('corps envoyé', () => {
       elapsedMs: 4000,
     });
     expect(s.contact).toHaveLength(200);
-    expect(JSON.stringify(s)).not.toMatch(/Mozilla|Chrome/);
+    // Famille et version majeure (« Chrome 141 ») seulement, jamais la chaîne complète.
+    expect(JSON.stringify(s)).not.toMatch(/Mozilla|AppleWebKit|Chrome\/141/);
   });
 
   it('famille du système', () => {
@@ -534,5 +581,91 @@ describe('vérification des réponses (mêmes verdicts que les schémas du contr
     expect(isKnownIssue({ ticket: 'AA-0001', title: '', status: 'fixed', updatedAt: 1 })).toBe(
       false,
     );
+  });
+});
+
+describe('captures d’écran (POST/DELETE /v1/attachments)', () => {
+  const ID = 'AbCdEfGhIjKlMnOpQrStUv';
+  const RECEIPT = {
+    id: ID,
+    type: 'image/webp',
+    width: 1920,
+    height: 1080,
+    bytes: 120_000,
+    expiresAt: Date.now() + 3_600_000,
+  };
+
+  it('reçu conforme au contrat ; formes refusées', () => {
+    expect(AttachmentReceiptSchema.safeParse(RECEIPT).success).toBe(true);
+    expect(isAttachmentReceipt(RECEIPT)).toBe(true);
+    expect(isAttachmentReceipt({ ...RECEIPT, type: 'image/gif' })).toBe(false);
+    expect(isAttachmentReceipt({ ...RECEIPT, width: 9000 })).toBe(false);
+    expect(isAttachmentReceipt({ ...RECEIPT, id: 'x' })).toBe(false);
+  });
+
+  it('corps binaire, Content-Type de l’image ; 415 et 413 traduits', async () => {
+    const { fetch, calls } = fakeFetch(() => json(201, RECEIPT));
+    const blob = new Blob([new Uint8Array(8)], { type: 'image/webp' });
+    expect(await uploadAttachment(blob, '', { base: BASE, fetch })).toEqual({
+      ok: true,
+      value: RECEIPT,
+    });
+    expect(calls[0]!.url).toBe(`${BASE}/v1/attachments?website=`);
+    expect(calls[0]!.init.body).toBe(blob);
+    expect((calls[0]!.init.headers as Record<string, string>)['Content-Type']).toBe('image/webp');
+    for (const [status, error] of [
+      [415, 'type'],
+      [413, 'tooLarge'],
+      [503, 'unavailable'],
+    ] as const) {
+      const f = fakeFetch(() => json(status, { error: 'invalid' }));
+      const res = await uploadAttachment(blob, '', { base: BASE, fetch: f.fetch });
+      expect(res.ok).toBe(false);
+      if (!res.ok) expect(attachmentError(res.failure)).toBe(error);
+    }
+  });
+
+  it('retrait : DELETE ; file du formulaire jusqu’au signalement', async () => {
+    let n = 0;
+    const { fetch, calls } = fakeFetch((_url, init) =>
+      init.method === 'DELETE'
+        ? new Response(null, { status: 204 })
+        : json(201, { ...RECEIPT, id: `${ID.slice(0, 21)}${++n}` }),
+    );
+    expect(await deleteAttachment(ID, { base: BASE, fetch })).toEqual({ ok: true, value: true });
+    expect(calls[0]).toMatchObject({ url: `${BASE}/v1/attachments/${ID}` });
+    let items: { key: string; status: string }[] = [];
+    const queue = createAttachmentQueue({
+      website: () => '',
+      onchange: (next) => (items = next),
+      client: { base: BASE, fetch },
+      prepare: async (file) => ({ ok: true, blob: file }),
+      createUrl: () => 'blob:x',
+      revokeUrl: () => undefined,
+    });
+    queue.add([new File([new Uint8Array(4)], 'a.png', { type: 'image/png' })]);
+    await vi.waitFor(() => expect(items[0]?.status).toBe('ready'));
+    const ids = await queue.fresh();
+    const s = buildSubmission({ ...submissionInput, attachments: ids });
+    expect(s.attachments).toEqual([`${ID.slice(0, 21)}1`]);
+    expect(ReportSubmissionSchema.safeParse(s).success).toBe(true);
+  });
+
+  it('suivi : captures signées acceptées, URL non http(s) refusée', () => {
+    const attachment = {
+      id: ID,
+      url: `https://arbre-api.cardormedia.com/v1/attachments/${ID}?sig=abc`,
+      type: 'image/png',
+      width: 800,
+      height: 600,
+    };
+    const view = { ...ticket, attachments: [attachment] };
+    expect(TicketViewSchema.safeParse(view).success).toBe(true);
+    expect(isTicketView(view)).toBe(true);
+    expect(isTicketView({ ...ticket, attachments: [{ ...attachment, url: 'javascript:1' }] })).toBe(
+      false,
+    );
+    expect(isReceipt({ ...receipt, attachments: 2 })).toBe(true);
+    expect(isReceipt({ ...receipt, attachments: 9 })).toBe(false);
   });
 });

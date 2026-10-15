@@ -2,11 +2,13 @@
   Fiche de suivi d'un signalement (DESIGN §14.6, §9.36 ; ARCHITECTURE §8, D10). Le jeton est dans
   le fragment (`/suivi/#<jeton>`) : jamais envoyé au serveur du site, retiré de l'historique dès
   la lecture (`history.replaceState`), envoyé au service seulement dans `Authorization: Bearer`.
-  Réponses de l'équipe rendues en texte brut (jamais de HTML). Aucun Referer (nginx + meta).
+  Réponses de l'équipe rendues en texte brut (jamais de HTML). Captures jointes en vignettes
+  (`AttachmentGallery`, URL signées du service : CSP `img-src`). Aucun Referer (nginx + meta).
 -->
 <script lang="ts">
   import { onMount, tick } from 'svelte';
   import {
+    AttachmentGallery,
     Button,
     Dialog,
     DymoLabel,
@@ -159,6 +161,10 @@
           closedReason={ticket.closedReason}
           animate
         />
+
+        {#if ticket.attachments?.length}
+          <AttachmentGallery images={ticket.attachments} title={ticket.ticket} headingLevel={2} />
+        {/if}
 
         <section class="replies" aria-labelledby="follow-replies">
           <h2 id="follow-replies">{t.repliesHeading}</h2>
