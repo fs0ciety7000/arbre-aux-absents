@@ -12,7 +12,11 @@
  */
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
-import { fr } from '../fr';
+import { fr as frCore } from '../fr';
+import { frDesk } from '../fr-desk';
+
+/** Catalogue complet (base + sections différées). */
+const fr = { ...frCore, ...frDesk };
 
 /** Sources du jeu (texte brut), hors tests, contenu généré et catalogues eux-mêmes. */
 const SOURCES = import.meta.glob<string>(

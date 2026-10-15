@@ -34,6 +34,7 @@ import {
 } from '../../platform/index';
 import {
   applyMessages,
+  ensureMessages,
   loadMessages,
   messages,
   uiLang,
@@ -217,7 +218,12 @@ export class AppController implements StoreHost {
     if (this.contentStatus === 'ready') return Promise.resolve(true);
     if (this.#contentLoad) return this.#contentLoad;
     this.contentStatus = 'loading';
-    const run = Promise.all([this.ensureCatalog(true), import('../../shell/Desk.svelte')])
+    // Textes des panneaux (section différée du catalogue) avec le Bureau.
+    const run = Promise.all([
+      this.ensureCatalog(true),
+      import('../../shell/Desk.svelte'),
+      ensureMessages('desk'),
+    ])
       .then(([, desk]) => {
         this.desk = desk.default as DeskComponent;
         this.contentStatus = 'ready';

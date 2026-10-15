@@ -1,9 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { en } from '../en';
-import { fr } from '../fr';
+import { en as enCore } from '../en';
+import { enDesk } from '../en-desk';
+import { fr as frCore } from '../fr';
+import { frDesk } from '../fr-desk';
 import { resolveUiLanguage, urlLanguageHint } from '../resolve';
 
 type Tree = Record<string, unknown>;
+
+/** Catalogues complets : base + sections différées. */
+const fr = { ...frCore, ...frDesk };
+const en = { ...enCore, ...enDesk };
 
 /** Toutes les feuilles `a.b.c → valeur` d'un catalogue. */
 function leaves(tree: unknown, prefix = ''): Map<string, unknown> {
@@ -43,6 +49,15 @@ describe('catalogues de l’interface', () => {
     const empty = [...b].filter(([, v]) => v === '').map(([k]) => k);
     const frEmpty = new Set([...a].filter(([, v]) => v === '').map(([k]) => k));
     expect(empty.filter((k) => !frEmpty.has(k))).toEqual([]);
+  });
+
+  it('sections différées hors du catalogue de base, sans clé commune', () => {
+    for (const [core, part] of [
+      [frCore, frDesk],
+      [enCore, enDesk],
+    ] as const) {
+      expect(Object.keys(part).filter((k) => k in core)).toEqual([]);
+    }
   });
 
   it('langue et étiquette Intl', () => {

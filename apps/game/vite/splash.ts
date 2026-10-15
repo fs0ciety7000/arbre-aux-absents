@@ -6,6 +6,8 @@
  *   fonts.css) : l'écran se peint dès l'arrivée du HTML, sans feuille bloquante.
  * - Au build : précharge le module de démarrage (`src/boot.ts`, importé dynamiquement par
  *   `src/main.ts`), ses dépendances et sa feuille de style (`preload`, non bloquant).
+ * - Paquets du dépôt sans effet de bord (`pureWorkspaceModule`) : leurs barils ne tirent dans le
+ *   module de démarrage que ce qu'il importe (docs/i18n/PLAN.md §2.4).
  * - Au build web (hors `--mode tauri`, qui a sa CSP dans tauri.conf.json) : CSP en `<meta>`.
  *   Aucun script en ligne ; le seul `<style>` en ligne est autorisé par son empreinte ;
  *   `style-src-attr 'unsafe-inline'` couvre les attributs `style` posés par Svelte
@@ -67,6 +69,20 @@ export function cspFor(styleHashes: string[], connect: string[] = []): string {
   ].join('; ');
 }
 
+/**
+ * Sources des paquets du dépôt (`@arbre/ui`, `@arbre/contract`, `@arbre/engine`) : sans effet de
+ * bord au chargement (aucune instruction de premier niveau hors déclarations). Leurs barils
+ * (`export * from …`) ne tirent donc que ce qui est importé : une primitive ou un schéma utilisé
+ * seulement par un écran chargé à la demande reste dans le morceau de cet écran. Les feuilles de
+ * style des composants (`….svelte?svelte&type=style…`) gardent leurs effets.
+ */
+const PURE_SOURCES = /[\\/]packages[\\/](?:ui|contract|engine)[\\/]src[\\/][^?]*\.(?:ts|svelte)$/;
+
+/** `true` si le module peut être retiré quand aucun de ses exports n'est utilisé. */
+export function pureWorkspaceModule(id: string): boolean {
+  return PURE_SOURCES.test(id);
+}
+
 interface Options {
   /** Feuille de l'écran d'attente. */
   splashCss: string;
@@ -89,6 +105,13 @@ export function splash(opts: Options): Plugin {
 
   return {
     name: 'arbre-splash',
+    config: () => ({
+      build: {
+        rolldownOptions: {
+          treeshake: { moduleSideEffects: (id: string) => !pureWorkspaceModule(id) },
+        },
+      },
+    }),
     configResolved(config) {
       isBuild = config.command === 'build';
       mode = config.mode;
