@@ -3,6 +3,8 @@
 // Plusieurs affaires : E2E_FIXTURES=mini,claim (fixtures de packages/content-tools/fixtures,
 // compilées à part puis réunies, monde de la première) et E2E_BUILD=<nom> (dossiers de contenu et de
 // build à part : `<nom>/game`, `<nom>-dist`), sur le port E2E_GAME_PORT.
+// Contenu réel du dépôt : E2E_REAL_CONTENT=demo|full (avec E2E_BUILD), compilé dans le cache
+// (`content:build -- --out`), jamais dans apps/game/src/generated (canaris de la démo anglaise).
 import { execFileSync, spawn } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -15,9 +17,14 @@ const vite = resolve(repo, 'node_modules/vite/bin/vite.js');
 const run = (cmd, args, env = {}) =>
   execFileSync(cmd, args, { cwd: repo, stdio: 'inherit', env: { ...process.env, ...env } });
 
+const realEdition = process.env.E2E_REAL_CONTENT;
+if (realEdition && !['demo', 'full'].includes(realEdition)) {
+  throw new Error(`E2E_REAL_CONTENT attend demo ou full (reçu : ${realEdition})`);
+}
 const fixtures = (process.env.E2E_FIXTURES ?? 'mini').split(',').filter(Boolean);
 const name = process.env.E2E_BUILD ?? (fixtures.length === 1 ? fixtures[0] : fixtures.join('-'));
-const single = fixtures.length === 1 && fixtures[0] === 'mini' && !process.env.E2E_BUILD;
+const single =
+  !realEdition && fixtures.length === 1 && fixtures[0] === 'mini' && !process.env.E2E_BUILD;
 // Build historique (`mini` seule) inchangé : `mini/` et `game-dist/`.
 const outDir = resolve(cache, single ? 'game-dist' : `${name}-dist`);
 const content = resolve(cache, name);
@@ -38,6 +45,10 @@ const byOrder = (a, b) => {
  * content-tools (`order`, puis id), illustrations par affaire, monde de la première fixture.
  */
 function buildContent() {
+  if (realEdition) {
+    run('npm', ['run', 'content:build', '--', '--out', content, '--edition', realEdition]);
+    return;
+  }
   if (fixtures.length === 1) {
     run('npm', [
       'run',

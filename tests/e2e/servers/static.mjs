@@ -1,5 +1,5 @@
 // Serveur statique du site prérendu, au plus près de nginx.conf : `/x` → `/x/` (301) puis
-// `index.html`, sinon `404.html` en 404 ; gzip (comme gzip_static) ; même CSP, avec les
+// `index.html`, sinon `404.html` en 404 (`en/404.html` sous `/en/`) ; gzip (comme gzip_static) ; même CSP, avec les
 // empreintes des scripts et styles en ligne calculées par scripts/csp-hashes.sh. Construit le site
 // d'abord, sauf E2E_SKIP_BUILD=1.
 import { execFileSync } from 'node:child_process';
@@ -87,7 +87,12 @@ createServer((req, res) => {
     : isFile(join(base, 'index.html'))
       ? join(base, 'index.html')
       : null;
-  const target = found ?? join(root, '404.html');
+  // 404 : celle du site anglais sous /en/ (nginx.conf : error_page 404 /en/404.html).
+  const notFound =
+    url.pathname.startsWith('/en/') && isFile(join(root, 'en/404.html'))
+      ? join(root, 'en/404.html')
+      : join(root, '404.html');
+  const target = found ?? notFound;
   const ext = extname(target);
   let body = readFileSync(target);
   headers['content-type'] = TYPES[ext] ?? 'application/octet-stream';

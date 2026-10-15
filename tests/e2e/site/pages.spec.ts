@@ -1,24 +1,46 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-/** Pages du site (sitemap + /design, page interne du design system). */
-const PAGES = [
+/** Pages du site (sitemap + /design, page interne du design system), en français. */
+const PAGES_FR = [
   '/',
   '/le-monde/',
   '/artbook/',
   '/charte/',
   '/presse/',
   '/credits/',
-  // Signalement : sans appel au service au chargement (problèmes connus : report.spec.ts).
+  // Signalement (envoi, suivi et problèmes connus en détail : report.spec.ts).
   '/signaler/',
   '/suivi/',
+  '/problemes-connus/',
   '/confidentialite/',
   '/design/',
 ];
 
+/** Version anglaise (D8 : préfixe /en/, mêmes slugs ; /design/ reste interne et français). */
+const PAGES_EN = PAGES_FR.filter((p) => p !== '/design/').map((p) => `/en${p}`);
+
+const PAGES = [...PAGES_FR, ...PAGES_EN];
+
+// Problèmes connus : la page interroge le service au chargement ; il est simulé (liste vide) pour
+// que ces contrôles ne dépendent pas du réseau.
+test.beforeEach(async ({ page }) => {
+  await page.route('https://arbre-api.cardormedia.com/**', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
+      body: '[]',
+    }),
+  );
+});
+
 for (const path of PAGES) {
   test.describe(path, () => {
-    test('200, lang="fr", lien d’évitement, aucune erreur ni violation CSP', async ({ page }) => {
+    const lang = path.startsWith('/en/') ? 'en' : 'fr';
+    test(`200, lang="${lang}", lien d’évitement, aucune erreur ni violation CSP`, async ({
+      page,
+    }) => {
       const errors: string[] = [];
       page.on('pageerror', (e) => errors.push(e.message));
       page.on('console', (m) => {
@@ -26,7 +48,7 @@ for (const path of PAGES) {
       });
       const res = await page.goto(path);
       expect(res?.status()).toBe(200);
-      await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
+      await expect(page.locator('html')).toHaveAttribute('lang', lang);
       await expect(page).toHaveTitle(/\S/);
       await expect(page.locator('h1')).toHaveCount(1);
       // Lien d'évitement : premier arrêt de tabulation, vers un élément existant.
@@ -73,6 +95,21 @@ test('page inconnue : 404 avec la page du site', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr');
   await expect(page.getByRole('link', { name: /accueil/i }).first()).toBeVisible();
   await expect(page.locator('h1')).toHaveCount(1);
+  const r = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
+    .analyze();
+  expect(r.violations.map((v) => `${v.id} (${v.nodes.length})`)).toEqual([]);
+});
+
+test('page anglaise inconnue : 404 en anglais (/en/404.html)', async ({ page }) => {
+  const res = await page.goto('/en/does-not-exist/');
+  expect(res?.status()).toBe(404);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(page.locator('h1')).toHaveCount(1);
+  await expect(page.getByRole('link', { name: /home/i }).first()).toHaveAttribute(
+    'href',
+    /^\/en\/?$/,
+  );
   const r = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     .analyze();
