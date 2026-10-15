@@ -290,7 +290,9 @@
             <details class="preview" bind:open={previewOpen}>
               <summary>{t.previewSummary}</summary>
               <p class="preview-line">{previewLine}</p>
-              <pre class="ink-type">{preview}</pre>
+              <!-- Zone défilante (16rem) : atteignable au clavier pour la lire en entier. -->
+              <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+              <pre class="ink-type" tabindex="0" aria-label={t.previewSummary}>{preview}</pre>
               <p class="preview-note">{t.previewNote}</p>
             </details>
 

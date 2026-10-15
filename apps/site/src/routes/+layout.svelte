@@ -12,6 +12,12 @@
 
   // Textes des primitives (@arbre/ui) dans la langue de la page (DESIGN §4.4).
   setUiStrings(() => UI_STRINGS[data.chrome.lang]);
+
+  // Pages hydratées : passer de /en/le-monde/ à /le-monde/ (sélecteur de langue) est une
+  // navigation côté client, sans nouveau `<html lang>` du serveur ; on le tient à jour ici.
+  $effect(() => {
+    document.documentElement.lang = data.chrome.lang;
+  });
 </script>
 
 <svelte:head>

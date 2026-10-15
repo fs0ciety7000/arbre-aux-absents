@@ -346,7 +346,9 @@
       <details class="preview" ontoggle={refresh}>
         <summary>{m.previewSummary}</summary>
         <p class="preview-line">{previewLine}</p>
-        <pre class="ink-type json">{preview}</pre>
+        <!-- Zone défilante (16rem) : atteignable au clavier pour la lire en entier. -->
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+        <pre class="ink-type json" tabindex="0" aria-label={m.previewSummary}>{preview}</pre>
         <p class="note">{m.previewNote}</p>
       </details>
 
@@ -429,6 +431,7 @@
     font-size: var(--step--1);
   }
   .preview summary:focus-visible,
+  .json:focus-visible,
   .copy-area textarea:focus-visible {
     outline: 3px solid var(--focus);
     outline-offset: 2px;
