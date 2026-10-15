@@ -1,0 +1,74 @@
+{
+  "map": {
+    "title": "Velmarche",
+    "attribution": "Map drawn and engraved by CM Creative Lab"
+  },
+  "places": {
+    "aubrelieu": {
+      "description": "Capital of the Republic, a bridge town on the Orvelle founded in 1214: the Palais des Chartes (National Archives), the Civil Re-registration Office, the opera house, the citadel, the university, the Tanneurs quarter."
+    },
+    "bains-de-merande": {
+      "description": "Spa town in the coastal hills of the south-west: baths, sanatorium, the Mérande Soapworks, a girls' high school."
+    },
+    "brenzac": {
+      "description": "Thalbère frontier town, bilingual, beyond the Col de Corvenne (Brénica in Thalbère)."
+    },
+    "col-de-corvenne": {
+      "description": "Pass through the Monts Corvins into Thalberie: blockhouses from the War of the Passes, a cross for the dead."
+    },
+    "dalvezac": {
+      "description": "Thalbère hamlet of charcoal burners in the Dalva valley, away from the pass road (Dalvica in Thalbère): wooden houses, charcoal stacks, school, cemetery."
+    },
+    "foret-de-sorbe": {
+      "description": "Beech wood between Aubrelieu and Moulinvert; an old paper mill is falling into ruin by the water."
+    },
+    "golfe-d-ambre": {
+      "description": "The western gulf, with milder waters; amber is gathered on its beaches."
+    },
+    "grisenoue": {
+      "description": "Marsh town north of Aubrelieu: reed beds and the charred ruins of the Wards' home."
+    },
+    "hautcorvin": {
+      "description": "Mountain town in the upper Orvelle valley: glassworks, garrison, a paper mill that trains apprentices."
+    },
+    "kessaar": {
+      "description": "A rock in the Mer Grise, off the coast of Ostrie: former penal colony (1938–1952), infirmary, small lighthouse."
+    },
+    "lac-d-aulne": {
+      "description": "Lake in the foothills south of Moulinvert: summer chalets, rowing boats and alders."
+    },
+    "landes-d-ostrie": {
+      "description": "Heather plateau of the north: standing stones, sheepfolds, stone tracks. Beyond lies Ostrie, its language and its fjords."
+    },
+    "mer-grise": {
+      "description": "Cold northern sea, mists and seals."
+    },
+    "monts-corvins": {
+      "description": "South-eastern range where the Orvelle rises: snow-capped peaks, pine forests."
+    },
+    "moulinvert": {
+      "description": "Industrial town on the Clairette, at the foot of the hills: the wheels, chimneys and pulp vats of the Varenque Paper Mills, the girls' school, the cemetery."
+    },
+    "orvelle": {
+      "description": "The river of Velmarche, from the Monts Corvins to the Golfe d'Ambre, and the Clairette, its left-bank tributary, coming down from the Sorbe hills: ferries, bridges, mills."
+    },
+    "pas-de-l-ourse": {
+      "description": "A gap in the ridge of the Monts Corvins, south of the Col de Corvenne, on the border: carved boundary stone, iron cross at the hairpin bend; a mountain refuge a little below, on the Velmarche side."
+    },
+    "port-senane": {
+      "description": "Great port on the Orvelle estuary, on the Golfe d'Ambre: docks, shipyards, the Orvelle Packet Company, the seamen's hospital, a theatre."
+    },
+    "saint-ormel": {
+      "description": "Cathedral city on the Orvelle, downstream from Aubrelieu: cathedral, notaries' offices, court registry."
+    },
+    "tennok": {
+      "description": "North-western tip of Ostrie: white lighthouse with a red band, the keeper's house, the lifeboat house, the post office; offshore, the reef of the Dents de Tennok."
+    },
+    "vellaak": {
+      "description": "Fishing village at the head of a fjord: harbour, fish-drying racks, the offices of Vel Taalik, the Ilvess photographic studio."
+    },
+    "vernezac": {
+      "description": "Village in the upper valley, on the Vèze, a torrent running down from the ridges to the Orvelle: furnace hall of the Hautcorvin Glassworks, inn, church, school, post office, customs post, guides' company."
+    }
+  }
+}
