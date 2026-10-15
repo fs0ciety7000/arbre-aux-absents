@@ -34,7 +34,7 @@ Plan en lecture seule : je n'ai modifié aucun fichier. J'ai lu `CLAUDE.md`, `do
 | D9 | Service de signalement : app Coolify séparée **`arbre-api.cardormedia.com`**, Node 22, `node:http` + `node:sqlite`, **zod comme seule dépendance d'exécution** (embarquée au build), volume `/data`. | CORS nécessaire de toute façon (origines Tauri, iframe itch). Un sous-domaine à un seul niveau est couvert par le certificat Cloudflare. Un proxy nginx vers un conteneur Coolify au nom instable serait fragile. `node:sqlite` est déjà utilisé par arcade-cardor. |
 | D10 | Numéro de ticket propre au service (`AA-0042`), sans lien avec le numéro du ticket GitHub. Lien de suivi `…/suivi/#<jeton>` (fragment). Jeton de 128 bits stocké **haché**. | Ni GitHub ni l'URL du ticket exposés ; le jeton n'apparaît ni dans les journaux ni dans le Referer. |
 | D11 | `@tauri-apps/plugin-opener` ajouté, limité à `https://arbre.cardormedia.com/*` et `https://cardorinteractive.itch.io/*`. | Plugin officiel et léger, seule manière propre d'ouvrir un lien externe sous Tauri (suivi, forum itch). Alternative : afficher l'URL à copier (moins bonne expérience). |
-| D12 | **Risque RGPD : le dépôt est public.** Je recommande un dépôt **privé** `fs0ciety7000/arbre-aux-absents-signalements`, configurable par `GITHUB_REPO`. Si le propriétaire maintient le dépôt public, le formulaire doit prévenir : « votre description sera publiée anonymement ». Le contact n'est jamais envoyé à GitHub. | La description libre peut contenir des données personnelles. |
+| D12 | **Décidé par le propriétaire (15/10)** : les signalements vont dans un dépôt **privé** dédié `fs0ciety7000/arbre-aux-absents-signalements`, configuré par `GITHUB_REPO`. Le contact n'est jamais envoyé à GitHub. | La description libre peut contenir des données personnelles ; le dépôt du jeu est public. |
 | D13 | Conservation : contact effacé 30 jours après la clôture ; ticket (empreinte du jeton, statut, réponses publiques) supprimé 12 mois après la clôture ; suppression immédiate à la demande (`DELETE`). Aucune IP stockée ni journalisée. | Minimisation. |
 
 ## 2. Contrat à écrire d'abord (orchestrateur, vague 0)
@@ -407,7 +407,7 @@ Onze lots, chacun limité à `content/cases/<id>/locales/en/<chemins du lot>` :
 ## 5. Risques
 
 - **Sécurité**
-  - Dépôt public (D12).
+  - Dépôt du jeu public : signalements dans un dépôt privé dédié (D12).
   - Marqueur de réponse publique détournable : filtré par `author_association`.
   - Injection Markdown dans les tickets : bloc de code.
   - Fuite du jeton : fragment, `no-referrer`, stockage haché.

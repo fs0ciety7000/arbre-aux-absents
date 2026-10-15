@@ -107,6 +107,35 @@ Fait :
 - [x] Correctifs QA : étiquette Dalvezac sous les contrôles de la carte du site (axe `target-size`), focus de
       la confirmation « Rétablir la déclaration », portrait déclaré lisible dans la fiche, secours par affaire
 
+## Session 2 — 15 oct. 2026 (traduction anglaise et signalement de problèmes, branche `claude/i18n-en`)
+
+Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
+
+- [x] Vague 0 (orchestrateur) : contrat `packages/contract/src/{i18n,report,report-ref}.ts`, champs
+      `hearing`, `Highlight.lang`, `SaveSlotSummary.caseId`, `Settings.language`, `Profile.reports`,
+      `ParseSaveErrorCode`, `systemLocales`/`openExternal` ; schémas JSON régénérés ; ARCHITECTURE §1–§6
+      et nouveau §8 ; WORKFLOW (périmètres, agent `traducteur`) ; `content/locales.json` (fr source,
+      en draft) ; scripts `content:i18n` (emplacement réservé) et `dev:report` ; `.env.example`.
+      Transition : `CompiledCase.locale`, `ParseSaveResult.code` et `Platform.systemLocales` restent
+      facultatifs dans le type jusqu'à A2/C1 pour garder `check` vert.
+- [ ] A1 · backend · i18n du contenu (calques, compilation par langue, sel structurel, règle 12, `content:i18n`)
+- [ ] A2 · backend · moteur et plateforme (`code` de `parseSave`, `lang`, `caseId`, `systemLocales`, `openExternal`)
+- [ ] A3 · design-lead · `UiStrings`, `LanguageSwitch`, `TicketStatus`, sections DESIGN
+- [ ] A4 · backend · service de signalement `apps/report`
+- [ ] A5 · devops · Docker du service, CSP, nginx `/en/`, Tauri opener, CI
+- [ ] T0 · scenariste · glossaire `docs/i18n/en/GLOSSAIRE.md`, `content/world/locales/en.json`
+- [ ] T0-V, T0-H · scenariste · terminologie par affaire (progression, family, tree)
+- [ ] B1 · frontend-jeu · i18n de l'UI
+- [ ] B3 · frontend-site · i18n du site (`/en/`, `hreflang`)
+- [ ] T1 · traducteur · documents, fins, aides, succès (lots V1–V6, H1–H5)
+- [ ] T2 · cartographe · surcharges SVG anglaises
+- [ ] B2 · frontend-jeu · écrans de signalement
+- [ ] B4 · frontend-site · pages de signalement, suivi, problèmes connus, confidentialité
+- [ ] C1 · orchestrateur + backend · `en: ready`, retrait de l'ancien format généré, budgets
+- [ ] C2 · level-designer · relecture de la déduction en anglais
+- [ ] C3 · qa-reviewer · e2e `en-GB`, signalement simulé
+- [ ] C4 · devops · déploiement `arbre-api.cardormedia.com`, webhook, étiquettes, dépôt de signalements
+
 ## Backlog
 
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
@@ -175,3 +204,16 @@ Fait :
 | 14/10 | La case revendiquée a deux champs faux (visage, métier) et un nom juste | Le joueur conteste sans tout jeter ; une déclaration juste sur 4 champs est une erreur de contenu. |
 | 14/10 | Option de décision indisponible affichée grisée avec sa raison (`unavailableReason`) | Le joueur voit ce qu'il lui manque au lieu d'une option qui disparaît. |
 | 14/10 | La démo n'inclut pas l'affaire 2 ; emplacements manuels partagés, secours par affaire | Démo inchangée ; une partie d'une affaire n'écrase jamais le secours de l'autre. |
+| 15/10 | D1 · i18n : le FR reste la **source de vérité** ; traductions dans des dossiers `content/cases/<id>/locales/<loc>/` | Aucun fichier FR déplacé, périmètres disjoints ; ajouter une langue = ajouter un dossier. |
+| 15/10 | D2 · Traductions JSON en **calques** (champs traduisibles seuls, indexés par id FR), tout le reste hérité | Dérive structurelle impossible par construction. |
+| 15/10 | D3 · Noms propres jamais traduits ; institutions et événements tranchés dans le glossaire ; **anglais britannique** ; titre du jeu inchangé, titres d'affaires traduits | Cohérence avec le DEVLOG ; marque conservée. |
+| 15/10 | D4 · Sel et `contentHash` calculés sur la **structure** (sources FR hors `locales/`), identiques entre langues | Sauvegardes et changement de langue en cours de partie sans migration. |
+| 15/10 | D5 · `Highlight.lang` : surlignage affiché seulement dans sa langue, conservé dans l'autre | Les positions dépendent du texte. |
+| 15/10 | D6 · Langue `system` : `fr-*` → français, toute autre → anglais ; `?lang=en` sur `/jouer/` comme indice (à valider par le propriétaire) | Un germanophone lit plus probablement l'anglais. |
+| 15/10 | D7 · Écran d'attente HTML neutre, message sans JS bilingue, aucun script en ligne | CSP ; titre identique dans les deux langues. |
+| 15/10 | D8 · Site : préfixe `/en/` avec les mêmes slugs, `hreflang` (fr, en, x-default → fr), aucune redirection automatique | Site statique, nginx sans logique, référencement propre. |
+| 15/10 | D9 · Service de signalement : app Coolify `arbre-api.cardormedia.com`, Node 22, `node:http` + `node:sqlite`, zod embarqué, volume `/data` | CORS nécessaire de toute façon ; certificat Cloudflare ; pas de proxy fragile. |
+| 15/10 | D10 · Numéro de ticket propre au service (`AA-0042`), lien de suivi `…/suivi/#<jeton>`, jeton 128 bits stocké haché | Ni GitHub ni l'URL du ticket exposés ; jeton absent des journaux et du Referer. |
+| 15/10 | D11 · `@tauri-apps/plugin-opener` limité à `arbre.cardormedia.com` et `cardorinteractive.itch.io` | Plugin officiel léger ; seule manière propre d'ouvrir un lien externe sous Tauri. |
+| 15/10 | D12 · Signalements dans un dépôt GitHub **privé** dédié `fs0ciety7000/arbre-aux-absents-signalements` (`GITHUB_REPO`) ; le contact n'est jamais envoyé à GitHub | Décision du propriétaire : la description libre peut contenir des données personnelles, le dépôt du jeu est public. |
+| 15/10 | D13 · Conservation : contact effacé 30 j après clôture, ticket supprimé 12 mois après clôture, suppression immédiate à la demande ; aucune IP stockée ni journalisée | Minimisation (RGPD). |
