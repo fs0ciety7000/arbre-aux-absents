@@ -1,0 +1,12 @@
+<!-- Harnais de test : fournit le store de partie au panneau Carte (rendu serveur). -->
+<script lang="ts">
+  import { setGame } from '../../lib/game/context';
+  import type { GameStore } from '../../lib/game/types';
+  import MapPanel from '../MapPanel.svelte';
+
+  let { game }: { game: GameStore } = $props();
+  // svelte-ignore state_referenced_locally
+  setGame(game);
+</script>
+
+<MapPanel />

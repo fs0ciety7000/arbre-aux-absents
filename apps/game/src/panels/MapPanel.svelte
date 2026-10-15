@@ -1,7 +1,8 @@
 <!--
   P06 — Carte : le monde imaginaire (MapView, `@arbre/map/svelte`), lieux visibles avec leur
-  état (mentionné / ouvert / tout consulté) doublé d'une pastille, panneau de lieu (fonds,
-  « Fiches à trouver », termes associés) et vue Liste accessible, équivalente à la carte.
+  état (mentionné / ouvert / nouvelles pièces / tout consulté) doublé d'une pastille, panneau de
+  lieu (fonds, « Fiches à trouver » ou pièces à venir, réouverture, termes associés) et vue Liste
+  accessible, équivalente à la carte.
 -->
 <script lang="ts">
   import type { PlaceId } from '@arbre/contract';
@@ -11,6 +12,7 @@
     placeCounters,
     placeDocuments,
     visiblePlaces,
+    type PlaceCounter,
   } from '@arbre/engine';
   import { MapView, type MapPlaceView } from '@arbre/map/svelte';
   import { Badge, Button, Card, IconButton, Panel } from '@arbre/ui';
@@ -45,6 +47,22 @@
     ).length;
   }
 
+  /** Lieu déjà ouvert avec des pièces accessibles non débloquées (à rouvrir). */
+  function hasNew(id: PlaceId): boolean {
+    return game.state.visited.includes(id) && (counters.get(id)?.remaining ?? 0) > 0;
+  }
+
+  /**
+   * Ligne d'aide « compteur » (niveau ≥ 1) d'un lieu ouvert : nombre de fiches à trouver, ou
+   * mention sans nombre des pièces encore conditionnées ; rien pour un lieu sans fonds.
+   */
+  function counterText(c: PlaceCounter | undefined, short: boolean): string | null {
+    if (!c) return null;
+    if (c.remaining === 0 && c.pending) return short ? pm.map.pendingShort : pm.map.pending;
+    if (c.remaining === 0 && c.found === 0) return null;
+    return pm.map.remaining(c.remaining);
+  }
+
   const places = $derived.by((): MapPlaceView[] =>
     visible.flatMap(({ id, state }) => {
       const p = placeOf(id);
@@ -60,6 +78,10 @@
       };
       if (state === 'mentioned') {
         view.badge = { text: pm.map.mentionedBadge, label: pm.map.mentionedLabel, tone: 'info' };
+      } else if (hasNew(id)) {
+        // Lieu déjà ouvert dont des pièces sont devenues accessibles : signal de réouverture
+        // (toujours affiché, comme « ? » : c'est l'état du lieu, pas une aide).
+        view.badge = { text: pm.map.newBadge, label: pm.map.newLabel, tone: 'accent' };
       } else if (state === 'exhausted') {
         view.badge = { text: '', label: pm.map.exhaustedLabel, tone: 'success', icon: 'check' };
       } else if (game.settings.hints.unreadBadges) {
@@ -86,7 +108,17 @@
         (d) => game.content.documents[d]?.place === id,
       ),
     );
-    return { id, place: p, state, docs, keywords: known.slice(0, 8), counter: counters.get(id) };
+    const counter = counters.get(id);
+    return {
+      id,
+      place: p,
+      state,
+      docs,
+      keywords: known.slice(0, 8),
+      counter,
+      fresh: hasNew(id),
+      empty: state === 'exhausted' && (counter?.found ?? 0) === 0,
+    };
   });
 
   function select(id: string) {
@@ -184,8 +216,9 @@
                     <span class="visually-hidden">{p.badge.label}</span>
                   </Badge>
                 {/if}
-                {#if showCounters && c && p.state !== 'mentioned'}
-                  <span class="num remaining">{pm.map.remaining(c.remaining)}</span>
+                {#if showCounters && p.state !== 'mentioned'}
+                  {@const text = counterText(c, true)}
+                  {#if text}<span class="num remaining">{text}</span>{/if}
                 {/if}
               </button>
             </li>
@@ -205,8 +238,17 @@
           {#if selected.place.description}
             <p class="reading desc">{selected.place.description}</p>
           {/if}
-          {#if showCounters && selected.counter && selected.state !== 'mentioned'}
-            <p class="num remaining">{pm.map.remaining(selected.counter.remaining)}</p>
+          {#if showCounters && selected.state !== 'mentioned'}
+            {@const text = counterText(selected.counter, false)}
+            {#if text}<p class="num remaining">{text}</p>{/if}
+          {/if}
+          {#if selected.fresh}
+            <p class="fresh">
+              <span aria-hidden="true"
+                ><Badge tone="accent" variant="solid">{pm.map.newBadge}</Badge></span
+              >
+              <span>{pm.map.newNotice}</span>
+            </p>
           {/if}
           {#if selected.state === 'mentioned' || (selected.counter && selected.counter.remaining > 0)}
             <Button
@@ -215,13 +257,13 @@
               verb="take"
               onclick={() => visit(selected.id)}
             >
-              {pm.map.visit}
+              {selected.fresh ? pm.map.reopen : pm.map.visit}
             </Button>
           {/if}
 
           <h4>{pm.map.documents}</h4>
           {#if selected.docs.length === 0}
-            <p class="muted">{pm.map.noDocuments}</p>
+            <p class="muted">{selected.empty ? pm.map.emptyPlace : pm.map.noDocuments}</p>
           {:else}
             <ul class="docs">
               {#each selected.docs as id, i (id)}
@@ -424,6 +466,12 @@
     font-size: var(--step--1);
   }
   .desc {
+    margin: 0;
+  }
+  .fresh {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
     margin: 0;
   }
   .docs,

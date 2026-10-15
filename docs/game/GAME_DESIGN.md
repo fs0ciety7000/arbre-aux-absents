@@ -391,11 +391,20 @@ entrées).
 | Inconnu | Absent (ou simple décor gravé sans étiquette) | Non |
 | Mentionné | Silhouette + étiquette en italique, pastille « ? » | Oui : montre les documents qui le citent |
 | Ouvert | Aquarelle « posée », étiquette droite, pastille du nombre de documents non lus | Oui : ouvre le panneau du lieu |
+| Ouvert, nouvelles pièces | Comme ouvert, pastille « + » (accent, nommée « nouvelles pièces à consulter ») : des pièces du fonds sont devenues accessibles depuis la dernière ouverture. Toujours affichée (état du lieu, comme « ? »), prioritaire sur le nombre de non lus | Oui : le panneau propose **Rouvrir le fonds du lieu** |
 | Épuisé | Aquarelle + coche discrète | Oui |
 
 - **Panneau du lieu** : nom, courte description (≤ 60 mots), fonds d'archives du lieu (documents
   débloqués et « fiches à trouver : N » si aide ≥ 1), termes associés, personnes de l'arbre liées
   (uniquement celles **verrouillées**).
+- **Pièces conditionnées** (audit du 15/10/2026) : ouvrir un lieu ne débloque que les pièces
+  accessibles à cet instant ; rien n'est débloqué d'office ensuite (la boucle reste « revenir au
+  lieu »). Ouvert, sans rien d'accessible mais avec des pièces encore conditionnées, le panneau dit
+  « D'autres pièces de ce fonds s'ouvriront avec l'enquête » (aide ≥ 1, sans nombre) au lieu de
+  « fiches à trouver : 0 ». Quand ces pièces deviennent accessibles : pastille « + » sur la carte et
+  dans la liste, mention « De nouvelles pièces de ce fonds sont accessibles » et bouton **Rouvrir le
+  fonds du lieu** dans le panneau. Lieu sans aucun fonds : « Rien à consulter ici », coché dès
+  l'ouverture. Moteur : `placeCounters` (`remaining`, `pending`).
 - Zoom ×1 à ×4 en 3 niveaux de détail (région, ville, quartier si fourni). Pincement, molette,
   boutons `+`/`−`, gâchettes.
 - **Navigation au clavier/manette** : `Tab` / croix directionnelle passe d'un lieu interactif à

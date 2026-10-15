@@ -26,7 +26,7 @@
     focusZoom?: number;
     /** Rayon de la zone sensible en unités de viewBox (`Place.hitRadius`, déf. 24). */
     hitRadius?: number;
-    /** Pastille en surimpression (« ? », nombre de non lus, coche). */
+    /** Pastille en surimpression (« ? », nombre de non lus, « + » nouvelles pièces, coche). */
     badge?: {
       text: string;
       label: string;

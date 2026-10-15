@@ -1295,8 +1295,10 @@ Un `font-size` en attribut est respecté.
   - `open` : lavis posés, étiquette droite ;
   - `exhausted` : comme `open` (la coche est une surimpression HTML).
   - survol, focus, `aria-current="true"`, `data-active` : le lavis prend (0,9).
-- Les pastilles (« ? », nombre de non lus, coche) et l'anneau de focus sont des **surimpressions
-  HTML** (`Badge`, `FocusRing rect`) positionnées par la caméra : jamais dans le SVG.
+- Les pastilles (« ? » `info`, nombre de non lus `accent`, « + » nouvelles pièces à rouvrir
+  `accent`, coche `success`) et l'anneau de focus sont des **surimpressions HTML** (`Badge`,
+  `FocusRing rect`) positionnées par la caméra : jamais dans le SVG. Chaque pastille est doublée
+  d'un libellé dans le nom accessible du lieu (« nouvelles pièces à consulter »…).
 - **Cartouche** (bas gauche) : rectangle `paper`, double filet `ink` 2–3 u + `ink-soft` 0,8, titre
   `label-major`, sous-titre `label-note`, mention « dressée et gravée par CM Creative Lab » en
   `label-note` (seule mention de la maison sur la carte). **Rose des vents** : cercles `ink-soft`/
