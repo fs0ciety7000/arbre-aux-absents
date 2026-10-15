@@ -13,6 +13,7 @@ const PAGES_FR = [
   '/signaler/',
   '/suivi/',
   '/problemes-connus/',
+  '/tickets/',
   '/confidentialite/',
   '/design/',
 ];

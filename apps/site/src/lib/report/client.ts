@@ -9,6 +9,7 @@
 import type {
   KnownIssue,
   Locale,
+  OpenTicket,
   ReportReceipt,
   ReportSubmission,
   TicketView,
@@ -18,7 +19,10 @@ import {
   CATEGORIES,
   CLOSED_REASONS,
   ERROR_CODES,
+  LIMITS,
+  OPEN_STATUSES,
   REPORT_TOKEN,
+  SOURCES,
   STATUSES,
   TICKET_NUMBER,
 } from './constants';
@@ -184,6 +188,33 @@ export function isKnownIssue(v: unknown): v is KnownIssue {
   );
 }
 
+/** Ligne de la liste publique : aucun champ en plus (le texte du joueur n'a rien à faire ici). */
+const OPEN_TICKET_KEYS = new Set([
+  'ticket',
+  'category',
+  'status',
+  'source',
+  'createdAt',
+  'updatedAt',
+  'title',
+]);
+
+export function isOpenTicket(v: unknown): v is OpenTicket {
+  return (
+    isObj(v) &&
+    Object.keys(v).every((k) => OPEN_TICKET_KEYS.has(k)) &&
+    typeof v.ticket === 'string' &&
+    TICKET_NUMBER.test(v.ticket) &&
+    oneOf(CATEGORIES, v.category) &&
+    oneOf(OPEN_STATUSES, v.status) &&
+    oneOf(SOURCES, v.source) &&
+    isTime(v.createdAt) &&
+    isTime(v.updatedAt) &&
+    (v.title === undefined ||
+      (typeof v.title === 'string' && v.title.length > 0 && v.title.length <= 200))
+  );
+}
+
 // ── Appels ─────────────────────────────────────────────────────────────
 
 /** POST /v1/reports → 201 `ReportReceipt`. */
@@ -250,6 +281,31 @@ export function getKnownIssues(
       const body = await json(res);
       if (!Array.isArray(body) || !body.every(isKnownIssue)) return null;
       return [...body].sort((a, b) => b.updatedAt - a.updatedAt);
+    },
+    opts,
+  );
+}
+
+/**
+ * GET /v1/tickets?locale= → `OpenTicket[]` (tickets ouverts, 200 au plus), triés du plus récent
+ * au plus ancien (date d'envoi).
+ */
+export function getOpenTickets(
+  locale: Locale,
+  opts: ClientOptions = {},
+): Promise<ApiResult<OpenTicket[]>> {
+  return call(
+    `/v1/tickets?locale=${locale}`,
+    // Liste publique, mise en cache 1 min par le service (Cache-Control) : cache HTTP normal.
+    { method: 'GET', cache: 'default' },
+    200,
+    async (res) => {
+      const body = await json(res);
+      if (!Array.isArray(body) || body.length > LIMITS.openTickets || !body.every(isOpenTicket))
+        return null;
+      return [...body].sort(
+        (a, b) => b.createdAt - a.createdAt || b.ticket.localeCompare(a.ticket),
+      );
     },
     opts,
   );

@@ -50,6 +50,7 @@ export const en = {
       'credits/': 'Credits',
       'signaler/': 'Report a problem',
       'problemes-connus/': 'Known issues',
+      'tickets/': 'Open tickets',
       'confidentialite/': 'Privacy',
     },
     legal: [
@@ -836,6 +837,14 @@ export const en = {
       description: 'Description:',
       diagnostics: 'Diagnostics:',
     },
+    already: [
+      'Already reported? Check the ',
+      { link: 'tickets/', text: 'open tickets' },
+      ' and the ',
+      { link: 'problemes-connus/', text: 'known issues' },
+      '.',
+    ] as Rich,
+    ticketsLink: 'See the open tickets',
   },
 
   follow: {
@@ -886,6 +895,7 @@ export const en = {
     },
     reportLink: 'Report a problem',
     knownLink: 'Known issues',
+    ticketsLink: 'Open tickets',
   },
 
   known: {
@@ -905,6 +915,53 @@ export const en = {
     updated: 'Updated on {date}',
     listLabel: 'Known issues',
     reportLink: 'Report a problem',
+    ticketsLink: 'Open tickets',
+  },
+
+  tickets: {
+    seoTitle: 'Open tickets',
+    seoDescription:
+      'Every report being handled for L’Arbre aux absents: number, category, status and dates, without the players’ own words.',
+    kicker: 'Report register',
+    title: 'Open tickets',
+    lede: 'Every report in progress, most recent first. What you wrote stays private: only the number, category, status and dates are public, with a title once the team has reviewed one.',
+    loading: 'Loading the register…',
+    empty: 'No open tickets for now.',
+    error: 'The register can’t be read at the moment.',
+    offline:
+      'Your device seems to be offline, or the service can’t be reached. Try again once you’re connected.',
+    rateLimited: 'Too many requests from your connection. Try again in {delay}.',
+    retry: 'Try again',
+    noscript:
+      'This list needs JavaScript. You can also ask about a report on the game’s itch.io forum:',
+    forum: 'itch.io forum',
+    listLabel: 'Open tickets',
+    countOne: '1 open ticket',
+    countMany: '{n} open tickets',
+    countsLabel: 'Breakdown by status',
+    capped: 'Only the {n} most recent are shown.',
+    ticketLabel: 'Number',
+    statusLabel: 'Status: {status}',
+    created: 'Sent on {date}',
+    updated: 'updated on {date}',
+    sources: { game: 'From the game', site: 'From the website' },
+    categories: {
+      bug: 'Malfunction',
+      blocked: 'Stuck in the investigation',
+      text: 'Typo or incorrect text',
+      display: 'Display',
+      audio: 'Sound',
+      controls: 'Controls',
+      performance: 'Slowness or crash',
+      other: 'Other',
+    },
+    yours: [
+      'Sent a report? Its number is in this list; the details and the team’s replies are on your follow-up link. What this register shows: ',
+      { link: 'confidentialite/', text: 'Privacy' },
+      '.',
+    ] as Rich,
+    reportLink: 'Report a problem',
+    knownLink: 'Known issues',
   },
 
   privacy: {

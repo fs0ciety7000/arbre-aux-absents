@@ -7,7 +7,9 @@
  * `report.test.ts` vérifie que les valeurs sont identiques.
  */
 import type {
+  OpenTicketStatus,
   ReportCategory,
+  ReportSource,
   ReportErrorCode,
   TicketClosedReason,
   TicketStatus,
@@ -32,6 +34,14 @@ export const STATUSES = [
   'closed',
 ] as const satisfies readonly TicketStatus[];
 
+export const OPEN_STATUSES = [
+  'received',
+  'confirmed',
+  'in-progress',
+] as const satisfies readonly OpenTicketStatus[];
+
+export const SOURCES = ['game', 'site'] as const satisfies readonly ReportSource[];
+
 export const CLOSED_REASONS = [
   'resolved',
   'duplicate',
@@ -54,6 +64,7 @@ export const LIMITS = {
   body: 64 * 1024,
   minElapsedMs: 3000,
   reply: 2000,
+  openTickets: 200,
 } as const;
 
 /** `TICKET_NUMBER` et `REPORT_TOKEN` du contrat. */

@@ -22,6 +22,7 @@
     'credits/',
     'signaler/',
     'problemes-connus/',
+    'tickets/',
     'confidentialite/',
   ] as const;
 </script>

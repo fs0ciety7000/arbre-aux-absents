@@ -21,6 +21,7 @@ export const SITE_PAGES = [
   'signaler/',
   'suivi/',
   'problemes-connus/',
+  'tickets/',
   'confidentialite/',
 ] as const;
 export type SitePath = (typeof SITE_PAGES)[number];

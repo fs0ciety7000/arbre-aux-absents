@@ -9,6 +9,7 @@ const HYDRATED = new Set([
   '/[[lang=lang]]/signaler',
   '/[[lang=lang]]/suivi',
   '/[[lang=lang]]/problemes-connus',
+  '/[[lang=lang]]/tickets',
   '/design',
 ]);
 

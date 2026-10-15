@@ -74,6 +74,7 @@ describe('catalogues', () => {
   it('signalement : une étiquette par catégorie du contrat, gabarits identiques', () => {
     for (const t of [fr, en]) {
       expect(Object.keys(t.reportCategories).sort()).toEqual([...REPORT_CATEGORIES].sort());
+      expect(Object.keys(t.tickets.categories).sort()).toEqual([...REPORT_CATEGORIES].sort());
     }
     // Les gabarits `{n}`, `{delay}`… sont remplis par le code : mêmes trous dans chaque langue.
     const holes = (v: unknown, at = ''): string[] =>
@@ -82,7 +83,7 @@ describe('catalogues', () => {
         : v && typeof v === 'object'
           ? Object.entries(v).flatMap(([k, x]) => holes(x, `${at}.${k}`))
           : [];
-    for (const key of ['report', 'follow', 'known'] as const) {
+    for (const key of ['report', 'follow', 'known', 'tickets'] as const) {
       expect(holes(en[key]).sort(), key).toEqual(holes(fr[key]).sort());
     }
   });

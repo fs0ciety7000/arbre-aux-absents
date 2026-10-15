@@ -202,6 +202,7 @@
   <p class="kicker">{t.kicker}</p>
   <h1>{t.title}</h1>
   <p class="lede">{t.lede}</p>
+  <p class="already"><Rich text={t.already} /></p>
 </header>
 
 <div class="container-narrow">
@@ -240,6 +241,7 @@
               onclick={() => copy(followUrl, t.receipt.linkCopied)}>{t.receipt.copyLink}</Button
             >
             <Button variant="ghost" onclick={another}>{t.receipt.another}</Button>
+            <Button variant="ghost" href={localHref(lang, 'tickets/')}>{t.ticketsLink}</Button>
           </div>
         </div>
       {:else}
@@ -360,6 +362,10 @@
 <ToastRegion />
 
 <style>
+  .already {
+    max-inline-size: var(--measure);
+    color: var(--text-muted);
+  }
   .page-head {
     padding-block-end: var(--space-8);
   }

@@ -5,6 +5,10 @@
  */
 import {
   KnownIssuesSchema,
+  OPEN_TICKET_STATUSES,
+  OpenTicketSchema,
+  OpenTicketsSchema,
+  REPORT_SOURCES,
   REPORT_CATEGORIES,
   REPORT_ERROR_CODES,
   REPORT_LIMITS,
@@ -20,8 +24,10 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   deleteTicket,
   getKnownIssues,
+  getOpenTickets,
   getTicket,
   isKnownIssue,
+  isOpenTicket,
   isReceipt,
   isTicketView,
   parseRetryAfter,
@@ -34,7 +40,9 @@ import {
   CLOSED_REASONS,
   ERROR_CODES,
   LIMITS,
+  OPEN_STATUSES,
   REPORT_TOKEN,
+  SOURCES,
   STATUSES,
   TICKET_NUMBER,
 } from './constants';
@@ -108,6 +116,8 @@ describe('constantes recopiées du contrat', () => {
   it('identiques à @arbre/contract', () => {
     expect(CATEGORIES).toEqual(REPORT_CATEGORIES);
     expect(STATUSES).toEqual(TICKET_STATUSES);
+    expect(OPEN_STATUSES).toEqual(OPEN_TICKET_STATUSES);
+    expect(SOURCES).toEqual(REPORT_SOURCES);
     expect(CLOSED_REASONS).toEqual(TICKET_CLOSED_REASONS);
     expect(ERROR_CODES).toEqual(REPORT_ERROR_CODES);
     for (const [k, v] of Object.entries(LIMITS)) {
@@ -401,6 +411,98 @@ describe('GET /v1/known-issues', () => {
       ok: false,
       failure: { kind: 'unavailable' },
     });
+  });
+});
+
+describe('GET /v1/tickets', () => {
+  const open = [
+    {
+      ticket: 'AA-0001',
+      category: 'bug',
+      status: 'confirmed',
+      source: 'game',
+      createdAt: 10,
+      updatedAt: 40,
+    },
+    {
+      ticket: 'AA-0003',
+      category: 'audio',
+      status: 'received',
+      source: 'site',
+      createdAt: 30,
+      updatedAt: 30,
+    },
+    {
+      ticket: 'AA-0002',
+      category: 'text',
+      status: 'in-progress',
+      source: 'game',
+      createdAt: 20,
+      updatedAt: 50,
+      title: 'Faute dans le registre',
+    },
+  ];
+
+  it('liste triée par date d’envoi, locale dans la requête, cache HTTP normal', async () => {
+    const { fetch, calls } = fakeFetch(() => json(200, open));
+    const r = await getOpenTickets('en', { base: BASE, fetch });
+    expect(OpenTicketsSchema.safeParse(open).success).toBe(true);
+    expect(r.ok && r.value.map((i) => i.ticket)).toEqual(['AA-0003', 'AA-0002', 'AA-0001']);
+    expect(calls[0]!.url).toBe(`${BASE}/v1/tickets?locale=en`);
+    expect(calls[0]!.init.cache).toBe('default');
+    expect(calls[0]!.init.credentials).toBe('omit');
+  });
+
+  it('vide, entrée invalide ou trop longue, panne, hors ligne', async () => {
+    const empty = fakeFetch(() => json(200, []));
+    expect(await getOpenTickets('fr', { base: BASE, fetch: empty.fetch })).toEqual({
+      ok: true,
+      value: [],
+    });
+    const unavailable = { ok: false, failure: { kind: 'unavailable' } };
+    for (const body of [
+      [{ ...open[0], status: 'fixed' }],
+      [{ ...open[0], description: 'texte du joueur' }],
+      Array.from({ length: LIMITS.openTickets + 1 }, () => open[0]),
+      { items: open },
+    ]) {
+      const bad = fakeFetch(() => json(200, body));
+      expect(await getOpenTickets('fr', { base: BASE, fetch: bad.fetch })).toEqual(unavailable);
+    }
+    const down = fakeFetch(() => json(503, { error: 'unavailable' }));
+    expect(await getOpenTickets('fr', { base: BASE, fetch: down.fetch })).toEqual(unavailable);
+    const limited = fakeFetch(() => json(429, { error: 'rateLimited' }, { 'Retry-After': '30' }));
+    expect(await getOpenTickets('fr', { base: BASE, fetch: limited.fetch })).toEqual({
+      ok: false,
+      failure: { kind: 'rateLimited', retryAfterSec: 30 },
+    });
+    const offline = fakeFetch(() => {
+      throw new TypeError('Failed to fetch');
+    });
+    expect(await getOpenTickets('fr', { base: BASE, fetch: offline.fetch })).toEqual({
+      ok: false,
+      failure: { kind: 'offline' },
+    });
+  });
+
+  it('mêmes verdicts que le schéma du contrat', () => {
+    const base = open[2]!;
+    const cases: [unknown, boolean][] = [
+      [base, true],
+      [{ ...base, title: undefined }, true],
+      [{ ...base, title: '' }, false],
+      [{ ...base, title: 'x'.repeat(201) }, false],
+      [{ ...base, status: 'closed' }, false],
+      [{ ...base, source: 'forum' }, false],
+      [{ ...base, category: 'autre' }, false],
+      [{ ...base, contact: 'a@b.c' }, false],
+      [{ ...base, ticket: 'aa-1' }, false],
+    ];
+    for (const [v, ok] of cases) {
+      const clean = JSON.parse(JSON.stringify(v));
+      expect(isOpenTicket(clean), JSON.stringify(v)).toBe(ok);
+      expect(OpenTicketSchema.safeParse(clean).success).toBe(ok);
+    }
   });
 });
 

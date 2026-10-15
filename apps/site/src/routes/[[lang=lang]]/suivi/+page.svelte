@@ -181,6 +181,7 @@
 
         <footer class="ticket-foot">
           <p class="muted note">{t.tokenNote}</p>
+          <Button variant="ghost" href={localHref(lang, 'tickets/')}>{t.ticketsLink}</Button>
           <Button variant="danger" iconName="trash" onclick={() => (confirmOpen = true)}
             >{t.delete}</Button
           >
@@ -224,6 +225,7 @@
             <Button variant="ghost" href={localHref(lang, 'problemes-connus/')}
               >{t.knownLink}</Button
             >
+            <Button variant="ghost" href={localHref(lang, 'tickets/')}>{t.ticketsLink}</Button>
           {/if}
         </div>
       </div>

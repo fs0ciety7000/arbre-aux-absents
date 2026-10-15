@@ -54,6 +54,7 @@ export const fr = {
       'credits/': 'Crédits',
       'signaler/': 'Signaler un problème',
       'problemes-connus/': 'Problèmes connus',
+      'tickets/': 'Tickets ouverts',
       'confidentialite/': 'Confidentialité',
     },
     legal: [
@@ -796,6 +797,15 @@ export const fr = {
       description: 'Description :',
       diagnostics: 'Diagnostics :',
     },
+    /** Avant d'écrire : le problème est peut-être déjà signalé. */
+    already: [
+      'Déjà signalé ? Consultez les ',
+      { link: 'tickets/', text: 'tickets ouverts' },
+      ' et les ',
+      { link: 'problemes-connus/', text: 'problèmes connus' },
+      '.',
+    ] as Rich,
+    ticketsLink: 'Voir les tickets ouverts',
   },
 
   follow: {
@@ -847,6 +857,7 @@ export const fr = {
     },
     reportLink: 'Signaler un problème',
     knownLink: 'Problèmes connus',
+    ticketsLink: 'Tickets ouverts',
   },
 
   known: {
@@ -866,6 +877,54 @@ export const fr = {
     updated: 'Mis à jour le {date}',
     listLabel: 'Problèmes connus',
     reportLink: 'Signaler un problème',
+    ticketsLink: 'Tickets ouverts',
+  },
+
+  tickets: {
+    seoTitle: 'Tickets ouverts',
+    seoDescription:
+      'Tous les signalements en cours de traitement pour L’Arbre aux absents : numéro, catégorie, statut et dates, sans le texte des joueurs.',
+    kicker: 'Registre des signalements',
+    title: 'Tickets ouverts',
+    lede: 'Tous les signalements en cours, du plus récent au plus ancien. Ce que vous avez écrit reste privé : seuls le numéro, la catégorie, le statut et les dates sont publics, avec un titre quand l’équipe en a relu un.',
+    loading: 'Chargement du registre…',
+    empty: 'Aucun ticket ouvert pour l’instant.',
+    error: 'Le registre est illisible pour le moment.',
+    offline:
+      'Votre appareil semble hors ligne, ou le service est injoignable. Réessayez une fois connecté.',
+    rateLimited: 'Trop de consultations depuis votre connexion. Réessayez dans {delay}.',
+    retry: 'Réessayer',
+    noscript:
+      'Cette liste a besoin de JavaScript. Vous pouvez aussi demander où en est un signalement sur le forum itch.io du jeu :',
+    forum: 'Forum itch.io',
+    listLabel: 'Tickets ouverts',
+    countOne: '1 ticket ouvert',
+    countMany: '{n} tickets ouverts',
+    countsLabel: 'Répartition par statut',
+    capped: 'Seuls les {n} plus récents sont affichés.',
+    ticketLabel: 'Numéro',
+    statusLabel: 'Statut : {status}',
+    created: 'Envoyé le {date}',
+    updated: 'mis à jour le {date}',
+    sources: { game: 'Depuis le jeu', site: 'Depuis le site' },
+    /** Libellés courts des catégories (registre public), sans la première personne du formulaire. */
+    categories: {
+      bug: 'Dysfonctionnement',
+      blocked: 'Blocage dans l’enquête',
+      text: 'Faute ou texte incorrect',
+      display: 'Affichage',
+      audio: 'Son',
+      controls: 'Commandes',
+      performance: 'Lenteur ou plantage',
+      other: 'Autre',
+    },
+    yours: [
+      'Vous avez signalé un problème ? Votre numéro figure dans la liste ; le détail et les réponses de l’équipe sont sur votre lien de suivi. Ce que montre ce registre : ',
+      { link: 'confidentialite/', text: 'Confidentialité' },
+      '.',
+    ] as Rich,
+    reportLink: 'Signaler un problème',
+    knownLink: 'Problèmes connus',
   },
 
   privacy: {

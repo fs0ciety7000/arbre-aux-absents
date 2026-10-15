@@ -327,12 +327,97 @@ test.describe('/problemes-connus/', () => {
   });
 });
 
+test.describe('/tickets/', () => {
+  const now = Date.parse('2026-10-14T10:00:00Z');
+  const open = [
+    {
+      ticket: 'AA-0007',
+      category: 'text',
+      status: 'in-progress',
+      source: 'game',
+      createdAt: now - 5 * 86_400_000,
+      updatedAt: now - 86_400_000,
+      title: 'Coquille dans un registre',
+    },
+    {
+      ticket: 'AA-0014',
+      category: 'controls',
+      status: 'received',
+      source: 'site',
+      createdAt: now,
+      updatedAt: now,
+    },
+  ];
+
+  test('registre trié par envoi, catégorie sans titre, compteurs, aucun texte du joueur', async ({
+    page,
+  }) => {
+    const errors = watchErrors(page);
+    const seen = await mockApi(page, () => ({ status: 200, body: open }));
+    await page.goto('/tickets/');
+    await expect(page.locator('h1')).toHaveText('Tickets ouverts');
+    const rows = page.locator('.ledger > li');
+    await expect(rows).toHaveCount(2);
+    await expect(rows.nth(0)).toContainText('AA-0014');
+    await expect(rows.nth(0).locator('h3')).toHaveText('Commandes');
+    await expect(rows.nth(0)).toContainText('Depuis le site · Envoyé le 14 octobre 2026');
+    await expect(rows.nth(0).getByRole('img', { name: 'Statut : Reçu' })).toBeVisible();
+    await expect(rows.nth(1).locator('h3')).toHaveText('Coquille dans un registre');
+    await expect(rows.nth(1)).toContainText('Faute ou texte incorrect · Depuis le jeu');
+    await expect(rows.nth(1).getByRole('img', { name: 'Statut : En cours' })).toBeVisible();
+    await expect(page.getByText('2 tickets ouverts')).toBeVisible();
+    expect(seen[0]!.url()).toBe(`${API}/v1/tickets?locale=fr`);
+    expect(seen[0]!.headers()['authorization']).toBeUndefined();
+    expect(await axe(page)).toEqual([]);
+    expect(errors).toEqual([]);
+  });
+
+  test('vide, hors ligne puis nouvel essai, anglais', async ({ page }) => {
+    let mode: 'empty' | 'offline' | 'list' = 'empty';
+    await mockApi(page, () =>
+      mode === 'offline' ? 'abort' : { status: 200, body: mode === 'empty' ? [] : open },
+    );
+    await page.goto('/tickets/');
+    await expect(page.getByText('Aucun ticket ouvert pour l’instant.')).toBeVisible();
+
+    mode = 'offline';
+    await page.goto('/en/tickets/');
+    await expect(page.getByText('Your device seems to be offline')).toBeVisible();
+    mode = 'list';
+    await page.getByRole('button', { name: 'Try again' }).click();
+    await expect(page.locator('.ledger > li').first()).toContainText('From the website');
+    await expect(page.locator('.ledger > li').first().locator('h3')).toHaveText('Controls');
+    await expect(page.getByText('2 open tickets')).toBeVisible();
+  });
+
+  test('liens depuis /signaler/ et l’en-tête', async ({ page }) => {
+    await mockApi(page, () => ({ status: 200, body: [] }));
+    await page.goto('/signaler/');
+    await expect(
+      page.locator('.page-head').getByRole('link', { name: 'tickets ouverts' }),
+    ).toHaveAttribute('href', '/tickets/');
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await expect(
+      page.getByRole('navigation', { name: 'Navigation principale' }).getByRole('link', {
+        name: 'Signaler',
+        exact: true,
+      }),
+    ).toHaveAttribute('aria-current', 'page');
+  });
+});
+
 // Accessibilité et petit écran des pages hydratées, service simulé (états chargés).
-for (const path of ['/signaler/', '/en/signaler/', '/problemes-connus/', '/en/suivi/']) {
+for (const path of [
+  '/signaler/',
+  '/en/signaler/',
+  '/problemes-connus/',
+  '/tickets/',
+  '/en/suivi/',
+]) {
   test(`${path} : axe, 390 px, lien d’évitement`, async ({ page }) => {
     const errors = watchErrors(page);
     await mockApi(page, (req) =>
-      req.url().includes('known-issues')
+      req.url().includes('known-issues') || req.url().includes('/v1/tickets?')
         ? { status: 200, body: [] }
         : { status: 200, body: { ...ticket, status: 'closed', closedReason: 'not-planned' } },
     );

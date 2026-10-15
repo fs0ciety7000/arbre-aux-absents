@@ -1652,6 +1652,13 @@ focalisé : aucune requête ni cookie YouTube avant le clic. Mention sous le cad
   plus » + lien vers `/signaler/`. Le fragment est effacé de l'historique dès la lecture.
 - **`/problemes-connus/`** : liste de `Card variant="index"` (titre, `TicketStatus` réduite à son
   dernier tampon, « Corrigé v1.2.0 » en tête de fiche), triée par mise à jour.
+- **`/tickets/`** (tickets ouverts) : le **registre**. Une `PaperSheet` qui porte une `<ol>` de
+  lignes séparées d'un filet en tirets `--line-strong` : numéro en Courier Prime gras, sujet en
+  `h3` (titre relu s'il est public, sinon la catégorie, jamais le texte du joueur), ligne de
+  métadonnées Courier `--text-muted` (catégorie, source, envoi, mise à jour, `Intl`), `Stamp ink
+  size="s"` du statut (Reçu, Confirmé, En cours) incliné −4° / +3°, nommé « Statut : Reçu ». Au-dessus,
+  le total en Oswald et une `<dl>` des comptes par statut. Feuille sous 34 rem **de conteneur** :
+  numéro et tampon sur une ligne, sujet dessous. Pas de nouvelle primitive ni de nouveau token.
 - **En-tête du site** : `LanguageSwitch hrefs short` à droite de la navigation (§9.35).
 
 ### 14.4 Pied de page

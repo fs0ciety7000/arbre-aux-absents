@@ -18,6 +18,7 @@ const EN_PAGES = [
   '/en/signaler/',
   '/en/suivi/',
   '/en/problemes-connus/',
+  '/en/tickets/',
   '/en/confidentialite/',
 ];
 

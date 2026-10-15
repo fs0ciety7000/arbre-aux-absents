@@ -56,9 +56,12 @@
   <p class="kicker">{t.kicker}</p>
   <h1>{t.title}</h1>
   <p class="lede">{t.lede}</p>
-  <Button variant="secondary" href={localHref(lang, 'signaler/')} iconName="envelope"
-    >{t.reportLink}</Button
-  >
+  <div class="head-actions">
+    <Button variant="secondary" href={localHref(lang, 'signaler/')} iconName="envelope"
+      >{t.reportLink}</Button
+    >
+    <Button variant="ghost" href={localHref(lang, 'tickets/')}>{t.ticketsLink}</Button>
+  </div>
 </header>
 
 <section class="container" aria-labelledby="known-list">
@@ -133,7 +136,8 @@
     font-size: var(--step-read);
     color: var(--text-muted);
   }
-  .actions {
+  .actions,
+  .head-actions {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-3);
