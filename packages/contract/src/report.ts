@@ -26,6 +26,14 @@ export type ReportCategory = (typeof REPORT_CATEGORIES)[number];
 export const TICKET_STATUSES = ['received', 'confirmed', 'in-progress', 'fixed', 'closed'] as const;
 export type TicketStatus = (typeof TICKET_STATUSES)[number];
 
+/** Statuts d'un ticket ouvert (ni corrigé ni classé) : ceux de la liste publique. */
+export const OPEN_TICKET_STATUSES = [
+  'received',
+  'confirmed',
+  'in-progress',
+] as const satisfies readonly TicketStatus[];
+export type OpenTicketStatus = (typeof OPEN_TICKET_STATUSES)[number];
+
 export const TICKET_CLOSED_REASONS = ['resolved', 'duplicate', 'not-planned'] as const;
 export type TicketClosedReason = (typeof TICKET_CLOSED_REASONS)[number];
 
@@ -56,6 +64,8 @@ export const REPORT_LIMITS = {
   /** Délai minimal entre l'ouverture du formulaire et l'envoi (anti-robot). */
   minElapsedMs: 3000,
   reply: 2000,
+  /** Plafond de la liste publique des tickets ouverts (`GET /v1/tickets`), les plus récents. */
+  openTickets: 200,
 } as const;
 
 export interface ReportDiagnostics {
@@ -122,6 +132,24 @@ export interface KnownIssue {
   status: TicketStatus;
   fixedIn?: string;
   updatedAt: number;
+}
+
+/**
+ * Ligne de la liste publique des tickets ouverts (`GET /v1/tickets`). Jamais le texte du joueur
+ * (description, contact, diagnostics, sauvegarde), ni le titre GitHub brut, ni aucun jeton.
+ */
+export interface OpenTicket {
+  ticket: string;
+  category: ReportCategory;
+  status: OpenTicketStatus;
+  source: ReportSource;
+  createdAt: number;
+  updatedAt: number;
+  /**
+   * Titre relu par l'équipe, seulement si le ticket porte l'étiquette `public` (même titre que
+   * les problèmes connus, `/public-title-en` en anglais) ; absent sinon.
+   */
+  title?: string;
 }
 
 export interface ReportErrorBody {
@@ -215,5 +243,17 @@ export const KnownIssueSchema = z.strictObject({
 });
 
 export const KnownIssuesSchema = z.array(KnownIssueSchema);
+
+export const OpenTicketSchema = z.strictObject({
+  ticket: TicketNumberSchema,
+  category: ReportCategorySchema,
+  status: z.enum(OPEN_TICKET_STATUSES),
+  source: z.enum(REPORT_SOURCES),
+  createdAt: MsSchema,
+  updatedAt: MsSchema,
+  title: z.string().min(1).max(200).optional(),
+});
+
+export const OpenTicketsSchema = z.array(OpenTicketSchema).max(REPORT_LIMITS.openTickets);
 
 export const ReportErrorBodySchema = z.strictObject({ error: ReportErrorCodeSchema });

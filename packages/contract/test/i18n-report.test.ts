@@ -9,6 +9,8 @@ import {
   HighlightSchema,
   KnownIssueSchema,
   LocalesConfigSchema,
+  OpenTicketSchema,
+  OpenTicketsSchema,
   ProfileSchema,
   ProgressionTranslationSchema,
   REPORT_LIMITS,
@@ -29,6 +31,7 @@ import {
   type FamilyTranslation,
   type KnownIssue,
   type LocalesConfig,
+  type OpenTicket,
   type ProgressionTranslation,
   type ReportReceipt,
   type ReportRef,
@@ -57,6 +60,7 @@ expectTypeOf<z.output<typeof ReportSubmissionSchema>>().toEqualTypeOf<ReportSubm
 expectTypeOf<z.output<typeof ReportReceiptSchema>>().toEqualTypeOf<ReportReceipt>();
 expectTypeOf<z.output<typeof TicketViewSchema>>().toEqualTypeOf<TicketView>();
 expectTypeOf<z.output<typeof KnownIssueSchema>>().toEqualTypeOf<KnownIssue>();
+expectTypeOf<z.output<typeof OpenTicketSchema>>().toEqualTypeOf<OpenTicket>();
 expectTypeOf<z.output<typeof ReportRefSchema>>().toEqualTypeOf<ReportRef>();
 
 const TOKEN = 'abcdefghijklmnopqrstuv';
@@ -242,6 +246,27 @@ describe('signalements', () => {
         updatedAt: 0,
       }).success,
     ).toBe(true);
+  });
+
+  it('liste publique des tickets ouverts : statuts ouverts, aucun champ du joueur, plafond', () => {
+    const open: OpenTicket = {
+      ticket: 'AA-0042',
+      category: 'blocked',
+      status: 'in-progress',
+      source: 'site',
+      createdAt: 1,
+      updatedAt: 2,
+    };
+    expect(OpenTicketSchema.parse(open)).toEqual(open);
+    expect(OpenTicketSchema.safeParse({ ...open, title: 'Carte figée' }).success).toBe(true);
+    expect(OpenTicketSchema.safeParse({ ...open, title: '' }).success).toBe(false);
+    expect(OpenTicketSchema.safeParse({ ...open, status: 'fixed' }).success).toBe(false);
+    expect(OpenTicketSchema.safeParse({ ...open, description: 'texte' }).success).toBe(false);
+    expect(OpenTicketSchema.safeParse({ ...open, contact: 'a@b.c' }).success).toBe(false);
+    expect(
+      OpenTicketsSchema.safeParse(Array.from({ length: REPORT_LIMITS.openTickets + 1 }, () => open))
+        .success,
+    ).toBe(false);
   });
 
   it('profil : signalements facultatifs, bornés à 20, jeton au bon format', () => {

@@ -582,6 +582,7 @@ POST   /v1/reports           ReportSubmission → 201 ReportReceipt | 400/413/42
 GET    /v1/tickets/current   Authorization: Bearer <token> → 200 TicketView | 404 (inconnu ou expiré)
 DELETE /v1/tickets/current   Bearer → 204 : contact effacé, corps du ticket GitHub remplacé, jeton invalidé
 GET    /v1/known-issues?locale=fr|en → KnownIssue[] (Cache-Control public, max-age=300)
+GET    /v1/tickets?locale=fr|en      → OpenTicket[] ≤ 200, du plus récent au plus ancien (Cache-Control public, max-age=60)
 POST   /v1/github/webhook    X-Hub-Signature-256 (HMAC, timingSafeEqual) → 204
 GET    /healthz              {ok, github: 'ok'|'degraded', pending: n, failed: n}
 ```
@@ -618,6 +619,18 @@ peut publier une réponse). Rendues en texte brut, 2 000 caractères au plus.
 **Problèmes connus** : tickets étiquetés `public`. Titre FR = titre du ticket, que l'équipe relit
 avant de poser l'étiquette. Titre anglais facultatif = commentaire d'un mainteneur commençant par
 `/public-title-en`.
+
+**Liste publique des tickets ouverts** (`GET /v1/tickets`, page `/tickets/` du site) : tous les
+tickets ni corrigés ni classés (`received`, `confirmed`, `in-progress`), y compris ceux qui attendent
+encore leur création GitHub (file `pending`, abandonnés compris : `received`), jamais ceux que le
+joueur a supprimés (`DELETE`, jeton effacé). Chaque ligne (`OpenTicket`) ne porte que le numéro, la
+catégorie, le statut, la source (`game`/`site`), les dates de création et de dernière mise à jour,
+et le **titre relu** seulement si le ticket est étiqueté `public` (même règle que les problèmes
+connus, `/public-title-en` en anglais). Jamais le texte du joueur (description, contact,
+diagnostics, sauvegarde), ni le titre GitHub brut, ni aucun jeton. Tri par date de création
+décroissante, plafond `REPORT_LIMITS.openTickets` (200, les plus récents) ; cache en mémoire d'une
+minute, vidé à chaque signalement, suppression ou changement reçu de GitHub ; mêmes CORS et plafond
+de lectures (60 par minute) que les problèmes connus.
 
 **Corps du ticket** : description dans un bloc de code à clôture plus longue que tout bloc présent
 dans le texte (neutralise mentions, images et liens), diagnostics en JSON dans `<details>`. Jamais de
