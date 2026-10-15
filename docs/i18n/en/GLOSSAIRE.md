@@ -456,8 +456,8 @@ Le nom propre reste, le mot générique se traduit.
 | Nuit des Lanternes | the Night of Lanterns | |
 | Fête de la neige | the Snow Festival | |
 | concours de la Saint-Éloi ; paroisse Saint-Éloi | the St Éloi competition ; St Éloi's parish | termes : *Saint-Éloi*, *St Éloi*, *St-Éloi* |
-| incendie de 1937 | the 1937 fire | terme délicat (§9.2) |
-| grève de 1936 | the 1936 strike | idem |
+| incendie de 1937 | the 1937 **blaze** | terme : *blaze* ; incendie = *blaze*, feu = *fire*, sans exception (§9.2) |
+| grève de 1936 | the 1936 **walkout** | terme : *walkout* ; *strike* est réservé à *strike off* (radier) |
 | expulsion de 1916 | the 1916 expulsion | |
 | avion postal | the mail plane | |
 | Coupe du Régent | **the Regent's Cup** | |
@@ -893,8 +893,8 @@ casse, **sans racinisation** (`autolink.ts`, `normalize.ts`). Conséquences :
    doit être celui du français. Un terme anglais **trop courant** crée des liens que le français n'a
    pas : *fire* (pour *incendie* ; le français dit souvent *feu*, qui n'est pas un terme), *strike*
    (*grève*), *exile*, *absent*, *keeper*, *captain*, *box*, *sheep*, *opera singer* (*cantatrice*
-   n'est pas un terme en français). Remède : un terme **composé** ou **plus précis** (*the 1937 fire*,
-   *fire of 1937*, *the 1936 strike*), ou la même rareté que le français ; puis vérifier avec
+   n'est pas un terme en français). Remède : un terme **composé** ou **plus précis** (*blaze* pour *incendie*,
+   *walkout* pour *grève*, retenus au lot T0-H), ou la même rareté que le français ; puis vérifier avec
    `npm run content:i18n -- --case <id>`.
 2. **Singulier et pluriel** : le français *absents* ne lie pas *absent* ; l'anglais *absent* couvre
    les deux. Rendre *les absents* par *the absent* (terme) et un *absent* isolé par *absentee* ou
