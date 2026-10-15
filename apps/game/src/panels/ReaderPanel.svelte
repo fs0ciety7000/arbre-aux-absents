@@ -395,6 +395,22 @@
   // Bruissement de la feuille quand elle livre un indice : pièce débloquée, secret, passage
   // surligné ou épinglé (§7.4, `use:rustle`).
   let clue = $state(0);
+
+  /**
+   * Pose de la feuille : inclinée de −0,5° autour de son centre. Une feuille haute (texte long,
+   * volet étroit, zoom qui la rallonge au carré) dériverait d'autant : à ×2, ses premières lignes
+   * sortaient à gauche du lecteur (débord non défilable) et les dernières à droite. L'angle est
+   * donc borné pour que les bords ne dérivent jamais de plus de TILT_DRIFT px ; le froissement
+   * (`--rustle-amp`) suit la même atténuation.
+   */
+  const TILT_MAX = 0.5;
+  const TILT_DRIFT = 4;
+  let sheetHeight = $state(0);
+  const tiltRatio = $derived.by(() => {
+    if (sheetHeight <= 0) return 1;
+    const deg = (Math.asin(Math.min(1, TILT_DRIFT / (sheetHeight / 2))) * 180) / Math.PI;
+    return Math.min(1, deg / TILT_MAX);
+  });
   onMount(() =>
     game.onEvents((events) => {
       if (events.some((e) => e.type === 'documentsUnlocked' || e.type === 'secretFound')) clue++;
@@ -593,7 +609,13 @@
 
         {#key id}
           <div class="sheet-wrap fasten-{look.fastener}" in:sheetPull>
-            <div class="sheet-rustle" use:rustle={clue}>
+            <div
+              class="sheet-rustle"
+              use:rustle={clue}
+              bind:clientHeight={sheetHeight}
+              style:--tilt="{(-TILT_MAX * tiltRatio).toFixed(3)}deg"
+              style:--rustle-amp={tiltRatio.toFixed(3)}
+            >
               <div
                 class="sheet mat-paper tone-{look.tone} kind-{doc.kind}"
                 class:edge-torn={look.edge === 'torn' && mode !== 'transcript'}
@@ -602,6 +624,7 @@
                 data-surface="paper"
                 bind:this={sheet}
                 style:zoom
+                style:--sheet-zoom={zoom}
               >
                 {@render sheetHead()}
                 <h2 id="reader-title" class="doc-title">{doc.title}</h2>
@@ -882,11 +905,14 @@
   }
   .sheet-rustle {
     position: relative;
+    /* --tilt et --rustle-amp viennent du script (pose bornée selon la hauteur). */
     --tilt: -0.5deg;
     transform: rotate(var(--tilt));
   }
+  /* Les marges latérales ne grossissent pas avec le zoom : il agrandit le texte, pas le papier
+     autour (sinon, à ×4, la colonne de texte perdait la moitié du volet). */
   .sheet {
-    padding: var(--space-6) var(--space-6) var(--space-8);
+    padding: var(--space-6) calc(var(--space-6) / var(--sheet-zoom, 1)) var(--space-8);
   }
   .sheet.transcript {
     padding-block-end: var(--space-6);

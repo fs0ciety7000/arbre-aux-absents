@@ -443,8 +443,12 @@
     padding-block-end: max(var(--space-5), env(safe-area-inset-bottom));
     outline: none;
   }
+  /* Tablette paysage : la poignée règle aussi le volet (elle était affichée, focalisable et
+     annoncée, mais la grille 55/45 l'ignorait) ; 60 % au plus pour garder l'arbre lisible. */
   .tablet .zones {
-    grid-template-columns: minmax(0, 55fr) var(--space-2) minmax(0, 45fr);
+    grid-template-columns:
+      minmax(0, 1fr) var(--space-2)
+      min(clamp(var(--side-min), var(--side-w), var(--side-max)), 60%);
     gap: var(--space-1);
     padding: var(--space-2) var(--space-3) var(--space-3);
   }

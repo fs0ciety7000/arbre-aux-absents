@@ -109,7 +109,8 @@ Points de rupture (largeur de la fenêtre, pas de l'appareil) :
 
 ### 3.2 Tablette (600–1279 px)
 
-- **Paysage** : deux volets 55 / 45 (zone principale / volet latéral), rail d'icônes en haut
+- **Paysage** : deux volets (volet latéral 440 px par défaut, réglable à la poignée ou au clavier
+  comme au desktop, 60 % de la largeur au plus), rail d'icônes en haut
   à gauche réduit à 56 px ; mêmes onglets que desktop.
 - **Portrait** : zone principale plein écran + **tiroir bas** (hauteur 40 % / 90 %, deux crans,
   poignée de 24 px) pour le Lecteur et les onglets secondaires. Barre d'onglets en bas comme le

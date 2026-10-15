@@ -143,19 +143,20 @@
     transform: translate(var(--unclaim-shift), calc(var(--unclaim-shift) * -0.35)) rotate(4deg);
   }
 }
-/* Froissement : petite oscillation amortie */
+/* Froissement : petite oscillation amortie ; `--rustle-amp` (0–1) l'atténue sur une feuille
+   très haute, où un degré déporte les bords de centaines de pixels. */
 @keyframes m-rustle {
   0% {
     transform: rotate(var(--tilt, 0deg));
   }
   25% {
-    transform: rotate(calc(var(--tilt, 0deg) - 1.2deg)) translateX(-1px);
+    transform: rotate(calc(var(--tilt, 0deg) - 1.2deg * var(--rustle-amp, 1))) translateX(-1px);
   }
   55% {
-    transform: rotate(calc(var(--tilt, 0deg) + 0.8deg)) translateX(1px);
+    transform: rotate(calc(var(--tilt, 0deg) + 0.8deg * var(--rustle-amp, 1))) translateX(1px);
   }
   80% {
-    transform: rotate(calc(var(--tilt, 0deg) - 0.3deg));
+    transform: rotate(calc(var(--tilt, 0deg) - 0.3deg * var(--rustle-amp, 1)));
   }
   100% {
     transform: rotate(var(--tilt, 0deg));

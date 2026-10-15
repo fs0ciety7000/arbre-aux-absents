@@ -207,6 +207,15 @@
     display: flex;
     justify-content: flex-end;
   }
+  /* Un tampon long (nom d'étude, de service) passe à la ligne plutôt que de déborder de la
+     feuille à gauche quand la colonne est étroite (volet, zoom du lecteur). */
+  .doc-stamp :global(.stamp-wrap) {
+    max-inline-size: 100%;
+  }
+  .doc-stamp :global(.stamp .inner) {
+    white-space: normal;
+    text-align: center;
+  }
   .stamp-t {
     font-family: var(--font-type);
     color: var(--text-muted);

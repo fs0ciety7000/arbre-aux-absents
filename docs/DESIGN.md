@@ -906,7 +906,7 @@ de `Dialog`). Index de cascade : `style="--i: n"`.
 | `.mv-thud` | la cible du tampon | `--dur-fast` | encaisse : `scale(.985)` + 1 px | absent |
 | `.mv-lock` | case verrouillée | `--dur-slow`, `--ease-snap` | le cadenas tombe et claque | fondu |
 | `.mv-ripple` | dépôt réussi | `--dur-slow` | onde concentrique qui pâlit | absent |
-| `.mv-rustle` | nouvel indice, page tournée (`use:rustle`) | `--dur-rustle` | froissement (micro-rotations) | absent |
+| `.mv-rustle` | nouvel indice, page tournée (`use:rustle`) | `--dur-rustle` | froissement (micro-rotations autour de `--tilt`, amplitude × `--rustle-amp`, 0–1, défaut 1) | absent |
 | `.mv-unclaim` | valeur déclarée retirée (§6.9) | `--dur-unclaim`, `--ease-out`, `forwards` | glisse de `--unclaim-shift` vers la marge, pivote de 4°, s'efface | instantané |
 | `.mv-pop` | compteur qui change | `--dur-base`, `--ease-snap` | `scale` 1,25 → 1 | absent |
 | `.mv-tab` | onglets au montage | `--dur-base`, `--ease-snap`, 40 ms / rang | sortent de la chemise | instantané |
