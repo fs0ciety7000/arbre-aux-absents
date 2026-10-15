@@ -18,8 +18,11 @@ export const LONG_PRESS_MS = [300, 400, 600] as const;
  */
 export const READ_SCALES = [0.9, 1, 1.15, 1.3, 1.5] as const;
 export type ReadScale = (typeof READ_SCALES)[number];
-/** Largeur du volet latéral (Lecteur, Archives…) en px CSS : bornes, standard et large. */
-export const SIDE_WIDTH = Object.freeze({ min: 360, standard: 440, wide: 640, max: 640 });
+/**
+ * Largeur du volet latéral (Lecteur, Archives…) en px CSS : bornes, standard et large. Le Bureau
+ * garde toujours au moins `--tree-min` à l'arbre : sur un écran étroit, le volet s'arrête avant.
+ */
+export const SIDE_WIDTH = Object.freeze({ min: 360, standard: 440, wide: 720, max: 1040 });
 /**
  * Disposition du Bureau (desktop et tablette paysage) : Enquête (arbre + volet côte à côte),
  * Lecture (Lecteur ~60 %), Arbre (arbre plein Bureau, volet en fiche flottante).

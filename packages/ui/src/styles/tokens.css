@@ -272,6 +272,9 @@
   --weight-semibold: 600;
   --weight-bold: 700;
   --measure: 66ch;
+  /* Feuille du Lecteur : mesure de la colonne (suit la taille du texte des pièces, A− / A+) */
+  --measure-sheet: 72ch;
+  --measure-sheet-wide: 88ch; /* disposition Lecture */
 
   /* ── Espacement (échelle 4 px), rayons, mise en page ──────────────── */
   --space-0: 0;
@@ -302,6 +305,7 @@
   --radius-pill: 999px;
   --border: 1px;
   --border-strong: 2px;
+  --established-ring: 4px; /* liseré d'une case établie (arbre) */
 
   --hit: 44px;
   --hit-l: 48px;
@@ -314,8 +318,11 @@
   --tabbar-h: 64px;
   --side-min: 360px;
   --side-default: 440px;
-  --side-max: 640px;
+  --side-max: 1040px;
+  --side-wide: 720px;
   --side-step: 40px;
+  /* Place gardée à l'arbre quand le volet s'élargit (poignée, disposition Lecture) */
+  --tree-min: 22rem;
   /* Fiche flottante (disposition Arbre) : largeur et hauteur au plus (bornées par le Bureau) */
   --float-card-w: 500px;
   --float-card-h: 640px;

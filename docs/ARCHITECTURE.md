@@ -280,7 +280,7 @@ export interface HintSettings { preset: 0 | 1 | 2 | 3 | 'custom'; unreadBadges: 
 export interface Settings {
   textScale: 0.875 | 1 | 1.25 | 1.5 | 2; readingFont: 'default' | 'hyperlegible' | 'dyslexic';
   readScale: 0.9 | 1 | 1.15 | 1.3 | 1.5; // READ_SCALES : texte du Lecteur (A− / A+), ≠ textScale et ≠ zoom
-  sideWidth: number; // SIDE_WIDTH : px entier 360–640, standard 440, large 640 (poignée du volet)
+  sideWidth: number; // SIDE_WIDTH : px entier 360–1040, standard 440, large 720 (poignée du volet ; 640 au plus jusqu’à 1.4.2)
   layout: 'investigate' | 'read' | 'tree'; // DESK_LAYOUTS : Enquête, Lecture, Arbre (desktop, tablette paysage)
   cardPosition: { x: number; y: number }; // fiche flottante (Arbre) : fractions [0, 1] de la place libre
   lineSpacing: 'default' | 'wide' | 'wider'; letterSpacing: boolean; transcriptByDefault: boolean;
@@ -295,7 +295,10 @@ export interface Settings {
 // readScale et sideWidth (« Confort de lecture », PROPOSITION-INTERFACE option 1) : migration
 // douce, `SettingsSchema` les complète par défaut (1, 440) quand un profil antérieur ne les a pas.
 // layout et cardPosition (dispositions, option 2) : même migration douce ('investigate', { x: 1, y: 1 }).
-// Le plein écran du document est un état d'interface (non mémorisé).
+// Le plein écran du document est un état d'interface (non mémorisé). Élargir SIDE_WIDTH (max 640 →
+// 1040, large 640 → 720) garde valides tous les profils existants (anciennes valeurs dans les bornes).
+// Plein écran de l'arbre et fenêtre détachée des documents : états d'interface du Bureau
+// (GameStore.treeFull, GameStore.docsPopped), non mémorisés.
 export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>; completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] }>;
   tutorial?: { done: boolean; seen: string[] }; // tutoriel en bulles : optionnel (anciens profils valides), seen ≤ 32 ids kebab-case
   reports?: ReportRef[]; // « Mes signalements », ≤ 20 (§8)

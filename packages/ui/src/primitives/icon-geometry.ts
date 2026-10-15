@@ -99,6 +99,8 @@ export const ICON_GEOMETRY = {
   'zoom-in': [c(10.5, 10.5, 6.5), 'M15.5 15.5L20 20', 'M10.5 8v5', 'M8 10.5h5'],
   'zoom-out': [c(10.5, 10.5, 6.5), 'M15.5 15.5L20 20', 'M8 10.5h5'],
   fit: ['M4 9V4h5', 'M20 9V4h-5', 'M4 15v5h5', 'M20 15v5h-5'],
+  /** Plein écran : deux flèches qui écartent les coins (distinct de « Ajuster », coins seuls). */
+  expand: ['M14 4h6v6', 'M20 4l-6 6', 'M10 20H4v-6', 'M4 20l6-6'],
   // États
   lock: ['M6 11h12v9H6z', 'M8.5 11V8a3.5 3.5 0 0 1 7 0v3', 'M12 14.5v2'],
   check: ['M5 12.5l4.5 4.5L19 7'],

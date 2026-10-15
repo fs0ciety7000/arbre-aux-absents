@@ -132,7 +132,8 @@
     if (!target) return;
     e.preventDefault();
     focusedId = target.id;
-    document.getElementById(`${idPrefix}-tab-${target.id}`)?.focus();
+    // Document de la liste (les onglets peuvent vivre dans une fenêtre détachée).
+    (listEl?.ownerDocument ?? document).getElementById(`${idPrefix}-tab-${target.id}`)?.focus();
     if (activation === 'auto') select(target.id);
   }
 
