@@ -119,11 +119,12 @@ test('fiche flottante : déplacée à la souris et au clavier, position mémoris
   const g = (await grip.boundingBox())!;
   await page.mouse.move(g.x + 40, g.y + g.height / 2);
   await page.mouse.down();
-  await page.mouse.move(g.x + 40 - 300, g.y + g.height / 2 + 120, { steps: 8 });
+  // Position par défaut en bas à droite : on la remonte vers la gauche.
+  await page.mouse.move(g.x + 40 - 300, g.y + g.height / 2 - 120, { steps: 8 });
   await page.mouse.up();
   const box1 = (await card(page).boundingBox())!;
   expect(box1.x).toBeLessThan(box0.x - 250);
-  expect(box1.y).toBeGreaterThan(box0.y + 80);
+  expect(box1.y).toBeLessThan(box0.y - 80);
 
   // Bornée à l'écran : on ne la pousse pas hors du Bureau.
   await page.mouse.move(box1.x + 60, box1.y + 20);

@@ -12,7 +12,7 @@ import {
 describe('disposition du Bureau', () => {
   it('par défaut : Enquête, fiche en haut à droite', () => {
     expect(DEFAULT_SETTINGS.layout).toBe('investigate');
-    expect(DEFAULT_SETTINGS.cardPosition).toEqual({ x: 1, y: 0 });
+    expect(DEFAULT_SETTINGS.cardPosition).toEqual({ x: 1, y: 1 });
     expect([...DESK_LAYOUTS]).toEqual(['investigate', 'read', 'tree']);
     const a = defaultSettings();
     a.cardPosition.x = 0;
@@ -53,7 +53,7 @@ describe('disposition du Bureau', () => {
     expect(parsed.success).toBe(true);
     if (!parsed.success) return;
     expect(parsed.data.settings.layout).toBe('investigate');
-    expect(parsed.data.settings.cardPosition).toEqual({ x: 1, y: 0 });
+    expect(parsed.data.settings.cardPosition).toEqual({ x: 1, y: 1 });
     expect(parsed.data.settings.showTimer).toBe(true);
   });
 

@@ -294,7 +294,7 @@ export interface Settings {
 }
 // readScale et sideWidth (« Confort de lecture », PROPOSITION-INTERFACE option 1) : migration
 // douce, `SettingsSchema` les complète par défaut (1, 440) quand un profil antérieur ne les a pas.
-// layout et cardPosition (dispositions, option 2) : même migration douce ('investigate', { x: 1, y: 0 }).
+// layout et cardPosition (dispositions, option 2) : même migration douce ('investigate', { x: 1, y: 1 }).
 // Le plein écran du document est un état d'interface (non mémorisé).
 export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>; completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] }>;
   tutorial?: { done: boolean; seen: string[] }; // tutoriel en bulles : optionnel (anciens profils valides), seen ≤ 32 ids kebab-case
