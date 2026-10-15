@@ -139,6 +139,14 @@
           : app.screen,
   );
 
+  /**
+   * Un passage par scène : chaque changement de `sceneKey` donne un objet neuf, donc une scène
+   * neuve. Avec la clé brute, revenir à un écran dont la scène s'escamote encore (Succès puis
+   * Retour au titre en moins d'une transition) ferait reprendre par `{#key}` cette scène sortante,
+   * restée cachée aux technologies d'assistance et sans identifiants (`screenLeave`).
+   */
+  const scenePass = $derived({ key: sceneKey });
+
   const toastOffset = $derived(
     app.screen === 'desk' && viewport.single ? 'calc(var(--tabbar-h) + var(--space-2))' : '0px',
   );
@@ -156,7 +164,7 @@
 
 <div class="app" class:hidden={viewport.tooSmall}>
   <!-- Une scène par écran : la nouvelle monte dans la lumière, l'ancienne s'escamote (§8.7). -->
-  {#key sceneKey}
+  {#key scenePass}
     <div class="scene" in:screenIn out:screenLeave>
       {#if app.fatal}
         <ErrorScreen

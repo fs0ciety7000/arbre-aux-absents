@@ -35,3 +35,24 @@ test('succès et crédits rangés par affaire', async ({ page }) => {
   await page.getByRole('button', { name: 'Crédits' }).first().click();
   await expect(page.getByRole('heading', { name: `Affaire : ${MINI}` })).toBeVisible();
 });
+
+test('retour au titre pendant que sa scène s’escamote encore : un menu neuf, accessible', async ({
+  page,
+}) => {
+  await gotoTitle(page);
+  // Transitions ralenties (×20) : la scène du titre sort encore quand le joueur y revient, comme
+  // pour un joueur rapide sur une machine lente. `dispatchEvent` : rien n'attend la fin des
+  // mouvements, c'est tout l'objet du test.
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Animation.enable');
+  await cdp.send('Animation.setPlaybackRate', { playbackRate: 0.05 });
+  await page.getByRole('button', { name: 'Succès' }).first().dispatchEvent('click');
+  await expect(page.getByRole('region', { name: MINI })).toBeAttached();
+  await page.getByRole('button', { name: 'Retour' }).first().dispatchEvent('click');
+  // Une seule scène du titre visible des technologies d'assistance, avec son `#contenu`.
+  await expect(page.getByRole('button', { name: 'Crédits' })).toHaveCount(1);
+  await expect(page.locator('#contenu')).toHaveCount(1);
+  await expect(page.locator('main#contenu.title-screen')).toBeAttached();
+  await page.getByRole('button', { name: 'Crédits' }).dispatchEvent('click');
+  await expect(page.getByRole('heading', { name: `Affaire : ${MINI}` })).toBeAttached();
+});

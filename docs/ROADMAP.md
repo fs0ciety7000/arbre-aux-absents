@@ -141,10 +141,6 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 
 ## Backlog
 
-- e2e instable : `tests/e2e/game/case-choice.spec.ts` « succès et crédits rangés par affaire » a
-  échoué deux fois de suite en CI sur 2f08fc2 (clic sur « Crédits » après « Retour » des Succès :
-  boutons de l'écran titre sans nom accessible dans l'instantané), puis vert à la relance et en local
-  (3/3). Chercher l'état transitoire de l'écran titre au retour (inert, transition) avant qu'il revienne.
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
   en mode scindé et fond transparent, lecture « à la visibilité » des entrées sans hydratation,
   `BrandLogo` mono en masque CSS, `Stamp` (classe transmise), titre Dymo pour `Panel`, matière liège,
