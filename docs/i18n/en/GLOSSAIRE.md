@@ -742,7 +742,7 @@ Règles :
 | `speakerine` | Speakerine | **Television announcer** | Mathilde | announcer | |
 | `medecin` | Médecin | **Doctor** | Hélène | | *Dr* |
 | `restauratrice` | Restauratrice de papier | **Paper conservator** | Lise | conservator | |
-| `ingenieure` | Ingénieure | **Engineer** | Claude | engineer | genre : §9.3 |
+| `ingenieure` | Ingénieure | **Woman engineer** | Claude | woman engineer | genre : §9.3 ; *engineer* seul lierait les *ingénieur* masculins (lot T0-V) |
 | `comptable` | Comptable *(leurre)* | **Bookkeeper** | — | | |
 | `photographe` | Photographe *(leurre)* | **Photographer** | — | photographer | |
 | `modele` | Modèle d'artiste *(leurre)* | **Artist's model** | — | | |
@@ -868,7 +868,7 @@ sous-titres : *Civil Re-registration Office — file No. 74-0318* / *No. 76-0012
 - **Mot-clé de personne** : les termes égaux à un prénom, un nom ou une variante de `family.json`
   restent **identiques** (règle 12.5 : ils doivent figurer dans les termes anglais). On ne traduit
   que l'élément de civilité ou de parenté : *Me Brunesseau* → *Maître Brunesseau* (+ *Brunesseau*) ;
-  *M. Hautfeuille* → *Mr Hautfeuille* ; *Tante Adé* → *Aunt Adé* (+ *Adé*) ; *sœur Agathe* → *Sister
+  *M. Hautfeuille* → *Mr Hautfeuille* ; *Tante Adé* → *Aunt Adé* (sans *Adé* seul, qui lierait chaque « Ma chère Adé », lot T0-V) ; *sœur Agathe* → *Sister
   Agathe* ; *abbé Pradeil* → *Father Pradeil* ; *le Goéland* → *the Gull* (+ *Gull*, *Maask*) ; *le
   Thalbère* → *the Thalbère* ; *La gardienne de l'Ourse* → *the keeper of the Ourse*.
 - **Mot-clé de lieu** : nom de la carte, toponyme, rue ou enseigne (§3.1) → **termes identiques**
