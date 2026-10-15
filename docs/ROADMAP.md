@@ -136,6 +136,12 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 - [x] Version 1.2.1 : bouton Signaler dans l’en-tête du bureau, dialogue plein écran sans débordement au téléphone ; page publique /tickets/ et lien Signaler dans l’en-tête du site.
 - [x] Version 1.3.0 (retours joueurs) : dispositions Enquête / Lecture / Arbre, fiche flottante et plein écran du document, taille du texte A− / A+, zoom du lecteur corrigé, signal « + » des lieux à rouvrir sur la carte ; site : erreur 500 de navigation corrigée. Audit : docs/level/AUDIT-2026-10-15.md.
 - [x] Version 1.3.1 : « Une conception de Nicolas Dessenius » aux crédits ; retour au titre pendant sa sortie (scène neuve, boutons accessibles).
+- [x] Signalement v2.5 (frontend, jeu et site) : description en Markdown (`MarkdownField` : barre
+      d'outils, Ctrl/⌘+B/I/K, aperçu sans HTML), captures d'écran (fichier, collage, dépôt ; réduites
+      côté client au-delà de 2 Mio ; `AttachmentTray`, `AttachmentGallery` dans le suivi), « Informations
+      envoyées » (navigateur `browserFamily`) ; site : version et plateforme du jeu déclarées ; CSP
+      `img-src` du site, du jeu web et de Tauri. Pas de capture automatique de l'écran du jeu (aucun
+      moyen léger et fiable : html-to-canvas trop lourd, pas d'API de capture de la webview Tauri).
 - [x] Liste publique des tickets ouverts : `GET /v1/tickets` (contrat `OpenTicket`, sans texte du
       joueur, titre seulement si `public`) et page `/tickets/` (FR/EN, sitemap, pied de page, liens
       depuis signaler/suivi/problèmes connus) ; lien « Signaler » dans l'en-tête du site.
