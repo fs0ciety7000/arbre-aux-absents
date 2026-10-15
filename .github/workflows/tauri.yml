@@ -74,10 +74,16 @@ jobs:
             exit 0
           fi
           if [ -z "$found" ]; then
-            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --draft --target "$GITHUB_SHA" \
-              --title "L'Arbre aux absents $TAG" --notes-file "$RUNNER_TEMP/notes.md"
-            found=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
-              --jq "[.[] | select(.tag_name == \"$TAG\")][0] // empty | \"\(.id) \(.draft)\"")
+            # L'id vient de la réponse de création : la liste des releases peut ne pas encore
+            # montrer un brouillon tout juste créé (id vide, publication sautée en 1.4.0).
+            id=$(gh api -X POST "repos/$GITHUB_REPOSITORY/releases" \
+              -f tag_name="$TAG" -f target_commitish="$GITHUB_SHA" -F draft=true \
+              -f name="L'Arbre aux absents $TAG" -f body="$(cat "$RUNNER_TEMP/notes.md")" --jq .id)
+            found="$id true"
+          fi
+          if [ -z "${found%% *}" ]; then
+            echo "::error::Release $TAG : id introuvable."
+            exit 1
           fi
           echo "id=${found%% *}" >> "$GITHUB_OUTPUT"
 
