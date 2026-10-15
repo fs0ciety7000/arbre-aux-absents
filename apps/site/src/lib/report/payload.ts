@@ -3,18 +3,11 @@
  * diagnostic de partie), son texte de repli à copier et quelques mises en forme. Module pur.
  */
 import type { Locale, ReportCategory, ReportDiagnostics, ReportSubmission } from '@arbre/contract';
+import { osFamily } from '@arbre/contract';
 import { LIMITS } from './constants';
 
-/** Famille grossière du système, jamais la chaîne User-Agent (contrat : `os` ≤ 40). */
-export function osFamily(userAgent: string): string | undefined {
-  if (/Android/i.test(userAgent)) return 'Android';
-  if (/iPhone|iPad|iPod/i.test(userAgent)) return 'iOS';
-  if (/Windows/i.test(userAgent)) return 'Windows';
-  if (/Mac OS X|Macintosh/i.test(userAgent)) return 'macOS';
-  if (/CrOS/i.test(userAgent)) return 'ChromeOS';
-  if (/Linux/i.test(userAgent)) return 'Linux';
-  return undefined;
-}
+/** Famille grossière du système : déplacée dans le contrat (partagée jeu/site). */
+export { osFamily };
 
 export interface SiteEnvironment {
   appVersion: string;

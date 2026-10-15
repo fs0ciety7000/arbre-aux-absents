@@ -17,3 +17,4 @@ export * from './i18n';
 export * from './report-ref';
 export * from './report';
 export * from './changelog';
+export * from './user-agent';
