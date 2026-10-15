@@ -256,7 +256,7 @@ décisions D9 à D13). App Coolify **séparée** du site : `https://arbre-api.ca
 | Image | `node:22-bookworm-slim` épinglée par digest (la même que le site) ; étape `build` : `npm ci --ignore-scripts` (lockfile figé, racine + `@arbre/report`), `npm run build -w @arbre/report` → `dist/server.js` et `dist/admin.js` autonomes (zod et le contrat embarqués) ; étape `runtime` : `dist/` + `package.json` seulement, **aucun `node_modules`**, fichiers à root en lecture seule, utilisateur `node` (1000) |
 | Port exposé | `8090` |
 | Healthcheck | `GET /healthz` → `200 {ok, github: 'ok'\|'degraded', pending, failed}`. `degraded` : pas de jeton, jeton refusé (401) ou GitHub injoignable ; la soumission reste acceptée (file `pending`). Sonde : `node dist/admin.js healthcheck` (`HEALTHCHECK` Docker et healthcheck Coolify : l'image n'a ni curl ni wget) |
-| Stockage | **volume persistant `/data`** (base SQLite, `DATA_DIR=/data`), seul dossier inscriptible ; `VOLUME /data` dans l'image. Sans volume Coolify nommé, chaque redéploiement repart d'une base vide (tickets et jetons de suivi perdus) |
+| Stockage | **volume persistant `/data`** (base SQLite, `DATA_DIR=/data`, et captures d'écran dans `/data/attachments/`, 2 Go au plus par défaut : `ATTACHMENTS_MAX_MB`), seul dossier inscriptible ; `VOLUME /data` dans l'image. Sans volume Coolify nommé, chaque redéploiement repart d'une base vide (tickets et jetons de suivi perdus) |
 | Commande | `node dist/server.js` (`NODE_OPTIONS=--disable-warning=ExperimentalWarning` pour `node:sqlite`) |
 | Branche | celle du site (auto-deploy) ; voir « Ordre de déploiement » |
 | **Statut** | **en ligne depuis le 15/10/2026**, `github: "ok"` ; jeton, webhook, étiquettes et jalon `v1.2.0` en place, test de bout en bout réussi le 15/10 |
@@ -294,7 +294,7 @@ ci-dessous) : sans cela, un client qui joint `152.53.176.13` directement pourrai
 | *Watch paths* | `apps/report/**`, `packages/contract/**`, `package-lock.json` : un push qui ne touche que le site ne redéploie pas le service. Le site, lui, n'a pas de *watch paths* (son image dépend de presque tout le repo) et se redéploie à chaque push |
 | Volume | persistant `swybrgki0ennurono4isofot-arbre-report-data` (uuid `jqi9r23nbriiuv9wxcd232fk`) → `/data` |
 | Healthcheck | type **commande** : `node dist/admin.js healthcheck` (le type HTTP de Coolify exige curl ou wget, absents de l'image, et le champ commande refuse guillemets et parenthèses) |
-| Variables | `GITHUB_REPO`, `ALLOWED_ORIGINS`, `PUBLIC_SITE_URL`, `DATA_DIR`, `REPORTS_ENABLED`, `TICKET_PREFIX`, `GITHUB_WEBHOOK_SECRET` (posé, généré localement, jamais affiché), `GITHUB_TOKEN` **vide** (à saisir) ; toutes à l'exécution seulement, aucune au build |
+| Variables | `GITHUB_REPO`, `ALLOWED_ORIGINS`, `PUBLIC_SITE_URL`, `DATA_DIR`, `REPORTS_ENABLED`, `TICKET_PREFIX`, `GITHUB_WEBHOOK_SECRET` (posé, généré localement, jamais affiché), `GITHUB_TOKEN` **vide** (à saisir), `ATTACHMENT_SECRET` **non posée** au 15/10/2026 (clé des captures dérivée de `GITHUB_WEBHOOK_SECRET` en attendant ; à poser avant les premières captures réelles) ; toutes à l'exécution seulement, aucune au build |
 | Origine fermée | *Container labels* personnalisés : middleware `traefik.http.middlewares.arbre-api-cf-only.ipallowlist.sourcerange=<plages IPv4 et IPv6 de https://api.cloudflare.com/client/v4/ips>` ajouté au routeur `https-0-swybrgki0ennurono4isofot` (`middlewares=gzip,arbre-api-cf-only`). Vérifié : avec une plage factice le service répond 403 via Cloudflare, avec les plages Cloudflare 200 (Traefik voit bien l'IP Cloudflare). Sans effet sur les autres apps du serveur |
 
 Attention aux *labels* : ils sont figés. Si le domaine change, ou après *Reset labels to defaults*
@@ -324,9 +324,14 @@ Création (faite le 15/10/2026, pour mémoire) : projet « Arbre aux absents »,
 | `DATA_DIR` | `/data` |
 | `REPORTS_ENABLED` | `true` (`false` : interrupteur d'urgence, `POST /v1/reports` → 503 `disabled`) |
 | `TICKET_PREFIX` | `AA` |
+| `ATTACHMENT_SECRET` | ≥ 32 caractères aléatoires (`openssl rand -hex 32`), clé des URL signées des captures d'écran — **secret**. Absente : dérivée de `GITHUB_WEBHOOK_SECRET` (le service démarre sans). La poser **avant** les premières captures réelles et ne plus la changer : une autre clé rend 403 les images des tickets déjà créés |
+| `PUBLIC_API_URL` | `https://arbre-api.cardormedia.com` (défaut ; base des URL signées des captures) |
+| `ATTACHMENTS_MAX_MB` | `2048` (défaut ; plafond de stockage des captures, au-delà `POST /v1/attachments` → 503) |
 
 Le contact laissé par un joueur ne se lit que depuis le terminal Coolify de l'app :
-`node dist/admin.js contact AA-0042`. Aucune route HTTP d'administration.
+`node dist/admin.js contact AA-0042`. Aucune route HTTP d'administration. Captures d'écran :
+`node dist/admin.js attachments` (nombre, volume), `attachments AA-0042` (pièces et URL signées),
+`attachment-delete <id>`, `purge` (pièces libres de plus d'une heure, fichiers orphelins).
 
 `/healthz` `failed` > 0 : une opération GitHub a été abandonnée après 8 erreurs 4xx permanentes
 (ticket refusé par GitHub, ex. 422). `node dist/admin.js pending` liste les lignes `ÉCHEC` (ticket,

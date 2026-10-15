@@ -616,6 +616,9 @@ DELETE /v1/tickets/current   Bearer → 204 : contact effacé, corps du ticket G
 GET    /v1/known-issues?locale=fr|en → KnownIssue[] (Cache-Control public, max-age=300)
 GET    /v1/tickets?locale=fr|en      → OpenTicket[] ≤ 200, du plus récent au plus ancien (Cache-Control public, max-age=60)
 POST   /v1/github/webhook    X-Hub-Signature-256 (HMAC, timingSafeEqual) → 204
+POST   /v1/attachments[?website=]  corps binaire image/png|jpeg|webp ≤ 2 Mio → 201 AttachmentReceipt | 400/413/415/429/503
+GET    /v1/attachments/<id>?sig=   image (URL signée) → 200 | 403 (signature) | 404 (inconnue, supprimée, libre expirée) ; HEAD idem
+DELETE /v1/attachments/<id>        pièce encore libre → 204 | 404 (inconnue ou déjà rattachée)
 GET    /healthz              {ok, github: 'ok'|'degraded', pending: n, failed: n}
 ```
 
@@ -664,11 +667,88 @@ décroissante, plafond `REPORT_LIMITS.openTickets` (200, les plus récents) ; ca
 minute, vidé à chaque signalement, suppression ou changement reçu de GitHub ; mêmes CORS et plafond
 de lectures (60 par minute) que les problèmes connus.
 
-**Corps du ticket** : description dans un bloc de code à clôture plus longue que tout bloc présent
-dans le texte (neutralise mentions, images et liens), diagnostics en JSON dans `<details>`. Jamais de
-contact, de jeton ni d'IP. Étiquettes `signalement`, `source:jeu|site`, `cat:<catégorie>`, `langue:en`.
+**Corps du ticket** : description en **Markdown GitHub** rendu tel quel (gras, italique, listes,
+citations, code, liens, tableaux), placée dans une citation (`> ` devant chaque ligne : un bloc de
+code non fermé ou un faux titre n'en sortent pas), après neutralisation (`neutralizeMarkdown`, un
+espace sans chasse U+200B invisible inséré) de ce qui notifie, piste ou trompe : mentions `@nom`
+(sauf adresse `a@b`), références `#123`, `o/r#12`, `GH-12` et URL de tickets GitHub, images
+`![…]` (devenues de simples liens), HTML brut (`<img>`, `</details>`…), entités (`&#64;`) ; contrôles
+et caractères de direction retirés. Puis section **Environnement** (tableau lisible : version et
+édition, plateforme, version et plateforme du jeu déclarées depuis le site, système, navigateur,
+langue, affaire et empreinte du contenu, fenêtre ; valeurs libres en code, `|` échappé), section
+**Captures d'écran** (images Markdown avec leurs URL signées, dans l'ordre), diagnostics complets en
+JSON dans `<details>`, sauvegarde. Jamais de contact, de jeton ni d'IP. La description n'est jamais
+réaffichée : ni dans le suivi joueur, ni dans les listes publiques. Étiquettes `signalement`, `source:jeu|site`, `cat:<catégorie>`, `langue:en`.
 Dépôt cible : dépôt **privé** dédié `fs0ciety7000/arbre-aux-absents-signalements` (D12), configuré
 par `GITHUB_REPO` ; les tickets ne sont jamais visibles du public.
+
+**Diagnostics automatiques** : `os` (`osFamily`) et `browser` (`browserFamily`, famille et version
+majeure : « Firefox 131 », « Safari 18 », « Edge 129 », « WebView Android 129 », « Chrome iOS 129 » ;
+dans Tauri, `browserFamily(ua, { tauri: true })` : « Tauri (WebView2 129) », « Tauri (WebKitGTK) »,
+« Tauri (WKWebView) », « Tauri (WebView Android 129) »). Fonctions pures du contrat
+(`packages/contract/src/user-agent.ts`), partagées par le jeu et le site ; jamais l'User-Agent
+complet. Depuis le site seulement (`platform: 'site'`, refusé sinon) : `gameVersion` (semver choisi
+dans le formulaire) et `gamePlatform` (`web` | `desktop` | `android`), facultatifs.
+
+**Captures d'écran** (`POST /v1/attachments`, 3 au plus par signalement) :
+
+- Envoi **avant** le signalement, une requête par image : corps binaire brut (pas de multipart),
+  `Content-Type` `image/png`, `image/jpeg` ou `image/webp` (autre → 415), **2 Mio** au plus
+  (`ATTACHMENT_LIMITS.bytes`, 413 `tooLarge` annoncé ou en flux ; la limite de 64 Ko reste celle des
+  autres routes). Le type est vérifié par les **octets magiques** (différent du `Content-Type` → 415),
+  la structure par un analyseur maison (incohérente ou tronquée → 400 `invalid`), les **dimensions**
+  lues dans l'en-tête et plafonnées (côté ≤ 8192, surface ≤ 40 Mpx → 413 `tooLarge`). Les
+  **métadonnées sont retirées** sans dépendance : PNG `tEXt`/`zTXt`/`iTXt` (XMP)/`eXIf`/`tIME` et
+  octets après `IEND` ; JPEG APP1 (EXIF, XMP), APP13 (IPTC), COM (orientation EXIF perdue : sans
+  effet sur une capture) ; WebP `EXIF`/`XMP ` et drapeaux `VP8X`. Seule l'image nettoyée est stockée.
+- Réponse `201 AttachmentReceipt { id, type, width, height, bytes, expiresAt }` ; `id` de 128 bits
+  (22 caractères base64url) à mettre dans `ReportSubmission.attachments` (ordre d'affichage, sans
+  doublon). Une pièce **non rattachée sous 1 h** (`expiresAt`) est ignorée par le signalement puis
+  purgée ; une pièce inconnue, expirée ou déjà rattachée n'empêche pas le signalement :
+  `ReportReceipt.attachments` (présent si le champ a été envoyé) dit combien ont été jointes.
+- Mêmes CORS que les signalements ; plafonds en mémoire : 15 pièces par heure et 60 par jour par
+  client, 180 par heure au total ; 8 envois traités à la fois (503 + `Retry-After`) ; plafond de
+  stockage `ATTACHMENTS_MAX_MB` (2 Go par défaut, 503 `unavailable`). Pot de miel : `?website=`
+  (valeur du champ caché) non vide → faux reçu plausible, rien de stocké. `REPORTS_ENABLED=false` →
+  503 `disabled`. Délai de réception d'une requête porté à 60 s (mobile lent), en-têtes 10 s.
+- `DELETE /v1/attachments/<id>` (sans signature : l'`id` est la capacité) supprime une pièce **encore
+  libre** (le joueur la retire du formulaire) ; rattachée → 404.
+- Stockage : fichiers `/data/attachments/<id>.<png|jpg|webp>` (0600, écriture atomique) et table
+  `attachments` (`id`, `ticket_id` → `tickets.id` ON DELETE CASCADE, `position`, `created_at`,
+  `attached_at`, `type`, `bytes`, `width`, `height`).
+- **Lecture** : `GET /v1/attachments/<id>?sig=<HMAC-SHA256 base64url, 43 caractères>`, URL non
+  devinable et sans expiration (elle figure dans le ticket GitHub). Signature invalide ou absente →
+  403 ; pièce inconnue, supprimée ou libre expirée → 404. En-têtes : `Content-Type` stocké,
+  `Cache-Control: private, max-age=300`, `Content-Disposition: inline`, `X-Content-Type-Options:
+  nosniff`, `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'; sandbox`,
+  `Cross-Origin-Resource-Policy: cross-origin` (affichable par le site et le jeu). 120 lectures par
+  minute et par client (page de suivi, proxy d'images de GitHub).
+- **Clé de signature** : `ATTACHMENT_SECRET` (≥ 32 caractères) ; à défaut, dérivée de
+  `GITHUB_WEBHOOK_SECRET` par HMAC avec un contexte propre (la clé du webhook n'est jamais réutilisée
+  telle quelle ni déductible) ; sans l'un ni l'autre (dev), clé aléatoire en mémoire (URL invalides
+  après redémarrage, avertissement au démarrage). Changer la clé (poser `ATTACHMENT_SECRET` après
+  coup, ou changer le secret du webhook dont elle dérive) rend **403 les images des tickets déjà
+  créés** : poser `ATTACHMENT_SECRET` une fois pour toutes, avant les premières captures réelles.
+- **Visibilité** : le ticket GitHub (dépôt privé) affiche les images ; le suivi joueur
+  (`GET /v1/tickets/current`) liste les siennes (`TicketView.attachments`, URL signées, champ absent
+  s'il n'y en a pas : les anciens builds du jeu valident `TicketView` strictement) ; `GET /v1/tickets`
+  et les problèmes connus ne les montrent **jamais**.
+- **Suppression et conservation** : `DELETE /v1/tickets/current` supprime aussitôt pièces et
+  fichiers (URL → 404) ; un ticket supprimé par la conservation (12 mois après la clôture) emporte
+  ses pièces (cascade, fichiers retirés à la purge qui suit). Purge toutes les 10 min et avec la
+  conservation quotidienne : pièces libres de plus d'une heure, pièces sans ticket, fichiers sans
+  ligne (ou temporaires) de plus d'une heure.
+
+**Côté jeu et site** (formulaires) : barre d'outils Markdown simple (gras `**`, italique `_`, code
+`` ` ``, bloc de code, liste `- `, liste numérotée, citation `> `, lien `[texte](url)`) qui insère la
+syntaxe dans le `<textarea>` (la description reste du texte, 4 000 caractères au plus) ; pas
+d'image dans le texte : les captures passent par `POST /v1/attachments` (fichier choisi, collé ou,
+dans le jeu, capture de l'écran), envoyées une à une avant le signalement, retirables
+(`DELETE`), puis leurs `id` dans `attachments`. Diagnostics : `browser: browserFamily(navigator.userAgent,
+{ tauri })` ; site : sélecteurs facultatifs « Version du jeu » et « Plateforme » (`gameVersion`,
+`gamePlatform`). Le suivi affiche `TicketView.attachments` en `<img src={url}>` : la CSP `img-src`
+du site (nginx) et du jeu (Tauri) doit autoriser `https://arbre-api.cardormedia.com`, comme
+`connect-src`.
 
 **Synchronisation** : webhook (`issues`, `issue_comment`, `milestone`) ; rapprochement toutes les
 30 min des tickets non fermés depuis plus de 30 jours (requêtes conditionnelles `If-None-Match`, une
@@ -700,7 +780,7 @@ webhook sans appel à l'API. Numéros AUTOINCREMENT, jamais réutilisés.
 **Comportements** : `POST` répond 201 sans attendre GitHub (création en tâche de fond) ; le titre
 du ticket GitHub ne contient aucun texte du joueur (`AA-0042 · bug (jeu)`, réécrit par l'équipe
 avant l'étiquette `public`) ; erreurs hors contrat renvoyées en `{ error: 'invalid' }` avec le
-statut HTTP adapté (400, 403, 404, 405, 401 pour une signature de webhook) ; pot de miel
+statut HTTP adapté (400, 403, 404, 405, 415 pour un type d'image refusé, 401 pour une signature de webhook) ; pot de miel
 (`website` rempli ou `elapsedMs < 3000`) → 201 avec un faux reçu plausible (numéro tiré parmi les
 20 derniers attribués, rien de créé ni de réservé, jeton qui ne mène à rien). `/healthz` dit
 `degraded` sans jeton ou après un échec GitHub.
@@ -710,7 +790,8 @@ statut HTTP adapté (400, 403, 404, 405, 401 pour une signature de webhook) ; po
 immédiate à la demande (`DELETE`). Aucune IP stockée ni journalisée.
 
 **Accès de l'équipe au contact** : `node dist/admin.js contact AA-0042` depuis le terminal Coolify
-(aussi `status`, `pending`, `retry`, `retention`).
+(aussi `status`, `pending`, `retry`, `retention` ; pièces jointes : `attachments` (nombre, volume),
+`attachments AA-0042` (pièces du ticket et URL signées), `attachment-delete <id>`, `purge`).
 Aucune route HTTP d'administration.
 
 **CORS** : `ALLOWED_ORIGINS` = `https://arbre.cardormedia.com`, `tauri://localhost`,
@@ -719,5 +800,7 @@ Aucune route HTTP d'administration.
 **Configuration** (variables d'environnement Coolify, jamais dans le repo ; `.env.example`) :
 `GITHUB_TOKEN` (fine-grained, un seul dépôt, Issues RW + Metadata R, expiration à surveiller :
 `/healthz` passe en `degraded` sur 401), `GITHUB_REPO` (`fs0ciety7000/arbre-aux-absents-signalements`), `GITHUB_WEBHOOK_SECRET`, `ALLOWED_ORIGINS`,
-`PUBLIC_SITE_URL`, `DATA_DIR=/data`, `REPORTS_ENABLED`, `TICKET_PREFIX=AA`. Côté builds du jeu et du
+`PUBLIC_SITE_URL`, `DATA_DIR=/data`, `REPORTS_ENABLED`, `TICKET_PREFIX=AA`, `ATTACHMENT_SECRET`
+(clé des URL signées des captures, ≥ 32 caractères, **secret**), `PUBLIC_API_URL`
+(`https://arbre-api.cardormedia.com`, base des URL signées), `ATTACHMENTS_MAX_MB` (2048). Côté builds du jeu et du
 site : `VITE_REPORT_API=https://arbre-api.cardormedia.com` (public). Dev : `npm run dev:report`.
