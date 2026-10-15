@@ -3,6 +3,7 @@
 	position du curseur + glyphe (coche / trait) + texte « Activé / Désactivé » optionnel.
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   interface Props {
     label: string;
     checked?: boolean;
@@ -25,6 +26,7 @@
     id = `toggle-${Math.random().toString(36).slice(2, 8)}`,
     class: className = '',
   }: Props = $props();
+  const ui = getUiStrings();
 
   function toggle() {
     checked = !checked;
@@ -48,7 +50,8 @@
     class="switch"
     onclick={toggle}
   >
-    {#if showState}<span class="state" aria-hidden="true">{checked ? 'Activé' : 'Désactivé'}</span
+    {#if showState}<span class="state" aria-hidden="true"
+        >{checked ? ui.toggle.on : ui.toggle.off}</span
       >{/if}
     <span class="track" aria-hidden="true">
       <span class="thumb">

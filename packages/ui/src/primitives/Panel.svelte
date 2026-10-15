@@ -8,6 +8,7 @@
 	Téléphone (< 600 px) : rayon 0, bord à bord.
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import type { Snippet } from 'svelte';
   import IconButton from './IconButton.svelte';
 
@@ -43,7 +44,7 @@
     scroll = true,
     padded = true,
     hideHeader = false,
-    closeLabel = 'Fermer le panneau',
+    closeLabel: closeLabelProp,
     onclose,
     actions,
     footer,
@@ -51,6 +52,8 @@
     id = `panel-${Math.random().toString(36).slice(2, 8)}`,
     class: className = '',
   }: Props = $props();
+  const ui = getUiStrings();
+  const closeLabel = $derived(closeLabelProp ?? ui.panel.close);
 </script>
 
 <svelte:element

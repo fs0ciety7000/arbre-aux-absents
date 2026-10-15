@@ -8,6 +8,7 @@
 	accessible (case de l'arbre : le bouton a un `aria-label`).
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import Icon from './Icon.svelte';
   import { unclaim } from '../motion';
 
@@ -24,12 +25,14 @@
   }
 
   let {
-    label = 'Déclaré',
+    label: labelProp,
     straddle = false,
     shown = true,
     decorative = false,
     class: className = '',
   }: Props = $props();
+  const ui = getUiStrings();
+  const label = $derived(labelProp ?? ui.claimTag.label);
 </script>
 
 {#if shown}

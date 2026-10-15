@@ -27,6 +27,7 @@
 </script>
 
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import type { Snippet } from 'svelte';
   import Icon from './Icon.svelte';
 
@@ -53,16 +54,20 @@
     options,
     value = $bindable(null),
     query = $bindable(''),
-    placeholder = 'Filtrer…',
+    placeholder: placeholderProp,
     mode = 'inline',
     hideLabel = false,
-    emptyText = 'Aucun candidat ne correspond.',
-    listLabel = 'Candidats',
+    emptyText: emptyTextProp,
+    listLabel: listLabelProp,
     onselect,
     empty,
     id = `combo-${Math.random().toString(36).slice(2, 8)}`,
     class: className = '',
   }: Props = $props();
+  const ui = getUiStrings();
+  const placeholder = $derived(placeholderProp ?? ui.combobox.placeholder);
+  const emptyText = $derived(emptyTextProp ?? ui.combobox.empty);
+  const listLabel = $derived(listLabelProp ?? ui.combobox.listLabel);
 
   let expanded = $state(false);
   let activeIndex = $state(-1);
@@ -202,8 +207,7 @@
     />
   </div>
   <p class="status visually-hidden" aria-live="polite">
-    {filtered.length}
-    {filtered.length > 1 ? 'candidats' : 'candidat'}
+    {ui.combobox.count(filtered.length)}
   </p>
   <ul
     bind:this={listEl}

@@ -3,6 +3,7 @@
 	(`multiline` + compteur), filtres. Libellé toujours visible, aide et erreur reliées.
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import type { Snippet } from 'svelte';
   import type { HTMLInputAttributes } from 'svelte/elements';
   import Icon from './Icon.svelte';
@@ -41,6 +42,7 @@
     class: className = '',
     ...rest
   }: Props = $props();
+  const ui = getUiStrings();
 
   const describedBy = $derived(
     [hint && `${id}-hint`, error && `${id}-error`, maxlength && `${id}-count`]
@@ -88,7 +90,7 @@
     {/if}
     {#if maxlength}
       <p id="{id}-count" class="count num" aria-live="polite">
-        <span class="visually-hidden">Caractères : </span>{count} / {maxlength}
+        <span class="visually-hidden">{ui.textField.characters}</span>{count} / {maxlength}
       </p>
     {/if}
   </div>

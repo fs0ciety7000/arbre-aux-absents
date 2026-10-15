@@ -6,6 +6,7 @@
 	En mouvement réduit : simple fondu de 100 ms, sans secousse.
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import type { Snippet } from 'svelte';
 
   interface Props {
@@ -24,7 +25,7 @@
   }
 
   let {
-    text = 'Établi',
+    text: textProp,
     tone = 'established',
     size = 'm',
     rotate = -6,
@@ -34,6 +35,8 @@
     icon,
     class: className = '',
   }: Props = $props();
+  const ui = getUiStrings();
+  const text = $derived(textProp ?? ui.stamp.established);
 </script>
 
 <span

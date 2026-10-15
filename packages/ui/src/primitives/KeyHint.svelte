@@ -5,6 +5,7 @@
 	la forme dit la position, la lettre ou le symbole dit la marque.
 -->
 <script lang="ts" module>
+  import { uiFr, type UiStrings } from '../i18n';
   export type Device = 'keyboard' | 'mouse' | 'touch' | 'gamepad';
   export type PadStyle = 'xbox' | 'playstation' | 'nintendo';
   export type PadButton =
@@ -24,52 +25,41 @@
     | 'lstick'
     | 'rstick';
 
-  const FACE: Record<PadStyle, Record<'south' | 'east' | 'west' | 'north', string>> = {
+  type Face = 'south' | 'east' | 'west' | 'north';
+  const LETTERS: Record<'xbox' | 'nintendo', Record<Face, string>> = {
     xbox: { south: 'A', east: 'B', west: 'X', north: 'Y' },
-    playstation: { south: 'Croix', east: 'Rond', west: 'Carré', north: 'Triangle' },
     nintendo: { south: 'B', east: 'A', west: 'Y', north: 'X' },
   };
-  const OTHER: Record<PadStyle, Partial<Record<PadButton, string>>> = {
-    xbox: {
-      lb: 'LB',
-      rb: 'RB',
-      lt: 'LT',
-      rt: 'RT',
-      start: 'Menu',
-      select: 'Vue',
-      ls: 'L3',
-      rs: 'R3',
-    },
-    playstation: {
-      lb: 'L1',
-      rb: 'R1',
-      lt: 'L2',
-      rt: 'R2',
-      start: 'Options',
-      select: 'Créer',
-      ls: 'L3',
-      rs: 'R3',
-    },
+  const SHOULDERS: Record<PadStyle, Partial<Record<PadButton, string>>> = {
+    xbox: { lb: 'LB', rb: 'RB', lt: 'LT', rt: 'RT', ls: 'L3', rs: 'R3' },
+    playstation: { lb: 'L1', rb: 'R1', lt: 'L2', rt: 'R2', ls: 'L3', rs: 'R3' },
     nintendo: { lb: 'L', rb: 'R', lt: 'ZL', rt: 'ZR', start: '+', select: '−', ls: 'L3', rs: 'R3' },
   };
-  const COMMON: Partial<Record<PadButton, string>> = {
-    dpad: 'Croix directionnelle',
-    lstick: 'Stick gauche',
-    rstick: 'Stick droit',
-  };
 
-  export function padLabel(b: PadButton, style: PadStyle): string {
-    if (b === 'south' || b === 'east' || b === 'west' || b === 'north') return FACE[style][b];
-    return OTHER[style][b] ?? COMMON[b] ?? b;
+  export function isFace(b: PadButton): b is Face {
+    return b === 'south' || b === 'east' || b === 'west' || b === 'north';
+  }
+
+  /** Nom d'un bouton de manette ; `strings` : textes de la langue courante (déf. français). */
+  export function padLabel(b: PadButton, style: PadStyle, strings: UiStrings = uiFr): string {
+    const k = strings.keyHint;
+    if (isFace(b)) return style === 'playstation' ? k.playstation[b] : LETTERS[style][b];
+    if (b === 'start' || b === 'select') {
+      if (style === 'xbox') return k.xbox[b];
+      if (style === 'playstation') return k.playstationMenu[b];
+    }
+    if (b === 'dpad' || b === 'lstick' || b === 'rstick') return k[b];
+    return SHOULDERS[style][b] ?? b;
   }
 </script>
 
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   interface Props {
     /** Libellé de l'action (« Ouvrir », « Retourner »). Omettre pour n'afficher que le glyphe. */
     action?: string;
     device?: Device;
-    /** Touches clavier, en français : ['Ctrl', 'S'], ['Maj'], ['Échap']. */
+    /** Touches clavier, dans la langue de l'interface : ['Ctrl', 'S'], ['Maj'] / ['Shift'], ['Échap'] / ['Esc']. */
     keys?: string[];
     /** Bouton de manette (position logique). */
     pad?: PadButton;
@@ -89,12 +79,14 @@
     class: className = '',
   }: Props = $props();
 
-  const face = $derived(pad === 'south' || pad === 'east' || pad === 'west' || pad === 'north');
-  const psSymbols: Record<string, string> = {
-    Croix: 'M7 7l6 6M13 7l-6 6',
-    Rond: 'M10 5.5a4.5 4.5 0 1 0 0 9a4.5 4.5 0 1 0 0-9',
-    Carré: 'M6 6h8v8H6z',
-    Triangle: 'M10 5l5 9H5z',
+  const ui = getUiStrings();
+  const face = $derived(pad !== undefined && isFace(pad));
+  // Symboles PlayStation, par position (croix en bas, rond à droite, carré à gauche, triangle en haut).
+  const psSymbols: Record<Face, string> = {
+    south: 'M7 7l6 6M13 7l-6 6',
+    east: 'M10 5.5a4.5 4.5 0 1 0 0 9a4.5 4.5 0 1 0 0-9',
+    west: 'M6 6h8v8H6z',
+    north: 'M10 5l5 9H5z',
   };
   const dots: Record<string, [number, number]> = {
     south: [10, 16],
@@ -106,8 +98,8 @@
 
 <span class="hint {className}">
   {#if device === 'gamepad' && pad}
-    {@const name = padLabel(pad, padStyle)}
-    <span class="glyphs" role="img" aria-label="Bouton {name}">
+    {@const name = padLabel(pad, padStyle, ui)}
+    <span class="glyphs" role="img" aria-label={ui.keyHint.button(name)}>
       {#if face}
         <svg class="diamond" viewBox="0 0 20 20" aria-hidden="true">
           {#each Object.entries(dots) as [pos, [x, y]] (pos)}
@@ -116,7 +108,7 @@
         </svg>
         {#if padStyle === 'playstation'}
           <svg class="cap round" viewBox="0 0 20 20" aria-hidden="true">
-            <path d={psSymbols[name]} />
+            <path d={psSymbols[pad as Face]} />
           </svg>
         {:else}
           <kbd class="cap round" aria-hidden="true">{name}</kbd>
@@ -126,7 +118,9 @@
           <path d="M7.5 2h5v5.5H18v5h-5.5V18h-5v-5.5H2v-5h5.5z" />
         </svg>
       {:else if pad === 'lstick' || pad === 'rstick'}
-        <kbd class="cap round stick" aria-hidden="true">{pad === 'lstick' ? 'G' : 'D'}</kbd>
+        <kbd class="cap round stick" aria-hidden="true"
+          >{pad === 'lstick' ? ui.keyHint.stickLetter.left : ui.keyHint.stickLetter.right}</kbd
+        >
       {:else}
         <kbd class="cap pill" aria-hidden="true">{name}</kbd>
       {/if}

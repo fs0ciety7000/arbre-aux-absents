@@ -41,7 +41,7 @@
   {#if kicker && size !== 'header'}
     <p class="kick mat-label red" class:mv-stamp={animate} style:--i="0">{kicker}</p>
   {/if}
-  <svelte:element this={tag} class="name" aria-label="L’Arbre aux absents">
+  <svelte:element this={tag} class="name" lang="fr" aria-label="L’Arbre aux absents">
     <span class="w" class:mv-ink={animate} style:--i="1" aria-hidden="true">L’Arbre</span>
     <span class="w aux" class:mv-ink={animate} style:--i="2" aria-hidden="true">aux</span>
     <span class="w" class:mv-ink={animate} style:--i="3" aria-hidden="true">absents</span>

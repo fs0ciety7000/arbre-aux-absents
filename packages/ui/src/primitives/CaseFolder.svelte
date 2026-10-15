@@ -10,6 +10,7 @@
 	À poser dans `CaseFolderGroup` (empilées sous 600 px, côte à côte au-delà).
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import type { Snippet } from 'svelte';
   import Icon from './Icon.svelte';
   import Stamp from './Stamp.svelte';
@@ -53,13 +54,15 @@
     status,
     note,
     decision,
-    decisionLabel = 'Dernière décision : ',
+    decisionLabel: decisionLabelProp,
     tone = 'kraft',
     deal,
     disabled = false,
     class: className = '',
     id = `case-${Math.random().toString(36).slice(2, 8)}`,
   }: Props = $props();
+  const ui = getUiStrings();
+  const decisionLabel = $derived(decisionLabelProp ?? ui.caseFolder.lastDecision);
 
   const describedBy = $derived(
     [

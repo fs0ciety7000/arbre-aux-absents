@@ -4,6 +4,7 @@
 	Rendu en général par <ToastRegion /> ; utilisable seul (bandeau de sauvegarde).
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import Icon from './Icon.svelte';
   import IconButton from './IconButton.svelte';
   import type { IconName } from './icons';
@@ -28,10 +29,12 @@
     message,
     action,
     timeout = 0,
-    closeLabel = 'Fermer la notification',
+    closeLabel: closeLabelProp,
     live = 'auto',
     onclose,
   }: Props = $props();
+  const ui = getUiStrings();
+  const closeLabel = $derived(closeLabelProp ?? ui.toast.close);
 
   const role = $derived(tone === 'danger' ? 'alert' : live === 'auto' ? 'status' : undefined);
 

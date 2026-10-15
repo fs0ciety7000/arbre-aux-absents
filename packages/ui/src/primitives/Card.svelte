@@ -11,6 +11,7 @@
 	couvre toute la carte (les boutons du pied restent cliquables au-dessus).
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import type { Snippet } from 'svelte';
   import Icon from './Icon.svelte';
 
@@ -58,6 +59,7 @@
     footer,
     class: className = '',
   }: Props = $props();
+  const ui = getUiStrings();
 
   const interactive = $derived(Boolean(href || onactivate));
   const angle = $derived(Math.max(-1.5, Math.min(1.5, tilt)));
@@ -83,8 +85,9 @@
             >Non lu.
           </span>{/if}
         {#if kicker}<span>{kicker}</span>{/if}
-        {#if pinned}<span class="pin" title="Épinglé"
-            ><Icon name="pin" size="1rem" /><span class="visually-hidden">Épinglé</span></span
+        {#if pinned}<span class="pin" title={ui.card.pinned}
+            ><Icon name="pin" size="1rem" /><span class="visually-hidden">{ui.card.pinned}</span
+            ></span
           >{/if}
       </p>
     {/if}
