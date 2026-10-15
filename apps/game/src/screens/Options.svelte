@@ -5,7 +5,6 @@
     Button,
     KeyHint,
     LANGUAGE_NAMES,
-    LanguageSwitch,
     Select,
     Slider,
     Tabs,
@@ -52,7 +51,7 @@
       : app.cases.length > 0 && app.contentLocale !== app.lang,
   );
 
-  // ── Langue (DESIGN §9.35) : réglette = langue résolue ; « système » dans le Select. ──
+  // ── Langue (DESIGN §9.35) : un seul contrôle, le Select (« système », français, anglais). ──
   const languageOptions = $derived([
     {
       value: 'system',
@@ -309,12 +308,6 @@
             />
           </div>
         {:else if id === 'language'}
-          <LanguageSwitch
-            value={app.lang}
-            label={m.language}
-            labelVisible
-            onchange={(loc) => void app.setLanguage(loc)}
-          />
           <Select
             label={m.language}
             options={languageOptions}

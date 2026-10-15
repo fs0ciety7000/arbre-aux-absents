@@ -1157,9 +1157,9 @@ capitales Oswald `--text-muted`. La différence est une **forme** (bande en reli
 pas seulement une couleur. Survol : la langue non choisie passe en `--text` et se soulève de
 `--lift` ; la bande se pose en `--dur-fast` `--ease-snap` (transform seul ; mouvement réduit : 0).
 
-- **Écran titre et Options du jeu** (sans `hrefs`) : `fieldset` + radios natifs invisibles
-  couvrant chaque étiquette (Tab entre une fois, flèches pour changer, Espace). Légende « Langue »
-  / “Language” masquée sauf `labelVisible`. Écran titre : sous le menu, à droite des crédits.
+- **Écran titre** (sans `hrefs`) : `fieldset` + radios natifs invisibles couvrant chaque
+  étiquette (Tab entre une fois, flèches pour changer, Espace). Légende « Langue » / “Language”
+  masquée sauf `labelVisible`. Sous le menu, à droite des crédits.
 - **En-tête du site** (`hrefs`) : `nav` + liens `hreflang`, la page courante dans chaque langue
   (mêmes slugs sous `/en/`, D8), `aria-current="true"` sur la langue courante. `short` à 360 px.
 - Chaque nom porte son `lang` (`lang="fr"` sur « Français », `lang="en"` sur « English ») ;
@@ -1173,12 +1173,14 @@ pas seulement une couleur. Survol : la langue non choisie passe en `--text` et s
   · `label` · `labelVisible` · `name` · `class`.
 
 ```svelte
-<LanguageSwitch bind:value={settings.language} onchange={applyLanguage} />          <!-- jeu -->
+<LanguageSwitch value={app.lang} onchange={(l) => app.setLanguage(l)} />            <!-- titre -->
 <LanguageSwitch value={lang} hrefs={{ fr: `/le-monde/`, en: `/en/le-monde/` }} short /> <!-- site -->
 ```
 
 Le réglage `system` (« Langue du système ») n'est pas dans la réglette : c'est une option du
-`Select` des Options (ARCHITECTURE, `LanguageSetting`) ; la réglette montre la langue résolue.
+`Select` des Options (ARCHITECTURE, `LanguageSetting`), **seul contrôle de langue des Options**
+(pas de réglette à côté : deux contrôles nommés « Langue » seraient ambigus au lecteur d'écran).
+La réglette de l'écran titre montre la langue résolue.
 
 ### 9.36 Suivi d'un signalement (`TicketStatus`) — v2.4
 
@@ -1598,7 +1600,7 @@ connu, mention « vu le 12 oct. » en `--text-muted`.
 Recettes inchangées en anglais (§4.4) ; vérifier à 360 et 390 px : menu de l'écran titre
 (« Resume the investigation »), onglets du Bureau (le mode compact se déclenche plus tôt, c'est
 voulu), barre du Lecteur, rapport final (« Endorsed »), chemises d'affaire (« Last decision: »).
-Le `LanguageSwitch` de l'écran titre se place sous le menu ; celui des Options en tête du panneau.
+Le `LanguageSwitch` de l'écran titre se place sous le menu ; les Options n'ont que le `Select` de langue (§9.35).
 
 ---
 

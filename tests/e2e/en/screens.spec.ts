@@ -41,6 +41,9 @@ for (const size of [
       await expect(page.getByRole('heading', { name: 'Options', level: 1 })).toBeVisible();
       await page.getByRole('tab', { name: 'Language' }).click();
       await expect(page.getByRole('combobox', { name: 'Language' })).toHaveValue('system');
+      // Un seul contrôle nommé « Language » dans le panneau (pas de réglette en plus du Select).
+      await expect(page.getByRole('group', { name: 'Language' })).toHaveCount(0);
+      await expect(page.getByRole('radio')).toHaveCount(0);
       await expect(page.getByRole('option', { name: 'System language (English)' })).toBeAttached();
       await check(page);
     });

@@ -126,7 +126,7 @@ export const reader = (page: Page): Locator =>
 export const slotButton = (page: Page, slot: string): Locator =>
   page.locator(`[data-tree-view] [data-slot="${slot}"]`);
 
-/** Pause → Options → onglet Langue → langue choisie → retour au Bureau. */
+/** Pause → Options → onglet Langue → langue choisie dans le Select → retour au Bureau. */
 export async function switchLanguageInGame(page: Page, to: 'en' | 'fr'): Promise<void> {
   const from = to === 'en' ? 'fr' : 'en';
   await page.getByRole('button', { name: 'Pause' }).click();
@@ -135,7 +135,10 @@ export async function switchLanguageInGame(page: Page, to: 'en' | 'fr'): Promise
     .getByRole('button', { name: 'Options' })
     .click();
   await page.getByRole('tab', { name: from === 'fr' ? 'Langue' : 'Language' }).click();
-  await page.getByRole('radio', { name: to === 'en' ? 'English' : 'Français' }).check();
+  // Un seul contrôle de langue dans les Options : le Select (DESIGN §9.35).
+  await page
+    .getByRole('combobox', { name: from === 'fr' ? 'Langue' : 'Language' })
+    .selectOption(to);
   await expect(page.locator('html')).toHaveAttribute('lang', to);
   // Échap referme les Options et rend la main à la pause, qu'on quitte (Reprendre).
   await page.keyboard.press('Escape');
