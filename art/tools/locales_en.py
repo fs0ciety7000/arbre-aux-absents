@@ -10,8 +10,9 @@ déterministe et se régénère après toute retouche des SVG français (`build.
 
 Règles (docs/i18n/en/GLOSSAIRE.md) : noms propres, lieux de la carte, sigles, dates numériques et
 chiffres inchangés ; anglais britannique ; `N°` → `No.` ; heures `23 h 10` → `23.10`.
-Écrit `art/map/locales/en/labels.svg`, `art/keyart/locales/en/keyart-desk{,-tall}.svg` (art clé de
-l'écran titre, généré par `art/tools/keyart/build.mjs`) et
+Écrit `art/map/locales/en/labels.svg`, `art/keyart/locales/en/{keyart-desk,keyart-desk-tall,
+spot-stamp,flourish-tampon}.svg` (art clé, vignette et ornement générés par
+`art/tools/keyart/build.mjs`) et
 `content/cases/<id>/locales/en/illustrations/<nom>.svg`.
 Python 3.10+, aucune dépendance.
 """
@@ -62,6 +63,25 @@ KEYART_TITLE = [
      "empty medallions, photographs, a map of Velmarche, a magnifying glass, a stamp, a cup of tea and "
      "a herbarium fern; at the window, dusk over the rooftops of Aubrelieu.</desc>"),
 ]
+
+# Fichiers de art/keyart/ à doubler : nom → (table des <text>, [(balise FR, balise EN)]).
+KEYART_FILES = {
+    'keyart-desk': (KEYART, KEYART_TITLE),
+    'keyart-desk-tall': (KEYART, KEYART_TITLE),
+    # vignette d'état vide (jeu : shell/Spot.svelte ; site : accueil, charte) ; même tampon
+    'spot-stamp': ([
+        ('ÉTABLI', 'ESTABLISHED', 1,
+         {'font-size': '13.5', 'y': '2', 'textLength': '94', 'lengthAdjust': 'spacingAndGlyphs'}),
+        ('oct. 1974', 'Oct. 1974', 1, None),
+    ], [('<title>Tampon de bois et empreinte « ÉTABLI »</title>',
+         '<title>Wooden stamp and “ESTABLISHED” imprint</title>')]),
+    # ornement gravé du site (charte) ; cadre intérieur 166 de large
+    'flourish-tampon': ([
+        ('ÉTABLI', 'ESTABLISHED', 1,
+         {'font-size': '20', 'y': '61', 'textLength': '148', 'lengthAdjust': 'spacingAndGlyphs'}),
+        ('Office de Réinscription civile', 'Civil Re-registration Office', 1, None),
+    ], [('<title>Tampon « ÉTABLI »</title>', '<title>“ESTABLISHED” stamp</title>')]),
+}
 
 H = 'revenant-hautcorvin'
 ILLUSTRATIONS = {
@@ -126,16 +146,16 @@ def main():
         sys.exit('labels.svg : titre introuvable')
     svg = translate(svg.replace(MAP_TITLE[0], MAP_TITLE[1]), MAP_LABELS, 'labels.svg')
     write('art/map/locales/en/labels.svg', svg)
-    for name in ('keyart-desk', 'keyart-desk-tall'):
+    for name, (table, titles) in KEYART_FILES.items():
         base = os.path.join('art', 'keyart', f'{name}.svg')
         with open(os.path.join(ROOT, base), encoding='utf-8') as fh:
             svg = fh.read()
-        for fr, en in KEYART_TITLE:
+        for fr, en in titles:
             if svg.count(fr) != 1:
                 sys.exit(f'{base} : titre ou description introuvable')
             svg = svg.replace(fr, en)
         write(os.path.join('art', 'keyart', 'locales', 'en', f'{name}.svg'),
-              translate(svg, KEYART, base))
+              translate(svg, table, base))
     for (case, name), table in ILLUSTRATIONS.items():
         base = os.path.join('content', 'cases', case, 'illustrations', f'{name}.svg')
         with open(os.path.join(ROOT, base), encoding='utf-8') as fh:
