@@ -10,7 +10,9 @@ déterministe et se régénère après toute retouche des SVG français (`build.
 
 Règles (docs/i18n/en/GLOSSAIRE.md) : noms propres, lieux de la carte, sigles, dates numériques et
 chiffres inchangés ; anglais britannique ; `N°` → `No.` ; heures `23 h 10` → `23.10`.
-Écrit `art/map/locales/en/labels.svg` et `content/cases/<id>/locales/en/illustrations/<nom>.svg`.
+Écrit `art/map/locales/en/labels.svg`, `art/keyart/locales/en/keyart-desk{,-tall}.svg` (art clé de
+l'écran titre, généré par `art/tools/keyart/build.mjs`) et
+`content/cases/<id>/locales/en/illustrations/<nom>.svg`.
 Python 3.10+, aucune dépendance.
 """
 import os
@@ -38,6 +40,28 @@ MAP_LABELS = [
     ('dressée et gravée par CM Creative Lab', 'drawn and engraved by CM Creative Lab', 1, None),
 ]
 MAP_TITLE = ('La Velmarche : toponymes, cadre et cartouche', 'Velmarche: place names, frame and cartouche')
+
+# Art clé « Le bureau sous la lampe » : mêmes textes dans les deux cadrages (16:9 et 4:5).
+# Tampon : ESTABLISHED (11 lettres) dans le cadre d'ÉTABLI (6) → corps 21 → 13, largeur bornée.
+KEYART = [
+    ('ÉTABLI', 'ESTABLISHED', 1,
+     {'font-size': '13', 'y': '1.5', 'textLength': '92', 'lengthAdjust': 'spacingAndGlyphs'}),
+    ('oct. 1974', 'Oct. 1974', 1, None),
+    ('n° 74-0112', 'No. 74-0112', 1, None),
+    ('n° 12', 'No. 12', 1, None),
+    ('Herbier', 'Herbarium', 1, None),
+    ('La Velmarche', 'Velmarche', 1, None),
+    ('revue en 1974', 'revised 1974', 1, None),
+]
+KEYART_TITLE = [
+    ('<title>Le bureau sous la lampe</title>', '<title>The desk under the lamp</title>'),
+    ("<desc>Un bureau d'enquêteur de 1974 sous une lampe de laiton : dossiers de kraft, brouillon "
+     "d'arbre généalogique aux médaillons vides, photographies, carte de la Velmarche, loupe, tampon, "
+     "tasse de thé et fougère d'herbier ; à la fenêtre, le crépuscule sur les toits d'Aubrelieu.</desc>",
+     "<desc>An investigator's desk in 1974 under a brass lamp: kraft folders, a draft family tree with "
+     "empty medallions, photographs, a map of Velmarche, a magnifying glass, a stamp, a cup of tea and "
+     "a herbarium fern; at the window, dusk over the rooftops of Aubrelieu.</desc>"),
+]
 
 H = 'revenant-hautcorvin'
 ILLUSTRATIONS = {
@@ -77,6 +101,8 @@ def translate(svg, table, where):
             tag = m.group(1)
             for k, v in (attrs or {}).items():
                 tag, n = re.subn(rf'\s{k}="[^"]*"', f' {k}="{v}"', tag)
+                if n == 0 and k in ('textLength', 'lengthAdjust'):
+                    tag, n = tag[:-1] + f' {k}="{v}">', 1  # ajout : bornes de largeur
                 if n != 1:
                     sys.exit(f'{where} : attribut {k} absent de « {fr} »')
             return tag + esc(en) + m.group(2)
@@ -100,6 +126,16 @@ def main():
         sys.exit('labels.svg : titre introuvable')
     svg = translate(svg.replace(MAP_TITLE[0], MAP_TITLE[1]), MAP_LABELS, 'labels.svg')
     write('art/map/locales/en/labels.svg', svg)
+    for name in ('keyart-desk', 'keyart-desk-tall'):
+        base = os.path.join('art', 'keyart', f'{name}.svg')
+        with open(os.path.join(ROOT, base), encoding='utf-8') as fh:
+            svg = fh.read()
+        for fr, en in KEYART_TITLE:
+            if svg.count(fr) != 1:
+                sys.exit(f'{base} : titre ou description introuvable')
+            svg = svg.replace(fr, en)
+        write(os.path.join('art', 'keyart', 'locales', 'en', f'{name}.svg'),
+              translate(svg, KEYART, base))
     for (case, name), table in ILLUSTRATIONS.items():
         base = os.path.join('content', 'cases', case, 'illustrations', f'{name}.svg')
         with open(os.path.join(ROOT, base), encoding='utf-8') as fh:
