@@ -713,8 +713,11 @@ export const en = {
     kicker: 'Credits',
     title: ['A ', { em: 'CARDOR Media' }, ' production'] as Rich,
     lede: [
+      'Created by ',
+      { strong: 'Nicolas Dessenius' },
+      '. ',
       TITLE,
-      ' is imagined, written, drawn and developed by the divisions of CARDOR Media.',
+      ' is written, drawn and developed by the divisions of CARDOR Media.',
     ] as Rich,
     houseHeading: 'The house',
     house:

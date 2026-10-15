@@ -293,6 +293,8 @@ export const en = {
 
   creditsScreen: {
     title: 'Credits',
+    designBy: 'Created by',
+    designer: 'Nicolas Dessenius',
     edition: 'Publishing and development',
     writing: 'Writing and illustration',
     publisher: 'A production by',

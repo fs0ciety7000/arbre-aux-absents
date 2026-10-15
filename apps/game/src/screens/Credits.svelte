@@ -21,6 +21,10 @@
 
 <ScreenFrame title={m.title} onback={() => app.goto('title')}>
   <div class="stack">
+    <p class="byline mv-deal" style:--i="1">
+      <span class="by">{m.designBy}</span>
+      <span class="author">{m.designer}</span>
+    </p>
     <ul class="logos">
       <li class="mv-deal" style:--i="2">
         <CardorMonogram class="logo emblem" />
@@ -53,6 +57,26 @@
   .stack {
     display: grid;
     gap: var(--space-8);
+  }
+  .byline {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    text-align: center;
+  }
+  .byline .by {
+    color: var(--text-muted);
+    font-family: var(--font-label);
+    font-size: var(--step--1);
+    letter-spacing: var(--tracking-stamp);
+    text-transform: uppercase;
+  }
+  .byline .author {
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-size: var(--step-3);
+    text-wrap: balance;
   }
   .logos {
     display: flex;

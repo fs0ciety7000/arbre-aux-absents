@@ -134,7 +134,7 @@ tickets: https://arbre.cardormedia.com/en/tickets/
 
 ### Crédits
 
-Développé par **CM Interactive**, écrit et illustré par **CM Creative Lab**, une production
+Une conception de **Nicolas Dessenius**. Développé par **CM Interactive**, écrit et illustré par **CM Creative Lab**, une production
 **CARDOR Media**. Polices : Fraunces, Literata, Instrument Sans, Oswald, Courier Prime, Caveat,
 Atkinson Hyperlegible Next (SIL Open Font License 1.1).
 

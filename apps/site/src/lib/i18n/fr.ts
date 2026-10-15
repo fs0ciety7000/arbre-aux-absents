@@ -669,8 +669,11 @@ export const fr = {
     kicker: 'Crédits',
     title: ['Une production ', { em: 'CARDOR Media' }] as Rich,
     lede: [
+      'Une conception de ',
+      { strong: 'Nicolas Dessenius' },
+      '. ',
       { em: 'L’Arbre aux absents' },
-      ' est imaginé, écrit, dessiné et développé par les divisions de CARDOR Media.',
+      ' est écrit, dessiné et développé par les divisions de CARDOR Media.',
     ] as Rich,
     houseHeading: 'La maison',
     house:

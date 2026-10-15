@@ -307,6 +307,8 @@ export const fr = {
 
   creditsScreen: {
     title: 'Crédits',
+    designBy: 'Une conception de',
+    designer: 'Nicolas Dessenius',
     edition: 'Édition et développement',
     writing: 'Écriture et illustration',
     publisher: 'Une production',
