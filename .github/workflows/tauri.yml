@@ -368,11 +368,15 @@ jobs:
           api="repos/$GITHUB_REPOSITORY/releases"
           gh api "$api/$ID" --jq '.assets[] | "\(.id) \(.name)"' > "$RUNNER_TEMP/assets.txt"
           asset=$(awk '$2 == "latest.json" { print $1 }' "$RUNNER_TEMP/assets.txt")
-          if [ -z "$asset" ]; then
-            echo "::error::latest.json absent de la release $TAG : elle reste en brouillon."
-            exit 1
+          if [ -n "$asset" ]; then
+            gh api -H 'Accept: application/octet-stream' "$api/assets/$asset" > "$RUNNER_TEMP/in.json"
+          else
+            # tauri-action saute latest.json quand il ne retrouve pas les signatures (nom du
+            # produit avec « ’ ») : on le construit depuis les fichiers .sig de la release.
+            echo "::notice::latest.json absent : construit depuis les signatures de la release."
+            gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.sig' --dir "$RUNNER_TEMP/sigs"
+            node scripts/updater-manifest.mjs "$RUNNER_TEMP/sigs" "$RUNNER_TEMP/assets.txt" "${TAG#v}" > "$RUNNER_TEMP/in.json"
           fi
-          gh api -H 'Accept: application/octet-stream' "$api/assets/$asset" > "$RUNNER_TEMP/in.json"
           node scripts/release-notes.mjs "$TAG" > "$RUNNER_TEMP/notes.md"
           mkdir -p "$RUNNER_TEMP/out"
           node - "$RUNNER_TEMP/in.json" "$RUNNER_TEMP/notes.md" "$RUNNER_TEMP/assets.txt" "$RUNNER_TEMP/out/latest.json" <<'NODE'
