@@ -42,6 +42,7 @@ export type ScreenId =
   | 'stats'
   | 'bonus'
   | 'credits'
+  | 'changelog'
   | 'desk'
   | 'ending';
 

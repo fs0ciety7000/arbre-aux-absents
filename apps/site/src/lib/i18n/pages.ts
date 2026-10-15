@@ -18,6 +18,7 @@ export const SITE_PAGES = [
   'charte/',
   'presse/',
   'credits/',
+  'nouveautes/',
   'signaler/',
   'suivi/',
   'problemes-connus/',

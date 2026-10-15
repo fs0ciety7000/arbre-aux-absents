@@ -25,6 +25,7 @@ import {
 import { claimedFields, newGame, parseSave, summarize, visibleSlots } from '@arbre/engine';
 import { pushToast } from '@arbre/ui';
 import type { Component } from 'svelte';
+import { version as APP_VERSION } from '../../../package.json';
 import { audio } from '../../audio/engine';
 import {
   PlatformError,
@@ -473,6 +474,33 @@ export class AppController implements StoreHost {
   /** Remplace la liste des signalements du profil (≤ 20) et l'enregistre aussitôt. */
   setReports(reports: ReportRef[]): void {
     this.profile = { ...this.profile, reports: reports.slice(0, REPORT_REF_LIMITS.max) };
+    void this.saveProfile();
+  }
+
+  // ── Nouveautés (ARCHITECTURE §3.8) ─────────────────────────────────
+
+  /** Version du jeu (apps/game/package.json), égale à la dernière entrée du journal. */
+  readonly version: string = APP_VERSION;
+
+  /**
+   * Marque « Nouveau » du menu titre : les notes de cette version n'ont pas encore été ouvertes,
+   * par un joueur qui a déjà joué (une toute première visite n'a rien de « nouveau »).
+   */
+  get changelogUnseen(): boolean {
+    const p = this.profile;
+    if (p.changelogSeen === this.version) return false;
+    return (
+      p.changelogSeen !== undefined ||
+      p.tutorial !== undefined ||
+      Object.keys(p.completed).length > 0 ||
+      this.saves.length > 0
+    );
+  }
+
+  /** L'écran Nouveautés a été ouvert : la marque disparaît jusqu'à la prochaine version. */
+  markChangelogSeen(): void {
+    if (this.profile.changelogSeen === this.version) return;
+    this.profile = { ...this.profile, changelogSeen: this.version };
     void this.saveProfile();
   }
 

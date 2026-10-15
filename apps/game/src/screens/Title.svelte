@@ -137,6 +137,7 @@
     { id: 'stats', label: m.stats, icon: 'list' },
     { id: 'bonus', label: m.bonus, icon: 'layers' },
     { id: 'credits', label: m.credits, icon: 'quill' },
+    { id: 'changelog', label: m.changelog, icon: 'sparkle' },
   ]);
   const HOT_ENTRY: Record<string, string> = {
     lamp: 'main',
@@ -234,13 +235,18 @@
       </ul>
       <ul class="more">
         {#each more as e (e.id)}
-          <li>
+          <li class:wide={e.id === 'changelog' && app.changelogUnseen}>
             <Button
               variant="ghost"
               iconName={e.icon}
               class={hot && HOT_ENTRY[hot] === e.id ? 'is-hot' : ''}
-              onclick={() => go(e.id)}>{e.label}</Button
-            >
+              onclick={() => go(e.id)}
+              >{e.label}
+              {#if e.id === 'changelog' && app.changelogUnseen}
+                <!-- Notes de la version installée pas encore ouvertes (ARCHITECTURE §3.8). -->
+                <Badge tone="accent" variant="solid" dot class="unseen">{m.changelogUnseen}</Badge>
+              {/if}
+            </Button>
           </li>
         {/each}
         {#if canQuit}
@@ -401,6 +407,10 @@
   .more :global(.btn) {
     justify-content: flex-start;
     width: 100%;
+  }
+  /* Nouveautés marquées « Nouveau » : toute la rangée, pour que la pastille tienne. */
+  .more .wide {
+    grid-column: 1 / -1;
   }
   /* Objet survolé dans l'art : son entrée de menu s'allume aussi. */
   .menu :global(.is-hot) {

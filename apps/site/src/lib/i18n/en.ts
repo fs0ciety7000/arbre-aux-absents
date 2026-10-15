@@ -49,6 +49,7 @@ export const en = {
       'presse/': 'Press',
       'charte/': 'Brand guidelines',
       'credits/': 'Credits',
+      'nouveautes/': 'What’s new',
       'signaler/': 'Report a problem',
       'problemes-connus/': 'Known issues',
       'tickets/': 'Open tickets',
@@ -995,6 +996,21 @@ export const en = {
         id: 'pourquoi',
         heading: 'Why',
         body: [
+  changelog: {
+    seoTitle: 'What’s new',
+    seoDescription:
+      'New features and fixes in each version of L’Arbre aux absents, for the game and the website, grouped by published release.',
+    kicker: 'Release notes',
+    title: 'What’s new',
+    lede: 'What changes with each published version of the game. Small touch-ups are grouped with the release that brings them.',
+    current: 'Current version:',
+    versionLabel: 'Version',
+    listLabel: 'Releases, newest first',
+    kinds: { new: 'New', improved: 'Improved', fixed: 'Fixed' },
+    knownLink: 'Known issues',
+    reportLink: 'Report a problem',
+  },
+
           [
             'To understand and fix the problem. The contact is only used to reply to you; it is never published.',
           ],

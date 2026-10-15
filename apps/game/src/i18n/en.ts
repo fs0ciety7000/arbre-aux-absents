@@ -57,6 +57,8 @@ export const en = {
     stats: 'Statistics',
     bonus: 'Extras',
     credits: 'Credits',
+    changelog: 'What’s new',
+    changelogUnseen: 'New',
     quit: 'Quit',
     quitConfirmTitle: 'Quit the game?',
     quitConfirmText: 'Your progress is saved.',
@@ -301,6 +303,14 @@ export const en = {
     fonts:
       'Fonts: Fraunces, Literata, Instrument Sans, Oswald, Courier Prime, Caveat, Atkinson Hyperlegible Next (SIL OFL 1.1).',
     caseCredits: 'Case',
+  },
+
+  changelogScreen: {
+    title: 'What’s new',
+    lede: 'What changes with each published version of the game.',
+    versionLabel: 'Version',
+    kinds: { new: 'New', improved: 'Improved', fixed: 'Fixed' },
+    error: 'The release notes could not be loaded.',
   },
 
   tutorial: {

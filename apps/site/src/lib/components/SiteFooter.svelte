@@ -20,6 +20,7 @@
     'presse/',
     'charte/',
     'credits/',
+    'nouveautes/',
     'signaler/',
     'problemes-connus/',
     'tickets/',

@@ -67,6 +67,9 @@ export const fr = {
     stats: 'Statistiques',
     bonus: 'Bonus',
     credits: 'Crédits',
+    changelog: 'Nouveautés',
+    /** Marque de l'entrée Nouveautés tant que les notes de la version n'ont pas été ouvertes. */
+    changelogUnseen: 'Nouveau',
     quit: 'Quitter',
     quitConfirmTitle: 'Quitter le jeu ?',
     quitConfirmText: 'Votre progression est sauvegardée.',
@@ -315,6 +318,15 @@ export const fr = {
     fonts:
       'Polices : Fraunces, Literata, Instrument Sans, Oswald, Courier Prime, Caveat, Atkinson Hyperlegible Next (SIL OFL 1.1).',
     caseCredits: 'Affaire',
+  },
+
+  /** Nouveautés (ARCHITECTURE §3.8, DESIGN §13.11) : notes de version, la plus récente d'abord. */
+  changelogScreen: {
+    title: 'Nouveautés',
+    lede: 'Ce qui change à chaque version publiée du jeu.',
+    versionLabel: 'Version',
+    kinds: { new: 'Nouveauté', improved: 'Amélioration', fixed: 'Correction' },
+    error: 'Les notes de version n’ont pas pu être chargées.',
   },
 
   /**

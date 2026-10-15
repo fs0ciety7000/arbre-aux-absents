@@ -62,6 +62,21 @@
     }
   });
 
+  // Nouveautés (notes de version, ARCHITECTURE §3.8) : chargées à la demande.
+  let Changelog = $state<Component | null>(null);
+  $effect(() => {
+    if (app.screen === 'changelog' && !Changelog) {
+      import('./screens/Changelog.svelte').then(
+        (m) => (Changelog = m.default),
+        (err: unknown) => {
+          console.warn('[nouveautés]', err);
+          app.goto('title');
+          pushToast({ tone: 'warning', title: messages.errors.panelLoad });
+        },
+      );
+    }
+  });
+
   // Signaler un problème, Mes signalements (DESIGN §13.8, §13.9) : chargés à la demande.
   let Report = $state<Component<{ request: ReportRequest }> | null>(null);
   let MyReports = $state<Component | null>(null);
@@ -195,6 +210,8 @@
         <Bonus />
       {:else if app.screen === 'credits'}
         {#if Credits}<Credits />{/if}
+      {:else if app.screen === 'changelog'}
+        {#if Changelog}<Changelog />{/if}
       {:else if app.screen === 'ending'}
         <Ending />
       {:else if app.screen === 'desk' && app.game && app.desk}

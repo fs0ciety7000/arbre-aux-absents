@@ -9,6 +9,7 @@ const PAGES_FR = [
   '/charte/',
   '/presse/',
   '/credits/',
+  '/nouveautes/',
   // Signalement (envoi, suivi et problèmes connus en détail : report.spec.ts).
   '/signaler/',
   '/suivi/',
