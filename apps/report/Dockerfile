@@ -8,6 +8,7 @@
 #   sh scripts/docker-smoke.sh --report arbre-report 8090
 #
 # Accès de l'équipe au contact d'un ticket (terminal Coolify) : node dist/admin.js contact AA-0042
+# Sonde de santé (Docker et Coolify, sans curl ni wget dans l'image) : node dist/admin.js healthcheck
 #
 # Même image Node que le site, épinglée par digest (build reproductible ; Dependabot la met à jour).
 # node:sqlite exige Node ≥ 22.13 sans option (engines : ≥ 22.17).
@@ -66,6 +67,6 @@ USER node
 VOLUME ["/data"]
 EXPOSE 8090
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-  CMD ["node", "-e", "fetch('http://127.0.0.1:8090/healthz').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+  CMD ["node", "dist/admin.js", "healthcheck"]
 
 CMD ["node", "dist/server.js"]

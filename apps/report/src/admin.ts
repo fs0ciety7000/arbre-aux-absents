@@ -10,6 +10,7 @@ import { runRetention } from './retention';
  *   node dist/admin.js pending           opérations GitHub en attente, puis les abandonnées
  *   node dist/admin.js retry AA-0042     remet dans la file une opération abandonnée
  *   node dist/admin.js retention         applique la conservation D13 maintenant
+ *   node dist/admin.js healthcheck       sonde GET /healthz (Docker, Coolify), sans ouvrir la base
  */
 
 export const ADMIN_USAGE = `Usage :
@@ -17,7 +18,8 @@ export const ADMIN_USAGE = `Usage :
   node dist/admin.js status <TICKET>
   node dist/admin.js pending
   node dist/admin.js retry <TICKET>
-  node dist/admin.js retention`;
+  node dist/admin.js retention
+  node dist/admin.js healthcheck`;
 
 export interface AdminIo {
   out(line: string): void;
