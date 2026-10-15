@@ -16,3 +16,4 @@ export * from './json-schema';
 export * from './i18n';
 export * from './report-ref';
 export * from './report';
+export * from './changelog';

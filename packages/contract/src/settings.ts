@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { AchievementId, CaseId, EndingId } from './ids';
-import { IdSchema, MsSchema } from './ids';
+import { IdSchema, MsSchema, SEMVER } from './ids';
 import type { LanguageSetting } from './i18n';
 import { LanguageSettingSchema } from './i18n';
 import type { ReportRef } from './report-ref';
@@ -126,6 +126,8 @@ export interface Profile {
   tutorial?: TutorialProgress;
   /** « Mes signalements » (≤ 20, les plus récents d'abord). Absent : aucun signalement. */
   reports?: ReportRef[];
+  /** Dernière version dont l'écran Nouveautés a été ouvert (semver). Absent : jamais ouvert. */
+  changelogSeen?: string;
 }
 
 /** Réglages par défaut (docs/game/GAME_DESIGN.md §10, §16, §17). */
@@ -242,4 +244,5 @@ export const ProfileSchema = z.strictObject({
   completed: z.record(IdSchema, CaseCompletionSchema),
   tutorial: TutorialProgressSchema.optional(),
   reports: z.array(ReportRefSchema).max(REPORT_REF_LIMITS.max).optional(),
+  changelogSeen: z.string().regex(SEMVER).optional(),
 });

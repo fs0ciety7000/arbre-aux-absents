@@ -1,0 +1,246 @@
+[
+  {
+    "version": "1.3.1",
+    "date": "2026-10-15",
+    "title": { "fr": "Crédits et retour au titre", "en": "Credits and return to title" },
+    "items": [
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Les crédits, dans le jeu et sur le site, nomment le concepteur du jeu : Nicolas Dessenius.",
+          "en": "The credits, in the game and on the website, now name the game’s designer: Nicolas Dessenius."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Revenir très vite à l’écran titre (depuis les Succès, par exemple) ne laisse plus un écran qui ne répond pas.",
+          "en": "Going back to the title screen very quickly (from Achievements, for instance) no longer leaves an unresponsive screen."
+        }
+      }
+    ]
+  },
+  {
+    "version": "1.3.0",
+    "date": "2026-10-15",
+    "title": {
+      "fr": "Dispositions du bureau et plein écran",
+      "en": "Desk layouts and full-screen documents"
+    },
+    "items": [
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Trois dispositions du bureau, Enquête, Lecture et Arbre, pour donner la place à ce qui compte (ordinateur et tablette en paysage).",
+          "en": "Three desk layouts, Investigate, Read and Tree, to give room to what matters (computer and tablet in landscape)."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Plein écran du document dans le Lecteur (touche F).",
+          "en": "Full-screen documents in the Reader (F key)."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Taille du texte des documents réglable (A− / A+) et volet de lecture élargi à la poignée.",
+          "en": "Adjustable document text size (A− / A+) and a reading pane you can widen with its handle."
+        }
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Carte : un « + » signale un lieu où de nouvelles pièces sont à consulter, et un fonds encore fermé le dit clairement.",
+          "en": "Map: a “+” marks a place with new documents to consult, and archives that are not open yet say so clearly."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Zoom avant du Lecteur lisible, et la fiche flottante ne couvre plus les boutons de zoom de l’arbre.",
+          "en": "Zooming in the Reader stays legible, and the floating card no longer covers the tree’s zoom buttons."
+        }
+      }
+    ]
+  },
+  {
+    "version": "1.2.1",
+    "date": "2026-10-15",
+    "title": { "fr": "Signaler pendant la partie", "en": "Reporting during play" },
+    "items": [
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Un bouton « Signaler » dans l’en-tête du bureau, pour signaler un problème sans quitter la partie.",
+          "en": "A “Report” button in the desk header, to report a problem without leaving your game."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Sur le site, la liste publique des tickets ouverts.",
+          "en": "On the website, the public list of open tickets."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Le formulaire de signalement ne défile plus de côté sur téléphone.",
+          "en": "The report form no longer scrolls sideways on phones."
+        }
+      }
+    ]
+  },
+  {
+    "version": "1.2.0",
+    "date": "2026-10-15",
+    "title": { "fr": "Le jeu en anglais", "en": "The game in English" },
+    "items": [
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Les deux affaires, l’interface et le site en anglais. La langue se choisit au lancement et se change en cours de partie, sans perdre sa sauvegarde.",
+          "en": "Both cases, the interface and the website in English. Pick the language at launch and change it mid-game without losing your save."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Signaler un problème depuis le jeu, puis suivre sa réponse dans « Mes signalements » ou sur le site.",
+          "en": "Report a problem from the game, then follow the answer in “My reports” or on the website."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Sur le site : les problèmes connus et une page de confidentialité.",
+          "en": "On the website: known issues and a privacy page."
+        }
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Premier affichage plus rapide.",
+          "en": "Faster first load."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Lancement plus fiable dans les navigateurs aux règles de sécurité strictes, et sélecteur de langue mieux lu par les lecteurs d’écran.",
+          "en": "More reliable start-up in browsers with strict security rules, and a language picker that screen readers announce better."
+        }
+      }
+    ]
+  },
+  {
+    "version": "1.1.0",
+    "date": "2026-10-15",
+    "title": {
+      "fr": "Deuxième affaire : Le Revenant de Hautcorvin",
+      "en": "Second case: The Revenant of Hautcorvin"
+    },
+    "items": [
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Une nouvelle affaire, « Le Revenant de Hautcorvin », avec sa propre carte, ses portraits et ses pièces illustrées.",
+          "en": "A new case, “The Revenant of Hautcorvin”, with its own map, portraits and illustrated documents."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Cases revendiquées : certaines identités arrivent déjà déclarées dans l’arbre. À vous de les vérifier.",
+          "en": "Claimed slots: some identities arrive already declared in the tree. It is up to you to check them."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Les affaires se choisissent comme des chemises posées sur le bureau.",
+          "en": "Cases are chosen like folders laid out on the desk."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Décision finale en tampons ; une option encore indisponible dit pourquoi.",
+          "en": "Final decision by rubber stamp; an option that is not available yet says why."
+        }
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Notes de service réglables : toutes, seulement les nouveautés, ou aucune.",
+          "en": "Adjustable office memos: all of them, only what is new, or none."
+        }
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Une sauvegarde de secours par affaire : passer d’une affaire à l’autre n’écrase plus rien.",
+          "en": "One backup save per case: switching between cases no longer overwrites anything."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Vue d’ensemble de la carte mieux cadrée et confirmations plus faciles au clavier.",
+          "en": "Better-framed map overview and confirmations that are easier to use with a keyboard."
+        }
+      }
+    ]
+  },
+  {
+    "version": "1.0.1",
+    "date": "2026-10-14",
+    "title": { "fr": "Première version publique", "en": "First public release" },
+    "items": [
+      {
+        "kind": "new",
+        "text": {
+          "fr": "« Succession Varenque » : reconstituez l’arbre d’une famille de la Velmarche à partir de plus de cent pièces d’archives, d’un catalogue de recherche et d’une carte illustrée.",
+          "en": "“The Varenque Succession”: rebuild the tree of a family from Velmarche using over a hundred archive documents, a search catalogue and an illustrated map."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Sur Windows, macOS, Linux, Android et dans le navigateur, avec sauvegardes, export et import.",
+          "en": "On Windows, macOS, Linux, Android and in the browser, with saves, export and import."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Une musique qui se compose au fil de l’enquête, et des ambiances sonores.",
+          "en": "Music that composes itself as the investigation unfolds, and ambient sound."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Des notes de service en bulles pour les premiers pas au bureau.",
+          "en": "Office memos in speech bubbles for your first steps at the desk."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Accessibilité : taille du texte, police très lisible ou pour la dyslexie, contraste élevé, palettes pour le daltonisme, mouvement réduit, clavier et manette.",
+          "en": "Accessibility: text size, highly legible or dyslexia-friendly font, high contrast, colour-blind palettes, reduced motion, keyboard and controller."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Téléphone et tablette : écran stable sans zoom ni glissement, barres système d’Android respectées, carte et tiroir adaptés aux petits écrans.",
+          "en": "Phone and tablet: a steady screen with no accidental zoom or sliding, Android system bars respected, map and drawer suited to small screens."
+        }
+      }
+    ]
+  }
+]

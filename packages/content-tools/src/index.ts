@@ -22,3 +22,4 @@ export * from './build';
 export * from './zip';
 export * from './sections';
 export * from './cli';
+export * from './changelog';

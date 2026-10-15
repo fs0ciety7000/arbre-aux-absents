@@ -293,3 +293,10 @@ describe('rapport final et sections', () => {
     expect(errors).toEqual(['section [a] en double']);
   });
 });
+
+describe('journal des versions du dépôt', () => {
+  it('content/changelog.json est valide et suit la version du jeu', async () => {
+    const { checkChangelog, REPO_ROOT } = await import('../src');
+    expect(await checkChangelog(REPO_ROOT)).toEqual([]);
+  });
+});

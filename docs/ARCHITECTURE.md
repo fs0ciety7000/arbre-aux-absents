@@ -298,7 +298,8 @@ export interface Settings {
 // Le plein écran du document est un état d'interface (non mémorisé).
 export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>; completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] }>;
   tutorial?: { done: boolean; seen: string[] }; // tutoriel en bulles : optionnel (anciens profils valides), seen ≤ 32 ids kebab-case
-  reports?: ReportRef[] } // « Mes signalements », ≤ 20 (§8)
+  reports?: ReportRef[]; // « Mes signalements », ≤ 20 (§8)
+  changelogSeen?: string } // dernière version des Nouveautés ouverte (§3.8)
 // Crans des « Notes de service » (E04) sans champ de plus : écrits dans `tutorial` au lancement.
 // Complètes → done false, seen ∪ {returning} (repart de zéro si done) ; Nouveautés seulement →
 // done false, seen ∪ 10 notes de base ; Aucune → done true. `done` devient vrai quand les notes
@@ -475,6 +476,29 @@ Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, 
 
 `content:build` écrit les affaires triées par `(meta.order ?? ∞, id)` ; tri des listes par
 `localeCompare(…, locale)` dans chaque langue.
+
+### 3.8 Journal des versions (« Nouveautés »)
+
+Source : `packages/contract/src/changelog.ts` ; données : `content/changelog.json` (un seul fichier).
+
+```ts
+type ChangeKind = 'new' | 'improved' | 'fixed';            // Nouveauté, Amélioration, Correction
+interface ChangelogRelease { version: string /* semver */; date: string /* AAAA-MM-JJ */;
+  title: { fr: string; en: string }; items: { kind: ChangeKind; text: { fr: string; en: string } }[] /* 1–8 */ }
+type Changelog = ChangelogRelease[];                         // la plus récente d'abord
+```
+
+- **Une entrée par version publiée** (`[tauri] [itch]`), jamais une par commit : la publication est le
+  regroupement. Points condensés pour les joueurs (3 à 7, 1 à 3 pour un petit correctif), sans détail
+  interne (CI, tests, refactorisation) ni solution d'affaire.
+- `content:check` (`checkChangelog`, `packages/content-tools/src/changelog.ts`) : schéma strict, versions
+  uniques, triées de la plus récente à la plus ancienne (dates non croissantes), **dernière entrée =
+  version de `apps/game/package.json`**. Un changement de version sans son entrée fait donc échouer
+  `check` (procédure : WORKFLOW › Publication, skill `/ship`).
+- Lecture : le jeu importe le fichier dans l'écran **Nouveautés** (chunk à la demande, `ChangelogSchema`
+  au chargement) ; le site le lit au prérendu (`/nouveautes/`, `/en/nouveautes/`), aucun JS client.
+- `Profile.changelogSeen` (semver, facultatif) : dernière version dont l'écran a été ouvert ; sert à la
+  marque « Nouveau » du menu titre.
 
 ## 4. Plateforme
 
