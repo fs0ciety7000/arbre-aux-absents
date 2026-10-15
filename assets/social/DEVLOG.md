@@ -87,7 +87,7 @@ freshly printed photograph on the counter and says: "I am Bastien Tessonnal."
 Bastien Tessonnal, son of the master glassmaker of Hautcorvin. Accused of setting fire to the furnace
 hall in 1937, struck from the registers in 1938, declared dead in a penal colony in 1944. The man
 knows everything: the name of the cat on the rue Haute, his sister's nickname, every stone of the
-Bear's Pass trail. His father has just died aged 95, leaving everything "to my living children". His
+Pas de l'Ourse trail. His father has just died aged 95, leaving everything "to my living children". His
 sister only says: "My brother had our mother's eyes."
 
 You're back at your desk as a rapporteur, now with a permanent post. Your file: establish the
