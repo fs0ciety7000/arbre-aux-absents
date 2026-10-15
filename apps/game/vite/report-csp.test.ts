@@ -16,7 +16,7 @@ describe('CSP Tauri et VITE_REPORT_API', () => {
   });
 
   it('origine absente : erreur qui nomme les deux réglages', () => {
-    const c = conf({ 'connect-src': `'self' ipc: ${API}` });
+    const c = conf({ 'connect-src': `'self' ipc: ${API}`, 'img-src': `'self' data: ${API}` });
     expect(tauriCspProblem(c, API)).toBeNull();
     const problem = tauriCspProblem(c, reportOrigin('https://staging-api.example.org/v1'));
     expect(problem).toContain('https://staging-api.example.org');
@@ -33,5 +33,10 @@ describe('CSP Tauri et VITE_REPORT_API', () => {
     expect(tauriConnectSrc(conf({ 'connect-src': ["'self'", API] }))).toEqual(["'self'", API]);
     expect(tauriConnectSrc(conf({ 'default-src': "'self'" }))).toBeNull();
     expect(tauriCspProblem({}, API)).toMatch(/aucune directive connect-src/);
+  });
+
+  it('img-src doit aussi autoriser le service (captures de la fiche de suivi)', () => {
+    const c = conf({ 'connect-src': `'self' ${API}`, 'img-src': "'self' data: blob:" });
+    expect(tauriCspProblem(c, API)).toMatch(/absent du img-src/);
   });
 });

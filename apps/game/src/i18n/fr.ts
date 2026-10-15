@@ -618,6 +618,17 @@ export const fr = {
     previewNote:
       'Rien d’autre : ni adresse IP, ni nom de joueur. elapsedMs est le temps passé sur ce formulaire (anti-robot) ; website doit rester vide.',
     platforms: { web: 'Navigateur', desktop: 'Ordinateur', android: 'Android' },
+    sentInfo: {
+      title: 'Informations envoyées avec le signalement',
+      version: 'Version',
+      platform: 'Plateforme',
+      os: 'Système',
+      browser: 'Navigateur',
+      language: 'Langue',
+      screen: 'Fenêtre',
+      unknown: 'Inconnu',
+    },
+    attachmentsBusy: 'Envoi des captures en cours : patientez un instant.',
     submit: 'Envoyer le signalement',
     receipt: {
       stamp: 'Reçu',
@@ -627,6 +638,10 @@ export const fr = {
       followLabel: 'Lien de suivi',
       open: 'Ouvrir le suivi sur le site',
       announce: (t: string) => `Signalement reçu, numéro ${t}.`,
+      attachmentsMissing: (n: number) =>
+        n > 1
+          ? `${n} captures n’ont pas pu être jointes (expirées ou refusées) : le signalement est bien reçu.`
+          : '1 capture n’a pas pu être jointe (expirée ou refusée) : le signalement est bien reçu.',
     },
     failure: {
       toast: 'Signalement non envoyé',

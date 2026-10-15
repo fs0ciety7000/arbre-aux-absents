@@ -138,7 +138,7 @@ test('envoi depuis l’écran titre : aperçu exact, reçu, Mes signalements, su
   await expect(preview).toContainText('"category": "blocked"');
   await expect(preview).toContainText(DESCRIPTION);
   await expect(preview).not.toContainText('"save"');
-  await expect(dialog.getByText(/^Version \d+\.\d+\.\d+ · /)).toBeVisible();
+  await expect(dialog.locator('.preview-line')).toHaveText(/^Version \d+\.\d+\.\d+ · /);
 
   await send.click();
   await expect(dialog.getByRole('heading', { name: 'Signalement reçu' })).toBeVisible();
@@ -318,7 +318,8 @@ test('clavier : le formulaire se remplit et s’envoie sans souris, Échap le re
 }) => {
   await mockApi(page, happyApi);
   const dialog = await openFromTitle(page);
-  await page.keyboard.press('Tab'); // catégorie → description
+  await page.keyboard.press('Tab'); // catégorie → barre de mise en forme (un seul arrêt)
+  await page.keyboard.press('Tab'); // → description
   await page.keyboard.type(DESCRIPTION);
   await expect(dialog.getByRole('textbox', { name: 'Description' })).toHaveValue(DESCRIPTION);
   const send = dialog.getByRole('button', { name: 'Envoyer le signalement' });

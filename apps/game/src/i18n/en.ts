@@ -589,6 +589,17 @@ export const en = {
     previewNote:
       'Nothing else: no IP address, no player name. elapsedMs is the time spent on this form (anti-bot); website must stay empty.',
     platforms: { web: 'Browser', desktop: 'Computer', android: 'Android' },
+    sentInfo: {
+      title: 'Information sent with the report',
+      version: 'Version',
+      platform: 'Platform',
+      os: 'System',
+      browser: 'Browser',
+      language: 'Language',
+      screen: 'Window',
+      unknown: 'Unknown',
+    },
+    attachmentsBusy: 'Screenshots are still uploading: please wait a moment.',
     submit: 'Send the report',
     receipt: {
       stamp: 'Received',
@@ -598,6 +609,8 @@ export const en = {
       followLabel: 'Follow-up link',
       open: 'Open the follow-up on the website',
       announce: (t: string) => `Report received, number ${t}.`,
+      attachmentsMissing: (n: number) =>
+        `${n} ${n === 1 ? 'screenshot' : 'screenshots'} could not be attached (expired or rejected): the report itself was received.`,
     },
     failure: {
       toast: 'Report not sent',

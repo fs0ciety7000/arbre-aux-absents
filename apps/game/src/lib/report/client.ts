@@ -8,10 +8,13 @@
  * l'API) ; aucun cookie (`credentials: 'omit'`), aucun Referer (`referrerPolicy: 'no-referrer'`).
  */
 import {
+  ATTACHMENT_ID,
+  AttachmentReceiptSchema,
   REPORT_TOKEN,
   ReportErrorBodySchema,
   ReportReceiptSchema,
   TicketViewSchema,
+  type AttachmentReceipt,
   type Locale,
   type ReportReceipt,
   type ReportSubmission,
@@ -26,6 +29,8 @@ export const SITE_URL = 'https://arbre.cardormedia.com';
 export const FORUM_URL = 'https://cardorinteractive.itch.io/arbre-aux-absents/community';
 /** Délai d'attente de chaque appel (DESIGN §13.8 : 10 s au plus). */
 export const REPORT_TIMEOUT_MS = 10_000;
+/** Envoi d'une capture (2 Mio au plus, réseau mobile lent) : le service attend 60 s. */
+export const ATTACHMENT_TIMEOUT_MS = 60_000;
 
 /** Base du service, sans barre finale. */
 export function reportApiBase(value: string | undefined = import.meta.env.VITE_REPORT_API): string {
@@ -54,6 +59,8 @@ export type ApiFailure =
   /** 400 et autres refus. */
   | { kind: 'invalid' }
   | { kind: 'tooLarge' }
+  /** 415 : type d'image refusé (captures : PNG, JPEG ou WebP seulement). */
+  | { kind: 'unsupported' }
   /** 404 : jeton inconnu, supprimé ou expiré. */
   | { kind: 'notFound' }
   /** Réseau injoignable (hors ligne, DNS, CORS refusé, CSP). */
@@ -99,6 +106,8 @@ async function failureOf(res: Response): Promise<ApiFailure> {
       return { kind: 'notFound' };
     case 413:
       return { kind: 'tooLarge' };
+    case 415:
+      return { kind: 'unsupported' };
     case 429:
       return {
         kind: 'rateLimited',
@@ -209,4 +218,31 @@ export function deleteTicket(token: string, opts: ClientOptions = {}): Promise<A
     async () => true as const,
     opts,
   );
+}
+
+/**
+ * POST /v1/attachments → 201 `AttachmentReceipt` : une capture, corps binaire brut, envoyée avant
+ * le signalement. `website` : valeur du pot de miel (vide pour un humain).
+ */
+export function uploadAttachment(
+  image: Blob,
+  website: string,
+  opts: ClientOptions = {},
+): Promise<ApiResult<AttachmentReceipt>> {
+  return call(
+    `/v1/attachments?website=${encodeURIComponent(website)}`,
+    { method: 'POST', headers: { 'Content-Type': image.type }, body: image },
+    201,
+    async (res) => {
+      const parsed = AttachmentReceiptSchema.safeParse(await json(res));
+      return parsed.success ? parsed.data : null;
+    },
+    { timeoutMs: ATTACHMENT_TIMEOUT_MS, ...opts },
+  );
+}
+
+/** DELETE /v1/attachments/<id> → 204 : capture retirée du formulaire (encore libre). */
+export function deleteAttachment(id: string, opts: ClientOptions = {}): Promise<ApiResult<true>> {
+  if (!ATTACHMENT_ID.test(id)) return Promise.resolve(fail({ kind: 'notFound' }));
+  return call(`/v1/attachments/${id}`, { method: 'DELETE' }, 204, async () => true as const, opts);
 }

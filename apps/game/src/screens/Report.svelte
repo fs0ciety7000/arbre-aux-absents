@@ -4,6 +4,9 @@
   sauvegarde anonymisée sur case cochée ; aperçu du JSON **réel** envoyé. Reçu : tampon, numéro,
   lien de suivi, référence gardée dans le profil (« Mes signalements »). Échec (hors ligne, 503,
   429, délai) : « Copier le rapport » et « Forum itch.io », sans jamais perdre le texte saisi.
+  Description en Markdown (barre d'outils, aperçu, DESIGN §9.37) ; captures d'écran (fichier,
+  collage, dépôt ; envoyées une à une avant le signalement, §9.38) ; « Informations envoyées ».
+  Pas de capture automatique de l'écran du jeu : aucun moyen léger et fiable (DESIGN §13.8).
 -->
 <script lang="ts">
   import {
@@ -15,16 +18,20 @@
     type SaveState,
   } from '@arbre/contract';
   import {
+    AttachmentTray,
     Button,
     Dialog,
     DymoLabel,
     Icon,
     LANGUAGE_NAMES,
+    MarkdownField,
     Select,
     Stamp,
     TextField,
     Toggle,
+    imageFiles,
     pushToast,
+    type AttachmentItem,
   } from '@arbre/ui';
   import { onMount } from 'svelte';
   import { version } from '../../package.json';
@@ -36,6 +43,11 @@
   import { initialFocus } from '../lib/game/initial-focus';
   import { copyText, openLink } from '../lib/report/actions';
   import { anonymiseSave } from '../lib/report/anonymise';
+  import {
+    LIMITS as ATTACHMENTS,
+    createAttachmentQueue,
+    missingAttachments,
+  } from '../lib/report/attachments';
   import { FORUM_URL, followUrlFor, submitReport, type ApiFailure } from '../lib/report/client';
   import {
     addReportRef,
@@ -79,6 +91,23 @@
   let receipt = $state.raw<ReportReceipt | null>(null);
   let failure = $state.raw<ApiFailure | null>(null);
   let copyFallback = $state(false);
+  /** Captures d'écran : file d'envoi (une requête par image, avant le signalement). */
+  let attachments = $state.raw<AttachmentItem[]>([]);
+  let tray: ReturnType<typeof AttachmentTray> | undefined = $state();
+  /** Captures envoyées mais absentes du reçu (expirées ou refusées entre-temps). */
+  let attachmentsMissing = $state(0);
+  const queue = createAttachmentQueue({
+    website: () => website,
+    onchange: (items) => (attachments = items),
+  });
+  const attachmentIds = $derived(
+    attachments.flatMap((a) => (a.status === 'ready' && a.receipt ? [a.receipt.id] : [])),
+  );
+  const uploading = $derived(
+    attachments.some((a) => a.status === 'preparing' || a.status === 'uploading'),
+  );
+  // Formulaire refermé sans envoi : les captures déjà envoyées sont supprimées du service.
+  onMount(() => () => queue.dispose(phase !== 'sent'));
 
   const openedAt = Date.now();
   /** Instant et fenêtre de l'aperçu (relus à chaque saisie, à l'ouverture de l'aperçu). */
@@ -147,6 +176,7 @@
         diagnostics,
         website,
         elapsedMs: now - openedAt,
+        attachments: attachmentIds,
       }),
     );
   });
@@ -166,6 +196,20 @@
     ]
       .filter(Boolean)
       .join(' · ');
+  });
+
+  /** « Informations envoyées » : ce qui part avec le signalement, en clair. */
+  const sentInfo = $derived.by(() => {
+    const d = submission.diagnostics;
+    const s = m.sentInfo;
+    return [
+      { label: s.version, value: `${d.appVersion} · ${messages.newGame.edition(d.edition)}` },
+      { label: s.platform, value: m.platforms[app.platform?.kind ?? 'web'] },
+      { label: s.os, value: d.os ?? s.unknown },
+      { label: s.browser, value: d.browser ?? s.unknown },
+      { label: s.language, value: LANGUAGE_NAMES[d.locale].name },
+      { label: s.screen, value: `${d.viewport.w} × ${d.viewport.h}` },
+    ];
   });
 
   const saveNote = $derived.by(() => {
@@ -209,16 +253,20 @@
   );
 
   async function send() {
-    if (missing > 0 || phase !== 'form') return;
-    refresh();
-    const body = $state.snapshot(submission);
+    if (missing > 0 || uploading || phase !== 'form') return;
     phase = 'sending';
     failure = null;
     copyFallback = false;
+    // Captures expirées (plus d'une heure) ou sur le point de l'être : renvoyées d'abord.
+    if (attachments.length) await queue.fresh();
+    refresh();
+    const body = $state.snapshot(submission);
     const res = await submitReport(body);
     if (res.ok) {
       receipt = res.value;
+      attachmentsMissing = missingAttachments(body.attachments?.length ?? 0, res.value.attachments);
       phase = 'sent';
+      queue.clear();
       app.setReports(
         addReportRef(app.reports, {
           ticket: res.value.ticket,
@@ -244,6 +292,14 @@
     }
   }
 
+  /** Une image collée (capture d'écran) est jointe ; du texte se colle normalement. */
+  function onpaste(e: ClipboardEvent) {
+    const files = imageFiles(e.clipboardData);
+    if (files.length === 0) return;
+    if (!Array.from(e.clipboardData?.types ?? []).includes('text/plain')) e.preventDefault();
+    tray?.addFiles(files);
+  }
+
   function selectAll(node: HTMLTextAreaElement) {
     node.focus();
     node.select();
@@ -251,6 +307,7 @@
 
   /** Fermé sans envoi : le texte saisi est gardé pour la prochaine ouverture (session). */
   function closed() {
+    queue.dispose(phase !== 'sent');
     app.reportDraft =
       phase === 'sent' || missingChars(description) === REPORT_LIMITS.descriptionMin
         ? null
@@ -285,6 +342,12 @@
         <DymoLabel text={receipt.ticket} tone="red" tilt={-1.5} />
       </p>
       <p>{m.receipt.keep}</p>
+      {#if attachmentsMissing > 0}
+        <p class="note warn" role="status">
+          <Icon name="warning" />
+          {m.receipt.attachmentsMissing(attachmentsMissing)}
+        </p>
+      {/if}
       <p class="follow">
         <span class="caps">{m.receipt.followLabel}</span>
         <span class="ink-type url">{followUrl}</span>
@@ -303,23 +366,37 @@
       class="form"
       novalidate
       oninput={refresh}
+      {onpaste}
       onsubmit={(e) => e.preventDefault()}
       use:initialFocus={'select'}
     >
       <Select label={m.categoryLabel} options={categoryOptions} bind:value={category} />
       <div class="description">
-        <TextField
+        <MarkdownField
+          id="report-description"
           label={m.descriptionLabel}
-          multiline
-          rows={4}
+          rows={5}
           maxlength={REPORT_LIMITS.descriptionMax}
           hint={m.descriptionHint}
+          describedby={missing > 0 ? 'report-missing' : undefined}
           bind:value={description}
         />
         {#if missing > 0}
           <p id="report-missing" class="missing">{m.descriptionMissing(missing)}</p>
         {/if}
+        {#if uploading}
+          <p id="report-busy" class="missing">{m.attachmentsBusy}</p>
+        {/if}
       </div>
+      <AttachmentTray
+        bind:this={tray}
+        items={attachments}
+        max={ATTACHMENTS.max}
+        disabled={phase === 'sending'}
+        onadd={(files) => queue.add(files)}
+        onremove={(key) => queue.remove(key)}
+        onretry={(key) => queue.retry(key)}
+      />
       <TextField
         label={m.contactLabel}
         maxlength={REPORT_LIMITS.contact}
@@ -348,6 +425,18 @@
           bind:value={website}
         />
       </div>
+
+      <section class="sent-info" aria-labelledby="report-sent-info">
+        <h3 id="report-sent-info" class="caps">{m.sentInfo.title}</h3>
+        <dl>
+          {#each sentInfo as row (row.label)}
+            <div>
+              <dt>{row.label}</dt>
+              <dd class="ink-type">{row.value}</dd>
+            </div>
+          {/each}
+        </dl>
+      </section>
 
       <details class="preview" ontoggle={refresh}>
         <summary>{m.previewSummary}</summary>
@@ -399,8 +488,8 @@
         variant="primary"
         iconName="envelope"
         loading={phase === 'sending'}
-        disabled={missing > 0}
-        aria-describedby={missing > 0 ? 'report-missing' : undefined}
+        disabled={missing > 0 || uploading}
+        aria-describedby={missing > 0 ? 'report-missing' : uploading ? 'report-busy' : undefined}
         onclick={() => void send()}>{failure ? messages.retry : m.submit}</Button
       >
     {/if}
@@ -426,6 +515,43 @@
   }
   .preview {
     min-inline-size: 0;
+  }
+  .sent-info {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border: var(--border) dashed var(--line-strong);
+    border-radius: var(--radius-xs);
+  }
+  .sent-info h3 {
+    margin: 0;
+    font-weight: var(--weight-medium);
+  }
+  .sent-info dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+    gap: var(--space-1) var(--space-4);
+    margin: 0;
+    font-size: var(--step--1);
+  }
+  .sent-info dl > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--space-2);
+    min-inline-size: 0;
+  }
+  .sent-info dt {
+    color: var(--text-muted);
+  }
+  .sent-info dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  .warn {
+    display: flex;
+    gap: var(--space-2);
+    align-items: flex-start;
+    color: var(--text);
   }
   .preview summary {
     display: flex;

@@ -15,11 +15,12 @@ import {
   type ReportRef,
   type ReportSubmission,
   type Settings,
+  browserFamily,
   osFamily,
 } from '@arbre/contract';
 
-/** Famille grossière du système : déplacée dans le contrat (partagée jeu/site). */
-export { osFamily };
+/** Famille grossière du système et du navigateur : dans le contrat (partagées jeu/site). */
+export { browserFamily, osFamily };
 
 export interface GameEnvironment {
   appVersion: string;
@@ -44,11 +45,14 @@ const clampSide = (n: number) => Math.max(0, Math.min(100_000, Math.round(n) || 
 /** Diagnostics d'un signalement envoyé depuis le jeu. */
 export function gameDiagnostics(env: GameEnvironment): ReportDiagnostics {
   const os = osFamily(env.userAgent);
+  // Dans Tauri (ordinateur, Android), le moteur intégré est nommé : « Tauri (WebView2 129) ».
+  const browser = browserFamily(env.userAgent, { tauri: env.platform !== 'web' });
   const out: ReportDiagnostics = {
     appVersion: env.appVersion.slice(0, 40),
     edition: env.edition,
     platform: env.platform,
     ...(os ? { os } : {}),
+    ...(browser ? { browser: browser.slice(0, 40) } : {}),
     locale: env.locale,
     viewport: {
       w: clampSide(env.width),
@@ -73,9 +77,11 @@ export interface FormInput {
   /** Pot de miel. */
   website: string;
   elapsedMs: number;
+  /** Captures déjà envoyées (`POST /v1/attachments`), dans l'ordre ; omises si aucune. */
+  attachments?: readonly string[];
 }
 
-/** Corps exact du POST /v1/reports (contact omis s'il est vide). */
+/** Corps exact du POST /v1/reports (contact et captures omis s'ils sont vides). */
 export function buildSubmission(input: FormInput): ReportSubmission {
   const contact = input.contact.trim().slice(0, REPORT_LIMITS.contact);
   return {
@@ -87,6 +93,7 @@ export function buildSubmission(input: FormInput): ReportSubmission {
     diagnostics: input.diagnostics,
     website: input.website,
     elapsedMs: Math.max(0, Math.round(input.elapsedMs)),
+    ...(input.attachments?.length ? { attachments: [...input.attachments] } : {}),
   };
 }
 

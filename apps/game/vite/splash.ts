@@ -58,7 +58,8 @@ export function cspFor(styleHashes: string[], connect: string[] = []): string {
     "script-src 'self'",
     `style-src 'self' ${styleHashes.join(' ')}`.trim(),
     "style-src-attr 'unsafe-inline'",
-    "img-src 'self' data: blob:",
+    // Captures jointes aux signalements (`TicketView.attachments`, URL signées du service).
+    ["img-src 'self' data: blob:", ...connect].join(' '),
     "font-src 'self'",
     "media-src 'self' blob:",
     ["connect-src 'self'", ...connect].join(' '),

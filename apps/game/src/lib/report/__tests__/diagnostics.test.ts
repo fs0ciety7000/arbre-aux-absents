@@ -46,9 +46,12 @@ describe('diagnostics du jeu', () => {
       edition: 'demo',
       platform: 'android',
       os: 'Android',
+      // Dans Tauri : le moteur intégré, jamais l'User-Agent complet.
+      browser: 'Tauri (WebView Android 129)',
       locale: 'en',
       viewport: { w: 412, h: 823, dpr: 2.63 },
     });
+    expect(gameDiagnostics({ ...env, platform: 'web' }).browser).toBe('Chrome 129');
     expect(JSON.stringify(d)).not.toContain('Pixel');
     expect(osFamily('Mozilla/5.0 (Windows NT 10.0; Win64; x64)')).toBe('Windows');
     expect(osFamily('Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5)')).toBe('macOS');

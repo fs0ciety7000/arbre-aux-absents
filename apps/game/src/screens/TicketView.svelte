@@ -1,12 +1,13 @@
 <!--
   Feuille de suivi d'un signalement (DESIGN §13.9, §9.36) : frise `TicketStatus`, réponses de
-  l'équipe (texte brut), « Ouvrir sur le site » et « Supprimer mon signalement » (confirmation,
+  l'équipe (texte brut), captures jointes (vignettes, agrandies au clic), « Ouvrir sur le site » et « Supprimer mon signalement » (confirmation,
   focus initial sur « Garder »). Hors ligne : la frise garde le dernier statut connu, « vu le … ».
   Introuvable (supprimé, expiré) : « Retirer de la liste ».
 -->
 <script lang="ts">
   import type { ReportRef, TicketView } from '@arbre/contract';
   import {
+    AttachmentGallery,
     Button,
     Dialog,
     DymoLabel,
@@ -139,6 +140,10 @@
         </span>
       </p>
       {#if !known}<p class="muted">{t.unknown}</p>{/if}
+    {/if}
+
+    {#if view?.attachments?.length}
+      <AttachmentGallery images={view.attachments} title={report.ticket} />
     {/if}
 
     {#if view}
