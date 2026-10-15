@@ -255,10 +255,11 @@ décisions D9 à D13). App Coolify **séparée** du site : `https://arbre-api.ca
 | Build | `apps/report/Dockerfile`, **contexte `.`** (racine du repo). BuildKit lit `apps/report/Dockerfile.dockerignore` (liste blanche : `package.json`, `package-lock.json`, `tsconfig.base.json`, `packages/contract/`, `apps/report/`) à la place du `.dockerignore` du site, qui exclut `apps/report` |
 | Image | `node:22-bookworm-slim` épinglée par digest (la même que le site) ; étape `build` : `npm ci --ignore-scripts` (lockfile figé, racine + `@arbre/report`), `npm run build -w @arbre/report` → `dist/server.js` et `dist/admin.js` autonomes (zod et le contrat embarqués) ; étape `runtime` : `dist/` + `package.json` seulement, **aucun `node_modules`**, fichiers à root en lecture seule, utilisateur `node` (1000) |
 | Port exposé | `8090` |
-| Healthcheck | `GET /healthz` → `200 {ok, github: 'ok'\|'degraded', pending, failed}` (aussi `HEALTHCHECK` Docker, `node -e fetch`). `degraded` : jeton GitHub refusé (401) ou GitHub injoignable ; la soumission reste acceptée (file `pending`) |
+| Healthcheck | `GET /healthz` → `200 {ok, github: 'ok'\|'degraded', pending, failed}`. `degraded` : pas de jeton, jeton refusé (401) ou GitHub injoignable ; la soumission reste acceptée (file `pending`). Sonde : `node dist/admin.js healthcheck` (`HEALTHCHECK` Docker et healthcheck Coolify : l'image n'a ni curl ni wget) |
 | Stockage | **volume persistant `/data`** (base SQLite, `DATA_DIR=/data`), seul dossier inscriptible ; `VOLUME /data` dans l'image. Sans volume Coolify nommé, chaque redéploiement repart d'une base vide (tickets et jetons de suivi perdus) |
 | Commande | `node dist/server.js` (`NODE_OPTIONS=--disable-warning=ExperimentalWarning` pour `node:sqlite`) |
 | Branche | celle du site (auto-deploy) ; voir « Ordre de déploiement » |
+| **Statut** | **en ligne depuis le 15/10/2026**, `github: "degraded"` tant que `GITHUB_TOKEN` n'est pas saisi (voir « Reste à faire ») |
 
 ### En local
 
@@ -274,20 +275,41 @@ dans `apps/report/.env.local`, gitignoré).
 
 ### DNS Cloudflare
 
-Zone `cardormedia.com` : **CNAME** `arbre-api` → `arbre.cardormedia.com` (ou **A** `arbre-api` →
-`152.53.176.13`, comme `arbre`), **proxied**. SSL/TLS « Full (strict) », certificat d'origine
+Zone `cardormedia.com` : **A** `arbre-api` → `152.53.176.13`, **proxied**, comme `arbre` (créé le
+15/10/2026, id d'enregistrement `529ba9d49ff727d10a8e575fb60db12d`). SSL/TLS « Full (strict) », certificat d'origine
 Let's Encrypt géré par Coolify (526 une à deux minutes au premier déploiement, comme pour le site).
 Cloudflare transmet `CF-Connecting-IP`, seule entrée de la limitation de débit (HMAC en mémoire,
-jamais stocké) : le service doit rester derrière le proxy Cloudflare.
+jamais stocké) : le service doit rester derrière le proxy Cloudflare. L'origine est **fermée aux IP
+non Cloudflare** pour cette app seulement (middleware Traefik `arbre-api-cf-only`, voir Coolify
+ci-dessous) : sans cela, un client qui joint `152.53.176.13` directement pourrait inventer son
+`CF-Connecting-IP` et contourner la limite de débit.
 
 ### Coolify
 
-Projet « Arbre aux absents », environnement `production`, **nouvelle application** :
+| Élément | Valeur |
+|---|---|
+| Application | `arbre-aux-absents-report` — uuid **`swybrgki0ennurono4isofot`** (projet `9ncijjge9recntgn78krbybu`, env. `rxkljsm57zpadq9seov0vffl`, serveur `r0os4cws004gs88k840wckok`) |
+| Source | GitHub App de l'instance (`cckkooog08wk8088gg8wg4sk`, la même que le site), branche `claude/project-thread-kdwfab`, **auto-deploy** |
+| Build | Dockerfile `/apps/report/Dockerfile`, base `/`, port `8090`, domaine `https://arbre-api.cardormedia.com` |
+| *Watch paths* | `apps/report/**`, `packages/contract/**`, `package-lock.json` : un push qui ne touche que le site ne redéploie pas le service. Le site, lui, n'a pas de *watch paths* (son image dépend de presque tout le repo) et se redéploie à chaque push |
+| Volume | persistant `swybrgki0ennurono4isofot-arbre-report-data` (uuid `jqi9r23nbriiuv9wxcd232fk`) → `/data` |
+| Healthcheck | type **commande** : `node dist/admin.js healthcheck` (le type HTTP de Coolify exige curl ou wget, absents de l'image, et le champ commande refuse guillemets et parenthèses) |
+| Variables | `GITHUB_REPO`, `ALLOWED_ORIGINS`, `PUBLIC_SITE_URL`, `DATA_DIR`, `REPORTS_ENABLED`, `TICKET_PREFIX`, `GITHUB_WEBHOOK_SECRET` (posé, généré localement, jamais affiché), `GITHUB_TOKEN` **vide** (à saisir) ; toutes à l'exécution seulement, aucune au build |
+| Origine fermée | *Container labels* personnalisés : middleware `traefik.http.middlewares.arbre-api-cf-only.ipallowlist.sourcerange=<plages IPv4 et IPv6 de https://api.cloudflare.com/client/v4/ips>` ajouté au routeur `https-0-swybrgki0ennurono4isofot` (`middlewares=gzip,arbre-api-cf-only`). Vérifié : avec une plage factice le service répond 403 via Cloudflare, avec les plages Cloudflare 200 (Traefik voit bien l'IP Cloudflare). Sans effet sur les autres apps du serveur |
+
+Attention aux *labels* : ils sont figés. Si le domaine change, ou après *Reset labels to defaults*
+dans Coolify, remettre les deux lignes `arbre-api-cf-only`. Plages Cloudflare à revoir une fois par an.
+
+Redéployer : `git push` d'un fichier sous les *watch paths*, Coolify › `arbre-aux-absents-report` ›
+*Redeploy*, ou `POST $COOLIFY_API_URL/api/v1/deploy` avec `{"uuid":"swybrgki0ennurono4isofot"}`.
+
+Création (faite le 15/10/2026, pour mémoire) : projet « Arbre aux absents », environnement `production`,
+**nouvelle application** :
 
 1. Source : même GitHub App et même repo `fs0ciety7000/arbre-aux-absents`, même branche que le site.
 2. Build pack **Dockerfile** ; *Base directory* `/` ; *Dockerfile location* `/apps/report/Dockerfile`.
 3. Port exposé `8090` ; domaine `https://arbre-api.cardormedia.com`.
-4. Healthcheck : `GET http://127.0.0.1:8090/healthz`.
+4. Healthcheck : type commande, `node dist/admin.js healthcheck` (sonde `http://127.0.0.1:8090/healthz`).
 5. *Persistent storage* : volume nommé (ex. `arbre-report-data`) monté sur **`/data`**.
 6. Variables d'environnement (miroir : `.env.example`, bloc « Service de signalement ») ; cocher
    *Is secret* pour `GITHUB_TOKEN` et `GITHUB_WEBHOOK_SECRET`, jamais *Build variable* :
@@ -353,6 +375,21 @@ voit « Corrigé dans vX.Y.Z ». Fermé sans jalon : « Classé (résolu) » ; �
 (non retenu) ». Réponse visible du joueur : commentaire d'un mainteneur dont la première ligne
 est `/public`. Problème connu : étiquette `public` (titre relu avant) et, en anglais, commentaire
 `/public-title-en <titre>`.
+
+### Reste à faire à la main (15/10/2026)
+
+1. **Jeton** : créer le jeton fine-grained (section ci-dessus), puis Coolify › projet « Arbre aux
+   absents » › `arbre-aux-absents-report` › *Environment Variables* › `GITHUB_TOKEN` › coller la
+   valeur, cocher *Is secret* (cadenas) › *Save* › *Redeploy*. `/healthz` doit passer à `github: "ok"`.
+2. **Webhook** (l'API GitHub n'était pas accessible depuis la session de déploiement) : GitHub ›
+   `fs0ciety7000/arbre-aux-absents-signalements` › Settings › Webhooks › *Add webhook*, réglages de la
+   section « Webhook GitHub » ; le *Secret* est la valeur de `GITHUB_WEBHOOK_SECRET` à copier depuis
+   Coolify › *Environment Variables* (icône œil), puis cocher *Is secret* sur cette variable dans
+   Coolify. Vérifier le `ping` en 2xx (*Recent Deliveries*). Sans signature valide, la route répond 401
+   (vérifié).
+3. **Étiquettes** : `sh scripts/report-labels.sh --milestone v1.2.0` depuis un poste où `gh` est
+   connecté avec un compte administrateur du dépôt (même raison).
+4. Test réel de bout en bout (« Ordre de déploiement », point 3).
 
 ### Ordre de déploiement
 

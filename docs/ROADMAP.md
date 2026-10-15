@@ -128,7 +128,10 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       = français (118/30 et 98/28, toutes les fins) ; premier affichage du jeu ramené à +1,4 Ko gz.
 - [x] C2 : citations des aides alignées sur les pièces, faux liens « lise » corrigés dans la source FR.
 - [x] C3 : projet e2e en-GB (172 réussis), revue sécurité, images Docker site et service avec /healthz.
-- [ ] C4 · devops · déploiement `arbre-api.cardormedia.com` (DNS, app Coolify, jeton, webhook, étiquettes).
+- [ ] C4 (partiel) · devops · `arbre-api.cardormedia.com` en ligne le 15/10 (DNS, app Coolify
+      `swybrgki0ennurono4isofot`, volume `/data`, secret du webhook, origine fermée aux IP non Cloudflare,
+      sonde `admin.js healthcheck`). Reste à la main (DEPLOYMENT §5) : jeton `GITHUB_TOKEN`, webhook et
+      étiquettes du dépôt des signalements, test de bout en bout.
 
 ## Backlog
 
@@ -164,8 +167,9 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 - Illustrations : qualité inégale (pb-01, photos de groupe aux tenues répétées) ; vrais profils pour ph-16/17.
 - Playtests : difficulté réelle des homonymes (Augustin, Firmin) et des cases à risque (C17, C21, C19, C25).
 
-- Signalement : la limite de débit fait confiance à `CF-Connecting-IP` ; fermer l'origine à tout ce qui
-      n'est pas Cloudflare (Authenticated Origin Pulls ou pare-feu) avant d'ouvrir largement.
+- Signalement : origine fermée aux IP non Cloudflare pour `arbre-api` (liste Traefik, 15/10). Plus
+      robuste plus tard : Authenticated Origin Pulls (mTLS) ou pare-feu de l'hôte sur 80/443, à l'échelle
+      du serveur (touche toutes les apps : à planifier).
 - Aides françaises de la Succession Varenque (c02, c04, c08, c13, c14, c18, c21, c22, c26, c29, c30) :
       citer le texte exact des pièces, comme l'anglais.
 - Liens fortuits à confirmer (scénariste) : « goéland » minuscule → `le-goeland` (cp-02, ct-02, dv-05,
