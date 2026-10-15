@@ -15,6 +15,7 @@
     "dev": "npm run content:build && npm run dev -w @arbre/game",
     "dev:site": "npm run content:build && npm run dev -w @arbre/site",
     "dev:tauri": "npm run tauri:dev",
+    "dev:report": "npm run dev -w @arbre/report",
     "check": "npm run content:build && npm run format:check && npm run lint && npm run typecheck && npm run contrast:check -w @arbre/ui && npm run test && npm run content:check",
     "build": "npm run content:build && npm run build -w @arbre/game && npm run build -w @arbre/site",
     "tauri:dev": "npm run tauri:dev -w @arbre/game",
@@ -30,6 +31,7 @@
     "content:check": "tsx scripts/content-check.ts",
     "content:build": "tsx scripts/content-build.ts",
     "content:solve": "tsx scripts/content-solve.ts",
+    "content:i18n": "tsx scripts/content-i18n.ts",
     "schemas:json": "npm run schemas:json -w @arbre/contract",
     "package:itch": "tsx scripts/package-itch.ts",
     "presskit": "tsx scripts/presskit/build.ts"

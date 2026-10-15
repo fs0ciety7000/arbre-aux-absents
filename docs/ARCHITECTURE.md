@@ -607,8 +607,8 @@ ni journaux ni Referer) (D10). Le jeu garde `ReportRef` dans `Profile.reports` (
 | Fermé sans jalon | `closed` / `resolved` |
 
 **Réponses publiques** : commentaires dont la première ligne est `/public`, **et seulement si
-`author_association` vaut OWNER, MEMBER ou COLLABORATOR** (sur un dépôt public, n'importe qui
-pourrait écrire le marqueur). Rendues en texte brut, 2 000 caractères au plus.
+`author_association` vaut OWNER, MEMBER ou COLLABORATOR** (défense en profondeur : seul un mainteneur
+peut publier une réponse). Rendues en texte brut, 2 000 caractères au plus.
 
 **Problèmes connus** : tickets étiquetés `public`. Titre FR = titre du ticket, que l'équipe relit
 avant de poser l'étiquette. Titre anglais facultatif = commentaire d'un mainteneur commençant par
@@ -617,8 +617,8 @@ avant de poser l'étiquette. Titre anglais facultatif = commentaire d'un mainten
 **Corps du ticket** : description dans un bloc de code à clôture plus longue que tout bloc présent
 dans le texte (neutralise mentions, images et liens), diagnostics en JSON dans `<details>`. Jamais de
 contact, de jeton ni d'IP. Étiquettes `signalement`, `source:jeu|site`, `cat:<catégorie>`, `langue:en`.
-Dépôt cible configurable par `GITHUB_REPO` (D12 : dépôt privé dédié recommandé ; s'il reste public,
-le formulaire prévient que la description sera publiée anonymement).
+Dépôt cible : dépôt **privé** dédié `fs0ciety7000/arbre-aux-absents-signalements` (D12), configuré
+par `GITHUB_REPO` ; les tickets ne sont jamais visibles du public.
 
 **Synchronisation** : webhook (`issues`, `issue_comment`, `milestone`) ; rapprochement toutes les
 30 min des tickets non fermés depuis plus de 30 jours (requêtes conditionnelles `If-None-Match`, une
@@ -649,6 +649,6 @@ Aucune route HTTP d'administration.
 
 **Configuration** (variables d'environnement Coolify, jamais dans le repo ; `.env.example`) :
 `GITHUB_TOKEN` (fine-grained, un seul dépôt, Issues RW + Metadata R, expiration à surveiller :
-`/healthz` passe en `degraded` sur 401), `GITHUB_REPO`, `GITHUB_WEBHOOK_SECRET`, `ALLOWED_ORIGINS`,
+`/healthz` passe en `degraded` sur 401), `GITHUB_REPO` (`fs0ciety7000/arbre-aux-absents-signalements`), `GITHUB_WEBHOOK_SECRET`, `ALLOWED_ORIGINS`,
 `PUBLIC_SITE_URL`, `DATA_DIR=/data`, `REPORTS_ENABLED`, `TICKET_PREFIX=AA`. Côté builds du jeu et du
 site : `VITE_REPORT_API=https://arbre-api.cardormedia.com` (public). Dev : `npm run dev:report`.

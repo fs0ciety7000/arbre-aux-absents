@@ -11,6 +11,7 @@ export default defineConfig({
             'packages/*/test/**/*.test.ts',
             'scripts/**/*.test.ts',
             'apps/site/src/**/*.test.ts',
+            'apps/report/test/**/*.test.ts',
           ],
           environment: 'node',
         },
