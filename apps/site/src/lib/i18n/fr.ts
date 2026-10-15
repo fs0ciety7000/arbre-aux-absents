@@ -962,6 +962,11 @@ export const fr = {
             ' : le contact est effacé, la description retirée du ticket et le lien cesse de fonctionner.',
           ],
           [
+            'Une précision honnête : GitHub garde l’historique des modifications d’un ticket. L’ancienne description y reste lisible, ',
+            { strong: 'par l’équipe seulement' },
+            ' (le dépôt est privé), et les notifications déjà reçues par l’équipe au moment du signalement la contiennent aussi. Elle n’est jamais rendue publique.',
+          ],
+          [
             'Lien perdu, question, accès ou rectification : écrivez-nous sur le forum itch.io du jeu en donnant le numéro du signalement, jamais votre contact. Vous pouvez aussi saisir l’autorité de protection des données de votre pays.',
           ],
         ] as Rich[],

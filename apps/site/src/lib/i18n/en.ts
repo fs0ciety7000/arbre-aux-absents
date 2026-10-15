@@ -1001,6 +1001,11 @@ export const en = {
             ': the contact is erased, the description is removed from the ticket and the link stops working.',
           ],
           [
+            'To be completely open: GitHub keeps the edit history of a ticket. The previous description remains readable there, ',
+            { strong: 'by the team only' },
+            ' (the repository is private), and the notifications the team already received when you reported also contain it. It is never made public.',
+          ],
+          [
             'Lost link, question, access or correction: write to us on the game’s itch.io forum with the report number, never your contact. You can also contact the data protection authority in your country.',
           ],
         ] as Rich[],
