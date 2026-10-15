@@ -39,6 +39,6 @@ export const TRAILER_POSTER = {
   width: 1280,
   height: 720,
 } as const;
-/** Durée ISO 8601 (assets/trailer/README.md : 60,2 s) ; date de mise en ligne à confirmer sur YouTube. */
+/** Durée ISO 8601 (assets/trailer/README.md : 60,2 s) ; date de mise en ligne ISO 8601 complète (heure + fuseau, exigés par Google), à confirmer sur YouTube. */
 export const TRAILER_DURATION = 'PT1M0S';
-export const TRAILER_UPLOAD_DATE = '2026-10-14';
+export const TRAILER_UPLOAD_DATE = '2026-10-14T12:00:00+02:00';
