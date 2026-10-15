@@ -1,0 +1,86 @@
+{
+  "hc-deux-pieces-pour-un-vivant": {
+    "title": "Two Documents for the Living",
+    "description": "Establish a first series of slots in file 76-0012."
+  },
+  "hc-fin-du-prologue": {
+    "title": "The Petition Is Admissible",
+    "description": "Establish the prologue group."
+  },
+  "hc-a-mi-chemin": { "title": "Halfway Up the Slope", "description": "Establish 14 slots." },
+  "hc-l-arbre-de-hautcorvin": {
+    "title": "The Hautcorvin Tree",
+    "description": "Establish all 28 slots."
+  },
+  "hc-le-revenant": { "title": "The Revenant", "description": "Establish the claimed slot." },
+  "hc-l-homme-du-couloir": {
+    "title": "The Man in the Corridor",
+    "description": "Establish the slot marked “?”."
+  },
+  "hc-les-maitres-verriers": {
+    "title": "The Master Glassmakers",
+    "description": "Establish the master glassmakers group."
+  },
+  "hc-les-guides-de-vernezac": {
+    "title": "The Vernezac Guides",
+    "description": "Establish the Vernezac guides group."
+  },
+  "hc-sous-la-neige": {
+    "title": "What the Snow Covers",
+    "description": "Uncover a first secret."
+  },
+  "hc-le-feu-de-1937": {
+    "title": "The Fire of 1937",
+    "description": "Uncover who set fire to the furnace hall."
+  },
+  "hc-le-pas-de-l-ourse": {
+    "title": "The Pas de l'Ourse",
+    "description": "Uncover the crossing of the struck-off."
+  },
+  "hc-tous-les-secrets": {
+    "title": "Nothing Left Under the Snow",
+    "description": "Uncover every secret in the case."
+  },
+  "hc-imposture": {
+    "title": "Impersonation",
+    "description": "Submit a report that exposes the claimant."
+  },
+  "hc-chacun-son-nom": {
+    "title": "To Each Their Own Name",
+    "description": "See the “To each their own name” ending."
+  },
+  "hc-laisser-vivre": {
+    "title": "The Living Lie",
+    "description": "Register the claimant under the name of Bastien Tessonnal."
+  },
+  "hc-trois-tampons": {
+    "title": "Three Stamps",
+    "description": "See an ending for each of the three decisions."
+  },
+  "hc-epilogue": { "title": "Thaw", "description": "Reach the epilogue of the case." },
+  "hc-tout-lu": { "title": "The Whole File", "description": "Read every document in the case." },
+  "hc-la-haute-vallee": {
+    "title": "The Upper Valley",
+    "description": "Open Hautcorvin, Vernezac, the Pas de l'Ourse and Dalvezac on the map."
+  },
+  "hc-trop-juste": {
+    "title": "He Answers Too Well",
+    "description": "Read every record of hearing."
+  },
+  "hc-matricule": {
+    "title": "Prisoner Number",
+    "description": "Search the Reader for the claimant's real Kessaar prisoner number."
+  },
+  "hc-un-visage-ment-moins": {
+    "title": "A Face Lies Less Than a Register",
+    "description": "Establish the “?” slot without reading the handwriting examination."
+  },
+  "hc-contre-la-montre": {
+    "title": "Against the Clock",
+    "description": "Submit the report in under 2 hours 30 minutes (timed game)."
+  },
+  "hc-archiviste-eclair": {
+    "title": "Lightning Glassmaker",
+    "description": "Submit the report in under 75 minutes (timed game)."
+  }
+}
