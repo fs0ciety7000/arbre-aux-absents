@@ -43,6 +43,14 @@
   const ui = getUiStrings();
   const label = $derived(labelProp ?? ui.language.label);
 
+  /**
+   * `short` : nom accessible « EN, English » en `aria-label`, qui commence par le texte visible
+   * (WCAG 2.5.3) ; une étiquette masquée dans le contenu serait lue « EN , English » (élément
+   * flexible séparé).
+   */
+  const shortName = (loc: UiLocale) =>
+    short ? `${LANGUAGE_NAMES[loc].short}, ${LANGUAGE_NAMES[loc].name}` : undefined;
+
   function choose(loc: UiLocale) {
     if (loc === value) return;
     value = loc;
@@ -53,8 +61,7 @@
 {#snippet tag(loc: UiLocale, on: boolean)}
   <span class="tape" class:mat-label={on}>
     {#if short}
-      <!-- Nom accessible « EN, English » : il commence par le texte visible (WCAG 2.5.3). -->
-      {LANGUAGE_NAMES[loc].short}<span class="visually-hidden">, {LANGUAGE_NAMES[loc].name}</span>
+      {LANGUAGE_NAMES[loc].short}
     {:else}
       {LANGUAGE_NAMES[loc].name}
     {/if}
@@ -74,6 +81,7 @@
             hreflang={loc}
             lang={loc}
             aria-current={on ? 'true' : undefined}
+            aria-label={shortName(loc)}
             onclick={() => choose(loc)}>{@render tag(loc, on)}</a
           >
         </li>
@@ -87,7 +95,14 @@
       {#each locales as loc (loc)}
         {@const on = loc === value}
         <label class="opt" lang={loc}>
-          <input type="radio" {name} value={loc} checked={on} onchange={() => choose(loc)} />
+          <input
+            type="radio"
+            {name}
+            value={loc}
+            checked={on}
+            aria-label={shortName(loc)}
+            onchange={() => choose(loc)}
+          />
           {@render tag(loc, on)}
         </label>
       {/each}

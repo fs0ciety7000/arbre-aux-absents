@@ -94,7 +94,7 @@ test('sélecteur de langue : même page dans l’autre langue, au clavier', asyn
     'true',
   );
   const fr = nav.getByRole('link', { name: 'FR, Français', exact: true });
-  await expect(fr).toHaveText('FR, Français');
+  await expect(fr).toHaveText('FR');
   await expect(fr).toHaveAttribute('hreflang', 'fr');
   await fr.focus();
   await page.keyboard.press('Enter');
