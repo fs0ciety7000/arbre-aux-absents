@@ -46,7 +46,19 @@ export const TIMINGS = {
   concurrency: 2,
   knownIssuesTtlMs: MINUTE,
   knownIssuesMax: 100,
+  /** Tentatives au-delà desquelles une erreur GitHub permanente fait abandonner l'opération. */
+  maxPermanentAttempts: 8,
 } as const;
+
+/**
+ * Erreur GitHub qu'un réessai ne corrigera pas : 4xx, sauf 401/403 (jeton, quota secondaire),
+ * 408 et 429 (passagères). Réseau (0), 5xx et réponse illisible (502) restent retentés.
+ */
+export const isPermanentGitHubError = (e: unknown): e is GitHubError =>
+  e instanceof GitHubError &&
+  e.status >= 400 &&
+  e.status < 500 &&
+  ![401, 403, 408, 429].includes(e.status);
 
 export const hashToken = (token: string): string =>
   createHash('sha256').update(token).digest('hex');
@@ -177,6 +189,18 @@ export class ReportService {
       } catch (e) {
         const attempts = row.attempts + 1;
         if (row.pendingOp === 'create' && this.store.deleteIfForgotten(row.id)) return;
+        if (isPermanentGitHubError(e) && attempts >= TIMINGS.maxPermanentAttempts) {
+          // Abandon visible (`admin.js pending`, `/healthz`) ; le ticket du joueur reste lisible
+          // (« reçu ») et la ligne garde son opération pour une reprise (`admin.js retry`).
+          this.store.markFailed(row.id, attempts, e.status, this.now());
+          this.log.warn('github.failed', {
+            ticket: row.ticket,
+            op: row.pendingOp,
+            attempts,
+            status: e.status,
+          });
+          return;
+        }
         this.store.markAttemptFailed(row.id, attempts, this.now() + this.backoff(attempts));
         this.log.warn('github.retry', {
           ticket: row.ticket,
@@ -417,6 +441,10 @@ export class ReportService {
 
   pendingCount(): number {
     return this.store.pendingCount();
+  }
+
+  failedCount(): number {
+    return this.store.failedCount();
   }
 
   get health(): 'ok' | 'degraded' {

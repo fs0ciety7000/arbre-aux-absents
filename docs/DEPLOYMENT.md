@@ -255,7 +255,7 @@ décisions D9 à D13). App Coolify **séparée** du site : `https://arbre-api.ca
 | Build | `apps/report/Dockerfile`, **contexte `.`** (racine du repo). BuildKit lit `apps/report/Dockerfile.dockerignore` (liste blanche : `package.json`, `package-lock.json`, `tsconfig.base.json`, `packages/contract/`, `apps/report/`) à la place du `.dockerignore` du site, qui exclut `apps/report` |
 | Image | `node:22-bookworm-slim` épinglée par digest (la même que le site) ; étape `build` : `npm ci --ignore-scripts` (lockfile figé, racine + `@arbre/report`), `npm run build -w @arbre/report` → `dist/server.js` et `dist/admin.js` autonomes (zod et le contrat embarqués) ; étape `runtime` : `dist/` + `package.json` seulement, **aucun `node_modules`**, fichiers à root en lecture seule, utilisateur `node` (1000) |
 | Port exposé | `8090` |
-| Healthcheck | `GET /healthz` → `200 {ok, github: 'ok'\|'degraded', pending}` (aussi `HEALTHCHECK` Docker, `node -e fetch`). `degraded` : jeton GitHub refusé (401) ou GitHub injoignable ; la soumission reste acceptée (file `pending`) |
+| Healthcheck | `GET /healthz` → `200 {ok, github: 'ok'\|'degraded', pending, failed}` (aussi `HEALTHCHECK` Docker, `node -e fetch`). `degraded` : jeton GitHub refusé (401) ou GitHub injoignable ; la soumission reste acceptée (file `pending`) |
 | Stockage | **volume persistant `/data`** (base SQLite, `DATA_DIR=/data`), seul dossier inscriptible ; `VOLUME /data` dans l'image. Sans volume Coolify nommé, chaque redéploiement repart d'une base vide (tickets et jetons de suivi perdus) |
 | Commande | `node dist/server.js` (`NODE_OPTIONS=--disable-warning=ExperimentalWarning` pour `node:sqlite`) |
 | Branche | celle du site (auto-deploy) ; voir « Ordre de déploiement » |
@@ -305,6 +305,11 @@ Projet « Arbre aux absents », environnement `production`, **nouvelle applicati
 
 Le contact laissé par un joueur ne se lit que depuis le terminal Coolify de l'app :
 `node dist/admin.js contact AA-0042`. Aucune route HTTP d'administration.
+
+`/healthz` `failed` > 0 : une opération GitHub a été abandonnée après 8 erreurs 4xx permanentes
+(ticket refusé par GitHub, ex. 422). `node dist/admin.js pending` liste les lignes `ÉCHEC` (ticket,
+opération, statut HTTP) ; `status AA-0042` les détaille ; une fois la cause corrigée,
+`retry AA-0042` remet l'opération dans la file. Le joueur garde son ticket (« reçu ») entre-temps.
 
 ### Jeton GitHub fine-grained
 

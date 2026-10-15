@@ -219,7 +219,7 @@ describe('suivi du ticket', () => {
     const r = await submit(t);
     await t.app.service.drain();
     let health = await (await fetch(`${t.base}/healthz`)).json();
-    expect(health).toEqual({ ok: true, github: 'degraded', pending: 1 });
+    expect(health).toEqual({ ok: true, github: 'degraded', pending: 1, failed: 0 });
     const row = t.app.store.byTicket(r.ticket)!;
     expect(row).toMatchObject({
       attempts: 1,
@@ -250,7 +250,72 @@ describe('suivi du ticket', () => {
       attempts: 0,
     });
     health = await (await fetch(`${t.base}/healthz`)).json();
-    expect(health).toEqual({ ok: true, github: 'ok', pending: 0 });
+    expect(health).toEqual({ ok: true, github: 'ok', pending: 0, failed: 0 });
+  });
+
+  it('erreur GitHub 4xx permanente : abandon après 8 tentatives, ticket toujours lisible', async () => {
+    t = await startApp();
+    t.gh.failure = 422;
+    const r = await submit(t);
+    for (let i = 0; i < 7; i++) {
+      await t.app.service.drain();
+      const row = t.app.store.byTicket(r.ticket)!;
+      expect(row).toMatchObject({ attempts: i + 1, failedAt: null });
+      t.clock.advance(row.nextAttemptAt! - t.clock.t);
+    }
+    await t.app.service.drain();
+    const failed = t.app.store.byTicket(r.ticket)!;
+    expect(failed).toMatchObject({
+      attempts: 8,
+      pendingOp: 'create',
+      failedAt: t.clock.t,
+      failedStatus: 422,
+      nextAttemptAt: null,
+    });
+    expect(failed.pendingPayload).toContain('### Description');
+    expect(await (await fetch(`${t.base}/healthz`)).json()).toEqual({
+      ok: true,
+      github: 'degraded',
+      pending: 0,
+      failed: 1,
+    });
+    // Plus aucun essai, même longtemps après.
+    const calls = t.gh.calls.length;
+    t.clock.advance(7 * 24 * 3_600_000);
+    await t.app.service.drain();
+    expect(t.gh.calls.length).toBe(calls);
+    // Le joueur garde son ticket, « reçu ».
+    const view = await getTicket(t, r.token);
+    expect(view.status).toBe(200);
+    expect(TicketViewSchema.parse(await view.json())).toMatchObject({
+      ticket: r.ticket,
+      status: 'received',
+    });
+    // Reprise manuelle (admin.js retry) : GitHub corrigé, le ticket est créé.
+    t.gh.failure = null;
+    expect(t.app.store.retry(failed.id, t.clock.t)).toBe(true);
+    await t.app.service.drain();
+    expect(t.app.store.byTicket(r.ticket)).toMatchObject({
+      issueNumber: 100,
+      pendingOp: null,
+      failedAt: null,
+    });
+  });
+
+  it('401, 403 et 429 GitHub : jamais abandonnés (jeton ou quota)', async () => {
+    for (const status of [401, 403, 429]) {
+      t = await startApp();
+      t.gh.failure = status;
+      const r = await submit(t);
+      for (let i = 0; i < 10; i++) {
+        await t.app.service.drain();
+        t.clock.advance(t.app.store.byTicket(r.ticket)!.nextAttemptAt! - t.clock.t);
+      }
+      expect(t.app.store.byTicket(r.ticket)).toMatchObject({ attempts: 10, failedAt: null });
+      expect(t.app.service.pendingCount()).toBe(1);
+      await t.close();
+      t = undefined;
+    }
   });
 
   it('401 GitHub : /healthz degraded', async () => {
@@ -270,6 +335,7 @@ describe('suivi du ticket', () => {
       ok: true,
       github: 'degraded',
       pending: 1,
+      failed: 0,
     });
   });
 
@@ -585,7 +651,7 @@ describe('routes et erreurs', () => {
     t = await startApp();
     const res = await fetch(`${t.base}/healthz`);
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ ok: true, github: 'ok', pending: 0 });
+    expect(await res.json()).toEqual({ ok: true, github: 'ok', pending: 0, failed: 0 });
   });
 
   it('rapprochement : tickets non fermés relus par requête conditionnelle', async () => {

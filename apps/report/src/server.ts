@@ -179,6 +179,7 @@ export function createReportServer(deps: ServerDeps): ReportServer {
       ok: true,
       github: github.enabled ? service.health : 'degraded',
       pending: service.pendingCount(),
+      failed: service.failedCount(),
     });
   }
 

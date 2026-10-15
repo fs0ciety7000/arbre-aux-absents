@@ -583,7 +583,7 @@ GET    /v1/tickets/current   Authorization: Bearer <token> → 200 TicketView | 
 DELETE /v1/tickets/current   Bearer → 204 : contact effacé, corps du ticket GitHub remplacé, jeton invalidé
 GET    /v1/known-issues?locale=fr|en → KnownIssue[] (Cache-Control public, max-age=300)
 POST   /v1/github/webhook    X-Hub-Signature-256 (HMAC, timingSafeEqual) → 204
-GET    /healthz              {ok, github: 'ok'|'degraded', pending: n}
+GET    /healthz              {ok, github: 'ok'|'degraded', pending: n, failed: n}
 ```
 
 `ReportErrorCode` : `invalid` (400), `tooLarge` (413), `rateLimited` (429 + `Retry-After`),
@@ -626,7 +626,11 @@ par `GITHUB_REPO` ; les tickets ne sont jamais visibles du public.
 30 min des tickets non fermés depuis plus de 30 jours (requêtes conditionnelles `If-None-Match`, une
 réponse 304 ne consomme pas de quota) ; rafraîchissement paresseux à la lecture si la donnée a plus
 de 10 min. Si GitHub est en panne, la soumission est **acceptée** quand même (`received`, file
-`pending`, réessais avec attente croissante) : le joueur a toujours son numéro.
+`pending`, réessais avec attente croissante) : le joueur a toujours son numéro. Une erreur GitHub
+**4xx permanente** (hors 401/403 : jeton ou quota, et hors 408/429 : passagères) fait **abandonner**
+l'opération à la 8ᵉ tentative : la ligne est marquée en échec (`failed_at`, `failed_status`),
+n'est plus retentée, apparaît dans `/healthz` (`failed`) et `admin.js pending`/`status` ; le ticket
+reste lisible par le joueur (statut `received`) et `admin.js retry AA-0042` le remet dans la file.
 
 **Limitation de débit** : en mémoire seulement. Clé = HMAC de `CF-Connecting-IP` avec un secret
 aléatoire tiré en mémoire et renouvelé chaque jour ; jamais écrite ni journalisée. Plafonds :
@@ -638,7 +642,8 @@ GitHub, concurrence bornée de la file `pending`.
 `created_at`, `updated_at`, `source`, `category`, `locale`, `issue_number` NULL, `status`,
 `fixed_in`, `closed_reason`, `closed_at`, `replies_json`, `contact` NULL, `pending_payload` NULL
 (effacé dès la création du ticket GitHub), `etag`, `synced_at`, plus la file de reprise
-(`pending_op` `create` ou `redact`, `attempts`, `next_attempt_at` ; délai doublé de 30 s à 6 h) et
+(`pending_op` `create` ou `redact`, `attempts`, `next_attempt_at` ; délai doublé de 30 s à 6 h ;
+`failed_at`, `failed_status` pour l'abandon, ajoutées au démarrage sur une base v1) et
 les problèmes connus (`public`, `title`). `replies_json` garde des marqueurs
 `{id, kind: reply | title-en, at, text}` pour appliquer les modifications de commentaires reçues par
 webhook sans appel à l'API. Numéros AUTOINCREMENT, jamais réutilisés.
@@ -654,7 +659,8 @@ statut HTTP adapté (400, 403, 404, 405, 401 pour une signature de webhook) ; po
 (empreinte du jeton, statut, réponses publiques) supprimé 12 mois après la clôture ; suppression
 immédiate à la demande (`DELETE`). Aucune IP stockée ni journalisée.
 
-**Accès de l'équipe au contact** : `node dist/admin.js contact AA-0042` depuis le terminal Coolify.
+**Accès de l'équipe au contact** : `node dist/admin.js contact AA-0042` depuis le terminal Coolify
+(aussi `status`, `pending`, `retry`, `retention`).
 Aucune route HTTP d'administration.
 
 **CORS** : `ALLOWED_ORIGINS` = `https://arbre.cardormedia.com`, `tauri://localhost`,

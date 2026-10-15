@@ -14,11 +14,12 @@ import type { Marker } from './status';
 /**
  * Base SQLite (`node:sqlite`, ARCHITECTURE §8). Aucune IP, jeton stocké haché (SHA-256).
  * Colonnes ajoutées au schéma de référence, propres à l'implémentation : `pending_op`, `attempts`,
- * `next_attempt_at` (file de réessai), `public` et `title` (problèmes connus). `replies_json` garde
+ * `next_attempt_at` (file de réessai), `failed_at` et `failed_status` (opération abandonnée après
+ * des erreurs GitHub permanentes, le ticket reste lisible), `public` et `title` (problèmes connus). `replies_json` garde
  * les marqueurs de mainteneurs (réponses `/public` et titre `/public-title-en`).
  */
 
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
@@ -42,6 +43,8 @@ CREATE TABLE IF NOT EXISTS tickets (
   pending_payload TEXT,
   attempts        INTEGER NOT NULL DEFAULT 0,
   next_attempt_at INTEGER,
+  failed_at       INTEGER,
+  failed_status   INTEGER,
   etag            TEXT,
   synced_at       INTEGER,
   public          INTEGER NOT NULL DEFAULT 0,
@@ -75,6 +78,9 @@ export interface TicketRow {
   pendingPayload: string | null;
   attempts: number;
   nextAttemptAt: number | null;
+  /** Opération GitHub abandonnée (erreurs 4xx permanentes) : quand, et le dernier statut HTTP. */
+  failedAt: number | null;
+  failedStatus: number | null;
   etag: string | null;
   syncedAt: number | null;
   public: boolean;
@@ -116,6 +122,8 @@ function toRow(r: Raw): TicketRow {
     pendingPayload: str(r.pending_payload),
     attempts: Number(r.attempts),
     nextAttemptAt: num(r.next_attempt_at),
+    failedAt: num(r.failed_at),
+    failedStatus: num(r.failed_status),
     etag: str(r.etag),
     syncedAt: num(r.synced_at),
     public: Number(r.public) === 1,
@@ -156,7 +164,14 @@ export function openDatabase(dataDir: string): DatabaseSync {
 export function initDatabase(db: DatabaseSync): DatabaseSync {
   db.exec('PRAGMA journal_mode = WAL; PRAGMA busy_timeout = 5000; PRAGMA foreign_keys = ON;');
   db.exec(SCHEMA);
-  db.prepare("INSERT OR IGNORE INTO meta (key, value) VALUES ('schema', ?)").run(
+  // Bases créées en v1 : colonnes de l'abandon ajoutées (CREATE TABLE IF NOT EXISTS ne le fait pas).
+  const columns = new Set(
+    (db.prepare('PRAGMA table_info(tickets)').all() as Raw[]).map((c) => String(c.name)),
+  );
+  for (const col of ['failed_at', 'failed_status']) {
+    if (!columns.has(col)) db.exec(`ALTER TABLE tickets ADD COLUMN ${col} INTEGER`);
+  }
+  db.prepare("INSERT OR REPLACE INTO meta (key, value) VALUES ('schema', ?)").run(
     String(SCHEMA_VERSION),
   );
   return db;
@@ -241,11 +256,15 @@ export class TicketStore {
     return this.one('SELECT * FROM tickets WHERE issue_number = ?', issueNumber);
   }
 
-  /** Opérations GitHub en attente et échues (une suppression attend la création du ticket). */
+  /**
+   * Opérations GitHub en attente et échues (une suppression attend la création du ticket) ; les
+   * opérations abandonnées (`failed_at`) n'y sont plus.
+   */
   duePending(now: number, limit: number): TicketRow[] {
     return this.all(
       `SELECT * FROM tickets
        WHERE (pending_op = 'create' OR (pending_op = 'redact' AND issue_number IS NOT NULL))
+         AND failed_at IS NULL
          AND (next_attempt_at IS NULL OR next_attempt_at <= ?)
        ORDER BY next_attempt_at, id LIMIT ?`,
       now,
@@ -253,11 +272,49 @@ export class TicketStore {
     );
   }
 
+  /** Opérations encore retentées (hors abandonnées). */
   pendingCount(): number {
     const r = this.db
-      .prepare('SELECT COUNT(*) AS n FROM tickets WHERE pending_op IS NOT NULL')
+      .prepare(
+        'SELECT COUNT(*) AS n FROM tickets WHERE pending_op IS NOT NULL AND failed_at IS NULL',
+      )
       .get() as Raw;
     return Number(r.n);
+  }
+
+  /** Opérations abandonnées après des erreurs GitHub permanentes. */
+  failedCount(): number {
+    const r = this.db
+      .prepare('SELECT COUNT(*) AS n FROM tickets WHERE failed_at IS NOT NULL')
+      .get() as Raw;
+    return Number(r.n);
+  }
+
+  failed(limit: number): TicketRow[] {
+    return this.all(
+      'SELECT * FROM tickets WHERE failed_at IS NOT NULL ORDER BY failed_at, id LIMIT ?',
+      limit,
+    );
+  }
+
+  /** Abandon : l'opération reste en place (charge utile comprise) pour une reprise manuelle. */
+  markFailed(id: number, attempts: number, status: number, now: number): void {
+    this.db
+      .prepare(
+        'UPDATE tickets SET attempts = ?, failed_at = ?, failed_status = ?, next_attempt_at = NULL WHERE id = ?',
+      )
+      .run(attempts, now, status, id);
+  }
+
+  /** Reprise manuelle (`admin.js retry`) : l'opération abandonnée repart dans la file. */
+  retry(id: number, now: number): boolean {
+    const r = this.db
+      .prepare(
+        `UPDATE tickets SET failed_at = NULL, failed_status = NULL, attempts = 0, next_attempt_at = ?
+         WHERE id = ? AND failed_at IS NOT NULL`,
+      )
+      .run(now, id);
+    return Number(r.changes) > 0;
   }
 
   /** Création GitHub réussie : la charge utile (données personnelles possibles) est effacée. */
@@ -265,6 +322,7 @@ export class TicketStore {
     this.db
       .prepare(
         `UPDATE tickets SET issue_number = ?, pending_payload = NULL, attempts = 0,
+           failed_at = NULL, failed_status = NULL,
            next_attempt_at = CASE WHEN pending_op = 'redact' THEN ? ELSE NULL END,
            pending_op = CASE WHEN pending_op = 'redact' THEN 'redact' ELSE NULL END,
            synced_at = ?
@@ -276,7 +334,8 @@ export class TicketStore {
   markRedacted(id: number): void {
     this.db
       .prepare(
-        'UPDATE tickets SET pending_op = NULL, attempts = 0, next_attempt_at = NULL WHERE id = ?',
+        `UPDATE tickets SET pending_op = NULL, attempts = 0, next_attempt_at = NULL,
+           failed_at = NULL, failed_status = NULL WHERE id = ?`,
       )
       .run(id);
   }
@@ -301,7 +360,8 @@ export class TicketStore {
     this.db
       .prepare(
         `UPDATE tickets SET token_hash = NULL, contact = NULL, pending_payload = NULL,
-           pending_op = 'redact', attempts = 0, next_attempt_at = ?, updated_at = ? WHERE id = ?`,
+           pending_op = 'redact', attempts = 0, next_attempt_at = ?, updated_at = ?,
+           failed_at = NULL, failed_status = NULL WHERE id = ?`,
       )
       .run(now, now, id);
   }

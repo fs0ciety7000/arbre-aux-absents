@@ -7,7 +7,8 @@ import { runRetention } from './retention';
  * Outil d'exploitation, depuis le terminal Coolify uniquement (aucune route HTTP d'administration) :
  *   node dist/admin.js contact AA-0042   contact laissé par le joueur (jamais envoyé à GitHub)
  *   node dist/admin.js status AA-0042    état du ticket (sans contact ni jeton)
- *   node dist/admin.js pending           opérations GitHub en attente
+ *   node dist/admin.js pending           opérations GitHub en attente, puis les abandonnées
+ *   node dist/admin.js retry AA-0042     remet dans la file une opération abandonnée
  *   node dist/admin.js retention         applique la conservation D13 maintenant
  */
 
@@ -15,6 +16,7 @@ export const ADMIN_USAGE = `Usage :
   node dist/admin.js contact <TICKET>
   node dist/admin.js status <TICKET>
   node dist/admin.js pending
+  node dist/admin.js retry <TICKET>
   node dist/admin.js retention`;
 
 export interface AdminIo {
@@ -58,6 +60,9 @@ export function runAdmin(
             issue: row.issueNumber,
             pending: row.pendingOp,
             attempts: row.attempts,
+            failed: row.failedAt
+              ? { at: new Date(row.failedAt).toISOString(), httpStatus: row.failedStatus }
+              : null,
             createdAt: new Date(row.createdAt).toISOString(),
             closedAt: row.closedAt ? new Date(row.closedAt).toISOString() : null,
             hasContact: row.contact !== null,
@@ -69,9 +74,27 @@ export function runAdmin(
       );
       return 0;
     }
-    case 'pending':
+    case 'pending': {
+      // Première ligne : opérations encore retentées ; puis une ligne par opération abandonnée.
       io.out(String(store.pendingCount()));
+      for (const row of store.failed(100)) {
+        io.out(
+          `ÉCHEC ${row.ticket} ${row.pendingOp ?? '-'} : HTTP ${row.failedStatus ?? '?'}, ` +
+            `${row.attempts} tentatives, abandonné le ${new Date(row.failedAt!).toISOString()}`,
+        );
+      }
       return 0;
+    }
+    case 'retry': {
+      const row = needTicket();
+      if (!row) return 1;
+      if (!store.retry(row.id, (deps.now ?? Date.now)())) {
+        io.err(`${row.ticket} : aucune opération abandonnée.`);
+        return 1;
+      }
+      io.out(`${row.ticket} : remis dans la file (repris au prochain passage).`);
+      return 0;
+    }
     case 'retention': {
       const r = runRetention(store, (deps.now ?? Date.now)());
       io.out(`Contacts effacés : ${r.contactsErased}, tickets supprimés : ${r.ticketsDeleted}`);
