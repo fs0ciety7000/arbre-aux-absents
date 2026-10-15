@@ -4,7 +4,13 @@ import scrollMotion from './lib/enhance/scroll-motion.js?raw';
 import videoFacade from './lib/enhance/video-facade.js?raw';
 
 /** Pages hydratées : leurs marqueurs d'hydratation doivent rester (ids de routes, D8). */
-const HYDRATED = new Set(['/[[lang=lang]]/le-monde', '/design']);
+const HYDRATED = new Set([
+  '/[[lang=lang]]/le-monde',
+  '/[[lang=lang]]/signaler',
+  '/[[lang=lang]]/suivi',
+  '/[[lang=lang]]/problemes-connus',
+  '/design',
+]);
 
 /**
  * Mouvement au défilement (lib/enhance/scroll-motion.js), réduit au strict nécessaire et posé en

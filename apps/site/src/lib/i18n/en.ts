@@ -48,6 +48,9 @@ export const en = {
       'presse/': 'Press',
       'charte/': 'Brand guidelines',
       'credits/': 'Credits',
+      'signaler/': 'Report a problem',
+      'problemes-connus/': 'Known issues',
+      'confidentialite/': 'Privacy',
     },
     legal: [
       '© 2026 CARDOR Media. ',
@@ -754,6 +757,258 @@ export const en = {
       text: 'Velmarche, its towns, its institutions, its newspapers and its inhabitants are imaginary. Any resemblance to real people or places is coincidental.',
       stamp: 'Fiction',
     },
+  },
+
+  reportCategories: {
+    bug: 'Something doesn’t work',
+    blocked: 'I’m stuck in the investigation',
+    text: 'Typo or incorrect text',
+    display: 'Display problem',
+    audio: 'Sound problem',
+    controls: 'Controls, keyboard or gamepad',
+    performance: 'Slowness or crash',
+    other: 'Something else',
+  },
+
+  report: {
+    seoTitle: 'Report a problem',
+    seoDescription:
+      'A bug, a dead end or a typo in L’Arbre aux absents? Report it to the team and follow its progress without an account.',
+    kicker: 'Report form',
+    title: 'Report a problem',
+    lede: 'A bug, a dead end, a typo? Describe it: the team reads every report, and you can follow its progress without an account.',
+    noscript:
+      'This form needs JavaScript. You can also report the problem on the game’s itch.io forum:',
+    forum: 'itch.io forum',
+    fromGame:
+      'In the game, use “Report a problem” instead (title screen, pause or help): it attaches the version and the current case.',
+    categoryLabel: 'Category',
+    descriptionLabel: 'Description',
+    descriptionHint: 'At least 20 characters. What you were doing, and what you expected.',
+    descriptionMissing: '{n} more characters before you can send.',
+    contactLabel: 'Contact (optional)',
+    contactHint: 'Never published. Only used to reply to you.',
+    contactPrivacy: [
+      'Email address or itch.io username. Kept on our server, never sent to GitHub, erased 30 days after the ticket is closed. ',
+      { link: 'confidentialite/', text: 'Privacy' },
+    ] as Rich,
+    honeypot: 'Website (leave empty)',
+    previewSummary: 'See exactly what will be sent',
+    previewLine: 'Version {version} · site · {language} · window {w} × {h}',
+    previewNote:
+      'Nothing else: no IP address, no cookie, no browsing history. elapsedMs is the time spent on this form (anti-bot); website must stay empty.',
+    submit: 'Send the report',
+    sending: 'Sending…',
+    receipt: {
+      stamp: 'Received',
+      title: 'Report received',
+      number: 'Report number',
+      keep: 'Keep this number and this link: they are the only way to follow your report, nothing is kept in this browser.',
+      followLabel: 'Follow-up link',
+      open: 'Open the follow-up',
+      copyLink: 'Copy the link',
+      linkCopied: 'Follow-up link copied',
+      another: 'Report another problem',
+      announce: 'Report received, number {ticket}.',
+    },
+    failure: {
+      toast: 'Report not sent',
+      lead: 'The service isn’t responding. Nothing is lost:',
+      leadRefused: 'The report was not accepted. Nothing is lost:',
+      offline: 'Your device seems to be offline, or the service can’t be reached.',
+      timeout: 'No response after 10 seconds.',
+      unavailable: 'The report service is unavailable at the moment.',
+      disabled: 'Reports are paused at the moment.',
+      rateLimited: 'Too many reports sent from your connection. Try again in {delay}.',
+      rateLimitedLater: 'Too many reports sent from your connection. Try again later.',
+      invalid: 'Check the description (20 to 4,000 characters) and the contact (200 at most).',
+      tooLarge: 'The report is too long.',
+      help: 'Copy the report and paste it on the forum (without your contact, the forum is public), or try again later.',
+      copy: 'Copy the report',
+      copied: 'Report copied',
+      copyFailed: 'Copying failed: select the text below.',
+      copyArea: 'Report to copy',
+      retry: 'Try again',
+    },
+    text: {
+      heading: 'Report · L’Arbre aux absents (site)',
+      category: 'Category:',
+      description: 'Description:',
+      diagnostics: 'Diagnostics:',
+    },
+  },
+
+  follow: {
+    seoTitle: 'Report follow-up',
+    seoDescription: 'Where your report stands: status, replies from the team, deletion on request.',
+    kicker: 'Follow-up sheet',
+    title: 'Report follow-up',
+    loading: 'Reading the sheet…',
+    noscript:
+      'The follow-up needs JavaScript: the follow-up link is never sent to the site’s server, only the page reads it. Without JavaScript, you can ask about your report on the game’s itch.io forum:',
+    forum: 'itch.io forum',
+    ticketLabel: 'Number',
+    created: 'Sent on {date}',
+    updated: 'updated on {date}',
+    repliesHeading: 'Replies from the team',
+    replyDate: 'On {date}',
+    noReplies: 'No reply from the team yet.',
+    tokenNote:
+      'The link has been removed from the address bar so that it doesn’t stay in your history: keep the link you received to come back.',
+    delete: 'Delete my report',
+    deleting: 'Deleting…',
+    confirm: {
+      title: 'Delete this report?',
+      text: 'The ticket will no longer be readable, your contact is erased and this follow-up link will stop working.',
+      keep: 'Keep',
+      confirm: 'Delete',
+    },
+    deleted: {
+      title: 'Report deleted',
+      text: 'Your contact is erased and the follow-up link no longer works. Any fix carries on without your data.',
+    },
+    deleteFailed: 'The report can’t be deleted at the moment. Try again later.',
+    missing: {
+      title: 'No follow-up link',
+      text: 'This page opens with the link you received after a report (it ends with # followed by a code). Open it exactly as it is.',
+    },
+    notFound: {
+      title: 'This follow-up no longer exists',
+      text: 'The link is incomplete, the report was deleted, or it was closed more than 12 months ago.',
+    },
+    error: {
+      title: 'The sheet can’t be read at the moment',
+      text: 'The report service isn’t responding. Your report isn’t lost: try again in a moment.',
+      offline:
+        'Your device seems to be offline, or the service can’t be reached. Try again once you’re connected.',
+      rateLimited: 'Too many look-ups from your connection. Try again in {delay}.',
+      retry: 'Try again',
+    },
+    reportLink: 'Report a problem',
+    knownLink: 'Known issues',
+  },
+
+  known: {
+    seoTitle: 'Known issues',
+    seoDescription:
+      'Problems in L’Arbre aux absents that the team already knows about, their status and the version that fixes them.',
+    kicker: 'Incident register',
+    title: 'Known issues',
+    lede: 'What the team already knows, most recent first. Your problem isn’t listed? Report it.',
+    loading: 'Loading the register…',
+    empty: 'No known issues for now.',
+    error: 'The register can’t be read at the moment.',
+    retry: 'Try again',
+    noscript:
+      'This list needs JavaScript. Known issues are also discussed on the game’s itch.io forum:',
+    forum: 'itch.io forum',
+    updated: 'Updated on {date}',
+    listLabel: 'Known issues',
+    reportLink: 'Report a problem',
+  },
+
+  privacy: {
+    seoTitle: 'Privacy',
+    seoDescription:
+      'What problem reports collect, why, where and for how long. No IP address stored, no cookies, deletion on request.',
+    kicker: 'Personal data',
+    title: 'Privacy',
+    lede: 'The site sets no cookies and doesn’t measure its audience (the embedded YouTube trailer and itch.io widget follow their own rules). Only problem reports collect data: here is what, and what becomes of it.',
+    sections: [
+      {
+        id: 'collecte',
+        heading: 'What is collected',
+        body: [
+          [
+            'When you report a problem: the category, your description and, if you give one, a contact. Technical diagnostics are added: the version, the platform (site, web, desktop or Android), the language, the window size and the operating system family (“Windows”, “Android”), never the browser’s full identification string.',
+          ],
+          [
+            'From the game, also: the edition, the current case and your settings, plus an anonymised save, without your notes or searches, ',
+            { strong: 'only if you tick the box' },
+            '. Each form shows exactly what will be sent before you send it.',
+          ],
+          ['No account, no cookies, no audience measurement.'],
+        ] as Rich[],
+      },
+      {
+        id: 'pourquoi',
+        heading: 'Why',
+        body: [
+          [
+            'To understand and fix the problem. The contact is only used to reply to you; it is never published.',
+          ],
+        ] as Rich[],
+      },
+      {
+        id: 'ou',
+        heading: 'Where the data goes',
+        body: [
+          [
+            'The description and diagnostics become a ticket in a ',
+            { strong: 'private GitHub repository' },
+            ', readable by the team only (GitHub is a provider based in the United States). The ticket contains neither your contact, nor the follow-up link, nor your IP address.',
+          ],
+          [
+            'The contact stays on our report server and ',
+            { strong: 'is never sent to GitHub' },
+            '.',
+          ],
+        ] as Rich[],
+      },
+      {
+        id: 'duree',
+        heading: 'How long',
+        body: [
+          [
+            'The contact is erased ',
+            { strong: '30 days after the ticket is closed' },
+            '. The follow-up sheet (fingerprint of the link, status, public replies) is deleted ',
+            { strong: '12 months after closure' },
+            '.',
+          ],
+        ] as Rich[],
+      },
+      {
+        id: 'ip',
+        heading: 'IP addresses',
+        body: [
+          [
+            'The report service ',
+            { strong: 'neither stores nor logs any IP address' },
+            '. To limit abuse, it derives a one-way fingerprint that stays in memory, changes every day and is never written down.',
+          ],
+          [
+            'The site and the service go through Cloudflare, which sees IP addresses like any network intermediary and handles them under its own policy.',
+          ],
+        ] as Rich[],
+      },
+      {
+        id: 'suivi',
+        heading: 'The follow-up link',
+        body: [
+          [
+            'The secret code in the link comes after the “#”: the browser never sends it to the site’s server, and the service only keeps a fingerprint of it. The follow-up page removes it from the address bar as soon as it has read it. Anyone who has this link can read and delete the report: don’t share it.',
+          ],
+        ] as Rich[],
+      },
+      {
+        id: 'droits',
+        heading: 'Your rights',
+        body: [
+          [
+            'Delete your report at any time with “Delete my report” on the ',
+            { link: 'suivi/', text: 'follow-up page' },
+            ': the contact is erased, the description is removed from the ticket and the link stops working.',
+          ],
+          [
+            'Lost link, question, access or correction: write to us on the game’s itch.io forum with the report number, never your contact. You can also contact the data protection authority in your country.',
+          ],
+        ] as Rich[],
+      },
+    ],
+    forum: 'itch.io forum',
+    reportLink: 'Report a problem',
+    updated: 'Last updated: October 2026',
   },
 
   palette: {

@@ -2,7 +2,19 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 /** Pages du site (sitemap + /design, page interne du design system). */
-const PAGES = ['/', '/le-monde/', '/artbook/', '/charte/', '/presse/', '/credits/', '/design/'];
+const PAGES = [
+  '/',
+  '/le-monde/',
+  '/artbook/',
+  '/charte/',
+  '/presse/',
+  '/credits/',
+  // Signalement : sans appel au service au chargement (problèmes connus : report.spec.ts).
+  '/signaler/',
+  '/suivi/',
+  '/confidentialite/',
+  '/design/',
+];
 
 for (const path of PAGES) {
   test.describe(path, () => {

@@ -6,6 +6,7 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { REPORT_CATEGORIES } from '@arbre/contract';
 import { describe, expect, it } from 'vitest';
 import { en } from './en';
 import { fr } from './fr';
@@ -63,9 +64,27 @@ describe('catalogues', () => {
       groups: t.palette.groups.length,
       swatches: Object.keys(t.palette.swatches).sort(),
       tools: t.credits.tools.list.length,
+      categories: Object.keys(t.reportCategories).sort(),
+      privacy: t.privacy.sections.map((s) => [s.id, s.body.length]),
     });
     expect(lists(en)).toEqual(lists(fr));
     expect(shape(en.charte.type.fonts)).toEqual(shape(fr.charte.type.fonts));
+  });
+
+  it('signalement : une étiquette par catégorie du contrat, gabarits identiques', () => {
+    for (const t of [fr, en]) {
+      expect(Object.keys(t.reportCategories).sort()).toEqual([...REPORT_CATEGORIES].sort());
+    }
+    // Les gabarits `{n}`, `{delay}`… sont remplis par le code : mêmes trous dans chaque langue.
+    const holes = (v: unknown, at = ''): string[] =>
+      typeof v === 'string'
+        ? [...v.matchAll(/\{(\w+)\}/g)].map((m) => `${at}:${m[1]}`)
+        : v && typeof v === 'object'
+          ? Object.entries(v).flatMap(([k, x]) => holes(x, `${at}.${k}`))
+          : [];
+    for (const key of ['report', 'follow', 'known'] as const) {
+      expect(holes(en[key]).sort(), key).toEqual(holes(fr[key]).sort());
+    }
   });
 
   it('chaque planche de portrait a sa légende anglaise', () => {

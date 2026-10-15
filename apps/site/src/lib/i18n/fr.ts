@@ -52,6 +52,9 @@ export const fr = {
       'presse/': 'Presse',
       'charte/': 'Charte graphique',
       'credits/': 'Crédits',
+      'signaler/': 'Signaler un problème',
+      'problemes-connus/': 'Problèmes connus',
+      'confidentialite/': 'Confidentialité',
     },
     legal: [
       '© 2026 CARDOR Media. « L’Arbre aux absents » est un jeu de CM Interactive, écrit et illustré par CM Creative Lab. Monde, lieux et personnages sont imaginaires.',
@@ -712,6 +715,263 @@ export const fr = {
   },
 
   /** Palette de la charte : familles et nuanciers (DESIGN §3 et §10.3), par token. */
+  /**
+   * Signalement (lot B4, ARCHITECTURE §8, DESIGN §13.8 et §14.6). Les pages hydratées reçoivent
+   * ces sections par leur `load` : textes seulement (gabarits `{n}`, aucune fonction).
+   */
+  reportCategories: {
+    bug: 'Quelque chose ne marche pas',
+    blocked: 'Je suis bloqué dans l’enquête',
+    text: 'Faute ou texte incorrect',
+    display: 'Problème d’affichage',
+    audio: 'Problème de son',
+    controls: 'Commandes, clavier ou manette',
+    performance: 'Lenteur ou plantage',
+    other: 'Autre chose',
+  },
+
+  report: {
+    seoTitle: 'Signaler un problème',
+    seoDescription:
+      'Un bug, un blocage, une faute dans L’Arbre aux absents ? Signalez-le à l’équipe et suivez son traitement sans créer de compte.',
+    kicker: 'Formulaire de signalement',
+    title: 'Signaler un problème',
+    lede: 'Un bug, un blocage, une faute ? Décrivez-le : l’équipe le lit, et vous suivez son traitement sans compte.',
+    noscript:
+      'Ce formulaire a besoin de JavaScript. Vous pouvez aussi signaler le problème sur le forum itch.io du jeu :',
+    forum: 'Forum itch.io',
+    fromGame:
+      'Depuis le jeu, passez plutôt par « Signaler un problème » (écran titre, pause ou aide) : il joint la version et l’affaire en cours.',
+    categoryLabel: 'Catégorie',
+    descriptionLabel: 'Description',
+    descriptionHint: 'Au moins 20 caractères. Ce que vous faisiez, ce que vous attendiez.',
+    descriptionMissing: 'Encore {n} caractères avant de pouvoir envoyer.',
+    contactLabel: 'Contact (facultatif)',
+    contactHint: 'Jamais publié. Seulement pour vous répondre.',
+    contactPrivacy: [
+      'Adresse e-mail ou pseudo itch.io. Gardé sur notre serveur, jamais envoyé à GitHub, effacé 30 jours après la clôture du ticket. ',
+      { link: 'confidentialite/', text: 'Confidentialité' },
+    ] as Rich,
+    honeypot: 'Site web (laisser vide)',
+    previewSummary: 'Voir exactement ce qui sera envoyé',
+    previewLine: 'Version {version} · site · {language} · fenêtre {w} × {h}',
+    previewNote:
+      'Rien d’autre : ni adresse IP, ni cookie, ni historique de navigation. elapsedMs est le temps passé sur ce formulaire (anti-robot) ; website doit rester vide.',
+    submit: 'Envoyer le signalement',
+    sending: 'Envoi en cours…',
+    receipt: {
+      stamp: 'Reçu',
+      title: 'Signalement reçu',
+      number: 'Numéro du signalement',
+      keep: 'Gardez ce numéro et ce lien : c’est le seul moyen de suivre votre signalement, rien n’est gardé dans ce navigateur.',
+      followLabel: 'Lien de suivi',
+      open: 'Ouvrir le suivi',
+      copyLink: 'Copier le lien',
+      linkCopied: 'Lien de suivi copié',
+      another: 'Signaler un autre problème',
+      announce: 'Signalement reçu, numéro {ticket}.',
+    },
+    failure: {
+      toast: 'Signalement non envoyé',
+      lead: 'Le service ne répond pas. Rien n’est perdu :',
+      leadRefused: 'Le signalement n’a pas été accepté. Rien n’est perdu :',
+      offline: 'Votre appareil semble hors ligne, ou le service est injoignable.',
+      timeout: 'Pas de réponse au bout de 10 secondes.',
+      unavailable: 'Le service de signalement est indisponible pour le moment.',
+      disabled: 'Les signalements sont suspendus pour le moment.',
+      rateLimited: 'Trop de signalements envoyés depuis votre connexion. Réessayez dans {delay}.',
+      rateLimitedLater: 'Trop de signalements envoyés depuis votre connexion. Réessayez plus tard.',
+      invalid: 'Vérifiez la description (20 à 4 000 caractères) et le contact (200 au plus).',
+      tooLarge: 'Le signalement est trop long.',
+      help: 'Copiez le rapport pour le coller sur le forum (sans votre contact, le forum est public), ou réessayez plus tard.',
+      copy: 'Copier le rapport',
+      copied: 'Rapport copié',
+      copyFailed: 'Copie impossible : sélectionnez le texte ci-dessous.',
+      copyArea: 'Rapport à copier',
+      retry: 'Réessayer',
+    },
+    text: {
+      heading: 'Signalement · L’Arbre aux absents (site)',
+      category: 'Catégorie :',
+      description: 'Description :',
+      diagnostics: 'Diagnostics :',
+    },
+  },
+
+  follow: {
+    seoTitle: 'Suivi d’un signalement',
+    seoDescription:
+      'Où en est votre signalement : statut, réponses de l’équipe, suppression à la demande.',
+    kicker: 'Fiche de suivi',
+    title: 'Suivi du signalement',
+    loading: 'Lecture de la fiche…',
+    noscript:
+      'Le suivi a besoin de JavaScript : le lien de suivi n’est jamais envoyé au serveur du site, seule la page le lit. Sans JavaScript, vous pouvez demander où en est votre signalement sur le forum itch.io du jeu :',
+    forum: 'Forum itch.io',
+    ticketLabel: 'Numéro',
+    created: 'Envoyé le {date}',
+    updated: 'mis à jour le {date}',
+    repliesHeading: 'Réponses de l’équipe',
+    replyDate: 'Le {date}',
+    noReplies: 'Pas encore de réponse de l’équipe.',
+    tokenNote:
+      'Le lien a été retiré de la barre d’adresse pour qu’il ne reste pas dans l’historique : gardez le lien reçu pour revenir.',
+    delete: 'Supprimer mon signalement',
+    deleting: 'Suppression…',
+    confirm: {
+      title: 'Supprimer ce signalement ?',
+      text: 'Le ticket ne sera plus lisible, votre contact est effacé et ce lien de suivi cessera de fonctionner.',
+      keep: 'Garder',
+      confirm: 'Supprimer',
+    },
+    deleted: {
+      title: 'Signalement supprimé',
+      text: 'Le contact est effacé et le lien de suivi ne fonctionne plus. La correction éventuelle se poursuit sans vos données.',
+    },
+    deleteFailed: 'Suppression impossible pour le moment. Réessayez plus tard.',
+    missing: {
+      title: 'Aucun lien de suivi',
+      text: 'Cette page s’ouvre avec le lien reçu après un signalement (il se termine par #… suivi d’un code). Ouvrez-le tel quel.',
+    },
+    notFound: {
+      title: 'Ce suivi n’existe plus',
+      text: 'Le lien est incomplet, le signalement a été supprimé, ou il est clos depuis plus de 12 mois.',
+    },
+    error: {
+      title: 'Fiche illisible pour le moment',
+      text: 'Le service de signalement ne répond pas. Votre signalement n’est pas perdu : réessayez dans un moment.',
+      offline:
+        'Votre appareil semble hors ligne, ou le service est injoignable. Réessayez une fois connecté.',
+      rateLimited: 'Trop de consultations depuis votre connexion. Réessayez dans {delay}.',
+      retry: 'Réessayer',
+    },
+    reportLink: 'Signaler un problème',
+    knownLink: 'Problèmes connus',
+  },
+
+  known: {
+    seoTitle: 'Problèmes connus',
+    seoDescription:
+      'Les problèmes de L’Arbre aux absents déjà connus de l’équipe, leur statut et la version qui les corrige.',
+    kicker: 'Registre des incidents',
+    title: 'Problèmes connus',
+    lede: 'Ce que l’équipe sait déjà, du plus récent au plus ancien. Votre problème n’y est pas ? Signalez-le.',
+    loading: 'Chargement du registre…',
+    empty: 'Aucun problème connu pour l’instant.',
+    error: 'Le registre est illisible pour le moment.',
+    retry: 'Réessayer',
+    noscript:
+      'Cette liste a besoin de JavaScript. Les problèmes connus sont aussi discutés sur le forum itch.io du jeu :',
+    forum: 'Forum itch.io',
+    updated: 'Mis à jour le {date}',
+    listLabel: 'Problèmes connus',
+    reportLink: 'Signaler un problème',
+  },
+
+  privacy: {
+    seoTitle: 'Confidentialité',
+    seoDescription:
+      'Ce que le signalement de problèmes collecte, pourquoi, où et pour combien de temps. Aucune IP stockée, aucun cookie, suppression à la demande.',
+    kicker: 'Données personnelles',
+    title: 'Confidentialité',
+    lede: 'Le site ne pose aucun cookie et ne mesure pas l’audience (la bande-annonce YouTube et le widget itch.io intégrés suivent leurs propres règles). Seul le signalement de problèmes recueille des données : voici lesquelles, et ce qu’elles deviennent.',
+    sections: [
+      {
+        id: 'collecte',
+        heading: 'Ce qui est collecté',
+        body: [
+          [
+            'Quand vous signalez un problème : la catégorie, votre description et, si vous le donnez, un contact. S’y ajoutent des diagnostics techniques : la version, la plateforme (site, web, ordinateur ou Android), la langue, la taille de la fenêtre et la famille du système (« Windows », « Android »), jamais la chaîne complète du navigateur.',
+          ],
+          [
+            'Depuis le jeu, aussi : l’édition, l’affaire en cours et vos réglages, plus une sauvegarde anonymisée, sans vos notes ni vos recherches, ',
+            { strong: 'seulement si vous cochez la case' },
+            '. Chaque formulaire montre exactement ce qui part avant l’envoi.',
+          ],
+          ['Pas de compte, pas de cookie, pas de mesure d’audience.'],
+        ] as Rich[],
+      },
+      {
+        id: 'pourquoi',
+        heading: 'Pourquoi',
+        body: [
+          [
+            'Comprendre et corriger le problème. Le contact sert uniquement à vous répondre ; il n’est jamais publié.',
+          ],
+        ] as Rich[],
+      },
+      {
+        id: 'ou',
+        heading: 'Où vont les données',
+        body: [
+          [
+            'La description et les diagnostics deviennent un ticket dans un ',
+            { strong: 'dépôt GitHub privé' },
+            ', lisible par l’équipe seulement (GitHub est un prestataire établi aux États-Unis). Le ticket ne contient ni votre contact, ni le lien de suivi, ni votre adresse IP.',
+          ],
+          [
+            'Le contact reste sur notre serveur de signalement et ',
+            { strong: 'n’est jamais envoyé à GitHub' },
+            '.',
+          ],
+        ] as Rich[],
+      },
+      {
+        id: 'duree',
+        heading: 'Combien de temps',
+        body: [
+          [
+            'Le contact est effacé ',
+            { strong: '30 jours après la clôture' },
+            ' du ticket. La fiche de suivi (empreinte du lien, statut, réponses publiques) est supprimée ',
+            { strong: '12 mois après la clôture' },
+            '.',
+          ],
+        ] as Rich[],
+      },
+      {
+        id: 'ip',
+        heading: 'Adresses IP',
+        body: [
+          [
+            'Le service de signalement ',
+            { strong: 'ne stocke ni ne journalise aucune adresse IP' },
+            '. Pour limiter les abus, il en dérive une empreinte à sens unique qui reste en mémoire, change chaque jour et n’est jamais écrite.',
+          ],
+          [
+            'Le site et le service passent par Cloudflare, qui voit les adresses IP comme tout intermédiaire réseau et les traite selon sa propre politique.',
+          ],
+        ] as Rich[],
+      },
+      {
+        id: 'suivi',
+        heading: 'Le lien de suivi',
+        body: [
+          [
+            'Le code secret du lien se trouve après le « # » : le navigateur ne l’envoie jamais au serveur du site, et le service n’en garde qu’une empreinte. La page de suivi le retire de la barre d’adresse dès la lecture. Quiconque possède ce lien peut lire et supprimer le signalement : ne le partagez pas.',
+          ],
+        ] as Rich[],
+      },
+      {
+        id: 'droits',
+        heading: 'Vos droits',
+        body: [
+          [
+            'Supprimez votre signalement à tout moment avec « Supprimer mon signalement » sur la ',
+            { link: 'suivi/', text: 'page de suivi' },
+            ' : le contact est effacé, la description retirée du ticket et le lien cesse de fonctionner.',
+          ],
+          [
+            'Lien perdu, question, accès ou rectification : écrivez-nous sur le forum itch.io du jeu en donnant le numéro du signalement, jamais votre contact. Vous pouvez aussi saisir l’autorité de protection des données de votre pays.',
+          ],
+        ] as Rich[],
+      },
+    ],
+    forum: 'Forum itch.io',
+    reportLink: 'Signaler un problème',
+    updated: 'Mise à jour : octobre 2026',
+  },
+
   palette: {
     groups: [
       {

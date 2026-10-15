@@ -14,7 +14,16 @@
   /** Textes de l'habillage (load du layout). */
   let { t }: { t: ChromeStrings } = $props();
   const lang = $derived(t.lang);
-  const links = ['le-monde/', 'artbook/', 'presse/', 'charte/', 'credits/'] as const;
+  const links = [
+    'le-monde/',
+    'artbook/',
+    'presse/',
+    'charte/',
+    'credits/',
+    'signaler/',
+    'problemes-connus/',
+    'confidentialite/',
+  ] as const;
 </script>
 
 <footer class="site-footer">

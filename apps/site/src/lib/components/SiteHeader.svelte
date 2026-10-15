@@ -14,7 +14,9 @@
   /** Textes de l'habillage (load du layout). */
   let { t }: { t: ChromeStrings } = $props();
 
-  // Place réservée aux pages de signalement (lot B4) : ajouter leur slug à SITE_PAGES puis ici.
+  // Pages de signalement (lot B4) : dans le pied de page seulement. À 64 rem, la navigation large
+  // occupe déjà toute la place (mesuré : ~760 px disponibles, ~770 px pris) ; un lien de plus
+  // déborderait. On y accède aussi depuis le jeu (Signaler, Mes signalements).
   const links = ['le-monde/', 'artbook/', 'charte/', 'presse/', 'credits/'] as const;
 
   const lang = $derived(t.lang);

@@ -11,8 +11,25 @@ export const SITE_LOCALES = ['fr', 'en'] as const satisfies readonly Locale[];
 export const SOURCE_LOCALE = 'fr' satisfies Locale;
 
 /** Slugs des pages localisées, relatifs à la racine de la langue (`''` = accueil). */
-export const SITE_PAGES = ['', 'le-monde/', 'artbook/', 'charte/', 'presse/', 'credits/'] as const;
+export const SITE_PAGES = [
+  '',
+  'le-monde/',
+  'artbook/',
+  'charte/',
+  'presse/',
+  'credits/',
+  'signaler/',
+  'suivi/',
+  'problemes-connus/',
+  'confidentialite/',
+] as const;
 export type SitePath = (typeof SITE_PAGES)[number];
+
+/**
+ * Pages hors du plan du site et non indexées : le suivi n'a de sens qu'avec un jeton (fragment
+ * `#…`), sa page nue n'apprend rien aux moteurs.
+ */
+export const UNLISTED_PAGES = ['suivi/'] as const satisfies readonly SitePath[];
 
 /** Langue d'un paramètre de route `[[lang=lang]]` (absent = français). */
 export function toLocale(param: string | undefined | null): Locale {
