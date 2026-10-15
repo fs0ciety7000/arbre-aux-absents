@@ -241,7 +241,7 @@ export type ReportErrorCode = 'invalid' | 'tooLarge' | 'rateLimited' | 'disabled
   - Fusion FR + calque, compilation par langue et par édition.
   - Sel et `contentHash` structurels, passage de `hearing`, tri `localeCompare(…, locale)`.
   - Projection structurelle et règle 12, solveur par langue.
-  - Nouvel écrivain du dossier généré (catalogues, chunks par affaire, surcharges d'assets, monde par langue). Il émet **aussi** l'ancien `cases.ts` / `cases.<éd>.json` (FR) jusqu'à C1, pour que jeu et site continuent de compiler.
+  - Nouvel écrivain du dossier généré (catalogues, chunks par affaire, surcharges d'assets, monde par langue). Il émet **aussi** l'ancien `cases.ts` / `cases.<éd>.json` (FR) jusqu'à C1, pour que jeu et site continuent de compiler (retiré à C1).
 - Critères :
   1. Avec `en: draft` et aucun fichier anglais, `content:check` est vert et liste les manques en avertissement.
   2. La fixture anglaise passe la parité ; une rupture volontaire (mot-clé manquant, figure déplacée, terme de nom absent, case différente) produit une erreur testée.
@@ -378,6 +378,8 @@ Onze lots, chacun limité à `content/cases/<id>/locales/en/<chemins du lot>` :
 ### Vague C (intégration)
 
 - **C1 · orchestrateur + backend** : passer `en` à `ready` ; retirer l'ancien format généré (backend) ; `npm run check` et `npm run build` ; zips itch (complet et démo, avec l'anglais) ; vérifier les budgets.
+  - **Fait.** `en: ready` ; ancien format retiré (`legacy`, `--no-legacy`, `cases.<éd>.json`, `cases.i18n.ts`) : le module généré est `cases.ts`, `content:build` supprime les restes ; `CompiledCase.locale` obligatoire. `npm run check` vert (règle 12 en erreurs ; avertissements restants : paragraphes ostriens voulus de lt-02 et rg-02, pas de démo pour Hautcorvin). Solveur anglais : 118 et 98 documents, 30 et 28 cases, toutes les fins (6 et 4). `npm run build` et `npm run package:itch` (web 4 461 Ko, démo 2 209 Ko, l'anglais compris, aucun texte hors démo dans la démo). e2e jeu et site : 104 réussis, 4 ignorés (mesures de perf, `E2E_PERF=1`).
+  - Budgets mesurés (gzip -9) : catalogue 4,8 Ko (en) et 4,7 Ko (fr) en édition complète, 1,0 Ko en démo (≤ 20 Ko) ; UI anglaise `en-*.js` 11,2 Ko (≤ 15 Ko). **Premier affichage hors budget** : JS préchargé 166,0 Ko contre 157,8 Ko avant la traduction (`fa165db`), soit + 8,2 Ko pour + 4 Ko permis (+ 5,5 Ko avant B2, + 2,7 Ko avec le signalement en jeu) ; C1 n'y change rien (166,0 Ko avant et après). À traiter (backlog perf).
 - **C2 · level-designer** : relecture de la cohérence de la déduction en anglais (`hiddenTerm` « fougère sans date », aides de niveau 3, cases à risque C17, C19, C21, C25) ; `npm run content:solve -- --locale en --report`.
 - **C3 · qa-reviewer** (`tests/e2e/**`) : projet Playwright `en-GB` :
   - détection de la langue, bascule sur l'écran titre ;

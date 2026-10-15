@@ -227,25 +227,27 @@ export interface CaseCatalogEntry { id: CaseId; edition: Edition; locale: Locale
 fois par langue `source` ou `ready` et par édition. Le **sel** et `contentHash` sont calculés sur la
 **structure** (sources FR hors `locales/` : ids, conditions, arbre), donc identiques d'une langue à
 l'autre (D4) ; `answer` ne porte que des noms propres et des ids. `locale` est la seule donnée
-propre à la langue, avec les champs traduisibles. *Transition : `locale` reste facultatif dans le
-type jusqu'à la vague C1.*
+propre à la langue (obligatoire dans `CompiledCase`), avec les champs traduisibles. Langues
+compilées aujourd'hui : `fr` (source) et `en` (`ready` depuis la vague C1).
 
 Arborescence générée (ignorée par git) :
 
 ```
 apps/game/src/generated/
-  cases.ts                          généré : edition, locales: Locale[], loadCatalog(loc), loadCase(loc, id), assetLoader(loc, caseId, key)
+  cases.ts                          généré : edition, locales: Locale[], loadCatalog(loc), loadCase(loc, id), assetLoader(loc, caseId, key), loadWorldText(loc)
   catalog.<éd>.<loc>.json           CaseCatalogEntry[] triés (order, id)
   case.<éd>.<loc>.<caseId>.json     CompiledCase (SVG de portraits retirés par le plugin)
   assets.<éd>.json                  illustrations communes (affaire → clé → SVG)
   assets.<éd>.<loc>.json            surcharges de la langue seulement ({} en fr)
   world.json  world.<loc>.json      couches communes ; texte et couche `labels` surchargée par langue
+  world.ts                          généré : `world` (monde de la langue source, typé)
 apps/site/src/generated/            idem, édition demo
 ```
 
 Chaque `case…json`, chaque catalogue et chaque surcharge devient **un chunk** ; le catalogue de l'UI
-anglaise aussi, chargé seulement en anglais. Jusqu'à C1, `content:build` émet en plus l'ancien
-`cases.ts` / `cases.<éd>.json` (FR).
+anglaise aussi, chargé seulement en anglais. Il n'y a plus d'autre format : l'ancien
+`cases.<éd>.json` (FR, une édition entière) et le module de transition `cases.i18n.ts` ont été
+retirés à la vague C1, et `content:build` supprime leurs restes éventuels.
 
 ### 3.4 Partie, profil, réglages
 
