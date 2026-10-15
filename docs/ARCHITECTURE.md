@@ -17,7 +17,7 @@ Aucune autre référence aux projets de la maison dans le jeu ou le site (demand
 
 ```
 content/world/** + art/map/*.svg ─┐
-content/cases/<id>/** ────────────┼─ content:build (zod, parseur Markdown, hachage, svgo, éditions full/démo)
+content/cases/<id>/** ────────────┼─ content:build (zod, parseur Markdown, hachage, svgo, éditions full/démo, langues fr/en)
                                   │      → apps/game/src/generated/   (ignoré par git)
                                   │      → apps/site/src/generated/
 packages/contract   types + schémas zod
@@ -27,10 +27,12 @@ packages/ui         tokens, art.css, polices, primitives Svelte
 apps/game           Vite + Svelte 5 SPA (base './')
    ├─ build web  → dist/ → zip itch.io (complet + démo)
    └─ src-tauri  → Tauri 2 : Windows, macOS, Linux, Android (CI uniquement)
-apps/site           SvelteKit adapter-static → nginx (Docker) → Coolify → arbre.fs0ciety.org
+apps/site           SvelteKit adapter-static → nginx (Docker) → Coolify → arbre.cardormedia.com (FR + /en/)
+apps/report         service de signalement Node 22 + node:sqlite → Coolify → arbre-api.cardormedia.com (§8)
 ```
 
-Aucun serveur de jeu : tout est hors ligne. Le site est entièrement statique.
+Aucun serveur de jeu : tout est hors ligne. Le site est entièrement statique. Le seul service est
+celui des signalements (§8) ; le jeu reste jouable sans lui (repli « Copier le rapport »).
 
 ## 2. Stack
 
@@ -51,10 +53,18 @@ Aucun serveur de jeu : tout est hors ligne. Le site est entièrement statique.
 | Tests | Vitest (moteur, contenu, caméra) ; Playwright chromium + webkit + axe | WebKit ≈ WKWebView/WebKitGTK | — |
 | Lint / format | Prettier + ESLint (typescript-eslint, eslint-plugin-svelte) ; `cargo fmt` + `clippy` en CI | Comme les projets liés | Biome |
 | Service du site | nginx-unprivileged :8080, précompressé, `/healthz` | Pas de Node au runtime | — |
+| i18n | **Catalogues TypeScript typés**, aucune bibliothèque : `fr.ts` source, `en.ts` `satisfies Messages`, Proxy réactif ; contenu traduit par calques (§3.6) | Zéro dépendance, clés et signatures vérifiées par le typage, chunk anglais chargé à la demande | FormatJS, paraglide |
+| Service de signalement | **Node 22 + `node:http` + `node:sqlite`**, zod embarqué au build (`vite build --ssr`, un seul `dist/server.js`), volume `/data` | Aucune dépendance au runtime, ~40 Mo de RAM ; comme arcade-cardor | Express/Fastify, base externe, formulaire tiers |
+| Liens externes (Tauri) | `@tauri-apps/plugin-opener`, limité à `https://arbre.cardormedia.com/*` et `https://cardorinteractive.itch.io/*` | Plugin officiel, seule manière propre d'ouvrir le suivi ou le forum | URL à copier |
 
 Dépendances d'exécution du jeu : `svelte`, `zod`, et sous Tauri seulement (import dynamique quand
-`VITE_TARGET=tauri`) `@tauri-apps/api`, `@tauri-apps/plugin-fs`, `@tauri-apps/plugin-dialog`.
-Textes d'UI regroupés dans `apps/game/src/messages.fr.ts` (prépare les traductions).
+`VITE_TARGET=tauri`) `@tauri-apps/api`, `@tauri-apps/plugin-fs`, `@tauri-apps/plugin-dialog`,
+`@tauri-apps/plugin-opener`.
+Textes d'UI dans `apps/game/src/i18n/` : `fr.ts` (source, `type Messages = typeof fr`), `en.ts`
+(`satisfies Messages`, chunk chargé seulement en anglais) et `index.svelte.ts` (langue courante en
+`$state.raw`, `messages` en Proxy réactif ; aucune capture de `messages.*` au niveau d'un module).
+`messages.fr.ts` et `panels/messages.ts` réexportent ce catalogue. Langue résolue avant l'écran
+titre : profil, puis `?lang=`, puis `Platform.systemLocales()` (`fr-*` → français, sinon anglais, D6).
 
 Porte de sortie : le cœur web ne dépend du shell que par l'interface `Platform` (§4). Si WebKitGTK
 bloque sous Linux, cette seule cible peut passer en Electron.
@@ -186,7 +196,8 @@ export interface WorldMap { aspect: number; layers: ('base' | 'relief' | 'water'
 export interface SlotAnswer { given: string[]; family: string[]; portrait: string[] /* canonique puis altPortraits */; occupation: string } // hachages cyrb53(salt|slot|champ|normalize(v))
 export interface CompiledDocument extends DocumentFrontmatter { id: DocumentId; body: Block[]; keywords: KeywordId[] }
 export interface CompiledCase {
-  format: 1; id: CaseId; edition: 'full' | 'demo'; contentHash: string /* 8 hex */; salt: string;
+  format: 1; id: CaseId; edition: 'full' | 'demo'; locale: Locale;
+  contentHash: string /* 8 hex, empreinte STRUCTURELLE : identique entre langues */; salt: string;
   meta: CaseMeta;
   documents: Record<DocumentId, CompiledDocument>;
   searchIndex: Record<string /* terme normalisé */, KeywordId>;
@@ -208,7 +219,33 @@ export interface CompiledCase {
   // portrait un chunk à la demande (`svg: ''` dans le cas compilé), la carte un chunk du panneau Carte.
   candidates: { given: string[]; family: string[] }; // noms proposables (lus dans les documents), pour la saisie par liste
 }
+export interface CaseCatalogEntry { id: CaseId; edition: Edition; locale: Locale; contentHash: string;
+  meta: CaseMeta; achievements: Achievement[]; endings: Record<EndingId, { title: string }> } // catalogue par langue
 ```
+
+**Langues** (`packages/contract/src/i18n.ts`, `docs/i18n/PLAN.md`) : une affaire est compilée une
+fois par langue `source` ou `ready` et par édition. Le **sel** et `contentHash` sont calculés sur la
+**structure** (sources FR hors `locales/` : ids, conditions, arbre), donc identiques d'une langue à
+l'autre (D4) ; `answer` ne porte que des noms propres et des ids. `locale` est la seule donnée
+propre à la langue, avec les champs traduisibles. *Transition : `locale` reste facultatif dans le
+type jusqu'à la vague C1.*
+
+Arborescence générée (ignorée par git) :
+
+```
+apps/game/src/generated/
+  cases.ts                          généré : edition, locales: Locale[], loadCatalog(loc), loadCase(loc, id), assetLoader(loc, caseId, key)
+  catalog.<éd>.<loc>.json           CaseCatalogEntry[] triés (order, id)
+  case.<éd>.<loc>.<caseId>.json     CompiledCase (SVG de portraits retirés par le plugin)
+  assets.<éd>.json                  illustrations communes (affaire → clé → SVG)
+  assets.<éd>.<loc>.json            surcharges de la langue seulement ({} en fr)
+  world.json  world.<loc>.json      couches communes ; texte et couche `labels` surchargée par langue
+apps/site/src/generated/            idem, édition demo
+```
+
+Chaque `case…json`, chaque catalogue et chaque surcharge devient **un chunk** ; le catalogue de l'UI
+anglaise aussi, chargé seulement en anglais. Jusqu'à C1, `content:build` émet en plus l'ancien
+`cases.ts` / `cases.<éd>.json` (FR).
 
 ### 3.4 Partie, profil, réglages
 
@@ -227,13 +264,15 @@ export interface SaveState {
   secrets: Record<SecretId, number>; hintsUsed: Record<HintId, number>;
   notebook: {
     pins: Pin[]; // ≤ 60
-    highlights: { doc: DocumentId; path: number[]; start: number; end: number; color: 1 | 2 | 3 | 4 | 5 }[];
+    highlights: { doc: DocumentId; path: number[]; start: number; end: number; color: 1 | 2 | 3 | 4 | 5;
+      lang?: Locale /* absent = 'fr' */ }[];
     notes: { id: string; target?: Pin; text: string /* ≤ 2000 */; at: number }[];
   };
   report: Record<string /* question */, string /* option */>;
   ending: EndingId | null;
 }
-export interface SaveSlotSummary { slot: SaveSlotId; caseTitle: string; updatedAt: number; elapsedMs: number; mode: SaveState['mode']; progress: number }
+export interface SaveSlotSummary { slot: SaveSlotId; caseId?: CaseId | null /* association par id, jamais par titre */;
+  caseTitle: string; updatedAt: number; elapsedMs: number; mode: SaveState['mode']; progress: number }
 export interface HintSettings { preset: 0 | 1 | 2 | 3 | 'custom'; unreadBadges: boolean; exhaustedTerms: boolean;
   placeCounters: boolean; whereToLook: boolean; groupCounter: boolean; progressiveHints: boolean } // GAME_DESIGN §10
 export interface Settings {
@@ -245,17 +284,25 @@ export interface Settings {
   volume: { master: number; music: number; ambience: number; sfx: number; ui: number };
   mono: boolean; muteInBackground: boolean; haptics: boolean; longPressMs: 300 | 400 | 600;
   confirmClear: boolean; inputGlyphs: 'auto' | 'keyboard' | 'gamepad';
+  language?: 'system' | Locale; // facultatif : anciens profils valides ; absent = 'system'
 }
 export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>; completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] }>;
-  tutorial?: { done: boolean; seen: string[] } } // tutoriel en bulles : optionnel (anciens profils valides), seen ≤ 32 ids kebab-case
+  tutorial?: { done: boolean; seen: string[] }; // tutoriel en bulles : optionnel (anciens profils valides), seen ≤ 32 ids kebab-case
+  reports?: ReportRef[] } // « Mes signalements », ≤ 20 (§8)
 // Crans des « Notes de service » (E04) sans champ de plus : écrits dans `tutorial` au lancement.
 // Complètes → done false, seen ∪ {returning} (repart de zéro si done) ; Nouveautés seulement →
 // done false, seen ∪ 10 notes de base ; Aucune → done true. `done` devient vrai quand les notes
 // requises par l'affaire (base + nouveautés dont la mécanique est dans les données) sont vues.
 // Cran par défaut : Nouveautés si done, base toute vue, ou une fin vue (`completed`).
 // Ids : base (welcome…help), `returning`, nouveautés génériques `claim`, `hearing`, `decision`
-// (déclencheurs : `claimedGuess`, pièce `report` dont le titre parle d'audition, question `choice`).
+// (déclencheurs : `claimedGuess`, document `hearing: true`, question `choice`).
 ```
+
+**Langue et partie** : une sauvegarde ne dépend pas de la langue (D4) ; elle se charge sur le compilé
+de n'importe quelle langue avec le même résultat de `validate`. Changer de langue en cours de partie
+remplace `content` (chargement de `case.<éd>.<loc>.<id>`) **sans toucher à `SaveState`**. Les
+surlignages sont des positions dans le texte, donc propres à une langue (D5) : chacun porte `lang`
+(absent = `fr`), n'est affiché que dans sa langue et conservé dans les autres, jamais retiré.
 
 ### 3.5 Moteur pur (`packages/engine`)
 
@@ -294,7 +341,9 @@ validate(s, c): { lock: SlotId[]; groups: GroupId[] }
 settle(s, c): { state; events }                           // point fixe des déblocages
 evaluate(cond, s, c): boolean
 evaluateAchievements(s, profile, c): AchievementId[]
-parseSave(raw, c): { ok: true; state; dropped: string[] } | { ok: false; error }
+parseSave(raw, c): { ok: true; state; dropped: string[] } | { ok: false; error; code: ParseSaveErrorCode }
+// code : 'tooLarge' | 'invalidJson' | 'notObject' | 'noVersion' | 'newerVersion' | 'migrationFailed' | 'corrupt' | 'otherCase'
+// l'UI choisit son message par `code` (jamais par le texte d'`error`) ; facultatif dans le type jusqu'à A2
 summarize(s, c): SaveSlotSummary
 // sélecteurs
 knownKeywords, availablePortraits, availableOccupations, availableNames, visiblePlaces, visibleSlots, progress, endingFor,
@@ -343,7 +392,19 @@ content/cases/<caseId>/
   tree.json  progression.json  hints.json  achievements.json   level-designer
   portraits/<portraitId>.svg  illustrations/*.svg              cartographe
 content/*.schema.json                          générés par z.toJSONSchema()
+content/locales.json                           LocalesConfig : { default: 'fr', locales: { fr: source, en: draft|ready } }
+content/cases/<caseId>/locales/<loc>/          calques (champs traduisibles seuls, clés = ids FR, objets stricts)
+  case.json family.json tree.json progression.json hints.json achievements.json   *Translation (i18n.ts)
+  documents/<docId>.md                         frontmatter DocumentFrontmatterTranslation + corps traduit
+  endings/<endingId>.md                        frontmatter `title`, mêmes étiquettes de section, même ordre
+  illustrations/*.svg                          surcharges facultatives (mots courants dessinés)
+content/world/locales/<loc>.json               WorldTranslation (titre de la carte, descriptions des lieux)
+art/map/locales/<loc>/labels.svg               surcharge facultative de la couche `labels`
 ```
+
+Un champ facultatif est exigé dans un calque si et seulement s'il est présent en FR. Tout le reste
+(conditions, ids, `reveals`, `place`, `date`, `kind`, `hearing`) est hérité du FR (D2) : la dérive
+structurelle est impossible par construction. Noms propres (personnes, lieux) jamais traduits (D3).
 
 Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, listes, tableaux pipe, `## titres`,
 `![alt](illustrations/x.svg "légende")`, `[[texte|keyword-id]]`, `::hand[…]`, `::stamp[…]`,
@@ -383,8 +444,27 @@ Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, 
 11. **Fuite** : aucun `bibleNotes` ni réponse en clair dans le compilé (la déclaration `claimedGuess`
     est en clair par nature) ; aucun portrait, autres âges compris, ne nomme sa personne ; autant de
     hachages de visage que de visages de la personne.
+12. **Traductions** (pour chaque langue autre que la source : **erreurs** si `ready`, **avertissements**
+    si `draft` ; une langue `draft` n'est pas compilée) :
+    1. Parité des fichiers et des clés : chaque unité FR traduisible a son équivalent, aucun extra.
+    2. Frontmatter traduit strict (`DocumentFrontmatterTranslation`).
+    3. Par document : **ensemble des mots-clés liés après autolink identique au FR** ; mêmes assets de
+       figure dans le même ordre. Nombre de `::redacted` et de `::stamp` différent : avertissement.
+    4. Fins : mêmes étiquettes `[Sx]` dans le même ordre.
+    5. Termes uniques après normalisation dans la langue. Tout terme FR égal à une variante
+       `given`/`family` d'une `Person` ou au `name` d'un `Place` figure aussi dans les termes de la langue.
+    6. **Projection structurelle du compilé de la langue égale à celle du FR**, par édition
+       (`candidates` compris).
+    7. Règles 1 à 11 rejouées **par langue** : solveur, canaris de la démo, budgets.
+    8. Surcharges SVG : même `viewBox` et mêmes ids que la base ; règles 8 et 9.
+    9. Avertissement si un paragraphe de plus de 8 mots est identique au FR (oubli de traduction).
 
-`content:build` écrit les affaires triées par `(meta.order ?? ∞, id)`.
+    Commandes : `npm run content:i18n -- --case <id> [--only <glob>]` (code 1 en cas d'erreur sur le
+    périmètre) et `npm run content:solve -- --locale en`. Budgets ajoutés : catalogue ≤ 20 Ko gz par
+    langue ; chunk de l'UI anglaise ≤ 15 Ko gz ; module de démarrage + 4 Ko gz au plus.
+
+`content:build` écrit les affaires triées par `(meta.order ?? ∞, id)` ; tri des listes par
+`localeCompare(…, locale)` dans chaque langue.
 
 ## 4. Plateforme
 
@@ -396,8 +476,16 @@ interface SaveStore {
   loadProfile(): Promise<unknown | null>; saveProfile(p: Profile): Promise<void>;
 }
 interface Platform { kind: 'web' | 'desktop' | 'android'; saves: SaveStore;
-  setFullscreen?(on: boolean): Promise<void>; onBack(cb: () => boolean): () => void; quit?(): void }
+  setFullscreen?(on: boolean): Promise<void>; onBack(cb: () => boolean): () => void; quit?(): void;
+  systemLocales(): readonly string[];               // navigator.languages ; facultatif dans le type jusqu'à A2
+  openExternal?(url: string): Promise<boolean> }     // false si refusé ou indisponible
 ```
+
+- **Langues du système** : `systemLocales()` rend `navigator.languages` (web et WebView Tauri) ;
+  sert à résoudre `language: 'system'` (`resolveLanguage`, `packages/contract/src/i18n.ts`).
+- **Liens externes** : `openExternal` importe dynamiquement `@tauri-apps/plugin-opener` sous Tauri,
+  capability `opener:allow-open-url` limitée à `https://arbre.cardormedia.com/*` et
+  `https://cardorinteractive.itch.io/*` ; sur le web, `window.open(url, '_blank', 'noopener')`.
 
 - **Tauri** : `$APPDATA/saves/<slot>.json`, écriture atomique (`.tmp` + renommage) et `.bak` ; capability
   limitée à `$APPDATA/saves/**` ; `plugin-dialog` pour export/import.
@@ -428,6 +516,9 @@ interface Platform { kind: 'web' | 'desktop' | 'android'; saves: SaveStore;
   `$APPDATA/saves/**`, `fs:allow-stat` pour vérifier la taille d'un import avant lecture).
 - Build web/itch : CSP en `<meta>` (aucun script inline, `<style>` du splash autorisé par empreinte,
   `style-src-attr 'unsafe-inline'` pour les attributs posés par Svelte).
+- CSP `connect-src` complétée par `https://arbre-api.cardormedia.com` (service de signalement, §8) :
+  `<meta>` du build web, `/jouer/` et site (nginx), `tauri.conf.json`. `Referrer-Policy: no-referrer`
+  sur `/suivi/` et `/en/suivi/` (le jeton de suivi est dans le fragment).
 - CSP stricte du site (nginx). Aucun secret dans le repo (keystore Android, clés butler, signature :
   secrets GitHub Actions uniquement).
 - Les réponses sont hachées dans le contenu compilé (anti-spoiler léger, pas une protection).
@@ -448,6 +539,10 @@ apps/game/src/** (hors platform), index.html, vite.config.ts            frontend
 apps/game/src-tauri/**              Tauri (config, capabilities, icônes)   devops
 apps/site/src/routes/design/**      démo du design system             design-lead
 apps/site/src/** (hors design)      accueil, monde, artbook, charte, crédits, presse   frontend-site
+apps/game/src/i18n/**, apps/game/vite/**                                 frontend-jeu
+apps/site/src/params/**, apps/site/src/lib/i18n/**                       frontend-site
+apps/report/src/**, apps/report/test/**, apps/report/package.json (+ tsconfig, vite.config)   backend
+apps/report/Dockerfile, apps/report/Dockerfile.dockerignore             devops
 apps/site/static/brand/**           logos (copie de static/brand/)    orchestrateur
 Dockerfile, nginx.conf, .github/**, docs/DEPLOYMENT.md, scripts/*.sh   devops
 docs/DESIGN.md                      design-lead
@@ -458,6 +553,9 @@ content/world/**, art/**            cartographe
 content/cases/<id>/{case,family}.json, documents/**, endings/**   scenariste
 content/cases/<id>/{tree,progression,hints,achievements}.json     level-designer
 content/cases/<id>/{portraits,illustrations}/**                   cartographe
+content/**/locales/<loc>/*.json, …/documents/**, …/endings/**, docs/i18n/**   scenariste ou traducteur (relecture level-designer : progression, aides, succès)
+content/**/locales/<loc>/illustrations/**, art/map/locales/**     cartographe
+content/locales.json                orchestrateur
 tests/e2e/**                        qa-reviewer
 ```
 
@@ -468,3 +566,89 @@ tests/e2e/**                        qa-reviewer
 | `ci.yml` | push / PR | check · build (web, zips itch complet et démo, site) · e2e (chromium + webkit + axe) · docker (site, `/healthz`) · rust-lint |
 | `tauri.yml` | tag `v*` + manuel | matrice Linux (AppImage, deb) / Windows (NSIS) / macOS (universel, dmg) + Android (APK/AAB, signés si secrets présents) → release brouillon |
 | `itch.yml` (plus tard) | release publiée | `butler push` par canal |
+
+## 8. Service de signalement (`apps/report`)
+
+Signaler un problème depuis le jeu ou le site, puis suivre son ticket sans compte. Contrat :
+`packages/contract/src/report.ts` et `report-ref.ts` (partagés par le jeu, le site et le service).
+Déploiement : app Coolify séparée **`arbre-api.cardormedia.com`**, Node 22, `node:http` +
+`node:sqlite`, **zod seule dépendance d'exécution** (embarquée au build : `vite build --ssr` →
+`dist/server.js`, pas de `node_modules` au runtime), volume `/data`, port 8090, `HEALTHCHECK` (D9).
+
+```
+POST   /v1/reports           ReportSubmission → 201 ReportReceipt | 400/413/429(Retry-After)/503 {error: ReportErrorCode}
+GET    /v1/tickets/current   Authorization: Bearer <token> → 200 TicketView | 404 (inconnu ou expiré)
+DELETE /v1/tickets/current   Bearer → 204 : contact effacé, corps du ticket GitHub remplacé, jeton invalidé
+GET    /v1/known-issues?locale=fr|en → KnownIssue[] (Cache-Control public, max-age=300)
+POST   /v1/github/webhook    X-Hub-Signature-256 (HMAC, timingSafeEqual) → 204
+GET    /healthz              {ok, github: 'ok'|'degraded', pending: n}
+```
+
+`ReportErrorCode` : `invalid` (400), `tooLarge` (413), `rateLimited` (429 + `Retry-After`),
+`disabled` (503, `REPORTS_ENABLED=false`), `unavailable` (503). Toute erreur est un JSON
+`{ error }`, jamais une trace. Pot de miel `website` non vide ou `elapsedMs < 3000` : réponse
+neutre, rien n'est créé.
+
+**Ticket** : numéro propre au service (`AA-0042`, préfixe `TICKET_PREFIX`), sans lien avec le
+numéro du ticket GitHub. Jeton de suivi de 128 bits (22 caractères base64url), stocké **haché**
+(SHA-256), jamais journalisé. Lien de suivi `https://arbre.cardormedia.com/suivi/#<jeton>` (fragment :
+ni journaux ni Referer) (D10). Le jeu garde `ReportRef` dans `Profile.reports` (≤ 20).
+
+**Correspondance des statuts** :
+
+| Ticket GitHub | Statut affiché |
+|---|---|
+| Ouvert, sans étiquette de statut | `received` |
+| Étiquette `statut:confirmé` | `confirmed` |
+| Étiquette `statut:en-cours`, ou ticket assigné | `in-progress` |
+| Fermé `completed` avec un jalon `vX.Y.Z` | `fixed` + `fixedIn` = titre du jalon |
+| Fermé `not_planned` | `closed` / `not-planned` |
+| Étiquette `doublon` | `closed` / `duplicate` |
+| Fermé sans jalon | `closed` / `resolved` |
+
+**Réponses publiques** : commentaires dont la première ligne est `/public`, **et seulement si
+`author_association` vaut OWNER, MEMBER ou COLLABORATOR** (sur un dépôt public, n'importe qui
+pourrait écrire le marqueur). Rendues en texte brut, 2 000 caractères au plus.
+
+**Problèmes connus** : tickets étiquetés `public`. Titre FR = titre du ticket, que l'équipe relit
+avant de poser l'étiquette. Titre anglais facultatif = commentaire d'un mainteneur commençant par
+`/public-title-en`.
+
+**Corps du ticket** : description dans un bloc de code à clôture plus longue que tout bloc présent
+dans le texte (neutralise mentions, images et liens), diagnostics en JSON dans `<details>`. Jamais de
+contact, de jeton ni d'IP. Étiquettes `signalement`, `source:jeu|site`, `cat:<catégorie>`, `langue:en`.
+Dépôt cible configurable par `GITHUB_REPO` (D12 : dépôt privé dédié recommandé ; s'il reste public,
+le formulaire prévient que la description sera publiée anonymement).
+
+**Synchronisation** : webhook (`issues`, `issue_comment`, `milestone`) ; rapprochement toutes les
+30 min des tickets non fermés depuis plus de 30 jours (requêtes conditionnelles `If-None-Match`, une
+réponse 304 ne consomme pas de quota) ; rafraîchissement paresseux à la lecture si la donnée a plus
+de 10 min. Si GitHub est en panne, la soumission est **acceptée** quand même (`received`, file
+`pending`, réessais avec attente croissante) : le joueur a toujours son numéro.
+
+**Limitation de débit** : en mémoire seulement. Clé = HMAC de `CF-Connecting-IP` avec un secret
+aléatoire tiré en mémoire et renouvelé chaque jour ; jamais écrite ni journalisée. Plafonds :
+5 signalements par heure et 20 par jour par clé, 60 par heure au total, 60 lectures de ticket par
+minute. Corps limité à 64 Ko. Interrupteur `REPORTS_ENABLED`. Délais d'attente sur chaque appel
+GitHub, concurrence bornée de la file `pending`.
+
+**Schéma SQLite**, table `tickets` : `id`, `ticket` UNIQUE, `token_hash` UNIQUE (SHA-256),
+`created_at`, `updated_at`, `source`, `category`, `locale`, `issue_number` NULL, `status`,
+`fixed_in`, `closed_reason`, `closed_at`, `replies_json`, `contact` NULL, `pending_payload` NULL
+(effacé dès la création du ticket GitHub), `etag`, `synced_at`.
+
+**Conservation** (D13, tâche quotidienne) : contact effacé 30 jours après la clôture ; ticket
+(empreinte du jeton, statut, réponses publiques) supprimé 12 mois après la clôture ; suppression
+immédiate à la demande (`DELETE`). Aucune IP stockée ni journalisée.
+
+**Accès de l'équipe au contact** : `node dist/admin.js contact AA-0042` depuis le terminal Coolify.
+Aucune route HTTP d'administration.
+
+**CORS** : `ALLOWED_ORIGINS` = `https://arbre.cardormedia.com`, `tauri://localhost`,
+`http://tauri.localhost`, `https://html-classic.itch.zone`.
+
+**Configuration** (variables d'environnement Coolify, jamais dans le repo ; `.env.example`) :
+`GITHUB_TOKEN` (fine-grained, un seul dépôt, Issues RW + Metadata R, expiration à surveiller :
+`/healthz` passe en `degraded` sur 401), `GITHUB_REPO`, `GITHUB_WEBHOOK_SECRET`, `ALLOWED_ORIGINS`,
+`PUBLIC_SITE_URL`, `DATA_DIR=/data`, `REPORTS_ENABLED`, `TICKET_PREFIX=AA`. Côté builds du jeu et du
+site : `VITE_REPORT_API=https://arbre-api.cardormedia.com` (public). Dev : `npm run dev:report`.
