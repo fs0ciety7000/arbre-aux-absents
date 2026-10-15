@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { HintSettings, LanguageSetting, Settings } from '@arbre/contract';
-  import { hintPreset, LONG_PRESS_MS, TEXT_SCALES } from '@arbre/contract';
+  import { hintPreset, LONG_PRESS_MS, READ_SCALES, SIDE_WIDTH, TEXT_SCALES } from '@arbre/contract';
   import {
     Button,
     KeyHint,
@@ -38,6 +38,15 @@
     'groupCounter',
     'progressiveHints',
   ] as const;
+
+  // ── Confort de lecture : taille du texte du Lecteur, largeur du volet (aussi au Bureau). ──
+  const sideOptions = $derived([
+    { value: String(SIDE_WIDTH.standard), label: m.sideWidthStandard },
+    { value: String(SIDE_WIDTH.wide), label: m.sideWidthWide },
+    ...(s.sideWidth === SIDE_WIDTH.standard || s.sideWidth === SIDE_WIDTH.wide
+      ? []
+      : [{ value: String(s.sideWidth), label: m.sideWidthCustom(s.sideWidth) }]),
+  ]);
 
   const presetOptions = $derived([
     ...[0, 1, 2, 3].map((p) => ({ value: String(p), label: messages.hintPresets[String(p)]! })),
@@ -152,6 +161,19 @@
             value={String(s.textScale)}
             onchange={(e) =>
               set({ textScale: Number(e.currentTarget.value) as Settings['textScale'] })}
+          />
+          <Select
+            label={m.readScale}
+            options={READ_SCALES.map((v) => ({ value: String(v), label: m.textScaleValue(v) }))}
+            value={String(s.readScale)}
+            onchange={(e) =>
+              set({ readScale: Number(e.currentTarget.value) as Settings['readScale'] })}
+          />
+          <Select
+            label={m.sideWidth}
+            options={sideOptions}
+            value={String(s.sideWidth)}
+            onchange={(e) => set({ sideWidth: Number(e.currentTarget.value) })}
           />
           <Select
             label={m.motion}

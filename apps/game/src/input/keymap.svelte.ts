@@ -27,6 +27,8 @@ export const COMMANDS = [
   'save',
   'reader.transcript',
   'reader.flip',
+  'reader.textUp',
+  'reader.textDown',
   'page.prev',
   'page.next',
   'zoom.in',
@@ -82,6 +84,9 @@ export const DEFAULT_KEYMAP: Readonly<Record<CommandId, readonly string[]>> = {
   save: ['Ctrl+s'],
   'reader.transcript': ['t'],
   'reader.flip': ['r'],
+  // Alt : Ctrl + / − est le zoom du navigateur. `code` en plus pour macOS (Alt change le caractère).
+  'reader.textUp': ['Alt+=', 'Alt++', 'Alt+Equal', 'Alt+NumpadAdd'],
+  'reader.textDown': ['Alt+-', 'Alt+Minus', 'Alt+NumpadSubtract'],
   'page.prev': ['PageUp'],
   'page.next': ['PageDown'],
   'zoom.in': ['+', '='],

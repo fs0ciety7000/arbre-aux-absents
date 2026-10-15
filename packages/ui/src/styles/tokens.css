@@ -245,6 +245,9 @@
   /* v2 : titre du jeu (écran titre, hero du site) 52 → 128 px */
   --step-6: calc(clamp(3.25rem, 1.3913rem + 8.2609vw, 8rem) * var(--text-scale));
   --hand-boost: 1.3; /* Caveat a un petit œil : ×1,3 pour le même confort que le romain */
+  /* Corps des pièces dans le Lecteur : un cran au-dessus du texte courant (×1,1), avant la
+     taille choisie par le joueur (A− / A+, Settings.readScale → --read-scale). */
+  --read-boost: 1.1;
 
   --leading-tight: 1.1;
   --leading-snug: 1.3;

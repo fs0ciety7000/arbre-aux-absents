@@ -12,7 +12,7 @@ import type {
   Settings,
   SlotId,
 } from '@arbre/contract';
-import { hintPreset } from '@arbre/contract';
+import { hintPreset, SIDE_WIDTH } from '@arbre/contract';
 import {
   applyAction,
   claimedFields,
@@ -44,6 +44,7 @@ import type {
   Split,
 } from './types';
 export type { RevealRecord, Split } from './types';
+import { clampSideWidth } from './reading';
 import { viewport } from './viewport.svelte';
 
 /** Délai sans modification avant l'évaluation automatique d'un groupe (GAME_DESIGN §7.4 R1). */
@@ -131,8 +132,25 @@ export class GameStoreImpl implements GameStore {
   miniReaderHidden = $state(false);
   /** Volet latéral replié (desktop/tablette). */
   sideCollapsed = $state(false);
-  /** Largeur du volet latéral (px). */
-  sideWidth = $state(440);
+  /** Largeur du volet pendant un glissement de la poignée (null : celle des réglages). */
+  #sideDrag = $state<number | null>(null);
+  /** Largeur du volet latéral (px) : mémorisée dans les réglages (`Settings.sideWidth`). */
+  get sideWidth(): number {
+    return this.#sideDrag ?? this.#host.settings.sideWidth ?? SIDE_WIDTH.standard;
+  }
+  set sideWidth(w: number) {
+    this.#sideDrag = null;
+    const next = clampSideWidth(w);
+    if (next !== this.#host.settings.sideWidth) this.#host.updateSettings({ sideWidth: next });
+  }
+  /** Largeur provisoire pendant le glissement (non enregistrée). */
+  previewSideWidth(w: number): void {
+    this.#sideDrag = clampSideWidth(w);
+  }
+  /** Fin du glissement : la largeur provisoire est enregistrée. */
+  commitSideWidth(): void {
+    if (this.#sideDrag !== null) this.sideWidth = this.#sideDrag;
+  }
   /** Le joueur a passé le tutoriel (« J'ai déjà joué »). */
   skipTutorial = $state(false);
   saveFailed = $state(false);

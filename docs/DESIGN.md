@@ -341,9 +341,17 @@ car ses 121 Ko concurrençaient l'illustration du héros sur mobile (LCP −350 
 | `--step-3` | 26 → 34 px | `h2`, titre de modale |
 | `--step-2` | 22 → 26 px | `h3`, titre de panneau, titre de document, accroche |
 | `--step-1` | 19 → 21 px | `h4`, bouton `l` |
-| `--step-read` | 17 → 19 px | Texte des documents |
+| `--step-read` | 17 → 19 px | Texte de lecture (site, transcriptions hors Lecteur) |
 | `--step-0` | 16 → 17 px | Interface (minimum du texte lu) |
 | `--step--1` | 14 → 15 px | Surtitres, pastilles, étiquettes. Jamais un texte qu'il faut lire pour jouer |
+
+**Corps des pièces dans le Lecteur** (v2.5, « Confort de lecture ») :
+`calc(var(--step-read) * var(--read-boost) * var(--read-scale))`, soit un cran au-dessus du texte
+courant par défaut (`--read-boost: 1.1`, 19 → 21 px) puis la taille choisie par le joueur
+(`--read-scale`, réglage `readScale`, A− / A+ : 90 · 100 · 115 · 130 · 150 %). L'écriture manuscrite
+garde `× --hand-boost`. `--read-scale` est posé sur le Lecteur (style en ligne), pas sur `<html>` :
+il ne touche ni l'interface ni `--text-scale`, et reste distinct du zoom ×1–×4 (qui agrandit la
+feuille entière).
 
 Interlignes `--leading-tight|snug|ui|read|display` ; approches `--tracking-tight|display|caps|label|stamp|read`,
 chacune `+ var(--tracking-extra)` ; graisses `--weight-regular|medium|semibold|bold|display|display-black`.
@@ -465,11 +473,23 @@ Les variables ne sont pas admises dans les media queries : valeurs en dur, **en 
 │ 64px │ Arbre / Carte / Tableau d'épingles     │ Tabs line : Lecteur · Archives ·      │
 │ Tabs │ Panel sans bord, plein cadre           │ Catalogue · Carnet · Journal · Aide   │
 │ rail │                                        │ Lecteur = Panel surface="paper"       │
-│      │                                        │ poignée 8 px (col-resize), Ctrl+[ ]   │
+│      │                                        │ poignée à encoche, Ctrl+[ ]           │
 └──────┴────────────────────────────────────────┴──────────────────────────────────────┘
 grid-template-columns: var(--rail-w) minmax(0, 1fr) clamp(var(--side-min), var(--side-w), var(--side-max))
 gap: var(--space-3) ; padding: var(--space-3) ; deux Lecteurs comparés = volet de 2 × 360 min.
 ```
+
+**Poignée du volet** (v2.5) : trait `--line` sur toute la hauteur du volet et **encoche à trois
+points** au milieu (pastille `--surface-1`, bord `--line-strong`, points `--text-muted`), visibles au
+repos ; survol, focus et glissement passent l'encoche et le trait en `--accent` (`scaleY(1.15)`,
+`--dur-base`, neutralisé en mouvement réduit) ; focus : anneau `--focus` 3 px. Cible de saisie
+`--hit` de large (pseudo-élément) dans une colonne de `--space-3`. Infobulle et description
+accessible : « Glisser pour élargir · double-clic : standard ou large ». Gestes : glisser (enregistré
+au relâcher), double-clic ou Entrée / Espace / A (manette) = bascule `--side-default` (440) ↔
+`--side-max` (640), flèches ± `--side-step`, Début / Fin = max / min. La largeur est mémorisée
+(`Settings.sideWidth`) et réglable aussi dans Options › Affichage (Standard, Large, ou
+« Personnalisée (N px) »). `forced-colors` : encoche et trait en `CanvasText`. Téléphone et tablette
+portrait : pas de volet, donc pas de poignée.
 
 **Tablette 600–1279 px** — paysage : rail 56 px + zone principale 55 % + volet 45 % ; portrait :
 zone principale plein écran + **tiroir bas** (`Panel` dans une feuille à deux crans 40 % / 90 %,
@@ -1536,6 +1556,15 @@ latéral étroit compris), tout passe en `IconButton` (icônes `reader`, `transc
 `aria-pressed`, nom accessible et info-bulle étiqueteuse conservés) et le facteur de zoom affiché
 devient le bouton « Ajuster » (nom « ×1 · Ajuster », cible ≥ 44 px). À 390 px : deux lignes au lieu
 de quatre. Captures : `v2-1-jeu-lecteur-*`, `v2-1-jeu-toast-*`.
+
+**Taille du texte A− / A+** (v2.5) : groupe `role="group"` « Taille du texte » entre le zoom et
+l'épingle, deux `IconButton` dont le glyphe est un « A » en police de lecture (`--step--1` pour A−,
+`--step-1` pour A+, cible ≥ 44 px) et, hors mode compact, le pourcentage en Courier (`--step--1`).
+Boutons désactivés au cran extrême ; chaque cran est annoncé dans le `role="status"` du Lecteur
+(« Texte à 115 % »). Raccourcis remappables `Alt+=` / `Alt+-` (`aria-keyshortcuts`) — `Ctrl` est
+pris par le zoom du navigateur. Réglage mémorisé (`Settings.readScale`), aussi dans Options ›
+Affichage. Présent sur tous les formats (téléphone et tablette portrait : c'est le seul réglage de
+confort de lecture, le Lecteur y est déjà plein écran).
 
 ### 13.5 Catalogue (LX-2)
 

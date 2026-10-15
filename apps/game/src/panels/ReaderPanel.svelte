@@ -1,6 +1,6 @@
 <!--
   P03 — Lecteur : document ouvert sur papier. Original / Transcription (T), recto / verso (R),
-  zoom ×1–×4 (+ / − / 0), loupe (Maj maintenue sur le document), surlignage 5 couleurs doublées
+  zoom ×1–×4 (+ / − / 0), taille du texte A− / A+ (Alt+= / Alt+-, mémorisée), loupe (Maj maintenue sur le document), surlignage 5 couleurs doublées
   d'un motif (H puis 1–5), épingle (P), note (N), mots-clés soulignés cliquables (bulle
   d'action : Rechercher, Voir au carnet, Épingler, Utiliser dans l'arbre), visages du document.
   Rendu de l'AST sans `{@html}` (DocumentBody).
@@ -45,6 +45,12 @@
   import KeywordBubble, { type BubbleItem } from './doc/KeywordBubble.svelte';
   import { HL_LABELS, KIND_LABELS, messages, pm } from './messages';
   import { formatNumber } from '../lib/game/format';
+  import {
+    READ_SCALE_MAX,
+    READ_SCALE_MIN,
+    readScalePercent,
+    stepReadScale,
+  } from '../lib/game/reading';
 
   const game = getGame();
 
@@ -295,6 +301,16 @@
     status = pm.reader.highlightDone;
   }
 
+  // ── Taille du texte (A− / A+) : réglage mémorisé, distinct du zoom de la feuille ──
+  const readScale = $derived(game.settings.readScale);
+  const readPct = $derived(pm.reader.textSizePct(readScalePercent(readScale)));
+  function stepText(dir: 1 | -1) {
+    const next = stepReadScale(readScale, dir);
+    if (next === readScale) return;
+    game.updateSettings({ readScale: next });
+    status = pm.reader.textSizeValue(readScalePercent(next));
+  }
+
   // ── Zoom, loupe ─────────────────────────────────────────────────
   const setZoom = (z: number) => (zoom = Math.round(Math.min(4, Math.max(1, z)) * 4) / 4);
 
@@ -338,6 +354,8 @@
       if (!doc) return false;
       if (cmd === 'reader.transcript') mode = mode === 'original' ? 'transcript' : 'original';
       else if (cmd === 'reader.flip' && flippable) face = face === 'front' ? 'back' : 'front';
+      else if (cmd === 'reader.textUp') stepText(1);
+      else if (cmd === 'reader.textDown') stepText(-1);
       else if (!ownsCommands(readerEl, 'reader', game.ui.main)) return false;
       else if (cmd === 'pin') togglePin();
       else if (cmd === 'note') openNote();
@@ -462,7 +480,7 @@
     </div>
   {:else}
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div class="reader" bind:this={readerEl}>
+    <div class="reader" bind:this={readerEl} style:--read-scale={readScale}>
       <!-- Deux rangées dans l'ordre du DOM (= ordre de tabulation) : affichage, zoom, épingle/note ;
            puis surlignage et verso. Étroit (< 40 rem, volet ou téléphone) : boutons icônes seuls,
            nom accessible et info-bulle conservés, le zoom affiché sert de bouton « Ajuster ». -->
@@ -527,6 +545,27 @@
             {#if !compact}
               <IconButton icon="fit" label={pm.reader.fit} onclick={() => setZoom(1)} />
             {/if}
+          </div>
+          <div class="seg text-size" role="group" aria-label={pm.reader.textSize}>
+            <IconButton
+              class="a-btn"
+              label={pm.reader.textSmaller}
+              aria-keyshortcuts="Alt+-"
+              disabled={readScale <= READ_SCALE_MIN}
+              onclick={() => stepText(-1)}
+              ><span class="a-glyph small" aria-hidden="true">A−</span></IconButton
+            >
+            {#if !compact}
+              <span class="num read-pct" data-testid="read-scale">{readPct}</span>
+            {/if}
+            <IconButton
+              class="a-btn"
+              label={pm.reader.textLarger}
+              aria-keyshortcuts="Alt+="
+              disabled={readScale >= READ_SCALE_MAX}
+              onclick={() => stepText(1)}
+              ><span class="a-glyph large" aria-hidden="true">A+</span></IconButton
+            >
           </div>
           <div class="seg end">
             <IconButton
@@ -843,6 +882,31 @@
     color: var(--text);
     font-size: var(--step--1);
   }
+  /* A− / A+ : deux « A » de corps différents, en police de lecture (le geste se lit seul). */
+  .toolbar :global(.ibtn.a-btn) {
+    inline-size: auto;
+    min-inline-size: var(--hit);
+    padding-inline: var(--space-1);
+    color: var(--text);
+  }
+  .a-glyph {
+    font-family: var(--font-read);
+    font-weight: var(--weight-semibold);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .a-glyph.small {
+    font-size: var(--step--1);
+  }
+  .a-glyph.large {
+    font-size: var(--step-1);
+  }
+  .read-pct {
+    min-inline-size: 3.5rem;
+    text-align: center;
+    font-family: var(--font-type);
+    font-size: var(--step--1);
+  }
   .hl-icon {
     display: inline-flex;
   }
@@ -951,8 +1015,14 @@
     color: var(--ink);
     text-wrap: balance;
   }
+  /* Corps de lecture des pièces : un cran au-dessus du texte courant (--read-boost), puis la
+     taille choisie par le joueur (A− / A+, --read-scale). Le zoom agrandit la feuille entière. */
+  .sheet {
+    --read-size: calc(var(--step-read) * var(--read-boost) * var(--read-scale, 1));
+  }
   .sheet .reading {
     max-inline-size: none;
+    font-size: var(--read-size);
   }
   .kind-telegram:not(.transcript),
   .kind-report:not(.transcript),
@@ -968,7 +1038,7 @@
   .kind-letter:not(.transcript) .reading,
   .kind-postcard:not(.transcript) .reading {
     font-family: var(--font-hand);
-    font-size: calc(var(--step-read) * var(--hand-boost));
+    font-size: calc(var(--read-size) * var(--hand-boost));
     color: var(--ink-hand);
     line-height: 1.4;
   }

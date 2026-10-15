@@ -10,7 +10,9 @@
     type TabItem,
   } from '@arbre/ui';
   import { unreadDocuments } from '@arbre/engine';
+  import { SIDE_WIDTH } from '@arbre/contract';
   import { getApp, setGame } from '../lib/game/context';
+  import { toggleSideWidth } from '../lib/game/reading';
   import {
     MAIN_PANELS,
     PHONE_TABS,
@@ -37,8 +39,8 @@
   const app = getApp();
   const m = messages.desk;
 
-  const SIDE_MIN = 360;
-  const SIDE_MAX = 640;
+  const SIDE_MIN = SIDE_WIDTH.min;
+  const SIDE_MAX = SIDE_WIDTH.max;
   const MORE: PanelId[] = ['pinboard', 'journal', 'faces', 'help'];
 
   let menuOpen = $state(false);
@@ -165,11 +167,12 @@
     game.normalizeLayout();
   });
 
-  // ── Poignée du volet latéral ──
-  let dragging = false;
+  // ── Poignée du volet latéral (largeur mémorisée dans les réglages) ──
+  let dragging = $state(false);
   let startX = 0;
   let startW = 0;
   function onHandleDown(e: PointerEvent) {
+    if (e.button !== 0) return;
     dragging = true;
     startX = e.clientX;
     startW = game.sideWidth;
@@ -177,11 +180,20 @@
   }
   function onHandleMove(e: PointerEvent) {
     if (!dragging) return;
-    const w = startW - (e.clientX - startX);
-    game.sideWidth = Math.round(Math.min(SIDE_MAX, Math.max(SIDE_MIN, w)));
+    game.previewSideWidth(startW - (e.clientX - startX));
   }
   function onHandleUp() {
+    if (!dragging) return;
     dragging = false;
+    game.commitSideWidth();
+  }
+  /** Double-clic, Entrée / Espace ou bouton A de la manette : standard ↔ large. */
+  function toggleSide() {
+    game.sideWidth = toggleSideWidth(game.sideWidth);
+  }
+  function onHandleClick(e: MouseEvent) {
+    // `detail` 0 : activation sans pointeur (manette, `click()`) ; la souris passe par dblclick.
+    if (e.detail === 0) toggleSide();
   }
   function onHandleKey(e: KeyboardEvent) {
     const step = 40;
@@ -189,6 +201,7 @@
     else if (e.key === 'ArrowRight') game.sideWidth = Math.max(SIDE_MIN, game.sideWidth - step);
     else if (e.key === 'Home') game.sideWidth = SIDE_MAX;
     else if (e.key === 'End') game.sideWidth = SIDE_MIN;
+    else if (e.key === 'Enter' || e.key === ' ') toggleSide();
     else return;
     e.preventDefault();
   }
@@ -353,19 +366,28 @@
         <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
         <div
           class="handle"
+          class:dragging
           role="separator"
           aria-orientation="vertical"
           aria-label={m.sideResize}
+          aria-describedby="side-handle-hint"
           aria-valuemin={SIDE_MIN}
           aria-valuemax={SIDE_MAX}
           aria-valuenow={game.sideWidth}
+          title={m.sideResizeHint}
           tabindex="0"
+          data-testid="side-handle"
           onpointerdown={onHandleDown}
           onpointermove={onHandleMove}
           onpointerup={onHandleUp}
           onpointercancel={onHandleUp}
+          ondblclick={toggleSide}
+          onclick={onHandleClick}
           onkeydown={onHandleKey}
-        ></div>
+        >
+          <span class="grip" aria-hidden="true"><span></span><span></span><span></span></span>
+        </div>
+        <span id="side-handle-hint" class="visually-hidden">{m.sideResizeHint}</span>
         <aside class="side" aria-label={m.sideLabel} in:sheetPull|global={{ delay: 120 }}>
           <Tabs
             items={sideItems}
@@ -556,26 +578,67 @@
     flex: 1;
     min-height: 0;
   }
+  /* Poignée du volet (DESIGN §5.3) : un trait sur toute la hauteur et une encoche à trois
+     points au milieu, visibles au repos ; la cible de saisie déborde à --hit de large. */
   .handle {
     align-self: stretch;
+    display: grid;
+    place-items: center;
     border-radius: var(--radius-pill);
     cursor: col-resize;
     touch-action: none;
     position: relative;
+    margin-block-start: var(--space-8);
+  }
+  .handle::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline: calc((100% - var(--hit)) / 2);
   }
   .handle::after {
     content: '';
     position: absolute;
-    inset-block: 40%;
-    inset-inline: calc(50% - 1px);
-    background: var(--line-strong);
+    inset-block: var(--space-4);
+    inset-inline: calc(50% - var(--space-px));
+    background: var(--line);
     border-radius: var(--radius-pill);
-    transition: transform var(--dur-base) var(--ease-snap);
+  }
+  .grip {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--space-1);
+    justify-items: center;
+    padding: var(--space-2) var(--space-0-5);
+    border: var(--border) solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    background: var(--surface-1);
+    box-shadow: var(--shadow-1);
+    transition:
+      transform var(--dur-base) var(--ease-snap),
+      border-color var(--dur-fast) var(--ease-out);
+  }
+  .grip > span {
+    inline-size: var(--space-1);
+    block-size: var(--space-1);
+    border-radius: var(--radius-pill);
+    background: var(--text-muted);
+  }
+  .handle:hover .grip,
+  .handle:focus-visible .grip,
+  .handle.dragging .grip {
+    border-color: var(--accent);
+    transform: scaleY(1.15);
+  }
+  .handle:hover .grip > span,
+  .handle:focus-visible .grip > span,
+  .handle.dragging .grip > span {
+    background: var(--accent);
   }
   .handle:hover::after,
-  .handle:focus-visible::after {
+  .handle.dragging::after {
     background: var(--accent);
-    transform: scaleY(1.4);
   }
   .handle:focus-visible {
     outline: 3px solid var(--focus);
@@ -754,6 +817,13 @@
     gap: var(--space-2);
   }
   @media (forced-colors: active) {
+    .grip {
+      border-color: CanvasText;
+    }
+    .grip > span,
+    .handle::after {
+      background: CanvasText;
+    }
     .side::after {
       border-color: CanvasText;
     }
