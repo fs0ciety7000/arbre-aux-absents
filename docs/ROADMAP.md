@@ -118,23 +118,17 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       en draft) ; scripts `content:i18n` (emplacement réservé) et `dev:report` ; `.env.example`.
       Transition : `CompiledCase.locale`, `ParseSaveResult.code` et `Platform.systemLocales` restent
       facultatifs dans le type jusqu'à A2/C1 pour garder `check` vert.
-- [ ] A1 · backend · i18n du contenu (calques, compilation par langue, sel structurel, règle 12, `content:i18n`)
-- [ ] A2 · backend · moteur et plateforme (`code` de `parseSave`, `lang`, `caseId`, `systemLocales`, `openExternal`)
-- [ ] A3 · design-lead · `UiStrings`, `LanguageSwitch`, `TicketStatus`, sections DESIGN
-- [ ] A4 · backend · service de signalement `apps/report`
-- [ ] A5 · devops · Docker du service, CSP, nginx `/en/`, Tauri opener, CI
-- [ ] T0 · scenariste · glossaire `docs/i18n/en/GLOSSAIRE.md`, `content/world/locales/en.json`
-- [ ] T0-V, T0-H · scenariste · terminologie par affaire (progression, family, tree)
-- [ ] B1 · frontend-jeu · i18n de l'UI
-- [ ] B3 · frontend-site · i18n du site (`/en/`, `hreflang`)
-- [ ] T1 · traducteur · documents, fins, aides, succès (lots V1–V6, H1–H5)
-- [ ] T2 · cartographe · surcharges SVG anglaises
-- [ ] B2 · frontend-jeu · écrans de signalement
-- [ ] B4 · frontend-site · pages de signalement, suivi, problèmes connus, confidentialité
-- [ ] C1 · orchestrateur + backend · `en: ready`, retrait de l'ancien format généré, budgets
-- [ ] C2 · level-designer · relecture de la déduction en anglais
-- [ ] C3 · qa-reviewer · e2e `en-GB`, signalement simulé
-- [ ] C4 · devops · déploiement `arbre-api.cardormedia.com`, webhook, étiquettes, dépôt de signalements
+- [x] A1 à A5 (contenu, moteur et plateforme, UI, service `apps/report`, infra), check vert (G1).
+- [x] T0, T0-V, T0-H : glossaire, monde, terminologie des deux affaires (blaze/walkout, woman engineer).
+- [x] T1 (V1–V6, H1–H5) : 216 pièces, 10 fins, aides, succès ; T2 : 13 illustrations, cartouche de carte,
+      illustration titre et vignette du tampon en anglais.
+- [x] B1 (UI du jeu, changement de langue en partie), B3 (site `/en/`, `hreflang`, sitemap), B2 et B4
+      (signalement dans le jeu et sur le site, suivi, problèmes connus, confidentialité).
+- [x] C1 : `en` ready, ancien format généré retiré, `CompiledCase.locale` obligatoire ; solveur anglais
+      = français (118/30 et 98/28, toutes les fins) ; premier affichage du jeu ramené à +1,4 Ko gz.
+- [x] C2 : citations des aides alignées sur les pièces, faux liens « lise » corrigés dans la source FR.
+- [x] C3 : projet e2e en-GB (172 réussis), revue sécurité, images Docker site et service avec /healthz.
+- [ ] C4 · devops · déploiement `arbre-api.cardormedia.com` (DNS, app Coolify, jeton, webhook, étiquettes).
 
 ## Backlog
 
@@ -169,6 +163,14 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 - Contrat : remappage des touches dans `Settings`, emplacement dédié au mode chronométré, fractionnés sauvegardés.
 - Illustrations : qualité inégale (pb-01, photos de groupe aux tenues répétées) ; vrais profils pour ph-16/17.
 - Playtests : difficulté réelle des homonymes (Augustin, Firmin) et des cases à risque (C17, C21, C19, C25).
+
+- Signalement : la limite de débit fait confiance à `CF-Connecting-IP` ; fermer l'origine à tout ce qui
+      n'est pas Cloudflare (Authenticated Origin Pulls ou pare-feu) avant d'ouvrir largement.
+- Aides françaises de la Succession Varenque (c02, c04, c08, c13, c14, c18, c21, c22, c26, c29, c30) :
+      citer le texte exact des pièces, comme l'anglais.
+- Liens fortuits à confirmer (scénariste) : « goéland » minuscule → `le-goeland` (cp-02, ct-02, dv-05,
+      pr-07), « tilleuls » (ph-05, ph-22), gardien de prison (rg-14), « le thalbère » langue (rp-03 H).
+- Cartouche de carte : la ligne « dressée et gravée par… » mord sur le filet hachuré (`labels.py`).
 
 ## Décisions
 
@@ -217,3 +219,6 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 | 15/10 | D11 · `@tauri-apps/plugin-opener` limité à `arbre.cardormedia.com` et `cardorinteractive.itch.io` | Plugin officiel léger ; seule manière propre d'ouvrir un lien externe sous Tauri. |
 | 15/10 | D12 · Signalements dans un dépôt GitHub **privé** dédié `fs0ciety7000/arbre-aux-absents-signalements` (`GITHUB_REPO`) ; le contact n'est jamais envoyé à GitHub | Décision du propriétaire : la description libre peut contenir des données personnelles, le dépôt du jeu est public. |
 | 15/10 | D13 · Conservation : contact effacé 30 j après clôture, ticket supprimé 12 mois après clôture, suppression immédiate à la demande ; aucune IP stockée ni journalisée | Minimisation (RGPD). |
+| 15/10 | D14 · Termes de recherche anglais : *blaze* (incendie), *walkout* (grève), *woman engineer* (ingénieure) ; lieux de la carte jamais traduits ; titres « The Varenque Succession », « The Revenant of Hautcorvin » | Éviter les liens que le français n'a pas (*fire*, *strike* = *strike off*, *engineer* masculin) et garder les indices de genre. |
+| 15/10 | D15 · `TicketStatus` en quatre étapes (Reçu → Confirmé → En cours → Corrigé vX ou Classé) | `fixed` et `closed` sont deux fins exclusives : une cinquième étape attendrait toujours. |
+| 15/10 | D16 · Textes des panneaux du jeu chargés avec le bureau ; paquets `@arbre/*` sans effets de bord pour le découpage | Tenir le budget du premier affichage (+1,4 Ko gz contre +4 Ko permis). |
