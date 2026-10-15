@@ -118,13 +118,26 @@ Les versions Windows et macOS ne sont pas signées. Au premier lancement :
 - **Android** : autorisez l'installation depuis le navigateur ou l'application itch quand Android
   le demande.
 
+### Signaler un problème
+
+Un bug, une coquille, un blocage ? Dans le jeu : **Signaler** (écran titre, en-tête du bureau ou
+Aide). Sinon, sur le site : https://arbre.cardormedia.com/signaler/
+
+Vous recevez un numéro de ticket et un lien de suivi personnel, sans compte. La liste des problèmes
+connus est publique : https://arbre.cardormedia.com/problemes-connus/
+
+*Report a problem* : found a bug, a typo or got stuck? In the game, use **Report** (title screen,
+desk header or Help), or go to https://arbre.cardormedia.com/en/signaler/. You get a ticket number
+and a private follow-up link, no account needed. Known issues:
+https://arbre.cardormedia.com/en/problemes-connus/
+
 ### Crédits
 
 Développé par **CM Interactive**, écrit et illustré par **CM Creative Lab**, une production
 **CARDOR Media**. Polices : Fraunces, Literata, Instrument Sans, Oswald, Courier Prime, Caveat,
 Atkinson Hyperlegible Next (SIL Open Font License 1.1).
 
-Site, artbook et dossier de presse : https://arbre.fs0ciety.org
+Site, artbook et dossier de presse : https://arbre.cardormedia.com
 
 ---
 
