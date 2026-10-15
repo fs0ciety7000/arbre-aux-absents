@@ -271,17 +271,26 @@ export interface PlaceCounter {
   found: number;
   /** « Fiches à trouver » : accessibles maintenant et pas encore débloquées. */
   remaining: number;
+  /**
+   * Le fonds garde des pièces ni débloquées ni accessibles (condition pas encore remplie) : elles
+   * s'ouvriront plus tard avec l'enquête. Booléen, sans nombre, pour ne rien divulguer.
+   */
+  pending: boolean;
 }
 
-/** Aide « compteur par lieu » (niveau 1). */
+/**
+ * Compteurs par lieu visible (aide « compteur par lieu », niveau 1, et signal de réouverture :
+ * un lieu déjà ouvert avec `remaining > 0` a des pièces devenues accessibles depuis la visite).
+ */
 export function placeCounters(s: SaveState, c: CompiledCase): PlaceCounter[] {
   return visiblePlaces(s, c).map(({ id }) => {
-    const docs = c.places[id]?.documents ?? [];
-    const found = docs.filter((d) => own(s.unlocked, d.id) !== undefined).length;
-    const remaining = placeDocuments(id, s, c).filter(
-      (d) => own(s.unlocked, d) === undefined,
-    ).length;
-    return { id, found, remaining };
+    const docs = (c.places[id]?.documents ?? []).filter(
+      (d) => own(c.documents, d.id) !== undefined,
+    );
+    const locked = docs.filter((d) => own(s.unlocked, d.id) === undefined);
+    const found = docs.length - locked.length;
+    const remaining = locked.filter((d) => holds(d.requires, s, c)).length;
+    return { id, found, remaining, pending: locked.length > remaining };
   });
 }
 

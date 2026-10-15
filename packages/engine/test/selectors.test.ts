@@ -176,9 +176,67 @@ describe('carnet et aides', () => {
     const s2 = play(s, [visit('vessaut', 4), open('moulin-vessaut', 5)], {}, c).state;
     expect(whereToLook(s2, c)).toEqual({ kind: 'place', id: 'port-lanne' });
     expect(placeCounters(s2, c)).toEqual([
-      { id: 'port-lanne', found: 1, remaining: 1 },
-      { id: 'vessaut', found: 1, remaining: 0 },
+      { id: 'port-lanne', found: 1, remaining: 1, pending: false },
+      { id: 'vessaut', found: 1, remaining: 0, pending: true },
     ]);
+  });
+
+  it('lieu ouvert : pièces en attente, puis accessibles (signal de réouverture), puis épuisé', () => {
+    const c = deepFreeze({
+      ...clone(C),
+      places: {
+        ...clone(C.places),
+        'port-lanne': {
+          ...clone(C.places['port-lanne']!),
+          documents: [
+            { id: 'annuaire-lanne' },
+            { id: 'photo-quai', requires: { read: 'annuaire-lanne' } },
+          ],
+        },
+      },
+      progression: { ...clone(C.progression), start: ['photo-noces'] },
+      meta: { ...C.meta, intro: 'photo-noces' },
+    });
+    const at = (s: SaveState) => placeCounters(s, c).find((p) => p.id === 'port-lanne');
+    const state = (s: SaveState) => visiblePlaces(s, c).find((p) => p.id === 'port-lanne')?.state;
+
+    // Mentionné, jamais ouvert : rien de débloqué, une pièce accessible, une en attente.
+    let s = play(newGameFor(c), [open('photo-noces', 1)], {}, c).state;
+    expect(at(s)).toEqual({ id: 'port-lanne', found: 0, remaining: 1, pending: true });
+
+    // Ouvert : tout l'accessible est pris, il reste une pièce conditionnée (« 0 à trouver »).
+    s = play(s, [visit('port-lanne', 2)], {}, c).state;
+    expect(state(s)).toBe('open');
+    expect(at(s)).toEqual({ id: 'port-lanne', found: 1, remaining: 0, pending: true });
+
+    // La condition devient vraie : la pièce est accessible, rien n'est débloqué d'office.
+    s = play(s, [open('annuaire-lanne', 3)], {}, c).state;
+    expect(s.unlocked['photo-quai']).toBeUndefined();
+    expect(state(s)).toBe('open');
+    expect(at(s)).toEqual({ id: 'port-lanne', found: 1, remaining: 1, pending: false });
+
+    // Réouverture manuelle : le fonds est épuisé, la coche revient.
+    s = play(s, [visit('port-lanne', 4)], {}, c).state;
+    expect(state(s)).toBe('exhausted');
+    expect(at(s)).toEqual({ id: 'port-lanne', found: 2, remaining: 0, pending: false });
+  });
+
+  it('lieu sans aucun fonds : épuisé dès l’ouverture, rien trouvé, rien en attente', () => {
+    const c = deepFreeze({
+      ...clone(C),
+      places: {
+        ...clone(C.places),
+        'port-lanne': { ...clone(C.places['port-lanne']!), documents: [] },
+      },
+    });
+    const s = play(start(), [visit('port-lanne', 2000)], {}, c).state;
+    expect(visiblePlaces(s, c)).toContainEqual({ id: 'port-lanne', state: 'exhausted' });
+    expect(placeCounters(s, c)).toContainEqual({
+      id: 'port-lanne',
+      found: 0,
+      remaining: 0,
+      pending: false,
+    });
   });
 
   it('lieux : mentionné, ouvert, épuisé ; compteurs', () => {
@@ -192,8 +250,8 @@ describe('carnet et aides', () => {
       { id: 'vessaut', state: 'open' },
     ]);
     expect(placeCounters(s, C)).toEqual([
-      { id: 'port-lanne', found: 1, remaining: 0 },
-      { id: 'vessaut', found: 1, remaining: 0 },
+      { id: 'port-lanne', found: 1, remaining: 0, pending: false },
+      { id: 'vessaut', found: 1, remaining: 0, pending: true },
     ]);
   });
 
