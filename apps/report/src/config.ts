@@ -28,7 +28,18 @@ export interface Config {
   dataDir: string;
   reportsEnabled: boolean;
   ticketPrefix: string;
+  /**
+   * Clé des URL signées des pièces jointes. Absent : dérivée de `webhookSecret` (HMAC à contexte
+   * propre), ou aléatoire en mémoire sans l'un ni l'autre (dev).
+   */
+  attachmentSecret?: string;
+  /** Base publique du service, pour les URL signées des pièces (`…/v1/attachments/<id>?sig=`). */
+  publicApiUrl: string;
+  /** Plafond de stockage de toutes les pièces, en octets (au-delà : 503 `unavailable`). */
+  attachmentsMaxBytes: number;
 }
+
+export const DEFAULT_PUBLIC_API_URL = 'https://arbre-api.cardormedia.com';
 
 const Bool = z
   .enum(['true', 'false', '1', '0', 'yes', 'no', 'on', 'off'])
@@ -80,6 +91,21 @@ const EnvSchema = z.object({
   ),
   DATA_DIR: z.preprocess(blankToUndefined, z.string().min(1).default('/data')),
   REPORTS_ENABLED: z.preprocess(blankToUndefined, Bool.default(true)),
+  ATTACHMENT_SECRET: z.preprocess(
+    blankToUndefined,
+    z.string().min(32, { error: '32 caractères au moins' }).optional(),
+  ),
+  PUBLIC_API_URL: z.preprocess(
+    blankToUndefined,
+    z
+      .url({ protocol: /^https?$/ })
+      .transform((u) => u.replace(/\/+$/, ''))
+      .optional(),
+  ),
+  ATTACHMENTS_MAX_MB: z.preprocess(
+    blankToUndefined,
+    z.coerce.number().int().min(1).max(1_000_000).default(2048),
+  ),
   TICKET_PREFIX: z.preprocess(
     blankToUndefined,
     z
@@ -114,5 +140,9 @@ export function loadConfig(
     dataDir: opts.dev && env.DATA_DIR === undefined ? '.data' : e.DATA_DIR,
     reportsEnabled: e.REPORTS_ENABLED,
     ticketPrefix: e.TICKET_PREFIX,
+    attachmentSecret: e.ATTACHMENT_SECRET,
+    publicApiUrl:
+      e.PUBLIC_API_URL ?? (opts.dev ? `http://localhost:${e.PORT}` : DEFAULT_PUBLIC_API_URL),
+    attachmentsMaxBytes: e.ATTACHMENTS_MAX_MB * 1024 * 1024,
   };
 }

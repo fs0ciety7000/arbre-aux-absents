@@ -129,6 +129,6 @@ describe('schéma', () => {
     const store = new TicketStore(db, 'AA');
     expect(store.byTicket('AA-0001')).toMatchObject({ failedAt: null, failedStatus: null });
     expect(store.failedCount()).toBe(0);
-    expect(db.prepare("SELECT value FROM meta WHERE key = 'schema'").get()).toEqual({ value: '2' });
+    expect(db.prepare("SELECT value FROM meta WHERE key = 'schema'").get()).toEqual({ value: '3' });
   });
 });

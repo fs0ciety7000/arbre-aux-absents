@@ -1,6 +1,8 @@
 import { createHash, randomBytes, randomInt } from 'node:crypto';
-import { REPORT_LIMITS } from '@arbre/contract';
+import { ATTACHMENT_LIMITS, REPORT_LIMITS } from '@arbre/contract';
 import type {
+  AttachmentReceipt,
+  AttachmentType,
   KnownIssue,
   Locale,
   OpenTicket,
@@ -8,7 +10,11 @@ import type {
   ReportSubmission,
   TicketView,
 } from '@arbre/contract';
-import type { TicketRow, TicketStore } from './db';
+import type { BlobStore, UrlSigner } from './attachments';
+import type { AttachmentPurge } from './attachments';
+import { newAttachmentId, purgeAttachments } from './attachments';
+import type { AttachmentRow, TicketRow, TicketStore } from './db';
+import type { CleanImage } from './image';
 import type { GitHubClient, GitHubComment, GitHubIssue } from './github';
 import { GitHubError, isAssigned, labelNames, parseTime } from './github';
 import type { IssueDraft } from './render';
@@ -103,7 +109,14 @@ export interface ServiceDeps {
   now: () => number;
   publicSiteUrl: string;
   logger?: Logger;
+  blobs: BlobStore;
+  signer: UrlSigner;
+  /** Plafond de stockage de toutes les pièces, en octets. */
+  attachmentsMaxBytes?: number;
 }
+
+/** Stockage plein (plafond `ATTACHMENTS_MAX_MB`) : 503 `unavailable`. */
+export class StorageFullError extends Error {}
 
 export class ReportService {
   private readonly store: TicketStore;
@@ -111,6 +124,9 @@ export class ReportService {
   private readonly now: () => number;
   private readonly log: Logger;
   private readonly siteUrl: string;
+  private readonly blobs: BlobStore;
+  private readonly signer: UrlSigner;
+  private readonly attachmentsMaxBytes: number;
   /** Créations GitHub en cours (une suppression pendant ce temps devient un remplacement). */
   private readonly creating = new Set<number>();
   private readonly refreshing = new Map<number, Promise<void>>();
@@ -126,6 +142,9 @@ export class ReportService {
     this.now = deps.now;
     this.log = deps.logger ?? silentLogger;
     this.siteUrl = deps.publicSiteUrl.replace(/\/+$/, '');
+    this.blobs = deps.blobs;
+    this.signer = deps.signer;
+    this.attachmentsMaxBytes = deps.attachmentsMaxBytes ?? Number.POSITIVE_INFINITY;
   }
 
   // ---------------------------------------------------------------------------------- création
@@ -144,14 +163,115 @@ export class ReportService {
       contact,
       pendingPayload: '{}',
     });
+    // Pièces encore libres et non expirées : les autres sont ignorées sans refuser le signalement.
+    const attached = s.attachments?.length
+      ? this.store.attach(row.id, s.attachments, now, now - ATTACHMENT_LIMITS.unattachedTtlMs)
+      : [];
     // Le numéro n'est connu qu'après l'insertion : le corps est rendu ensuite.
-    const draft = renderIssue(row.ticket, s);
+    const draft = renderIssue(
+      row.ticket,
+      s,
+      attached.map((a) => ({ ...a, url: this.signer.url(a.id) })),
+    );
     this.store.setPayload(row.id, JSON.stringify(draft));
-    this.log.info('report.created', { ticket: row.ticket, category: s.category, source: s.source });
+    this.log.info('report.created', {
+      ticket: row.ticket,
+      category: s.category,
+      source: s.source,
+      attachments: attached.length,
+    });
     // Le nouveau ticket apparaît aussitôt dans la liste publique des tickets ouverts.
     this.invalidateKnown();
     this.kick();
-    return { ticket: row.ticket, token, followUrl: this.followUrl(token, s.locale) };
+    return {
+      ticket: row.ticket,
+      token,
+      followUrl: this.followUrl(token, s.locale),
+      ...(s.attachments !== undefined ? { attachments: attached.length } : {}),
+    };
+  }
+
+  // ---------------------------------------------------------------------------- pièces jointes
+
+  /** Enregistre une image déjà vérifiée et nettoyée (`cleanImage`). */
+  storeAttachment(img: CleanImage): AttachmentReceipt {
+    if (this.store.attachmentStats().bytes + img.data.length > this.attachmentsMaxBytes) {
+      this.log.warn('attachment.full', { bytes: img.data.length });
+      throw new StorageFullError('stockage des pièces plein');
+    }
+    const id = newAttachmentId();
+    const now = this.now();
+    // Fichier d'abord, ligne ensuite (synchrone) ; si l'insertion échoue, le fichier est retiré.
+    this.blobs.put(id, img.type, img.data);
+    try {
+      this.store.insertAttachment({
+        id,
+        createdAt: now,
+        type: img.type,
+        bytes: img.data.length,
+        width: img.width,
+        height: img.height,
+      });
+    } catch (e) {
+      this.blobs.delete(id, img.type);
+      throw e;
+    }
+    this.log.info('attachment.stored', { type: img.type, bytes: img.data.length });
+    return {
+      id,
+      type: img.type,
+      width: img.width,
+      height: img.height,
+      bytes: img.data.length,
+      expiresAt: now + ATTACHMENT_LIMITS.unattachedTtlMs,
+    };
+  }
+
+  /** Faux reçu du pot de miel : rien n'est stocké, l'identifiant ne mène à rien. */
+  decoyAttachment(type: AttachmentType, width: number, height: number, bytes: number) {
+    return {
+      id: newAttachmentId(),
+      type,
+      width,
+      height,
+      bytes,
+      expiresAt: this.now() + ATTACHMENT_LIMITS.unattachedTtlMs,
+    } satisfies AttachmentReceipt;
+  }
+
+  /** Lecture par URL signée : la signature est vérifiée par l'appelant. */
+  readAttachment(id: string): { row: AttachmentRow; data: Buffer } | undefined {
+    const row = this.store.attachment(id);
+    if (!row) return undefined;
+    // Une pièce libre expirée n'est plus servie, même avant la purge.
+    if (row.ticketId === null && this.now() - row.createdAt >= ATTACHMENT_LIMITS.unattachedTtlMs) {
+      return undefined;
+    }
+    const data = this.blobs.get(id, row.type);
+    return data ? { row, data } : undefined;
+  }
+
+  /** `DELETE /v1/attachments/<id>` : seulement une pièce encore libre. */
+  deleteUnattached(id: string): boolean {
+    const row = this.store.deleteUnattached(id);
+    if (!row) return false;
+    this.blobs.delete(row.id, row.type);
+    return true;
+  }
+
+  /** Purge : pièces libres de plus d'une heure, pièces de tickets supprimés, fichiers orphelins. */
+  purgeAttachments(): AttachmentPurge {
+    return purgeAttachments(this.store, this.blobs, this.now());
+  }
+
+  private viewAttachments(row: TicketRow) {
+    return this.store.attachmentsOf(row.id).map((a) => ({
+      id: a.id,
+      url: this.signer.url(a.id),
+      type: a.type,
+      width: a.width,
+      height: a.height,
+    }));
   }
 
   /**
@@ -283,7 +403,9 @@ export class ReportService {
       await this.refreshWithin(row, TIMINGS.lazyRefreshTimeoutMs);
       row = this.store.byId(row.id) ?? row;
     }
-    return toView(row);
+    const view = toView(row);
+    const attachments = this.viewAttachments(row);
+    return attachments.length ? { ...view, attachments } : view;
   }
 
   /** Rafraîchit sans faire attendre le lecteur plus de `ms` (sinon la donnée en base est servie). */
@@ -497,6 +619,8 @@ export class ReportService {
 
   /** `DELETE` : contact effacé, jeton invalidé, corps GitHub remplacé (file `redact`). */
   forget(row: TicketRow): void {
+    // Pièces jointes supprimées tout de suite (fichiers compris) : leurs URL signées répondent 404.
+    for (const a of this.store.deleteAttachmentsOf(row.id)) this.blobs.delete(a.id, a.type);
     this.store.forget(row.id, this.creating.has(row.id), this.now());
     this.invalidateKnown();
     this.log.info('report.deleted', { ticket: row.ticket });

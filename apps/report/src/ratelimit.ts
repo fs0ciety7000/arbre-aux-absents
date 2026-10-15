@@ -24,6 +24,12 @@ export const LIMITS = {
   reportPerDay: { max: 20, windowMs: DAY },
   reportGlobalPerHour: { max: 60, windowMs: HOUR },
   readPerMinute: { max: 60, windowMs: 60_000 },
+  /** Pièces jointes : 3 par signalement, donc trois fois les plafonds des signalements. */
+  attachmentPerHour: { max: 15, windowMs: HOUR },
+  attachmentPerDay: { max: 60, windowMs: DAY },
+  attachmentGlobalPerHour: { max: 180, windowMs: HOUR },
+  /** Lectures d'images par URL signée (page de suivi, proxy d'images de GitHub). */
+  attachmentReadPerMinute: { max: 120, windowMs: 60_000 },
 } as const;
 
 /** Au-delà, les fenêtres expirées sont purgées (protection mémoire). */
@@ -106,4 +112,16 @@ export function reportRules(key: string): Rule[] {
 
 export function readRules(key: string): Rule[] {
   return [{ bucket: 'read', key, ...LIMITS.readPerMinute }];
+}
+
+export function attachmentRules(key: string): Rule[] {
+  return [
+    { bucket: 'att-h', key, ...LIMITS.attachmentPerHour },
+    { bucket: 'att-d', key, ...LIMITS.attachmentPerDay },
+    { bucket: 'att-g', key: '*', ...LIMITS.attachmentGlobalPerHour },
+  ];
+}
+
+export function attachmentReadRules(key: string): Rule[] {
+  return [{ bucket: 'att-read', key, ...LIMITS.attachmentReadPerMinute }];
 }

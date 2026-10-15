@@ -3,6 +3,7 @@ import {
   ConfigError,
   DEFAULT_ALLOWED_ORIGINS,
   DEFAULT_GITHUB_REPO,
+  DEFAULT_PUBLIC_API_URL,
   loadConfig,
 } from '../src/config';
 
@@ -56,5 +57,30 @@ describe('loadConfig', () => {
     const c = loadConfig({}, { dev: true });
     expect(c.dataDir).toBe('.data');
     expect(c.allowedOrigins).toContain('http://localhost:5173');
+  });
+
+  it('pièces jointes : secret, base publique de l’API, plafond de stockage', () => {
+    const d = loadConfig({});
+    expect(d.attachmentSecret).toBeUndefined();
+    expect(d.publicApiUrl).toBe(DEFAULT_PUBLIC_API_URL);
+    expect(d.attachmentsMaxBytes).toBe(2048 * 1024 * 1024);
+    expect(loadConfig({}, { dev: true }).publicApiUrl).toBe('http://localhost:8090');
+    const c = loadConfig({
+      ATTACHMENT_SECRET: 's'.repeat(40),
+      PUBLIC_API_URL: 'https://api.example/',
+      ATTACHMENTS_MAX_MB: '10',
+    });
+    expect(c.attachmentSecret).toBe('s'.repeat(40));
+    expect(c.publicApiUrl).toBe('https://api.example');
+    expect(c.attachmentsMaxBytes).toBe(10 * 1024 * 1024);
+    const short = 'trop-court';
+    expect(() => loadConfig({ ATTACHMENT_SECRET: short })).toThrow(ConfigError);
+    try {
+      loadConfig({ ATTACHMENT_SECRET: short });
+    } catch (e) {
+      expect((e as Error).message).not.toContain(short);
+    }
+    expect(() => loadConfig({ PUBLIC_API_URL: 'javascript:alert(1)' })).toThrow(ConfigError);
+    expect(() => loadConfig({ ATTACHMENTS_MAX_MB: '0' })).toThrow(ConfigError);
   });
 });

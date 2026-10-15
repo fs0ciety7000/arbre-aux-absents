@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import type { SQLInputValue } from 'node:sqlite';
 import type {
+  AttachmentType,
   Locale,
   OpenTicketStatus,
   ReportCategory,
@@ -20,7 +21,7 @@ import type { Marker } from './status';
  * les marqueurs de mainteneurs (réponses `/public` et titre `/public-title-en`).
  */
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
@@ -56,6 +57,19 @@ CREATE INDEX IF NOT EXISTS tickets_pending ON tickets (pending_op, next_attempt_
 CREATE INDEX IF NOT EXISTS tickets_closed ON tickets (closed_at);
 CREATE INDEX IF NOT EXISTS tickets_public ON tickets (public, updated_at);
 CREATE INDEX IF NOT EXISTS tickets_open ON tickets (status, created_at);
+CREATE TABLE IF NOT EXISTS attachments (
+  id          TEXT PRIMARY KEY,
+  ticket_id   INTEGER REFERENCES tickets (id) ON DELETE CASCADE,
+  position    INTEGER,
+  created_at  INTEGER NOT NULL,
+  attached_at INTEGER,
+  type        TEXT NOT NULL CHECK (type IN ('image/png', 'image/jpeg', 'image/webp')),
+  bytes       INTEGER NOT NULL,
+  width       INTEGER NOT NULL,
+  height      INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS attachments_ticket ON attachments (ticket_id, position);
+CREATE INDEX IF NOT EXISTS attachments_created ON attachments (created_at);
 `;
 
 export type PendingOp = 'create' | 'redact';
@@ -130,6 +144,34 @@ function toRow(r: Raw): TicketRow {
     syncedAt: num(r.synced_at),
     public: Number(r.public) === 1,
     title: str(r.title),
+  };
+}
+
+/** Métadonnées d'une pièce jointe (le fichier est dans le `BlobStore`). */
+export interface AttachmentRow {
+  id: string;
+  /** `null` : envoyée mais pas encore rattachée à un signalement (purgée après 1 h). */
+  ticketId: number | null;
+  position: number | null;
+  createdAt: number;
+  attachedAt: number | null;
+  type: AttachmentType;
+  bytes: number;
+  width: number;
+  height: number;
+}
+
+function toAttachment(r: Raw): AttachmentRow {
+  return {
+    id: String(r.id),
+    ticketId: num(r.ticket_id),
+    position: num(r.position),
+    createdAt: Number(r.created_at),
+    attachedAt: num(r.attached_at),
+    type: String(r.type) as AttachmentType,
+    bytes: Number(r.bytes),
+    width: Number(r.width),
+    height: Number(r.height),
   };
 }
 
@@ -493,6 +535,117 @@ export class TicketStore {
       title: str(r.title),
       markers: parseMarkers(r.replies_json),
     }));
+  }
+
+  // ------------------------------------------------------------------------------ pièces jointes
+
+  private attachments(sql: string, ...params: SQLInputValue[]): AttachmentRow[] {
+    return (this.db.prepare(sql).all(...params) as Raw[]).map(toAttachment);
+  }
+
+  insertAttachment(a: Omit<AttachmentRow, 'ticketId' | 'position' | 'attachedAt'>): void {
+    this.db
+      .prepare(
+        `INSERT INTO attachments (id, created_at, type, bytes, width, height)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+      )
+      .run(a.id, a.createdAt, a.type, a.bytes, a.width, a.height);
+  }
+
+  attachment(id: string): AttachmentRow | undefined {
+    const r = this.db.prepare('SELECT * FROM attachments WHERE id = ?').get(id) as Raw | undefined;
+    return r ? toAttachment(r) : undefined;
+  }
+
+  hasAttachment(id: string): boolean {
+    return this.db.prepare('SELECT 1 FROM attachments WHERE id = ?').get(id) !== undefined;
+  }
+
+  /**
+   * Rattache au ticket les pièces encore libres et envoyées après `createdAfter`, dans l'ordre
+   * donné ; les autres (inconnues, expirées, déjà rattachées) sont ignorées. Renvoie les pièces
+   * rattachées.
+   */
+  attach(
+    ticketId: number,
+    ids: readonly string[],
+    now: number,
+    createdAfter: number,
+  ): AttachmentRow[] {
+    return this.tx(() => {
+      const stmt = this.db.prepare(
+        `UPDATE attachments SET ticket_id = ?, position = ?, attached_at = ?
+         WHERE id = ? AND ticket_id IS NULL AND created_at > ?`,
+      );
+      let position = 0;
+      for (const id of ids) {
+        const r = stmt.run(ticketId, position, now, id, createdAfter);
+        if (Number(r.changes) > 0) position++;
+      }
+      return this.attachmentsOf(ticketId);
+    });
+  }
+
+  attachmentsOf(ticketId: number): AttachmentRow[] {
+    return this.attachments(
+      'SELECT * FROM attachments WHERE ticket_id = ? ORDER BY position, id',
+      ticketId,
+    );
+  }
+
+  /** Supprime une pièce encore libre (`DELETE /v1/attachments/<id>`) ; renvoie sa ligne. */
+  deleteUnattached(id: string): AttachmentRow | undefined {
+    const row = this.attachment(id);
+    if (!row || row.ticketId !== null) return undefined;
+    this.db.prepare('DELETE FROM attachments WHERE id = ? AND ticket_id IS NULL').run(id);
+    return row;
+  }
+
+  deleteAttachment(id: string): AttachmentRow | undefined {
+    const row = this.attachment(id);
+    if (row) this.db.prepare('DELETE FROM attachments WHERE id = ?').run(id);
+    return row;
+  }
+
+  /** Supprime les pièces d'un ticket (suppression demandée par le joueur) ; renvoie leurs lignes. */
+  deleteAttachmentsOf(ticketId: number): AttachmentRow[] {
+    const rows = this.attachmentsOf(ticketId);
+    this.db.prepare('DELETE FROM attachments WHERE ticket_id = ?').run(ticketId);
+    return rows;
+  }
+
+  /**
+   * Purge : pièces jamais rattachées envoyées avant `createdBefore`, et pièces dont le ticket
+   * n'existe plus (cascade de la conservation ; filet si les clés étrangères étaient coupées).
+   */
+  purgeAttachments(createdBefore: number): AttachmentRow[] {
+    return this.tx(() => {
+      const rows = this.attachments(
+        `SELECT * FROM attachments
+         WHERE (ticket_id IS NULL AND created_at <= ?)
+            OR (ticket_id IS NOT NULL AND ticket_id NOT IN (SELECT id FROM tickets))`,
+        createdBefore,
+      );
+      const del = this.db.prepare('DELETE FROM attachments WHERE id = ?');
+      for (const r of rows) del.run(r.id);
+      return rows;
+    });
+  }
+
+  attachmentStats(): { attached: number; unattached: number; bytes: number } {
+    const r = this.db
+      .prepare(
+        `SELECT COALESCE(SUM(ticket_id IS NOT NULL), 0) AS attached,
+                COALESCE(SUM(ticket_id IS NULL), 0) AS unattached,
+                COALESCE(SUM(bytes), 0) AS bytes
+         FROM attachments`,
+      )
+      .get() as Raw;
+    return {
+      attached: Number(r.attached),
+      unattached: Number(r.unattached),
+      bytes: Number(r.bytes),
+    };
   }
 
   /** Conservation D13. */

@@ -1,4 +1,6 @@
+import { join } from 'node:path';
 import { runAdmin } from '../admin';
+import { FsBlobStore, UrlSigner, signingKey } from '../attachments';
 import { ConfigError, loadConfig } from '../config';
 import { openDatabase } from '../db';
 
@@ -24,9 +26,14 @@ if (process.argv[2] === 'healthcheck') {
   try {
     const config = loadConfig(process.env);
     const db = openDatabase(config.dataDir);
+    const blobs = new FsBlobStore(join(config.dataDir, 'attachments'));
+    const signer = new UrlSigner(
+      signingKey(config.attachmentSecret, config.webhookSecret).key,
+      config.publicApiUrl,
+    );
     const code = runAdmin(
       process.argv.slice(2),
-      { db, prefix: config.ticketPrefix },
+      { db, prefix: config.ticketPrefix, blobs, signer },
       { out: (l) => console.log(l), err: (l) => console.error(l) },
     );
     db.close();

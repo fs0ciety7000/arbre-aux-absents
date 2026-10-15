@@ -22,7 +22,14 @@ async function main() {
     github: config.githubToken ? 'configured' : 'disabled',
     repo: config.githubRepo,
     reports: config.reportsEnabled,
+    // Origine de la clé des URL signées des pièces jointes, jamais sa valeur.
+    attachmentKey: app.attachmentSecretSource,
   });
+  if (app.attachmentSecretSource === 'ephemeral') {
+    logger.warn('attachments.ephemeral-key', {
+      hint: 'ATTACHMENT_SECRET absent : URL des captures invalides après redémarrage',
+    });
+  }
   let stopping = false;
   const stop = async (signal: string) => {
     if (stopping) return;

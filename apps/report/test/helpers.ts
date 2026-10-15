@@ -10,6 +10,7 @@ export const T0 = Date.UTC(2026, 9, 15, 12, 0, 0);
 export const REPO = 'fs0ciety7000/arbre-aux-absents-signalements';
 export const WEBHOOK_SECRET = 'test-webhook-secret-0123456789';
 export const ORIGIN = 'https://arbre.cardormedia.com';
+export const API = 'https://arbre-api.cardormedia.com';
 
 export class Clock {
   constructor(public t = T0) {}
@@ -144,6 +145,8 @@ export function testConfig(over: Partial<Config> = {}): Config {
     dataDir: ':memory:',
     reportsEnabled: true,
     ticketPrefix: 'AA',
+    publicApiUrl: API,
+    attachmentsMaxBytes: 64 * 1024 * 1024,
     ...over,
   };
 }
