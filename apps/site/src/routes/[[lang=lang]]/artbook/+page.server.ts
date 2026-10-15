@@ -22,15 +22,15 @@ const SPOTS: SpotName[] = [
 export const load: PageServerLoad = ({ params }) => {
   const lang = toLocale(params.lang);
   const t = STRINGS[lang];
-  const keyart = keyArtFullImages();
+  const keyart = keyArtFullImages(lang);
   return {
     keyart: { ...keyart, alt: t.meta.keyArtAlt ?? keyart.alt },
     spots: SPOTS.map((name) => ({
       name,
       title: t.artbook.spots.names[name],
-      image: spotImage(name),
+      image: spotImage(name, lang),
     })),
-    seal: flourishImage('seal'),
+    seal: flourishImage('seal', lang),
     map: worldMap({ lang }),
     // L'id de personne reste au prérendu : la page ne reçoit que la planche et l'URL du dessin.
     plates: localizePlates(PORTRAIT_PLATES, t.portraits).map(({ person, ...p }) => ({

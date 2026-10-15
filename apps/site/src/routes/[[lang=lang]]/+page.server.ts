@@ -6,22 +6,23 @@ import type { PageServerLoad } from './$types';
 
 // Prérendu seulement (csr = false) : l'art est lu au build et n'entre jamais dans le JS client.
 export const load: PageServerLoad = ({ params }) => {
-  const t = STRINGS[toLocale(params.lang)];
-  const { wide, tall } = keyArt();
+  const lang = toLocale(params.lang);
+  const t = STRINGS[lang];
+  const { wide, tall } = keyArt(lang);
   return {
-    hero: { images: keyArtImages(), live: { wide: wide.live, tall: tall.live }, alt: wide.alt },
-    map: worldMapLayers(toLocale(params.lang)),
+    hero: { images: keyArtImages(lang), live: { wide: wide.live, tall: tall.live }, alt: wide.alt },
+    map: worldMapLayers(lang),
     spots: {
-      tree: spotImage('tree'),
-      archives: spotImage('archives'),
-      map: spotImage('map-pin'),
-      catalogue: spotImage('catalogue'),
-      stamp: spotImage('stamp'),
-      magnifier: spotImage('magnifier'),
-      register: spotImage('register'),
-      letter: spotImage('letter'),
-      lighthouse: spotImage('lighthouse'),
-      fern: spotImage('fern'),
+      tree: spotImage('tree', lang),
+      archives: spotImage('archives', lang),
+      map: spotImage('map-pin', lang),
+      catalogue: spotImage('catalogue', lang),
+      stamp: spotImage('stamp', lang),
+      magnifier: spotImage('magnifier', lang),
+      register: spotImage('register', lang),
+      letter: spotImage('letter', lang),
+      lighthouse: spotImage('lighthouse', lang),
+      fern: spotImage('fern', lang),
     },
     // L'id de personne reste au prérendu : la page ne reçoit que la planche et l'URL du dessin.
     plates: localizePlates(HOME_PLATES, t.portraits).map(({ person, ...p }) => ({

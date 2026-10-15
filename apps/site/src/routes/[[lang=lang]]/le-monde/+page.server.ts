@@ -17,10 +17,10 @@ export const load: PageServerLoad = ({ params }) => {
     places: sitePlaces(lang),
     mapTitle: mapTitle(lang, WORLD_MAP.title),
     spots: {
-      lighthouse: spotImage('lighthouse'),
-      register: spotImage('register'),
-      letter: spotImage('letter'),
-      pin: spotImage('map-pin'),
+      lighthouse: spotImage('lighthouse', lang),
+      register: spotImage('register', lang),
+      letter: spotImage('letter', lang),
+      pin: spotImage('map-pin', lang),
     },
   };
 };

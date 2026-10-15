@@ -3,9 +3,8 @@
  * (`page.route`) : envoi réussi, 429 avec Retry-After, 503, hors ligne, suivi par le fragment,
  * suppression, problèmes connus ; en français et en anglais ; axe et 390 px.
  *
- * Le serveur e2e (servers/static.mjs) pose `connect-src 'self'` ; nginx autorise aussi
- * https://arbre-api.cardormedia.com. Les pages testées ici reçoivent donc la CSP du serveur avec
- * l'origine du service ajoutée, comme en production.
+ * Le serveur e2e (servers/static.mjs) pose la même CSP que nginx : `connect-src` autorise
+ * https://arbre-api.cardormedia.com, que `page.route` intercepte ici.
  */
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page, type Request, type Route } from '@playwright/test';
@@ -25,25 +24,9 @@ type Handler = (
   req: Request,
 ) => { status: number; body?: unknown; headers?: Record<string, string> } | 'abort';
 
-/** CSP du serveur e2e complétée par l'origine du service (comme nginx.conf). */
-async function allowApiInCsp(page: Page) {
-  await page.route(/\/(en\/)?(signaler|suivi|problemes-connus)\/(\?.*)?$/, async (route) => {
-    const res = await route.fetch();
-    const headers = { ...res.headers() };
-    const csp = headers['content-security-policy'];
-    if (csp)
-      headers['content-security-policy'] = csp.replace(
-        "connect-src 'self'",
-        `connect-src 'self' ${API}`,
-      );
-    await route.fulfill({ response: res, headers });
-  });
-}
-
 /** Service simulé : `handler` par requête, préflight CORS compris. Rend les requêtes reçues. */
 async function mockApi(page: Page, handler: Handler) {
   const seen: Request[] = [];
-  await allowApiInCsp(page);
   await page.route(`${API}/**`, async (route: Route) => {
     const req = route.request();
     if (req.method() === 'OPTIONS') {
@@ -231,7 +214,9 @@ test.describe('/suivi/', () => {
       }
       return deleted ? { status: 404, body: { error: 'invalid' } } : { status: 200, body: ticket };
     });
-    await page.goto(`/suivi/#${TOKEN}`);
+    const res = await page.goto(`/suivi/#${TOKEN}`);
+    expect(res?.headers()['referrer-policy']).toBe('no-referrer');
+    expect(res?.headers()['content-security-policy']).toContain(`connect-src 'self' ${API}`);
     await expect(page.getByText('AA-0042')).toBeVisible();
     await expect(page.getByRole('list', { name: 'Suivi du signalement' })).toBeVisible();
     await expect(page.locator('[aria-current="step"]')).toContainText('En cours');

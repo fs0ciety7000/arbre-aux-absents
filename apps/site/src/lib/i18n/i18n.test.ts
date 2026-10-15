@@ -203,6 +203,44 @@ describe.skipIf(!built)('site construit (apps/site/build)', () => {
     for (const u of urls) expect(existsSync(fileOf(u)), u).toBe(true);
   });
 
+  it('art à texte dessiné : les pages /en/ prennent les surcharges anglaises', () => {
+    const overrides = readdirSync(join(SITE, '../../art/keyart/locales/en'))
+      .filter((f) => f.endsWith('.svg'))
+      .map((f) => f.replace(/\.svg$/, ''));
+    expect(overrides.length).toBeGreaterThan(0);
+    const art = readdirSync(join(BUILD, 'art'));
+    // Chaque surcharge a son SVG autonome anglais (suffixe -en), à côté du français.
+    for (const name of overrides) {
+      expect(
+        art.some((f) => f.startsWith(`${name}-en.`)),
+        name,
+      ).toBe(true);
+      expect(
+        art.some((f) => f.startsWith(`${name}.`)),
+        name,
+      ).toBe(true);
+    }
+    const html = (p: string) => readFileSync(join(BUILD, p), 'utf8');
+    const artRefs = (h: string) =>
+      [...h.matchAll(/\/art\/([a-z-]+)\.[0-9a-f]+\.svg/g)].map((m) => m[1]!);
+    // Accueil : fond de l'art clé et vignette du tampon.
+    const enHome = artRefs(html('en/index.html'));
+    expect(enHome).toContain('keyart-desk-en');
+    expect(enHome).toContain('keyart-desk-tall-en');
+    expect(enHome).toContain('spot-stamp-en');
+    expect(enHome).not.toContain('keyart-desk');
+    expect(enHome).not.toContain('spot-stamp');
+    // Artbook : art clé entier figé.
+    expect(artRefs(html('en/artbook/index.html'))).toContain('keyart-desk-full-en');
+    // Les pages françaises ne prennent aucune surcharge.
+    for (const p of ['index.html', 'artbook/index.html', 'charte/index.html']) {
+      expect(
+        artRefs(html(p)).filter((n) => n.endsWith('-en')),
+        p,
+      ).toEqual([]);
+    }
+  });
+
   it('liens « Jouer » : /jouer/?lang=en sur les pages anglaises', () => {
     const home = readFileSync(join(BUILD, 'en/index.html'), 'utf8');
     expect(home).toContain('href="/jouer/?lang=en"');
