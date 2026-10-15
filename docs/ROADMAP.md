@@ -134,6 +134,7 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       bout en bout réussi (ticket de test AA-0001 : créé, puis « Confirmé » via le webhook).
 - [x] Version 1.2.0 du jeu (anglais + signalement en jeu) envoyée sur itch.io par la CI.
 - [x] Version 1.2.1 : bouton Signaler dans l’en-tête du bureau, dialogue plein écran sans débordement au téléphone ; page publique /tickets/ et lien Signaler dans l’en-tête du site.
+- [x] Version 1.3.0 (retours joueurs) : dispositions Enquête / Lecture / Arbre, fiche flottante et plein écran du document, taille du texte A− / A+, zoom du lecteur corrigé, signal « + » des lieux à rouvrir sur la carte ; site : erreur 500 de navigation corrigée. Audit : docs/level/AUDIT-2026-10-15.md.
 - [x] Liste publique des tickets ouverts : `GET /v1/tickets` (contrat `OpenTicket`, sans texte du
       joueur, titre seulement si `public`) et page `/tickets/` (FR/EN, sitemap, pied de page, liens
       depuis signaler/suivi/problèmes connus) ; lien « Signaler » dans l'en-tête du site.
