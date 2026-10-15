@@ -259,7 +259,7 @@ décisions D9 à D13). App Coolify **séparée** du site : `https://arbre-api.ca
 | Stockage | **volume persistant `/data`** (base SQLite, `DATA_DIR=/data`), seul dossier inscriptible ; `VOLUME /data` dans l'image. Sans volume Coolify nommé, chaque redéploiement repart d'une base vide (tickets et jetons de suivi perdus) |
 | Commande | `node dist/server.js` (`NODE_OPTIONS=--disable-warning=ExperimentalWarning` pour `node:sqlite`) |
 | Branche | celle du site (auto-deploy) ; voir « Ordre de déploiement » |
-| **Statut** | **en ligne depuis le 15/10/2026**, `github: "degraded"` tant que `GITHUB_TOKEN` n'est pas saisi (voir « Reste à faire ») |
+| **Statut** | **en ligne depuis le 15/10/2026**, `github: "ok"` ; jeton, webhook, étiquettes et jalon `v1.2.0` en place, test de bout en bout réussi le 15/10 |
 
 ### En local
 
@@ -376,7 +376,9 @@ voit « Corrigé dans vX.Y.Z ». Fermé sans jalon : « Classé (résolu) » ; �
 est `/public`. Problème connu : étiquette `public` (titre relu avant) et, en anglais, commentaire
 `/public-title-en <titre>`.
 
-### Reste à faire à la main (15/10/2026)
+### Mise en service manuelle (faite le 15/10/2026)
+
+À refaire seulement si le dépôt des signalements ou le jeton change.
 
 1. **Jeton** : créer le jeton fine-grained (section ci-dessus), puis Coolify › projet « Arbre aux
    absents » › `arbre-aux-absents-report` › *Environment Variables* › `GITHUB_TOKEN` › coller la

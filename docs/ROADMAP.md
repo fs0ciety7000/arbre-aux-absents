@@ -128,10 +128,11 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       = français (118/30 et 98/28, toutes les fins) ; premier affichage du jeu ramené à +1,4 Ko gz.
 - [x] C2 : citations des aides alignées sur les pièces, faux liens « lise » corrigés dans la source FR.
 - [x] C3 : projet e2e en-GB (172 réussis), revue sécurité, images Docker site et service avec /healthz.
-- [ ] C4 (partiel) · devops · `arbre-api.cardormedia.com` en ligne le 15/10 (DNS, app Coolify
-      `swybrgki0ennurono4isofot`, volume `/data`, secret du webhook, origine fermée aux IP non Cloudflare,
-      sonde `admin.js healthcheck`). Reste à la main (DEPLOYMENT §5) : jeton `GITHUB_TOKEN`, webhook et
-      étiquettes du dépôt des signalements, test de bout en bout.
+- [x] C4 · devops · `arbre-api.cardormedia.com` en ligne le 15/10 (DNS, app Coolify
+      `swybrgki0ennurono4isofot`, volume `/data`, origine fermée aux IP non Cloudflare, sonde
+      `admin.js healthcheck`). Jeton, webhook, étiquettes et jalon `v1.2.0` posés par Nicolas ; test de
+      bout en bout réussi (ticket de test AA-0001 : créé, puis « Confirmé » via le webhook).
+- [x] Version 1.2.0 du jeu (anglais + signalement en jeu) envoyée sur itch.io par la CI.
 
 ## Backlog
 
