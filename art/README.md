@@ -47,6 +47,7 @@ couche. Les motifs `#art-hatch|art-hatch-dense|art-stipple` viennent de `<ArtDef
 | `base.py`, `relief.py`, `water.py`, `places.py`, `labels.py` | une couche chacun (`build()` → texte SVG) |
 | `content.py` | `content/world/map.json` et `places/<id>.json` (descriptions sans rien du rôle des lieux dans l'affaire) |
 | `build.py` | point d'entrée |
+| `locales_en.py` | surcharges anglaises (lot T2, règle 12.8) : `art/map/locales/en/labels.svg` et `content/cases/<id>/locales/en/illustrations/*.svg`, copies des SVG français où seuls les `<text>` à mots courants changent (table dans le script, glossaire `docs/i18n/en/GLOSSAIRE.md`). À relancer après toute régénération des SVG français. |
 
 Pour déplacer un lieu : changer `pos` dans `world.PLACES` (et, si besoin, `PLACE_LABELS`), puis
 régénérer ; relief et végétation s'écartent d'eux-mêmes des vignettes et des toponymes.
