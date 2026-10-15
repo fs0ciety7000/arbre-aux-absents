@@ -45,6 +45,7 @@ import {
   latestBackup,
   listenEscape,
   notFound,
+  platformStrings,
   readSummary,
   readSystemLocales,
   serialize,
@@ -58,14 +59,16 @@ import {
   type GameSlotSummary,
   type Summarizer,
 } from './common';
+import { fr } from '../i18n/fr';
 import { createMemorySaveStore } from './memory';
 
-export const TAURI_STORAGE_WARNING =
-  'Le dossier des sauvegardes est inaccessible : votre partie sera perdue à la fermeture.';
+/** Avertissement du dossier inaccessible, en français (langue courante : `platformStrings()`). */
+export const TAURI_STORAGE_WARNING: string = fr.platform.storageTauri;
 
 export const SAVES_DIR = 'saves';
 const BASE = BaseDirectory.AppData;
-const JSON_FILTERS = [{ name: 'Sauvegarde', extensions: ['json'] }];
+/** Filtre des dialogues de fichier, nommé dans la langue courante. */
+const jsonFilters = () => [{ name: platformStrings().saveFilter, extensions: ['json'] }];
 
 const path = (name: string) => `${SAVES_DIR}/${name}`;
 const BACKUP_FILE = /^auto\.([a-z0-9-]+)\.json(?:\.bak)?$/;
@@ -344,9 +347,9 @@ export function createTauriSaveStore(opts: TauriStoreOptions = {}): GameSaveStor
       const text = await readWithBackup(file);
       if (text === null) throw notFound();
       const target = await saveDialog({
-        title: 'Exporter la partie',
+        title: platformStrings().exportTitle,
         defaultPath: exportFileName(slot, new Date(), id),
-        filters: JSON_FILTERS,
+        filters: jsonFilters(),
       });
       if (target === null) return;
       try {
@@ -359,10 +362,10 @@ export function createTauriSaveStore(opts: TauriStoreOptions = {}): GameSaveStor
 
     async importFile(): Promise<unknown | null> {
       const picked = await openDialog({
-        title: 'Importer une partie',
+        title: platformStrings().importTitle,
         multiple: false,
         directory: false,
-        filters: JSON_FILTERS,
+        filters: jsonFilters(),
       });
       if (picked === null) return null;
       // Taille contrôlée AVANT la lecture : un fichier énorme n'est jamais chargé en mémoire.
@@ -440,20 +443,23 @@ export async function createTauriPlatform(opts: TauriPlatformOptions = {}): Prom
   if (typeof window !== 'undefined') listenEscape(window, registry);
 
   // Sonde : dossier des sauvegardes inaccessible → mode mémoire avec avertissement.
-  let storageWarning: string | null = null;
+  let memory = false;
   let saves: GameSaveStore;
   try {
     await mkdir(SAVES_DIR, { baseDir: BASE, recursive: true });
     saves = createTauriSaveStore(opts);
   } catch (err) {
     console.warn('[platform] dossier des sauvegardes inaccessible, mode mémoire', err);
-    storageWarning = TAURI_STORAGE_WARNING;
+    memory = true;
     saves = createMemorySaveStore({ summarize: opts.summarize });
   }
 
   const platform: GamePlatform = {
     kind,
-    storageWarning,
+    // Relu à chaque accès : suit la langue de l'interface (`platformStrings`).
+    get storageWarning() {
+      return memory ? platformStrings().storageTauri : null;
+    },
     saves,
     onBack: (cb) => registry.add(cb),
     quit: () => void getCurrentWindow().close(),

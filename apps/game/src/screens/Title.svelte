@@ -276,9 +276,16 @@
   </div>
 
   <footer class="studio">
-    <Icon name="fern" size="1rem" />
-    <span>{messages.credits}</span>
-    {#if dev}<Badge tone="warning" variant="outline">{m.devBadge}</Badge>{/if}
+    <p class="studio-line">
+      <Icon name="fern" size="1rem" />
+      <span>{messages.credits}</span>
+      {#if dev}<Badge tone="warning" variant="outline">{m.devBadge}</Badge>{/if}
+    </p>
+    <!-- Signaler un problème (DESIGN §13.8) : lien discret sous les crédits. -->
+    <button type="button" class="report-link" onclick={() => app.openReport()}>
+      <Icon name="envelope" size="1rem" />
+      {messages.bugReport.entry}
+    </button>
   </footer>
 </main>
 
@@ -443,16 +450,46 @@
   .studio {
     position: absolute;
     inset: auto auto var(--space-4) var(--space-5);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2);
+    display: grid;
+    justify-items: start;
+    gap: var(--space-1);
     padding-block-end: env(safe-area-inset-bottom);
     font-family: var(--font-label);
     font-size: var(--step--1);
     letter-spacing: var(--tracking-stamp);
     text-transform: uppercase;
     color: var(--text-muted);
+  }
+  .studio-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+  }
+  /* Lien discret : texte souligné, cible ≥ 44 px, focus visible. */
+  .report-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--hit);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text-muted);
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+  .report-link:hover {
+    color: var(--text);
+  }
+  .report-link:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
   }
 
   /* ── Sous 760 px : art 4:5 recomposé, menu dessous (§13.1) ── */

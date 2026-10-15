@@ -5,7 +5,10 @@
   import type { GameStoreImpl } from '../../lib/game/store.svelte';
   import { messages } from '../../messages.fr';
 
-  /** P14 Pause : Reprendre, Options, Succès, Statistiques, Sauvegarder et quitter. */
+  /**
+   * P14 Pause : Reprendre, Options, Succès, Statistiques, Signaler un problème, Sauvegarder et
+   * quitter.
+   */
   interface Props {
     game: GameStoreImpl;
     open: boolean;
@@ -46,6 +49,9 @@
         >{m.achievements}</Button
       >
       <Button block iconName="list" onclick={() => app.goto('stats')}>{m.stats}</Button>
+      <Button block iconName="envelope" onclick={() => app.openReport()}
+        >{messages.bugReport.entry}</Button
+      >
       <Button block iconName="save" onclick={() => (confirming = true)}>{m.saveQuit}</Button>
     </div>
   {/if}

@@ -9,6 +9,7 @@ import {
   fallbackSummarize,
   globalNavigator,
   listenEscape,
+  platformStrings,
   readSystemLocales,
   webOpenExternal,
   type FileIo,
@@ -16,11 +17,11 @@ import {
   type GameSaveStore,
   type Summarizer,
 } from './common';
+import { fr } from '../i18n/fr';
 import { createKvSaveStore, type KvBackend } from './kv-store';
 
-export const MEMORY_STORAGE_WARNING =
-  'Le stockage de ce navigateur est indisponible : votre partie sera perdue à la fermeture. ' +
-  'Exportez-la pour la conserver.';
+/** Avertissement du mode mémoire, en français (la langue courante : `platformStrings()`). */
+export const MEMORY_STORAGE_WARNING: string = fr.platform.storageMemory;
 
 /** Pas de fichier possible : export ignoré, import annulé. */
 export const NO_FILE_IO: FileIo = {
@@ -64,7 +65,10 @@ export function createMemorySaveStore(
 }
 
 export interface MemoryPlatformOptions extends MemoryStoreOptions {
-  /** Message affiché ; `null` pour les tests. Défaut : `MEMORY_STORAGE_WARNING`. */
+  /**
+   * Message affiché ; `null` pour les tests. Défaut : l'avertissement du mode mémoire dans la
+   * langue courante (`platformStrings().storageMemory`, `MEMORY_STORAGE_WARNING` en français).
+   */
   storageWarning?: string | null;
   kind?: GamePlatform['kind'];
   /** Cible des touches (Échap) ; absente en test sans DOM. */
@@ -93,12 +97,14 @@ export function createMemoryPlatform(opts: MemoryPlatformOptions = {}): MemoryPl
     opts.systemLocales !== undefined
       ? readSystemLocales({ languages: opts.systemLocales })
       : readSystemLocales(globalNavigator());
+  const fixedWarning = opts.storageWarning;
   return {
     kind: opts.kind ?? 'web',
     kv,
     saves: createMemorySaveStore(opts, kv),
-    storageWarning:
-      opts.storageWarning === undefined ? MEMORY_STORAGE_WARNING : opts.storageWarning,
+    get storageWarning() {
+      return fixedWarning === undefined ? platformStrings().storageMemory : fixedWarning;
+    },
     onBack: (cb) => registry.add(cb),
     back: () => registry.dispatch(),
     systemLocales: () => locales,

@@ -16,6 +16,38 @@ import {
   type SaveStore,
 } from '@arbre/contract';
 import { z } from 'zod';
+import { fr } from '../i18n/fr';
+
+/**
+ * Textes de la plateforme montrés au joueur (avertissements de stockage, titres et filtre des
+ * dialogues de fichier sous Tauri). Par défaut en français (catalogue source) ; l'app injecte
+ * ceux de la langue courante avec `setPlatformStrings` (relus à chaque usage : un changement de
+ * langue en cours de partie est suivi sans recréer la plateforme).
+ */
+export interface PlatformStrings {
+  storageMemory: string;
+  storageTauri: string;
+  exportTitle: string;
+  importTitle: string;
+  saveFilter: string;
+}
+
+const defaultStrings = (): PlatformStrings => fr.platform;
+let stringsSource: () => PlatformStrings = defaultStrings;
+
+/** Branche la source des textes (`null` : retour au français). */
+export function setPlatformStrings(source: (() => PlatformStrings) | null): void {
+  stringsSource = source ?? defaultStrings;
+}
+
+/** Textes courants ; jamais d'exception (repli sur le français). */
+export function platformStrings(): PlatformStrings {
+  try {
+    return stringsSource();
+  } catch {
+    return fr.platform;
+  }
+}
 
 /** Taille maximale d'un fichier importé (octets), alignée sur `MAX_SAVE_CHARS` du moteur. */
 export const MAX_IMPORT_BYTES = 2_000_000;
@@ -72,7 +104,10 @@ export interface GameSaveStore extends SaveStore {
 /** Plateforme du jeu : le contrat + l'avertissement de stockage (mode secours). */
 export interface GamePlatform extends Platform {
   readonly saves: GameSaveStore;
-  /** Non nul quand les parties risquent de ne pas survivre à la fermeture (texte UI, français). */
+  /**
+   * Non nul quand les parties risquent de ne pas survivre à la fermeture (texte UI dans la langue
+   * de `platformStrings()`, relu à chaque accès).
+   */
   readonly storageWarning: string | null;
 }
 

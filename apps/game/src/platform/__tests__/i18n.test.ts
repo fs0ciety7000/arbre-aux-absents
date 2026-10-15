@@ -247,3 +247,43 @@ describe('plateforme mémoire', () => {
     }
   });
 });
+
+describe('textes de la plateforme dans la langue de l’interface', () => {
+  it('avertissement du mode mémoire : français par défaut, puis la langue injectée', async () => {
+    const { setPlatformStrings } = await import('../common');
+    const { MEMORY_STORAGE_WARNING } = await import('../memory');
+    const { en } = await import('../../i18n/en');
+    const { fr } = await import('../../i18n/fr');
+    const p = createMemoryPlatform();
+    expect(p.storageWarning).toBe(MEMORY_STORAGE_WARNING);
+    expect(MEMORY_STORAGE_WARNING).toBe(fr.platform.storageMemory);
+    setPlatformStrings(() => en.platform);
+    try {
+      expect(p.storageWarning).toBe(en.platform.storageMemory);
+      // Avertissement fixé par l'appelant (tests) : jamais remplacé.
+      expect(createMemoryPlatform({ storageWarning: null }).storageWarning).toBeNull();
+      const web = await createWebPlatform({
+        indexedDB: null,
+        localStorage: null,
+        storageManager: null,
+        useHistory: false,
+      });
+      expect(web.storageWarning).toBe(en.platform.storageMemory);
+    } finally {
+      setPlatformStrings(null);
+    }
+    expect(p.storageWarning).toBe(MEMORY_STORAGE_WARNING);
+  });
+
+  it('source en échec : repli sur le français, sans exception', async () => {
+    const { platformStrings, setPlatformStrings } = await import('../common');
+    setPlatformStrings(() => {
+      throw new Error('catalogue absent');
+    });
+    try {
+      expect(platformStrings().saveFilter).toBe('Sauvegarde');
+    } finally {
+      setPlatformStrings(null);
+    }
+  });
+});

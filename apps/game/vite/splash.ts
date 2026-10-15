@@ -36,7 +36,21 @@ export function fallbackFaces(fontsCss: string): string {
     .join('\n');
 }
 
-export function cspFor(styleHashes: string[]): string {
+/** Service de signalement par défaut (ARCHITECTURE §8) ; `VITE_REPORT_API` le remplace. */
+export const DEFAULT_REPORT_API = 'https://arbre-api.cardormedia.com';
+
+/** Origine du service de signalement à autoriser dans `connect-src` (ARCHITECTURE §5). */
+export function reportOrigin(value?: string): string {
+  const v = (value ?? '').trim() || DEFAULT_REPORT_API;
+  try {
+    const u = new URL(v);
+    return u.protocol === 'https:' || u.protocol === 'http:' ? u.origin : DEFAULT_REPORT_API;
+  } catch {
+    return DEFAULT_REPORT_API;
+  }
+}
+
+export function cspFor(styleHashes: string[], connect: string[] = []): string {
   return [
     "default-src 'self'",
     "script-src 'self'",
@@ -45,7 +59,7 @@ export function cspFor(styleHashes: string[]): string {
     "img-src 'self' data: blob:",
     "font-src 'self'",
     "media-src 'self' blob:",
-    "connect-src 'self'",
+    ["connect-src 'self'", ...connect].join(' '),
     "worker-src 'self'",
     "object-src 'none'",
     "base-uri 'self'",
@@ -61,6 +75,7 @@ interface Options {
 export function splash(opts: Options): Plugin {
   let isBuild = false;
   let mode = 'production';
+  let reportApi = DEFAULT_REPORT_API;
   const uiStyles = dirname(require.resolve('@arbre/ui/styles/index.css'));
 
   const inlineCss = () =>
@@ -77,6 +92,7 @@ export function splash(opts: Options): Plugin {
     configResolved(config) {
       isBuild = config.command === 'build';
       mode = config.mode;
+      reportApi = reportOrigin(config.env.VITE_REPORT_API as string | undefined);
     },
     transformIndexHtml: {
       order: 'post',
@@ -91,7 +107,7 @@ export function splash(opts: Options): Plugin {
             tag: 'meta',
             attrs: {
               'http-equiv': 'Content-Security-Policy',
-              content: cspFor([`'sha256-${hash}'`]),
+              content: cspFor([`'sha256-${hash}'`], [reportApi]),
             },
             injectTo: 'head-prepend',
           });

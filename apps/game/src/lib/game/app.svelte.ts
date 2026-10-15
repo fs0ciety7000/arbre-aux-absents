@@ -7,6 +7,8 @@ import type {
   Locale,
   ParseSaveErrorCode,
   Profile,
+  ReportCategory,
+  ReportRef,
   SaveSlotId,
   SaveSlotSummary,
   SaveState,
@@ -18,6 +20,7 @@ import {
   defaultSettings,
   hintPreset,
   ProfileSchema,
+  REPORT_REF_LIMITS,
 } from '@arbre/contract';
 import { claimedFields, newGame, parseSave, summarize, visibleSlots } from '@arbre/engine';
 import { pushToast } from '@arbre/ui';
@@ -62,6 +65,17 @@ export interface NewGameRequest {
   skipTutorial: boolean;
 }
 
+/** Ouverture de « Signaler un problème » ; `error` : depuis l'écran d'erreur. */
+export interface ReportRequest {
+  error?: { code: string; message: string };
+}
+
+export interface ReportDraft {
+  category: ReportCategory;
+  description: string;
+  contact: string;
+}
+
 export type LoadResult = { ok: true } | { ok: false; error: string; corrupt: boolean };
 
 /** Chargement de l'affaire compilée et du Bureau (modules à part, à la demande). */
@@ -101,13 +115,17 @@ export class AppController implements StoreHost {
   /** Emplacements manuels, puis un secours par affaire (AFFAIRE-2 §2.3). */
   saves = $state.raw<GameSlotSummary[]>([]);
   ready = $state(false);
-  /** Avertissement de stockage de la plateforme (mode secours, iframe itch…). */
-  storageWarning = $state<string | null>(null);
+  /** Signaler un problème (DESIGN §13.8) : ouvert, avec le contexte d'une erreur éventuelle. */
+  reportRequest = $state.raw<ReportRequest | null>(null);
+  /** Brouillon d'un signalement fermé sans envoi (session seulement, jamais enregistré). */
+  reportDraft: ReportDraft | null = null;
+  /** « Mes signalements » (DESIGN §13.9) ouvert. */
+  myReportsOpen = $state(false);
   saveError = $state(false);
   fatal = $state<FatalError | null>(null);
   ending = $state<EndingId | null>(null);
 
-  #platform: GamePlatform | null = null;
+  #platform = $state.raw<GamePlatform | null>(null);
   #profileTimer: ReturnType<typeof setTimeout> | undefined;
   #backUnsub: (() => void) | null = null;
   #contentLoad: Promise<boolean> | null = null;
@@ -118,6 +136,11 @@ export class AppController implements StoreHost {
 
   get platform(): GamePlatform | null {
     return this.#platform;
+  }
+
+  /** Avertissement de stockage de la plateforme (mode secours, iframe itch…), langue courante. */
+  get storageWarning(): string | null {
+    return this.#platform?.storageWarning ?? null;
   }
 
   get settings(): Settings {
@@ -170,7 +193,6 @@ export class AppController implements StoreHost {
         return c ? summarize(s, c) : fallbackSummary(s);
       });
       this.#platform = loaded.platform;
-      this.storageWarning = loaded.storageWarning;
       const raw = await this.#safe(() => loaded.platform.saves.loadProfile(), null);
       const parsed = ProfileSchema.safeParse(raw);
       if (parsed.success) this.profile = parsed.data as Profile;
@@ -416,6 +438,36 @@ export class AppController implements StoreHost {
 
   saveStatus(ok: boolean): void {
     this.saveError = !ok;
+  }
+
+  // ── Signalements ───────────────────────────────────────────────────
+
+  /** Ouvre « Signaler un problème » (écran titre, pause, aide, écran d'erreur). */
+  openReport(request: ReportRequest = {}): void {
+    this.reportRequest = request;
+  }
+
+  closeReport(): void {
+    this.reportRequest = null;
+  }
+
+  openMyReports(): void {
+    this.myReportsOpen = true;
+  }
+
+  closeMyReports(): void {
+    this.myReportsOpen = false;
+  }
+
+  /** Signalements envoyés depuis cet appareil (les plus récents d'abord). */
+  get reports(): ReportRef[] {
+    return this.profile.reports ?? [];
+  }
+
+  /** Remplace la liste des signalements du profil (≤ 20) et l'enregistre aussitôt. */
+  setReports(reports: ReportRef[]): void {
+    this.profile = { ...this.profile, reports: reports.slice(0, REPORT_REF_LIMITS.max) };
+    void this.saveProfile();
   }
 
   // ── Emplacements ───────────────────────────────────────────────────

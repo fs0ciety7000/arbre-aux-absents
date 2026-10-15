@@ -447,3 +447,41 @@ describe('tauri : plateforme', () => {
     expect(detectKind('Macintosh')).toBe('desktop');
   });
 });
+
+describe('tauri : textes dans la langue de l’interface', () => {
+  it('avertissement, titres et filtre des dialogues suivent `setPlatformStrings`', async () => {
+    const { setPlatformStrings } = await import('../common');
+    const { en } = await import('../../i18n/en');
+    const { fr } = await import('../../i18n/fr');
+    const { save, open } = await import('@tauri-apps/plugin-dialog');
+    fsState.failMkdir = true;
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const p = await createTauriPlatform();
+    warn.mockRestore();
+    fsState.failMkdir = false;
+    expect(p.storageWarning).toBe(TAURI_STORAGE_WARNING);
+    let lang: 'fr' | 'en' = 'en';
+    setPlatformStrings(() => (lang === 'en' ? en.platform : fr.platform));
+    try {
+      expect(p.storageWarning).toBe(en.platform.storageTauri);
+      const store = createTauriSaveStore();
+      await store.save('slot-1', makeSave('slot-1'));
+      vi.mocked(save).mockClear();
+      vi.mocked(open).mockClear();
+      await store.exportFile('slot-1');
+      await store.importFile();
+      expect(vi.mocked(save).mock.calls[0]?.[0]).toMatchObject({
+        title: 'Export the save',
+        filters: [{ name: 'Save', extensions: ['json'] }],
+      });
+      expect(vi.mocked(open).mock.calls[0]?.[0]).toMatchObject({
+        title: 'Import a save',
+        filters: [{ name: 'Save', extensions: ['json'] }],
+      });
+      lang = 'fr';
+      expect(p.storageWarning).toBe(TAURI_STORAGE_WARNING);
+    } finally {
+      setPlatformStrings(null);
+    }
+  });
+});

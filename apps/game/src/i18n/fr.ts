@@ -4,7 +4,7 @@
  * `index.svelte.ts` (`messages`, `pm`…) : jamais importés directement par un composant.
  * Vocabulaire et typographie : docs/i18n/en/GLOSSAIRE.md, DESIGN §4.4.
  */
-import type { DocumentKind, KeywordKind } from '@arbre/contract';
+import type { DocumentKind, KeywordKind, ReportCategory } from '@arbre/contract';
 import type { Device } from '@arbre/ui';
 import type { PanelId, SlotField } from '../lib/game/types';
 
@@ -536,6 +536,120 @@ export const fr = {
     toTitle: 'Revenir au titre',
     tooSmall: 'Agrandissez la fenêtre',
     tooSmallText: 'Le jeu a besoin d’au moins 360 pixels de large.',
+  },
+
+  /** Signaler un problème, Mes signalements (DESIGN §13.8, §13.9 ; ARCHITECTURE §8). */
+  bugReport: {
+    entry: 'Signaler un problème',
+    entryError: 'Signaler ce problème',
+    mine: 'Mes signalements',
+    kicker: 'Formulaire de signalement',
+    categoryLabel: 'Catégorie',
+    categories: {
+      bug: 'Quelque chose ne marche pas',
+      blocked: 'Je suis bloqué dans l’enquête',
+      text: 'Faute ou texte incorrect',
+      display: 'Problème d’affichage',
+      audio: 'Problème de son',
+      controls: 'Commandes, clavier ou manette',
+      performance: 'Lenteur ou plantage',
+      other: 'Autre chose',
+    } satisfies Record<ReportCategory, string>,
+    descriptionLabel: 'Description',
+    descriptionHint: 'Au moins 20 caractères. Ce que vous faisiez, ce que vous attendiez.',
+    descriptionMissing: (n: number) =>
+      `Encore ${n} ${plural(n, 'caractère', 'caractères')} avant de pouvoir envoyer.`,
+    errorPrefill: (code: string, message: string) => `Erreur ${code} : ${message}\n\n`,
+    contactLabel: 'Contact (facultatif)',
+    contactHint: 'Jamais publié. Seulement pour vous répondre.',
+    attachSave: 'Joindre ma sauvegarde anonymisée',
+    attachSaveHint: 'Sans vos notes ni vos recherches.',
+    attachSaveNone: 'Aucune partie à joindre.',
+    saveStripped: (notes: number, queries: number) =>
+      `Retirés de la sauvegarde : le texte de ${notes} ${plural(notes, 'note', 'notes')} et ${queries} ${plural(queries, 'recherche tapée', 'recherches tapées')}. L’arbre et la progression restent.`,
+    saveTrimmed: 'Sauvegarde raccourcie pour tenir dans la limite (anciennes recherches).',
+    saveTooLarge: 'Sauvegarde trop volumineuse : elle ne sera pas jointe.',
+    honeypot: 'Site web (laisser vide)',
+    previewSummary: 'Voir exactement ce qui sera envoyé',
+    previewNote:
+      'Rien d’autre : ni adresse IP, ni nom de joueur. elapsedMs est le temps passé sur ce formulaire (anti-robot) ; website doit rester vide.',
+    platforms: { web: 'Navigateur', desktop: 'Ordinateur', android: 'Android' },
+    submit: 'Envoyer le signalement',
+    receipt: {
+      stamp: 'Reçu',
+      title: 'Signalement reçu',
+      number: 'Numéro du signalement',
+      keep: 'Gardez ce numéro : le suivi est aussi dans Mes signalements.',
+      followLabel: 'Lien de suivi',
+      open: 'Ouvrir le suivi sur le site',
+      announce: (t: string) => `Signalement reçu, numéro ${t}.`,
+    },
+    failure: {
+      toast: 'Signalement non envoyé',
+      lead: 'Le service ne répond pas. Rien n’est perdu :',
+      leadRefused: 'Le signalement n’a pas été accepté. Rien n’est perdu :',
+      offline: 'Votre appareil semble hors ligne, ou le service est injoignable.',
+      timeout: 'Pas de réponse au bout de 10 secondes.',
+      unavailable: 'Le service de signalement est indisponible pour le moment.',
+      disabled: 'Les signalements sont suspendus pour le moment.',
+      rateLimited: (delay: string) =>
+        `Trop de signalements envoyés depuis votre connexion. Réessayez dans ${delay}.`,
+      rateLimitedLater: 'Trop de signalements envoyés depuis votre connexion. Réessayez plus tard.',
+      invalid: 'Vérifiez la description (20 à 4 000 caractères) et le contact (200 au plus).',
+      tooLarge: 'Le signalement est trop long.',
+      help: 'Copiez le rapport pour le coller sur le forum (sans votre contact, le forum est public), ou réessayez plus tard.',
+      copy: 'Copier le rapport',
+      copied: 'Rapport copié',
+      copyFailed: 'Copie impossible : sélectionnez le texte ci-dessous.',
+      copyArea: 'Rapport à copier',
+      forum: 'Forum itch.io',
+    },
+    text: {
+      heading: 'Signalement · L’Arbre aux absents (jeu)',
+      category: 'Catégorie :',
+      description: 'Description :',
+      diagnostics: 'Diagnostics :',
+    },
+    linkCopied: 'Le lien n’a pas pu s’ouvrir : il a été copié.',
+    linkFailed: 'Le lien n’a pas pu s’ouvrir.',
+    listLabel: 'Signalements envoyés depuis cet appareil',
+    empty: 'Aucun signalement envoyé depuis cet appareil.',
+    sentOn: (d: string) => `Envoyé le ${d}`,
+    ticket: {
+      kicker: 'Fiche de suivi',
+      title: (t: string) => `Signalement ${t}`,
+      loading: 'Lecture de la fiche…',
+      updated: (d: string) => `Mis à jour le ${d}`,
+      seen: (d: string) => `vu le ${d}`,
+      replies: 'Réponses de l’équipe',
+      replyDate: (d: string) => `Le ${d}`,
+      noReplies: 'Pas encore de réponse de l’équipe.',
+      unknown: 'Statut pas encore lu.',
+      offline: 'Statut indisponible pour le moment (hors ligne ou service injoignable).',
+      rateLimited: (delay: string) => `Trop de consultations. Réessayez dans ${delay}.`,
+      notFound:
+        'Ce suivi n’existe plus : le signalement a été supprimé, ou il est clos depuis plus de 12 mois.',
+      openSite: 'Ouvrir sur le site',
+      remove: 'Supprimer mon signalement',
+      forget: 'Retirer de la liste',
+      confirmTitle: 'Supprimer ce signalement ?',
+      confirmText: 'Le ticket ne sera plus lisible.',
+      keep: 'Garder',
+      confirm: 'Supprimer',
+      deleted: 'Signalement supprimé.',
+      deleteFailed: 'Suppression impossible pour le moment. Réessayez plus tard.',
+    },
+  },
+
+  /** Textes de la plateforme (avertissements de stockage, dialogues de fichier sous Tauri). */
+  platform: {
+    storageMemory:
+      'Le stockage de ce navigateur est indisponible : votre partie sera perdue à la fermeture. Exportez-la pour la conserver.',
+    storageTauri:
+      'Le dossier des sauvegardes est inaccessible : votre partie sera perdue à la fermeture.',
+    exportTitle: 'Exporter la partie',
+    importTitle: 'Importer une partie',
+    saveFilter: 'Sauvegarde',
   },
 
   commands: {

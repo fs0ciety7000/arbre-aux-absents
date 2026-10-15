@@ -4,14 +4,22 @@
  * dynamique dans une branche éliminée du bundle web.
  */
 import type { SaveSlotSummary, SaveState } from '@arbre/contract';
-import { fallbackSummarize, type GamePlatform, type Summarizer } from './common';
+import {
+  fallbackSummarize,
+  setPlatformStrings,
+  type GamePlatform,
+  type Summarizer,
+} from './common';
 import { createMemoryPlatform } from './memory';
 
 export {
   MAX_IMPORT_BYTES,
   PlatformError,
   exportFileName,
+  platformStrings,
+  setPlatformStrings,
   type GamePlatform,
+  type PlatformStrings,
   type GameSaveStore,
   type GameSlotSummary,
   type PlatformErrorCode,
@@ -67,4 +75,5 @@ export function getPlatform(): Promise<GamePlatform> {
 export function resetPlatformForTests(): void {
   instance = null;
   summarizer = fallbackSummarize;
+  setPlatformStrings(null);
 }

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button, DymoLabel, LampLight, pushToast } from '@arbre/ui';
   import type { FatalError } from '../lib/game/app.svelte';
+  import { getApp } from '../lib/game/context';
   import { messages } from '../messages.fr';
 
   /** Erreur de chargement : code, retour au titre, journal technique copiable (ECRANS §5). */
@@ -10,6 +11,7 @@
   }
   let { error, onback }: Props = $props();
   const m = messages.errors;
+  const app = getApp();
 
   async function copy() {
     try {
@@ -34,6 +36,12 @@
   <div class="actions">
     <Button variant="primary" onclick={onback}>{m.toTitle}</Button>
     <Button iconName="list" onclick={copy}>{m.copyLog}</Button>
+    <Button
+      variant="ghost"
+      iconName="envelope"
+      onclick={() => app.openReport({ error: { code: error.code, message: error.message } })}
+      >{messages.bugReport.entryError}</Button
+    >
   </div>
 </main>
 

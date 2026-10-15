@@ -330,6 +330,12 @@
           {#if app.screen !== 'desk'}
             <Button iconName="archives" onclick={() => app.goto('slots')}>{m.manageSaves}</Button>
           {/if}
+          <Button iconName="list" onclick={() => app.openMyReports()}
+            >{messages.bugReport.mine}</Button
+          >
+          <Button iconName="envelope" onclick={() => app.openReport()}
+            >{messages.bugReport.entry}</Button
+          >
           <Button variant="danger" onclick={resetSettings}>{m.resetSettings}</Button>
         {/if}
       </div>
