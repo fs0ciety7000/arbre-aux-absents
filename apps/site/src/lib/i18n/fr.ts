@@ -180,7 +180,7 @@ export const fr = {
       browser: 'Navigateur',
       playHere: 'Jouer ici',
       itchTitle: 'L’Arbre aux absents sur itch.io',
-      note: 'Jeu en français, en solo, de six à dix heures. Gratuit.',
+      note: 'Jeu en français et en anglais, en solo, de six à dix heures. Gratuit.',
     },
     shots: {
       kicker: 'Captures',

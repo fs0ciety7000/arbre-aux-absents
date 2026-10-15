@@ -15,7 +15,7 @@ export const PRESS_FACTS: Fact[] = [
   { term: 'Écriture et illustration', value: 'CM Creative Lab' },
   { term: 'Édition', value: 'CARDOR Media' },
   { term: 'Plateformes', value: 'Windows, macOS, Linux, Android, navigateur' },
-  { term: 'Langue', value: 'Français (textes et interface)' },
+  { term: 'Langues', value: 'Français, anglais (textes et interface)' },
   { term: 'Joueurs', value: 'Un joueur' },
   { term: 'Durée', value: 'Six à dix heures pour l’affaire principale' },
   { term: 'Prix', value: 'Gratuit' },
