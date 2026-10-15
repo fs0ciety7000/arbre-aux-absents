@@ -12,6 +12,7 @@ export default defineConfig({
             'scripts/**/*.test.ts',
             'apps/site/src/**/*.test.ts',
             'apps/report/test/**/*.test.ts',
+            'apps/game/vite/**/*.test.ts',
           ],
           environment: 'node',
         },

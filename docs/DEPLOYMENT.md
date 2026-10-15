@@ -129,7 +129,7 @@ commande Rust).
 | Version | celle de `apps/game/package.json` |
 | Frontend | `frontendDist: ../dist`, `devUrl: http://localhost:5173` |
 | Avant build | `npm run tauri:before-build` = `content:build` + `vite build --mode tauri` (`apps/game/.env.tauri` → `VITE_TARGET=tauri`) |
-| CSP | `default-src 'self'`, `script-src 'self'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob:`, `media-src 'self' blob:`, `connect-src 'self' ipc: http://ipc.localhost https://arbre-api.cardormedia.com` (service de signalement, §5) ; aucun autre domaine distant |
+| CSP | `default-src 'self'`, `script-src 'self'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob:`, `media-src 'self' blob:`, `connect-src 'self' ipc: http://ipc.localhost https://arbre-api.cardormedia.com` (service de signalement, §5) ; aucun autre domaine distant. L'origine de l'API y est **figée** : si `VITE_REPORT_API` change, changer aussi ce `connect-src`. `vite build --mode tauri` **échoue** si elles divergent (`apps/game/vite/report-csp.ts`) |
 | Capabilities | `core:default`, plein écran, fermeture, `dialog` open/save, `fs` lecture/écriture/renommage/suppression **limités à `$APPDATA/saves/**`** (les chemins choisis dans un dialogue d'export/import sont ajoutés au scope par le plugin) ; `opener:allow-open-url` **limité à `https://arbre.cardormedia.com/*` et `https://cardorinteractive.itch.io/*`** (suivi des signalements, forum itch ; D11), sans `opener:default` |
 | Linux | AppImage (`bundleMediaFramework: true`, GStreamer embarqué pour l'audio) + deb + rpm |
 | Windows | NSIS par utilisateur, bootstrapper WebView2 |
@@ -222,7 +222,7 @@ Aucun secret dans le repo ; `.env.example` en est le miroir.
 |---|---|---|
 | `ARBRE_EDITION` | `content:build` | `full` (défaut) ou `demo` ; équivaut à `-- --edition` |
 | `VITE_TARGET` | build du jeu | `web` (défaut) ou `tauri` (posé par `apps/game/.env.tauri`) |
-| `VITE_REPORT_API` | builds du jeu et du site | `https://arbre-api.cardormedia.com` (public). Absente : même valeur par défaut ; service injoignable : repli « Copier le rapport » et forum itch.io |
+| `VITE_REPORT_API` | builds du jeu et du site | `https://arbre-api.cardormedia.com` (public). Absente : même valeur par défaut ; service injoignable : repli « Copier le rapport » et forum itch.io. La CSP du build web du jeu la suit ; celles de Tauri (`tauri.conf.json`, vérifiée au build `--mode tauri`) et de nginx (`nginx.conf`) l'écrivent en dur : les changer ensemble |
 
 Les variables d'exécution du service de signalement (dont `GITHUB_TOKEN` et
 `GITHUB_WEBHOOK_SECRET`) vivent dans Coolify uniquement : §5.
