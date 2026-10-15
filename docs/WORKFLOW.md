@@ -83,6 +83,25 @@ Rends : résumé des changements, fichiers touchés, points hors périmètre sig
 - Commits conventionnels, push sur la branche de travail.
 - Résumé à l'utilisateur : livré, vérifié, actions manuelles restantes.
 
+## 6. Publication d'une version (jeu sur itch.io et builds natifs)
+
+Une version publiée = un commit `chore(release): version X.Y.Z, <résumé> [tauri] [itch]` qui
+change `apps/game/package.json` (et la version Tauri). **Le même commit ajoute son entrée en tête
+de `content/changelog.json`** (ARCHITECTURE §3.8) :
+
+1. Lister les commits depuis la publication précédente :
+   `git log --oneline <commit de la version précédente>..HEAD`.
+2. **Condenser** pour les joueurs : 3 à 7 points (1 à 3 pour un petit correctif), chacun
+   `new` (Nouveauté), `improved` (Amélioration) ou `fixed` (Correction), en français et en anglais
+   (glossaire `docs/i18n/en/GLOSSAIRE.md`). On regroupe : plusieurs commits font un point. On écarte
+   tout ce qui ne se voit pas en jouant (CI, tests, refactorisation, docs) et toute solution
+   d'affaire.
+3. `version` = la nouvelle version, `date` = le jour de publication (AAAA-MM-JJ), `title` court.
+
+On n'écrit **pas** d'entrée par commit ni entre deux publications : le journal attend la version
+suivante. `npm run content:check` échoue tant que la dernière entrée ne porte pas la version de
+`apps/game/package.json`. Le jeu (écran Nouveautés) et le site (`/nouveautes/`) lisent ce fichier.
+
 ## Definition of Done
 
 - `check` et `build` verts ; image Docker qui build et démarre (healthcheck 200) si applicable.

@@ -1673,6 +1673,22 @@ Recettes inchangées en anglais (§4.4) ; vérifier à 360 et 390 px : menu de l
 voulu), barre du Lecteur, rapport final (« Endorsed »), chemises d'affaire (« Last decision: »).
 Le `LanguageSwitch` de l'écran titre se place sous le menu ; les Options n'ont que le `Select` de langue (§9.35).
 
+### 13.11 « Nouveautés » (notes de version)
+
+Accès : écran titre, entrée `ghost` « Nouveautés » (`sparkle`) en fin de la grille des entrées
+secondaires. Tant que les notes de la version installée n'ont pas été ouvertes par un joueur qui a
+déjà joué, `Badge tone="accent" variant="solid" dot` « Nouveau » dans le bouton (son nom devient
+« Nouveautés Nouveau ») et l'entrée prend toute la rangée.
+
+`ScreenFrame` (bureau), surtitre étiqueteuse rouge « Version 1.3.1 » (version installée), accroche
+Fraunces italique `--text-muted`. Une `PaperSheet` par version (`new` pour la plus récente, `paper`
+ensuite, inclinaison ±0,3°, `mv-deal`) : `DymoLabel` rouge du numéro (« Version » en texte masqué),
+date en Courier Prime `--step--1`, titre `h2` Fraunces `--step-2`, puis une liste : pastille de
+nature (`Badge` : Nouveauté `accent` + `sparkle`, Amélioration `info` + `plus`, Correction
+`success` + `check` ; toujours icône + texte) et texte en `--font-read`. Chaque version est un arrêt
+de focus (`tabindex="0"`, nommée par son titre, anneau `--focus` 3 px) : clavier et manette font
+défiler la liste. Sous 40 rem, la pastille passe au-dessus de sa ligne. Pas de nouveau token.
+
 ---
 
 ## 14. Recettes du site
@@ -1735,6 +1751,14 @@ focalisé : aucune requête ni cookie YouTube avant le clic. Mention sous le cad
   en `--step--1` avec `--space-2` de marge et écarts resserrés, pour tenir à 1024 px ; dans le menu
   `<details>` étroit, libellé complet. Le menu s'ancre au bord droit des outils (dans l'écran à
   360 px).
+
+### 14.7 Page « Nouveautés » (`/nouveautes/`, `/en/nouveautes/`)
+
+Même lecture que §13.11, prérendue sans JS : `page-head` (surtitre « Journal des versions », `h1`,
+accroche, « Version actuelle : 1.3.1 » en Courier Prime), puis une `<ol>` de `PaperSheet` (la plus
+récente `new` avec trombone), mêmes pastilles et même grille (colonne de pastilles 9 rem, une seule
+colonne sous 40 rem). Pied : « Problèmes connus » (`secondary`) et « Signaler un problème »
+(`ghost`, `envelope`). Lien dans le pied de page du site, après Crédits.
 
 ### 14.4 Pied de page
 

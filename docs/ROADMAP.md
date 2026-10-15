@@ -139,6 +139,11 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 - [x] Liste publique des tickets ouverts : `GET /v1/tickets` (contrat `OpenTicket`, sans texte du
       joueur, titre seulement si `public`) et page `/tickets/` (FR/EN, sitemap, pied de page, liens
       depuis signaler/suivi/problèmes connus) ; lien « Signaler » dans l'en-tête du site.
+- [x] Nouveautés (notes de version) : contrat `changelog.ts`, `content/changelog.json` (1.0.1 à
+      1.3.1, une entrée par version publiée), contrôlé par `content:check` (dernière entrée = version du
+      jeu) ; écran « Nouveautés » depuis le titre (marque « Nouveau » tant que non ouvert,
+      `Profile.changelogSeen`) ; page `/nouveautes/` FR/EN (pied de page, sitemap) ; procédure WORKFLOW §6
+      et `/ship`.
 
 ## Backlog
 
@@ -233,3 +238,4 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 | 15/10 | D14 · Termes de recherche anglais : *blaze* (incendie), *walkout* (grève), *woman engineer* (ingénieure) ; lieux de la carte jamais traduits ; titres « The Varenque Succession », « The Revenant of Hautcorvin » | Éviter les liens que le français n'a pas (*fire*, *strike* = *strike off*, *engineer* masculin) et garder les indices de genre. |
 | 15/10 | D15 · `TicketStatus` en quatre étapes (Reçu → Confirmé → En cours → Corrigé vX ou Classé) | `fixed` et `closed` sont deux fins exclusives : une cinquième étape attendrait toujours. |
 | 15/10 | D16 · Textes des panneaux du jeu chargés avec le bureau ; paquets `@arbre/*` sans effets de bord pour le découpage | Tenir le budget du premier affichage (+1,4 Ko gz contre +4 Ko permis). |
+| 15/10 | D17 · Notes de version : **une entrée par version publiée** (`[tauri] [itch]`), condensée pour les joueurs, jamais une par commit ; `content:check` lie la dernière entrée à la version du jeu | Demande de l'auteur : ne pas polluer, regrouper aux « grosses » mises à jour ; l'oubli devient impossible. |
