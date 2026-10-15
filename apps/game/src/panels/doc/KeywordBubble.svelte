@@ -39,13 +39,15 @@
     const away = (e: PointerEvent) => {
       if (menu && !menu.contains(e.target as Node)) onclose(false);
     };
-    document.addEventListener('pointerdown', away, true);
-    return () => document.removeEventListener('pointerdown', away, true);
+    // Document de la bulle : le Lecteur peut vivre dans la fenêtre détachée.
+    const doc = menu?.ownerDocument ?? document;
+    doc.addEventListener('pointerdown', away, true);
+    return () => doc.removeEventListener('pointerdown', away, true);
   });
 
   function onkeydown(e: KeyboardEvent) {
     const list = buttons();
-    const i = list.indexOf(document.activeElement as HTMLButtonElement);
+    const i = list.indexOf((menu?.ownerDocument ?? document).activeElement as HTMLButtonElement);
     let next: number | null = null;
     if (e.key === 'ArrowDown') next = (i + 1) % list.length;
     else if (e.key === 'ArrowUp') next = (i - 1 + list.length) % list.length;

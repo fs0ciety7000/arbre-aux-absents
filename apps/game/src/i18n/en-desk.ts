@@ -47,6 +47,8 @@ export const enDesk = {
       zoomOut: 'Shrink the tree',
       fit: 'Overview',
       zoomLevel: (pct: number) => `${pct}%`,
+      fullscreen: 'Tree in full screen',
+      fullscreenExit: 'Exit full screen',
       established: 'Established',
       lockedLabel: 'established',
       open: 'open',

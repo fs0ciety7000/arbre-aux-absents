@@ -120,7 +120,7 @@ test.describe('taille du texte du Lecteur', () => {
     await expect.poll(() => readSize(page)).toBeGreaterThan(base * 1.4);
     await expect(page.getByRole('separator', { name: 'Largeur du volet latéral' })).toHaveAttribute(
       'aria-valuenow',
-      '640',
+      '720',
     );
   });
 });
@@ -138,8 +138,8 @@ test.describe('poignée du volet', () => {
     await expect(handle).toHaveAccessibleDescription(/double-clic/);
 
     await handle.dblclick();
-    await expect(handle).toHaveAttribute('aria-valuenow', '640');
-    await expect.poll(width).toBeGreaterThanOrEqual(600);
+    await expect(handle).toHaveAttribute('aria-valuenow', '720');
+    await expect.poll(width).toBeGreaterThanOrEqual(680);
     await handle.dblclick();
     await expect(handle).toHaveAttribute('aria-valuenow', '440');
     await expect.poll(width).toBeLessThanOrEqual(480);
@@ -147,14 +147,14 @@ test.describe('poignée du volet', () => {
     // Clavier : Entrée bascule aussi ; flèche = ±40 px.
     await handle.focus();
     await page.keyboard.press('Enter');
-    await expect(handle).toHaveAttribute('aria-valuenow', '640');
+    await expect(handle).toHaveAttribute('aria-valuenow', '720');
     await page.keyboard.press('ArrowRight');
-    await expect(handle).toHaveAttribute('aria-valuenow', '600');
+    await expect(handle).toHaveAttribute('aria-valuenow', '680');
 
     await reloadAndContinue(page);
     await expect(page.getByRole('separator', { name: 'Largeur du volet latéral' })).toHaveAttribute(
       'aria-valuenow',
-      '600',
+      '680',
     );
   });
 });

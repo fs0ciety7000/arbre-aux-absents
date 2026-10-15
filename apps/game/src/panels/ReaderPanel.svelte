@@ -265,7 +265,8 @@
   }
 
   function selectionPassage(): { path: number[]; start: number; end: number } | null {
-    const sel = window.getSelection();
+    // La feuille peut vivre dans la fenêtre détachée : sa sélection est celle de son document.
+    const sel = (sheet?.ownerDocument.defaultView ?? window).getSelection();
     if (!sel || sel.isCollapsed || sel.rangeCount === 0 || !sheet || !doc) return null;
     const r = sel.getRangeAt(0);
     const startEl = (
@@ -297,7 +298,7 @@
     // Étiqueté avec la langue du texte (absent = français, comme les sauvegardes d'avant l'i18n).
     const lang = textLang === 'fr' ? {} : { lang: textLang };
     game.dispatch({ type: 'highlight', h: { doc: id, ...p, color, ...lang } });
-    window.getSelection()?.removeAllRanges();
+    (sheet?.ownerDocument.defaultView ?? window).getSelection()?.removeAllRanges();
     status = pm.reader.highlightDone;
   }
 
@@ -362,8 +363,10 @@
       else if (cmd === 'reader.textUp') stepText(1);
       else if (cmd === 'reader.textDown') stepText(-1);
       else if (!ownsCommands(readerEl, 'reader', game.ui.main)) return false;
-      else if (cmd === 'reader.fullscreen') toggleFull();
-      else if (cmd === 'pin') togglePin();
+      else if (cmd === 'reader.fullscreen') {
+        if (game.docsPopped) return false;
+        toggleFull();
+      } else if (cmd === 'pin') togglePin();
       else if (cmd === 'note') openNote();
       else if (cmd === 'highlight') {
         awaitingColor = true;
@@ -574,15 +577,18 @@
             >
           </div>
           <div class="seg end">
-            <IconButton
-              icon="external"
-              label={game.readerFull ? pm.reader.fullscreenExit : pm.reader.fullscreen}
-              pressed={game.readerFull}
-              aria-keyshortcuts="F"
-              data-reader-full
-              tooltipPlacement="start"
-              onclick={toggleFull}
-            />
+            <!-- Fenêtre détachée : le plein écran se ferait dans l'autre fenêtre, on le retire. -->
+            {#if !game.docsPopped}
+              <IconButton
+                icon="expand"
+                label={game.readerFull ? pm.reader.fullscreenExit : pm.reader.fullscreen}
+                pressed={game.readerFull}
+                aria-keyshortcuts="F"
+                data-reader-full
+                tooltipPlacement="start"
+                onclick={toggleFull}
+              />
+            {/if}
             <IconButton
               icon="pin"
               label={pinned ? pm.common.unpin : pm.common.pin}
@@ -978,7 +984,11 @@
   /* ── La feuille (PaperSheet, §6.1 ; style par type, §10.8) ── */
   .sheet-wrap {
     position: relative;
-    max-inline-size: calc(var(--measure) + 2 * var(--space-6));
+    /* Colonne mesurée en caractères, qui suit la taille du texte (A− / A+, disposition Lecture) :
+       un volet plus large donne une feuille plus large, sans lignes interminables. */
+    max-inline-size: calc(
+      var(--measure-sheet) * var(--read-scale, 1) * var(--read-layout, 1) + 2 * var(--space-6)
+    );
     margin-block-start: var(--space-3);
     transform-origin: 50% 100%;
   }

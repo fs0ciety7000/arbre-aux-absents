@@ -22,7 +22,7 @@
   } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
   import { portraitSvg } from './lib/assets.svelte';
-  import { onMount, tick } from 'svelte';
+  import { onMount, tick, untrack } from 'svelte';
   import { getGame } from '../lib/game/context';
   import { generationCote, generationNumber } from '../lib/game/generations';
   import { listenCommands, ownsCommands } from './lib/commands';
@@ -37,10 +37,11 @@
   } from './lib/tree-layout';
   import { claimView, fieldValueLabel, guessOf, slotName } from './lib/view';
   import { FIELD_LABELS, pm } from './messages';
+  import { treeUi, type TreeView } from './lib/tree-ui.svelte';
   import SlotSheet from './tree/SlotSheet.svelte';
 
   const game = getGame();
-  type View = 'graph' | 'generation' | 'list';
+  type View = TreeView;
 
   const visible = $derived(visibleSlots(game.state, game.content));
   const nodes: TreeNodeInput[] = $derived(
@@ -59,14 +60,19 @@
   const layout = $derived(layoutTree(nodes));
   const prog = $derived(progress(game.state, game.content));
 
-  let view = $state<View>('graph');
-  let zoom = $state(1);
-  /** Génération montrée (vue par génération), par sa valeur dans le contenu : une génération
+  /** Vue, génération montrée et zoom : gardés par partie (remontage, plein écran), jamais
+   remis à zéro par le temps qui passe. Génération par sa valeur dans le contenu : une génération
    révélée plus tard ne décale pas la vue (l'indice de rangée, lui, change). */
-  let shownGen = $state<number | null>(null);
+  const tui = treeUi(game);
+  tui.view ??=
+    typeof matchMedia === 'function' && matchMedia('(max-width: 37.4375rem)').matches
+      ? 'generation'
+      : 'graph';
+  const view = $derived<View>(tui.view ?? 'graph');
+  const zoom = $derived(tui.zoom);
   const generation = $derived(
-    shownGen !== null && layout.generations.includes(shownGen)
-      ? layout.generations.indexOf(shownGen)
+    tui.gen !== null && layout.generations.includes(tui.gen)
+      ? layout.generations.indexOf(tui.gen)
       : 0,
   );
   let sheetSlot = $state<SlotId | null>(null);
@@ -88,7 +94,6 @@
   const isLocked = (id: SlotId) => game.state.locked[id] !== undefined;
 
   onMount(() => {
-    if (matchMedia('(max-width: 37.4375rem)').matches) view = 'generation';
     const off = game.onEvents((events) => {
       for (const e of events) {
         if (e.type === 'slotsLocked') {
@@ -131,14 +136,24 @@
     return ((Math.abs(h) % 5) - 2) * 0.35;
   }
 
-  // Navigation transverse vers une case : la montrer et la sélectionner.
+  // Navigation transverse vers une case : la montrer et la sélectionner. Seulement quand la case
+  // visée change : l'état de partie change chaque seconde (chronomètre), et `visible` avec lui ;
+  // sans ce filtre, la vue revenait sans cesse à la génération de la case choisie et la toile
+  // ou la liste « sautaient » vers elle (retour de jeu, octobre 2026).
+  const target = $derived(
+    game.ui.selectedSlot && visible.includes(game.ui.selectedSlot) ? game.ui.selectedSlot : null,
+  );
   $effect(() => {
-    const id = game.ui.selectedSlot;
-    if (!id || !visible.includes(id)) return;
-    focusId = id;
-    const gen = game.content.slots[id]?.generation;
-    if (gen !== undefined) shownGen = gen;
-    void tick().then(() => cardEl(id)?.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
+    const id = target;
+    untrack(() => {
+      if (id === tui.target) return;
+      tui.target = id;
+      if (!id) return;
+      focusId = id;
+      const gen = game.content.slots[id]?.generation;
+      if (gen !== undefined) tui.gen = gen;
+      void tick().then(() => cardEl(id)?.scrollIntoView({ block: 'nearest', inline: 'nearest' }));
+    });
   });
 
   function cardEl(id: SlotId): HTMLElement | null {
@@ -184,7 +199,7 @@
       if (!next) return;
       select(next);
       const gen = game.content.slots[next]?.generation;
-      if (view === 'generation' && gen !== undefined) shownGen = gen;
+      if (view === 'generation' && gen !== undefined) tui.gen = gen;
       await tick();
       cardEl(next)?.focus();
       return;
@@ -204,6 +219,7 @@
       if (view === 'graph' && cmd === 'zoom.in') setZoom(zoom + 0.25);
       else if (view === 'graph' && cmd === 'zoom.out') setZoom(zoom - 0.25);
       else if (view === 'graph' && cmd === 'zoom.fit') fit();
+      else if (cmd === 'reader.fullscreen') game.setTreeFull(!game.treeFull);
       else if (cmd === 'context') {
         // Menu de la case (clic droit, appui long, Menu / Maj+F10, X) : sa fiche, qui porte
         // les actions (retirer / rétablir la déclaration, voir la requête).
@@ -221,7 +237,7 @@
   );
 
   function setZoom(z: number) {
-    zoom = Math.round(Math.min(ZMAX, Math.max(ZMIN, z)) * 100) / 100;
+    tui.zoom = Math.round(Math.min(ZMAX, Math.max(ZMIN, z)) * 100) / 100;
   }
   function fit() {
     if (!wrap) return setZoom(1);
@@ -262,7 +278,7 @@
     swipe = null;
     if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
     const n = layout.generations.length;
-    shownGen =
+    tui.gen =
       layout.generations[Math.min(n - 1, Math.max(0, generation + (dx < 0 ? 1 : -1)))] ?? null;
   }
 
@@ -419,6 +435,11 @@
       {/if}
     </span>
     {#if locked}
+      <!-- Case établie (§13.3) : liseré violet, bandeau en tête et sceau coché, en plus du tampon :
+           la forme (sceau, bandeau) dit « établie » même sans la couleur. -->
+      <span class="seal" class:mv-lock={fresh} style:--i={Math.max(0, rank)} aria-hidden="true"
+        ><Icon name="check" size="0.95rem" clean /></span
+      >
       <span class="lock" class:mv-lock={fresh} style:--i={Math.max(0, rank)} aria-hidden="true"
         ><Icon name="lock" size="1rem" /></span
       >
@@ -442,23 +463,35 @@
         label={pm.tree.views}
         variant="line"
         idPrefix="tree-view"
-        bind:value={view}
+        bind:value={() => view, (v) => (tui.view = v as View)}
         items={[
           { id: 'graph', label: pm.tree.viewGraph, icon: 'tree' },
           { id: 'generation', label: pm.tree.viewGeneration, icon: 'layers' },
           { id: 'list', label: pm.tree.viewList, icon: 'list' },
         ]}
       />
-      {#if view === 'graph'}
-        <div class="zoom" role="group" aria-label={pm.tree.zoom}>
-          <IconButton icon="minus" label={pm.tree.zoomOut} onclick={() => setZoom(zoom - 0.25)} />
-          <span class="num zoom-level" aria-live="polite"
-            >{pm.tree.zoomLevel(Math.round(zoom * 100))}</span
-          >
-          <IconButton icon="plus" label={pm.tree.zoomIn} onclick={() => setZoom(zoom + 0.25)} />
-          <IconButton icon="fit" label={pm.tree.fit} onclick={fit} />
-        </div>
-      {/if}
+      <div class="tools">
+        {#if view === 'graph'}
+          <div class="zoom" role="group" aria-label={pm.tree.zoom}>
+            <IconButton icon="minus" label={pm.tree.zoomOut} onclick={() => setZoom(zoom - 0.25)} />
+            <span class="num zoom-level" aria-live="polite"
+              >{pm.tree.zoomLevel(Math.round(zoom * 100))}</span
+            >
+            <IconButton icon="plus" label={pm.tree.zoomIn} onclick={() => setZoom(zoom + 0.25)} />
+            <IconButton icon="fit" label={pm.tree.fit} onclick={fit} />
+          </div>
+        {/if}
+        <!-- Plein écran de l'arbre (couche du Bureau + plein écran natif s'il existe), touche F. -->
+        <IconButton
+          icon="expand"
+          label={game.treeFull ? pm.tree.fullscreenExit : pm.tree.fullscreen}
+          pressed={game.treeFull}
+          tooltipPlacement="start"
+          aria-keyshortcuts="F"
+          data-tree-full
+          onclick={() => game.setTreeFull(!game.treeFull)}
+        />
+      </div>
     </div>
 
     {#if carry.item}
@@ -537,7 +570,7 @@
                 class="gen-dot num"
                 aria-pressed={generation === i}
                 aria-label={item.label}
-                onclick={() => (shownGen = item.g)}>{item.n}</button
+                onclick={() => (tui.gen = item.g)}>{item.n}</button
               >
             {/each}
           </div>
@@ -681,6 +714,12 @@
     min-inline-size: 0;
     max-inline-size: 100%;
     overflow-x: auto;
+  }
+  .tools {
+    display: flex;
+    gap: var(--space-2);
+    align-items: center;
+    margin-inline-start: auto;
   }
   .zoom {
     display: flex;
@@ -884,10 +923,45 @@
       0 0 0 var(--border-strong) var(--accent),
       var(--shadow-lifted);
   }
+  /* Case établie : liseré épais à l'encre du tampon, bandeau en tête de fiche et sceau coché
+     à cheval sur le coin (retour de jeu : « remarquer un peu plus que c'est OK »). */
   .slot.locked {
     box-shadow:
-      0 0 0 var(--border-strong) var(--established),
+      0 0 0 var(--established-ring) var(--established),
       var(--shadow-paper);
+  }
+  .slot.locked::before {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 0;
+    block-size: var(--space-1);
+    background: var(--established);
+    border-start-start-radius: inherit;
+    border-start-end-radius: inherit;
+    pointer-events: none;
+  }
+  .slot.locked.selected {
+    box-shadow:
+      0 0 0 var(--established-ring) var(--established),
+      0 0 0 calc(var(--established-ring) + var(--border-strong)) var(--accent),
+      var(--shadow-lifted);
+  }
+  .seal {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: calc(var(--space-2) * -1);
+    inset-inline-start: calc(var(--space-2) * -1);
+    display: grid;
+    place-items: center;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--established);
+    color: var(--established-contrast);
+    box-shadow:
+      0 0 0 var(--border-strong) var(--card),
+      var(--shadow-1);
   }
   .slot.droppable {
     background-color: var(--surface-2);
@@ -932,6 +1006,14 @@
     .slot,
     .list-slot {
       border: 1px solid CanvasText;
+    }
+    .slot.locked {
+      border: var(--established-ring) double CanvasText;
+    }
+    .slot.locked::before,
+    .seal {
+      background: CanvasText;
+      color: Canvas;
     }
     .slot.selected,
     .slot.droppable {
@@ -1030,8 +1112,11 @@
   }
   .list-slot.locked {
     box-shadow:
-      inset var(--border-strong) 0 0 var(--established),
+      inset var(--established-ring) 0 0 var(--established),
       var(--shadow-paper);
+  }
+  .list-slot.locked .list-open :global(.icon) {
+    color: var(--established);
   }
   .list-open {
     font-family: var(--font-type);

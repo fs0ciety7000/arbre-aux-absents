@@ -193,6 +193,19 @@ export class GameStoreImpl implements GameStore {
   setReaderFull(on: boolean): void {
     this.readerFull = on;
   }
+
+  /** Arbre en plein écran (état d'interface, non mémorisé) : on le quitte par Échap ou B. */
+  treeFull = $state(false);
+  setTreeFull(on: boolean): void {
+    this.treeFull = on;
+    if (on) this.readerFull = false;
+  }
+
+  /**
+   * Fiche des documents ouverte dans une fenêtre à part (Document Picture-in-Picture ou fenêtre
+   * surgissante, navigateur) : la fiche du Bureau ne monte alors plus ses panneaux.
+   */
+  docsPopped = $state(false);
   /** Le joueur a passé le tutoriel (« J'ai déjà joué »). */
   skipTutorial = $state(false);
   saveFailed = $state(false);
@@ -739,6 +752,8 @@ export class GameStoreImpl implements GameStore {
       this.ui.side = id;
       this.sideCollapsed = false;
     }
+    // Un panneau autre que l'arbre ne se voit pas sous l'arbre en plein écran.
+    if (id !== 'tree' && !this.docsPopped) this.treeFull = false;
     if (id === 'reader') this.miniReaderHidden = false;
     this.#pushHistory();
   }
@@ -796,6 +811,10 @@ export class GameStoreImpl implements GameStore {
   back(): void {
     if (this.readerFull && this.modals.length === 0) {
       this.setReaderFull(false);
+      return;
+    }
+    if (this.treeFull && this.modals.length === 0 && !this.ui.picking) {
+      this.setTreeFull(false);
       return;
     }
     if (this.ui.picking) {

@@ -95,6 +95,11 @@ export interface GameStore {
   /** Document en plein écran (couche posée par le Bureau). */
   readonly readerFull: boolean;
   setReaderFull(on: boolean): void;
+  /** Fiche des documents dans une fenêtre détachée (navigateur, second écran). */
+  readonly docsPopped: boolean;
+  /** Arbre en plein écran (couche posée par le Bureau). */
+  readonly treeFull: boolean;
+  setTreeFull(on: boolean): void;
   /** Ouvre un panneau (principal sur téléphone, latéral si pertinent sur grand écran). */
   showPanel(id: PanelId): void;
   /** Dernier mot-clé ciblé par `navigate` (le Carnet le met en avant). */

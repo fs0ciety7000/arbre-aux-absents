@@ -445,12 +445,15 @@ de manette, lettres des sticks G/D → L/R), `LanguageSwitch`, `TicketStatus`. I
 - **Rayons v2, resserrés** (des objets découpés, pas des cartes d'application) : `--radius-paper` 2 ·
   `--radius-xs` 3 · `--radius-s` 5 (boutons, champs) · `--radius-m` 7 (fiches, chemises) ·
   `--radius-l` 10 (panneaux, modales) · `--radius-xl` 16 · `--radius-tab` 9 (coin d'onglet) · `--radius-pill`.
-- **Traits** `--border` 1, `--border-strong` 2. **Cibles** `--hit` 44, `--hit-l` 48, `--hit-row` 56.
-- **Bureau** : `--header-h` 48/56, `--rail-w` 64/56, `--tabbar-h` 64, volet `--side-min|default|max|step`
-  360/440/640/40, `--mini-reader-h` 72, `--drawer-handle` 24, `--popover-w` 320 × `--popover-max-h` 480,
+- **Traits** `--border` 1, `--border-strong` 2, `--established-ring` 4 (liseré d'une case établie,
+  v2.6). **Cibles** `--hit` 44, `--hit-l` 48, `--hit-row` 56.
+- **Bureau** : `--header-h` 48/56, `--rail-w` 64/56, `--tabbar-h` 64, volet `--side-min|default|wide|max|step`
+  360/440/720/1040/40 (v2.6 : 640 au plus avant), place gardée à l'arbre `--tree-min` 22 rem (v2.6),
+  `--mini-reader-h` 72, `--drawer-handle` 24, `--popover-w` 320 × `--popover-max-h` 480,
   `--sheet-w` 480, case d'arbre `--slot-w` 144 × `--slot-h` 168, **`--tab-h` 34 (onglet de chemise)**,
   fiche flottante `--float-card-w` 500 × `--float-card-h` 640 (au plus), feuille plein écran
-  `--full-sheet-w` 960 (v2.5).
+  `--full-sheet-w` 960 (v2.5). Feuille du Lecteur : colonne `--measure-sheet` 72ch (Lecture :
+  `--measure-sheet-wide` 88ch), multipliée par la taille du texte (A− / A+) (v2.6).
 - **Site** : `--site-header-h` 64, `--container` 76 rem, `--container-narrow` 44 rem.
 
 ### 5.2 Points de rupture
@@ -472,13 +475,14 @@ Les variables ne sont pas admises dans les media queries : valeurs en dur, **en 
 ┌──────────────────────── En-tête 48 px (surface-1, liseré bas) ────────────────────────┐
 │ ← · L'Arbre aux absents     12 / 30 identifiés · 2 / ? secrets · 01:12:40 · ? · ⏸      │
 ├──────┬────────────────────────────────────────┬──────────────────────────────────────┤
-│ Rail │ Zone principale (canvas + halo lampe)  │ Volet latéral 360–640 (déf. 440)      │
+│ Rail │ Zone principale (canvas + halo lampe)  │ Volet latéral 360–1040 (déf. 440)     │
 │ 64px │ Arbre / Carte / Tableau d'épingles     │ Tabs line : Lecteur · Archives ·      │
 │ Tabs │ Panel sans bord, plein cadre           │ Catalogue · Carnet · Journal · Aide   │
 │ rail │                                        │ Lecteur = Panel surface="paper"       │
 │      │                                        │ poignée à encoche, Ctrl+[ ]           │
 └──────┴────────────────────────────────────────┴──────────────────────────────────────┘
-grid-template-columns: var(--rail-w) minmax(0, 1fr) clamp(var(--side-min), var(--side-w), var(--side-max))
+grid-template-columns: minmax(0, 1fr) var(--space-3)
+  min(clamp(var(--side-min), var(--side-w), var(--side-max)), 100% − --tree-min − gouttières)
 gap: var(--space-3) ; padding: var(--space-3) ; deux Lecteurs comparés = volet de 2 × 360 min.
 ```
 
@@ -489,9 +493,12 @@ repos ; survol, focus et glissement passent l'encoche et le trait en `--accent` 
 `--hit` de large (pseudo-élément) dans une colonne de `--space-3`. Infobulle et description
 accessible : « Glisser pour élargir · double-clic : standard ou large ». Gestes : glisser (enregistré
 au relâcher), double-clic ou Entrée / Espace / A (manette) = bascule `--side-default` (440) ↔
-`--side-max` (640), flèches ± `--side-step`, Début / Fin = max / min. La largeur est mémorisée
-(`Settings.sideWidth`) et réglable aussi dans Options › Affichage (Standard, Large, ou
-« Personnalisée (N px) »). `forced-colors` : encoche et trait en `CanvasText`. Téléphone et tablette
+`--side-wide` (720), flèches ± `--side-step`, Début / Fin = au plus large possible / min. **v2.6** :
+le volet va jusqu'à `--side-max` (1040, retour de jeu « élargir encore la fenêtre des documents »),
+mais l'arbre garde toujours `--tree-min` (22 rem) : sur un écran plus étroit, la grille et la poignée
+s'arrêtent avant (la largeur mémorisée reste, elle reprend sur un grand écran). La largeur est
+mémorisée (`Settings.sideWidth`) et réglable aussi dans Options › Affichage (Standard, Large,
+Très large, ou « Personnalisée (N px) »). `forced-colors` : encoche et trait en `CanvasText`. Téléphone et tablette
 portrait : pas de volet, donc pas de poignée.
 
 **Dispositions** (v2.5, desktop et tablette paysage ; `Settings.layout`) : sélecteur dans l'en-tête,
@@ -502,9 +509,10 @@ avant les actions — trois `IconButton` à bascule (`aria-pressed`) dans une r�
 annoncé (« Disposition : Lecture »). Absent en une seule zone (téléphone, tablette portrait).
 
 - **Enquête** : la grille ci-dessus.
-- **Lecture** : `grid-template-columns: minmax(0, 2fr) var(--space-3) minmax(0, 3fr)` (volet ~60 %),
-  colonne de poignée vide (la disposition fixe la largeur), feuille centrée (`margin-inline: auto`,
-  `--measure`), `--read-layout` (texte +1 cran).
+- **Lecture** : `grid-template-columns: minmax(min(var(--tree-min), 35%), 3fr) var(--space-3)
+  minmax(0, 7fr)` (volet ~70 %, v2.6 ; 60 % avant), colonne de poignée vide (la disposition fixe la
+  largeur), feuille centrée (`margin-inline: auto`, `--measure-sheet-wide`), `--read-layout` (texte
+  +1 cran).
 - **Arbre** : une colonne ; le volet devient la **fiche flottante** (`FloatingCard`, `shell/`) :
   `aside` « Fiche des documents » `--surface-1`, `--radius-l`, `--shadow-3`, surpiqûre `--stitch`
   comme le volet, `--float-card-w` × `--float-card-h` bornés par le Bureau, entrée `sheetPull`.
@@ -516,6 +524,20 @@ annoncé (« Disposition : Lecture »). Absent en une seule zone (téléphone, t
   même après un redimensionnement. Glisser (souris, doigt : `touch-action: none`) ou flèches sur
   la poignée (24 px, `Maj` 96 px). Repliée : la tête seule, à la même place. `forced-colors` :
   bord `CanvasText`.
+- **Fenêtre détachée** (v2.6, navigateur ; retour de jeu « la glisser sur un deuxième écran ») :
+  dans la tête de la fiche, avant « Plein écran », `IconButton` `external` à bascule
+  (`aria-pressed`) « Ouvrir dans une fenêtre » / « Ramener la fiche ». Ouvre une fenêtre
+  **Document Picture-in-Picture** (Chromium : toujours au premier plan, déplaçable sur un autre
+  écran), sinon une fenêtre surgissante (`window.open`, autres navigateurs, cadre itch.io) ; en
+  Tauri, seulement si la WebView propose Document PiP (sinon le bouton n'est pas affiché). La
+  fenêtre reçoit les feuilles de style et les attributs de `<html>` du jeu (thème, contraste, taille
+  du texte, suivis en direct) et monte les **mêmes** onglets (`SideTabs`) avec le même magasin de
+  partie : document ouvert, surlignages, épingles et notes restent synchronisés. Tête de fenêtre
+  `--hit-row` (intitulé Oswald `--text-muted`, `Button ghost` « Ramener la fiche » icône `back`),
+  surpiqûre `--stitch` en bas, fond `--surface-1`. Pendant ce temps la fiche du Bureau se réduit au
+  renvoi (« Les documents sont ouverts dans une autre fenêtre… » + « Ramener la fiche »,
+  hauteur ≤ 12 rem). Fermer la fenêtre, le bouton, quitter la disposition Arbre ou la page :
+  retour à la fiche, focus rendu au bouton, annonce. Fenêtre refusée : toast `warning`.
 
 **Plein écran du document** (v2.5, tous formats) : couche `position: fixed` `--z-drawer` sur
 `.desk-surface`, Bureau dessous `inert` ; barre avec `Button` « Quitter le plein écran » (ou
@@ -524,8 +546,20 @@ annoncé (« Disposition : Lecture »). Absent en une seule zone (téléphone, t
 compacte au desktop). Un seul Lecteur est monté : sa place sur le Bureau est tenue par un renvoi
 (« Le document est affiché en plein écran »). Focus posé sur la couche à l'entrée (annonce
 « Échap pour revenir »), rendu au bouton de départ à la sortie (`Échap`, B, bouton). Icône du
-bouton : `external` faute d'icône « plein écran » dédiée (**demande au design-lead** : une icône
-`expand` encrée, distincte de `fit`).
+bouton : `expand` (v2.6 : deux flèches qui écartent les coins, distincte de `fit` et de `external`,
+qui sert désormais à « Ouvrir dans une fenêtre »).
+
+**Plein écran de l'arbre** (v2.6, tous formats) : `IconButton` `expand` « Arbre en plein écran »
+(`aria-pressed`, touche `F` quand l'arbre a la main, `data-tree-full`) à droite des outils de
+l'arbre, après le zoom (affiché dans les trois vues ; ⛶ = `fit`, « Vue d'ensemble »). Couche
+`position: fixed` `--z-drawer` (`.desk-surface`), Bureau dessous `inert` ; barre avec `Button`
+« Quitter le plein écran » (icône `back`), puis la chemise kraft (`--kraft`, `--radius-m`,
+`--shadow-paper`, `data-surface="kraft"`) qui porte le panneau de l'arbre sur toute la largeur.
+Un seul arbre monté (renvoi « L'arbre est affiché en plein écran » à sa place) ; vue, génération et
+zoom sont gardés. Navigateur : la page passe aussi en plein écran natif (Fullscreen API) quand il
+est permis, et en sort avec la couche ; `Échap` (qui quitte d'abord le plein écran natif), B ou le
+bouton reviennent, focus rendu au bouton de l'arbre, entrée annoncée (« Échap pour revenir »).
+Ouvrir un autre panneau (raccourci, lien d'une fiche) quitte le plein écran.
 
 **Tablette 600–1279 px** — paysage : rail 56 px + zone principale 55 % + volet 45 % ; portrait :
 zone principale plein écran + **tiroir bas** (`Panel` dans une feuille à deux crans 40 % / 90 %,
@@ -1082,12 +1116,13 @@ revoir seulement pour une scène défilée complexe (artbook interactif).
   `npm run icons:ink -w @arbre/ui`.
 - `Icon` : `name`, `size`, `weight` (déf. 1,75), `wash` (tache d'aquarelle derrière : `true` =
   safran, ou une couleur token), `clean` (géométrie nette, pour 16 px et moins).
-- **61 icônes** (`ICON_NAMES`) : panneaux `tree archives reader catalog notebook map pinboard
+- **62 icônes** (`ICON_NAMES`) : panneaux `tree archives reader catalog notebook map pinboard
   journal faces help` · navigation `menu pause back forward chevron-down chevron-up close plus minus
   external grip list layers settings sound` · verbes `look search take write pin use highlight note`
   · lecteur `flip transcript zoom-in zoom-out fit` · états `lock check stamp face unknown-person
   star clock info warning danger trash save quill` · **v2** `lamp fern folder envelope photo compass
-  typewriter clip sparkle` · **v2.2** `staple` (agrafe de la case revendiquée).
+  typewriter clip sparkle` · **v2.2** `staple` (agrafe de la case revendiquée) · **v2.6** `expand`
+  (plein écran : document, arbre ; `external` = ouvrir dans une fenêtre).
 - Une icône = un sens partout. Toujours `aria-hidden` ; le nom est porté par le contrôle.
 - **Curseurs** v2 : flèche taillée à l'encre de nuit (`#182039`) à liseré vélin (`#f7efdc`), trait de
   safran (`#f2b33d`) sur le fût ; pastille du verbe dessinée à la plume. 32 px, point chaud (3, 2),
@@ -1612,7 +1647,15 @@ Le site vitrine, lui, garde le zoom.
   coupure entre les mots seulement), 2 lignes au plus puis points de suspension (texte complet dans
   le nom accessible) ; un mot trop long pour une ligne réduit le corps (`--occ-chars`) ; le cadenas
   se place à droite du portrait ;
-- case **établie** : `Stamp text="Établi" size="s"` en bas à droite, débordant de la fiche ;
+- case **établie** : `Stamp text="Établi" size="s"` en bas à droite, débordant de la fiche ; et
+  (v2.6, retour de jeu « remarquer un peu plus que c'est OK ») liseré `--established-ring` (4 px)
+  `--established` autour de la fiche, **bandeau** `--established` de `--space-1` en tête, **sceau
+  coché** (pastille 24 px `--established`, icône `check` `--established-contrast`, cerclée
+  `--card`) à cheval sur le coin haut gauche. La forme (bandeau, sceau, tampon, cadenas) porte
+  l'état sans la couleur ; `--established-contrast` sur `--established` est vérifié dans tous les
+  contextes (≥ 7,2:1, vision des couleurs comprise) ; `forced-colors` : liseré double `CanvasText`,
+  sceau et bandeau `CanvasText`. Sélectionnée : l'anneau `--accent` passe autour du liseré. Liste :
+  filet gauche de 4 px et cadenas à l'encre `--established` ;
 - case **ouverte** : titre « ? », aide « Déposer une pièce » + `Icon unknown-person`, opacité 0,88 ;
 - case **revendiquée** (affaire 2) : `.claim-frame` + `ClaimTag straddle decorative` + `.claim-value`
   sur chaque champ déclaré, sans cadenas ni tampon ; retrait en `unclaim` (§6.9) ;
@@ -1650,7 +1693,7 @@ pris par le zoom du navigateur. Réglage mémorisé (`Settings.readScale`), auss
 Affichage. Présent sur tous les formats (téléphone et tablette portrait : c'est le seul réglage de
 confort de lecture, le Lecteur y est déjà plein écran).
 
-**Plein écran** (v2.5) : `IconButton` `external` en tête du groupe de droite (avant l'épingle),
+**Plein écran** (v2.5) : `IconButton` `expand` (v2.6 ; `external` avant) en tête du groupe de droite (avant l'épingle),
 `aria-pressed` et libellé « Plein écran » / « Quitter le plein écran », touche `F` ; voir §5.3.
 
 ### 13.5 Catalogue (LX-2)

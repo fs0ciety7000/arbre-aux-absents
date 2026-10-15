@@ -44,7 +44,9 @@
   const sideOptions = $derived([
     { value: String(SIDE_WIDTH.standard), label: m.sideWidthStandard },
     { value: String(SIDE_WIDTH.wide), label: m.sideWidthWide },
-    ...(s.sideWidth === SIDE_WIDTH.standard || s.sideWidth === SIDE_WIDTH.wide
+    // Au plus large : l'arbre garde tout de même sa place (--tree-min) sur un écran étroit.
+    { value: String(SIDE_WIDTH.max), label: m.sideWidthMax },
+    ...(([SIDE_WIDTH.standard, SIDE_WIDTH.wide, SIDE_WIDTH.max] as number[]).includes(s.sideWidth)
       ? []
       : [{ value: String(s.sideWidth), label: m.sideWidthCustom(s.sideWidth) }]),
   ]);

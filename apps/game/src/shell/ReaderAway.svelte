@@ -10,7 +10,7 @@
 
 <div class="away">
   <p>{m.fullscreenAway}</p>
-  <Button iconName="external" onclick={() => game.setReaderFull(false)}>{m.fullscreenExit}</Button>
+  <Button iconName="expand" onclick={() => game.setReaderFull(false)}>{m.fullscreenExit}</Button>
 </div>
 
 <style>

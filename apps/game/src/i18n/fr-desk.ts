@@ -46,6 +46,8 @@ export const frDesk = {
       zoomOut: 'Réduire l’arbre',
       fit: 'Vue d’ensemble',
       zoomLevel: (pct: number) => `${pct} %`,
+      fullscreen: 'Arbre en plein écran',
+      fullscreenExit: 'Quitter le plein écran',
       established: 'Établi',
       lockedLabel: 'établie',
       open: 'ouverte',

@@ -5,9 +5,13 @@
   Une `region` dans l'ordre de tabulation, pas une modale.
 -->
 <script lang="ts">
-  import { IconButton, Icon, sheetPull } from '@arbre/ui';
-  import type { Snippet } from 'svelte';
+  import { Button, IconButton, Icon, pushToast, sheetPull } from '@arbre/ui';
+  import { getAllContexts, mount, tick, unmount, type Snippet } from 'svelte';
+  import { announcer } from '../lib/game/announcer.svelte';
+  import { getApp } from '../lib/game/context';
   import { moveCard } from '../lib/game/reading';
+  import PopoutDocs from './PopoutDocs.svelte';
+  import { canPopOut, mirrorPage, openPopOut } from './popout';
   import type { GameStoreImpl } from '../lib/game/store.svelte';
   import { messages } from '../messages.fr';
 
@@ -32,7 +36,68 @@
 
   const pos = $derived(game.cardPosition);
   const collapsed = $derived(game.sideCollapsed);
-  const canFull = $derived(game.ui.openDocument !== null);
+  const canFull = $derived(game.ui.openDocument !== null && !game.docsPopped);
+
+  // ── Fenêtre détachée (second écran, navigateur) : mêmes panneaux, même partie ──
+  const app = getApp();
+  const contexts = getAllContexts();
+  const canPop = $derived(canPopOut(app.platform?.kind));
+  let popWin: Window | null = null;
+  let popApp: Record<string, unknown> | null = null;
+  let stopMirror: (() => void) | null = null;
+  let opening = false;
+
+  async function popOut() {
+    if (opening || game.docsPopped) return;
+    opening = true;
+    const win = await openPopOut({
+      width: card?.offsetWidth || 500,
+      height: Math.max(card?.offsetHeight || 0, 560),
+      title: m.popoutTitle(game.content.meta.title),
+      platformKind: app.platform?.kind,
+    });
+    opening = false;
+    if (!win) {
+      pushToast({ tone: 'warning', title: m.popoutBlocked });
+      return;
+    }
+    popWin = win;
+    stopMirror = mirrorPage(win);
+    popApp = mount(PopoutDocs, {
+      target: win.document.body,
+      props: { game, onback: () => win.close() },
+      context: contexts,
+    });
+    game.docsPopped = true;
+    win.addEventListener('pagehide', () => bringBack(false), { once: true });
+    announcer.say(m.popoutOn);
+  }
+
+  /** Ramène la fiche (bouton, fermeture de la fenêtre, fin de la disposition Arbre). */
+  function bringBack(close = true, focus = true) {
+    const win = popWin;
+    if (!win) return;
+    popWin = null;
+    stopMirror?.();
+    stopMirror = null;
+    if (popApp) void unmount(popApp);
+    popApp = null;
+    if (close && !win.closed) win.close();
+    game.docsPopped = false;
+    if (!focus) return;
+    announcer.say(m.popoutOff);
+    void tick().then(() => card?.querySelector<HTMLElement>('[data-card-popout]')?.focus());
+  }
+
+  // La page quittée (ou la fiche démontée) referme la fenêtre détachée.
+  $effect(() => {
+    const leave = () => bringBack(true, false);
+    window.addEventListener('pagehide', leave);
+    return () => {
+      window.removeEventListener('pagehide', leave);
+      leave();
+    };
+  });
 
   function freeSpace(): { w: number; h: number } {
     if (!track || !card) return { w: 0, h: 0 };
@@ -79,6 +144,7 @@
   <aside
     class="card"
     class:collapsed
+    class:popped={game.docsPopped}
     class:dragging
     aria-label={m.cardLabel}
     bind:this={card}
@@ -104,8 +170,18 @@
         <span class="title">{collapsed ? title : m.cardLabel}</span>
       </button>
       <span id="card-move-hint" class="visually-hidden">{m.cardMoveHint}</span>
+      {#if canPop}
+        <IconButton
+          icon="external"
+          label={game.docsPopped ? m.popoutBack : m.popout}
+          pressed={game.docsPopped}
+          tooltipPlacement="start"
+          data-card-popout
+          onclick={() => (game.docsPopped ? bringBack() : popOut())}
+        />
+      {/if}
       <IconButton
-        icon="external"
+        icon="expand"
         label={m.fullscreen}
         disabled={!canFull}
         tooltipPlacement="start"
@@ -124,7 +200,15 @@
       />
     </div>
     {#if !collapsed}
-      <div class="body">{@render children()}</div>
+      {#if game.docsPopped}
+        <!-- Un seul jeu de panneaux monté : la fenêtre détachée les porte. -->
+        <div class="body away">
+          <p>{m.popoutAway}</p>
+          <Button iconName="back" onclick={() => bringBack()}>{m.popoutBack}</Button>
+        </div>
+      {:else}
+        <div class="body">{@render children()}</div>
+      {/if}
     {/if}
   </aside>
 </div>
@@ -167,6 +251,11 @@
   /* Repliée : l'onglet seul, posé au même endroit (la hauteur est celle de la tête). */
   .card.collapsed {
     --ch: var(--hit-row);
+    block-size: auto;
+  }
+  /* Détachée : la fiche se réduit au renvoi (tête + message). */
+  .card.popped {
+    --ch: min(12rem, 100%);
     block-size: auto;
   }
   .head {
@@ -225,31 +314,16 @@
     flex: 1;
     min-block-size: 0;
   }
-  .body > :global(.tabs) {
-    flex: 1;
-    min-height: 0;
+  .away {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    justify-items: start;
+    padding: var(--space-5);
+    color: var(--text-muted);
   }
-  .body :global([role='tablist']) {
-    overflow-x: auto;
-    scrollbar-width: thin;
-    padding-inline: var(--space-2);
-  }
-  .body :global([role='tabpanel']) {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-  }
-  .body :global([role='tabpanel'] > *) {
-    flex: 1;
-    min-height: 0;
-  }
-  .body :global(.panel.desk) {
-    background: transparent;
-    box-shadow: none;
-  }
-  .body :global(.panel.desk::after) {
-    display: none;
+  .away p {
+    margin: 0;
   }
   @media (forced-colors: active) {
     .card {

@@ -13,12 +13,7 @@
   import { SIDE_WIDTH } from '@arbre/contract';
   import { getApp, setGame } from '../lib/game/context';
   import { toggleSideWidth } from '../lib/game/reading';
-  import {
-    MAIN_PANELS,
-    PHONE_TABS,
-    SIDE_PANELS,
-    type GameStoreImpl,
-  } from '../lib/game/store.svelte';
+  import { MAIN_PANELS, PHONE_TABS, type GameStoreImpl } from '../lib/game/store.svelte';
   import type { PanelId } from '../lib/game/types';
   import { viewport } from '../lib/game/viewport.svelte';
   import { messages } from '../messages.fr';
@@ -29,6 +24,8 @@
   import { CandidatePicker, PANELS } from './panels';
   import FloatingCard from './FloatingCard.svelte';
   import ReaderAway from './ReaderAway.svelte';
+  import SideTabs from './SideTabs.svelte';
+  import TreeAway from './TreeAway.svelte';
   import type { Component } from 'svelte';
   import { tick } from 'svelte';
   import { announcer } from '../lib/game/announcer.svelte';
@@ -54,9 +51,12 @@
   /** Disposition (Enquête / Lecture / Arbre) ; toujours Enquête en une seule zone. */
   const layout = $derived(game.layout);
 
-  /** Un seul Lecteur monté : en plein écran, sa place sur le Bureau est tenue par un renvoi. */
+  /** Un seul Lecteur (un seul arbre) monté : en plein écran, sa place sur le Bureau est tenue
+   par un renvoi. */
   function panelOf(id: PanelId): Component {
-    return id === 'reader' && game.readerFull ? ReaderAway : PANELS[id];
+    if (id === 'reader' && game.readerFull) return ReaderAway;
+    if (id === 'tree' && game.treeFull) return TreeAway;
+    return PANELS[id];
   }
   // Un seul #contenu (lien d'évitement) : l'écran ouvert par-dessus le Bureau le porte alors.
   const contentId = $derived(app.overlay === null ? 'contenu' : undefined);
@@ -75,7 +75,6 @@
   }
 
   const railItems = $derived(MAIN_PANELS.map(item));
-  const sideItems = $derived(SIDE_PANELS.map(item));
   const barItems = $derived(PHONE_TABS.map(item));
   /** Onglet affiché comme sélectionné dans la barre (le panneau actif peut être hors barre). */
   const barValue = $derived(PHONE_TABS.includes(game.ui.main) ? game.ui.main : '');
@@ -184,16 +183,32 @@
   let dragging = $state(false);
   let startX = 0;
   let startW = 0;
+  let zonesEl: HTMLElement | undefined = $state();
+  let room: number = SIDE_MAX;
+  /** Largeur affichée du volet (la mémorisée peut dépasser la place, l'arbre garde --tree-min). */
+  function shownSide(): number {
+    return zonesEl?.querySelector<HTMLElement>('aside.side')?.offsetWidth || game.sideWidth;
+  }
+  /** Largeur au plus du volet ici : ce qui laisse `--tree-min` à l'arbre. */
+  function sideRoom(): number {
+    const folder = zonesEl?.querySelector<HTMLElement>('.main-folder');
+    if (!zonesEl || !folder) return SIDE_MAX;
+    const raw = getComputedStyle(zonesEl).getPropertyValue('--tree-min').trim();
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const treeMin = raw.endsWith('rem') ? parseFloat(raw) * rem : parseFloat(raw) || 0;
+    return Math.max(SIDE_MIN, Math.min(SIDE_MAX, shownSide() + folder.offsetWidth - treeMin));
+  }
   function onHandleDown(e: PointerEvent) {
     if (e.button !== 0) return;
     dragging = true;
     startX = e.clientX;
-    startW = game.sideWidth;
+    startW = shownSide();
+    room = sideRoom();
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   }
   function onHandleMove(e: PointerEvent) {
     if (!dragging) return;
-    game.previewSideWidth(startW - (e.clientX - startX));
+    game.previewSideWidth(Math.min(room, startW - (e.clientX - startX)));
   }
   function onHandleUp() {
     if (!dragging) return;
@@ -210,9 +225,10 @@
   }
   function onHandleKey(e: KeyboardEvent) {
     const step = 40;
-    if (e.key === 'ArrowLeft') game.sideWidth = Math.min(SIDE_MAX, game.sideWidth + step);
-    else if (e.key === 'ArrowRight') game.sideWidth = Math.max(SIDE_MIN, game.sideWidth - step);
-    else if (e.key === 'Home') game.sideWidth = SIDE_MAX;
+    const w = shownSide();
+    if (e.key === 'ArrowLeft') game.sideWidth = Math.min(sideRoom(), w + step);
+    else if (e.key === 'ArrowRight') game.sideWidth = Math.max(SIDE_MIN, w - step);
+    else if (e.key === 'Home') game.sideWidth = sideRoom();
     else if (e.key === 'End') game.sideWidth = SIDE_MIN;
     else if (e.key === 'Enter' || e.key === ' ') toggleSide();
     else return;
@@ -238,6 +254,51 @@
     });
   });
   const ReaderFull = PANELS.reader;
+
+  // ── Plein écran de l'arbre : couche du Bureau, plus le plein écran natif s'il existe ──
+  // (navigateur : la fenêtre entière ; refusé ou absent : la couche seule suffit). Échap quitte
+  // le plein écran natif avant d'arriver à la page : `fullscreenchange` ferme alors la couche.
+  const TreeFull = PANELS.tree;
+  let treeLayer: HTMLElement | undefined = $state();
+  let wasTreeFull = false;
+  let nativeTree = false;
+  $effect(() => {
+    const full = game.treeFull;
+    if (full === wasTreeFull) return;
+    wasTreeFull = full;
+    if (full) {
+      const root = document.documentElement;
+      if (document.fullscreenEnabled && !document.fullscreenElement && root.requestFullscreen) {
+        root.requestFullscreen().then(
+          () => (nativeTree = true),
+          () => (nativeTree = false),
+        );
+      }
+    } else if (nativeTree) {
+      nativeTree = false;
+      if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+    }
+    void tick().then(() => {
+      if (full) {
+        treeLayer?.focus();
+        announcer.say(m.treeFullOn);
+      } else {
+        document.querySelector<HTMLElement>('[data-tree-full]')?.focus();
+      }
+    });
+  });
+  $effect(() => {
+    const onChange = () => {
+      if (document.fullscreenElement || !nativeTree) return;
+      nativeTree = false;
+      if (game.treeFull) game.setTreeFull(false);
+    };
+    document.addEventListener('fullscreenchange', onChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', onChange);
+      if (nativeTree && document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+    };
+  });
   const fullBack = $derived(layout === 'tree' ? m.fullscreenToCard : m.fullscreenExit);
 
   /** Cote du dossier à l'étiqueteuse (décor stable, tirée de l'empreinte de l'affaire). */
@@ -262,8 +323,8 @@
   class:layout-read={!single && layout === 'read'}
   class:layout-tree={!single && layout === 'tree'}
   style:--side-w="{game.sideWidth}px"
-  inert={app.overlay !== null || game.readerFull}
-  aria-hidden={game.readerFull ? 'true' : undefined}
+  inert={app.overlay !== null || game.readerFull || game.treeFull}
+  aria-hidden={game.readerFull || game.treeFull ? 'true' : undefined}
 >
   <LampLight x={64} y={-6} dust={12} />
   <DeskHeader {game} onmenu={() => (menuOpen = true)} sideToggle={!single} />
@@ -370,7 +431,7 @@
       />
     </nav>
   {:else}
-    <main id={contentId} class="zones" tabindex="-1" aria-label={m.region}>
+    <main id={contentId} class="zones" tabindex="-1" aria-label={m.region} bind:this={zonesEl}>
       <Folder title={folderTitle} enter class="main-folder">
         {#snippet tabs()}
           <div class="folder-row">
@@ -398,26 +459,9 @@
           {/key}
         </div>
       </Folder>
-      {#snippet sideTabs()}
-        <Tabs
-          items={sideItems}
-          value={game.ui.side ?? 'reader'}
-          label={m.sideLabel}
-          variant="line"
-          idPrefix="desk-side"
-          onchange={(id) => game.showPanel(id as PanelId)}
-        >
-          {#snippet children(id)}
-            {@const SidePanel = panelOf(id as PanelId)}
-            {#key id}
-              <div class="panel-in"><SidePanel /></div>
-            {/key}
-          {/snippet}
-        </Tabs>
-      {/snippet}
       {#if layout === 'tree'}
         <FloatingCard {game} title={messages.panels[game.ui.side ?? 'reader']}>
-          {@render sideTabs()}
+          <SideTabs {game} />
         </FloatingCard>
       {:else if !game.sideCollapsed}
         <!-- Séparateur focalisable (motif ARIA « window splitter ») : interactif par conception. -->
@@ -452,7 +496,7 @@
           <span id="side-handle-hint" class="visually-hidden">{m.sideResizeHint}</span>
         {/if}
         <aside class="side" aria-label={m.sideLabel} in:sheetPull|global={{ delay: 120 }}>
-          {@render sideTabs()}
+          <SideTabs {game} />
         </aside>
       {/if}
     </main>
@@ -473,6 +517,24 @@
     </div>
     <div class="full-sheet panel-host">
       <ReaderFull />
+    </div>
+  </section>
+{/if}
+
+{#if game.treeFull}
+  <!-- Plein écran de l'arbre : Échap / B ou le bouton reviennent au Bureau. -->
+  <section
+    class="tree-full desk-surface"
+    aria-label={m.treeFullLabel}
+    tabindex="-1"
+    bind:this={treeLayer}
+    data-testid="tree-full"
+  >
+    <div class="full-bar tree-bar">
+      <Button iconName="back" onclick={() => game.setTreeFull(false)}>{m.fullscreenExit}</Button>
+    </div>
+    <div class="tree-full-sheet panel-host" data-surface="kraft">
+      <TreeFull />
     </div>
   </section>
 {/if}
@@ -518,12 +580,17 @@
   .desk.single {
     grid-template-rows: auto minmax(0, 1fr) auto;
   }
+  /* Le volet va jusqu'à --side-max, mais l'arbre garde toujours --tree-min (moins les deux
+     gouttières et la colonne de la poignée). */
   .zones {
     position: relative;
     display: grid;
     grid-template-columns:
       minmax(0, 1fr) var(--space-3)
-      clamp(var(--side-min), var(--side-w), var(--side-max));
+      min(
+        clamp(var(--side-min), var(--side-w), var(--side-max)),
+        calc(100% - var(--tree-min) - var(--space-3) - 2 * var(--space-2))
+      );
     gap: var(--space-2);
     min-height: 0;
     padding: var(--space-2) var(--space-5) var(--space-5);
@@ -533,20 +600,27 @@
     outline: none;
   }
   /* Tablette paysage : la poignée règle aussi le volet (elle était affichée, focalisable et
-     annoncée, mais la grille 55/45 l'ignorait) ; 60 % au plus pour garder l'arbre lisible. */
+     annoncée, mais la grille 55/45 l'ignorait) ; l'arbre garde --tree-min. */
   .tablet .zones {
     grid-template-columns:
       minmax(0, 1fr) var(--space-2)
-      min(clamp(var(--side-min), var(--side-w), var(--side-max)), 60%);
+      min(
+        clamp(var(--side-min), var(--side-w), var(--side-max)),
+        calc(100% - var(--tree-min) - var(--space-2) - 2 * var(--space-1))
+      );
     gap: var(--space-1);
     padding: var(--space-2) var(--space-3) var(--space-3);
   }
-  /* Disposition Lecture : le volet (Lecteur) prend ~60 % ; la poignée ne règle plus rien. */
+  /* Disposition Lecture : le volet (Lecteur) prend ~70 % ; la poignée ne règle plus rien.
+     L'arbre garde de quoi déposer une pièce (--tree-min, ou 35 % sur un écran étroit). */
   .layout-read .zones {
-    grid-template-columns: minmax(0, 2fr) var(--space-3) minmax(0, 3fr);
+    grid-template-columns: minmax(min(var(--tree-min), 35%), 3fr) var(--space-3) minmax(0, 7fr);
   }
   .tablet.layout-read .zones {
-    grid-template-columns: minmax(0, 2fr) var(--space-2) minmax(0, 3fr);
+    grid-template-columns: minmax(min(var(--tree-min), 35%), 3fr) var(--space-2) minmax(0, 7fr);
+  }
+  .layout-read {
+    --measure-sheet: var(--measure-sheet-wide);
   }
   /* La feuille centrée, colonne de lecture (~70 caractères), texte un cran plus grand. */
   .layout-read {
@@ -587,6 +661,11 @@
   .folder-tabs {
     flex: 1;
     min-width: 0;
+  }
+  /* Les onglets de chemise descendent de 6 px (raccord au carton) : la rangée, qui défile à
+     l'horizontale, ne doit pas pouvoir défiler à la verticale pour autant. */
+  .folder-tabs :global(.tabs:not(.icon-only) > [role='tablist']) {
+    overflow-y: hidden;
   }
   .cote {
     align-self: center;
@@ -762,6 +841,47 @@
     flex: 1;
     min-height: 0;
   }
+  /* Plein écran de l'arbre : la chemise kraft occupe tout l'écran (pas de largeur de lecture). */
+  .tree-full {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-drawer);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: max(var(--space-2), env(safe-area-inset-top))
+      max(var(--space-3), env(safe-area-inset-right))
+      max(var(--space-3), env(safe-area-inset-bottom))
+      max(var(--space-3), env(safe-area-inset-left));
+    outline: none;
+  }
+  .tree-bar {
+    inline-size: 100%;
+  }
+  .tree-full-sheet {
+    padding: var(--space-3) var(--space-3) var(--space-4);
+    background: var(--kraft);
+    color: var(--text);
+    border-radius: var(--radius-m);
+    box-shadow: var(--shadow-paper);
+  }
+  .tree-full-sheet > :global(*) {
+    flex: 1;
+    min-height: 0;
+  }
+  .tree-full-sheet :global(.panel.desk) {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+  .tree-full-sheet :global(.panel.desk::after) {
+    display: none;
+  }
+  @media (forced-colors: active) {
+    .tree-full-sheet {
+      border: var(--border) solid CanvasText;
+    }
+  }
 
   /* ── Le volet : un sous-main surpiqué où l'on pose feuilles et fiches ── */
   .side {
@@ -784,32 +904,6 @@
     pointer-events: none;
     border: 1.5px dashed var(--stitch);
     border-radius: calc(var(--radius-l) - 4px);
-  }
-  .side > :global(.tabs) {
-    flex: 1;
-    min-height: 0;
-  }
-  .side :global([role='tablist']) {
-    overflow-x: auto;
-    scrollbar-width: thin;
-    padding-inline: var(--space-2);
-  }
-  .side :global([role='tabpanel']) {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden;
-  }
-  .side :global([role='tabpanel'] > *) {
-    flex: 1;
-    min-height: 0;
-  }
-  .side :global(.panel.desk) {
-    background: transparent;
-    box-shadow: none;
-  }
-  .side :global(.panel.desk::after) {
-    display: none;
   }
   .single-main {
     display: flex;
