@@ -5,7 +5,8 @@
   "description": "Contrat partagé : types et schémas zod (contenu source, sauvegarde, profil, réglages).",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./user-agent": "./src/user-agent.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",

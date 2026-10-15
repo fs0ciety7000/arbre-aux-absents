@@ -9,7 +9,10 @@ import type {
   ReportDiagnostics,
   ReportSubmission,
 } from '@arbre/contract';
-import { browserFamily, osFamily } from '@arbre/contract';
+// Sous-chemin sans zod : l'entrée du contrat construit ses schémas au chargement, et zod 4 y sonde
+// `Function('')` (compilation à la volée), refusé par la CSP du site (`script-src` sans
+// `'unsafe-eval'`). Ce module est client : rien d'autre que des types depuis `@arbre/contract`.
+import { browserFamily, osFamily } from '@arbre/contract/user-agent';
 import { GAME_PLATFORMS, GAME_VERSION, LIMITS } from './constants';
 
 /** Familles grossières du système et du navigateur : dans le contrat (partagées jeu/site). */

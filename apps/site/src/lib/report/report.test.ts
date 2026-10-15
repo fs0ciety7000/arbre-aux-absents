@@ -27,6 +27,9 @@ import {
   TICKET_STATUSES,
   TicketViewSchema,
 } from '@arbre/contract';
+import { readFileSync, readdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it, vi } from 'vitest';
 import { attachmentError, createAttachmentQueue } from './attachments';
 import {
@@ -148,6 +151,21 @@ describe('constantes recopiées du contrat', () => {
     expect(ATTACHMENT_ID.source).toBe(CONTRACT_ATTACHMENT_ID.source);
     expect(GAME_PLATFORMS).toEqual(CONTRACT_GAME_PLATFORMS);
     expect(GAME_VERSION.source).toBe(CONTRACT_GAME_VERSION.source);
+  });
+
+  it('modules client : rien que des types depuis l’entrée du contrat (zod hors des pages)', () => {
+    // L'entrée `@arbre/contract` construit les schémas zod au chargement ; zod 4 y sonde
+    // `Function('')`, ce que la CSP du site refuse (violation « script-src eval »).
+    const dir = dirname(fileURLToPath(import.meta.url));
+    const sources = readdirSync(dir).filter((f) => f.endsWith('.ts') && !f.endsWith('.test.ts'));
+    expect(sources.length).toBeGreaterThan(0);
+    for (const file of sources) {
+      const code = readFileSync(join(dir, file), 'utf8');
+      const runtime = [...code.matchAll(/^import\s+(type\s+)?[^;]*?from\s+'@arbre\/contract'/gm)]
+        .filter((m) => !m[1])
+        .map((m) => m[0]);
+      expect(runtime, file).toEqual([]);
+    }
   });
 
   it('URL du service : variable publique, sinon la production, sans barre finale', () => {
