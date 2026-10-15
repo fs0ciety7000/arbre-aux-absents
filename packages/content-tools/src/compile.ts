@@ -17,6 +17,7 @@ import type {
   Edition,
   Hint,
   Inline,
+  Locale,
   Occupation,
   Place,
   Person,
@@ -30,6 +31,7 @@ import type { SourceWorld } from './load';
 import { mentions, type PreparedCase } from './prepare';
 import type { SolverModel, SolverSlot } from './solver';
 import { optimizeSvg, type SvgProblem } from './svg';
+import { structuralProjection } from './projection';
 import { cyrb53Hex, hashAnswer, normalize, shortHash, stableStringify } from './shared';
 
 export interface CompileOutput {
@@ -40,7 +42,10 @@ export interface CompileOutput {
   svgProblems: { file: string; problems: SvgProblem[] }[];
 }
 
-/** Sel dérivé du contenu source : stable tant que les sources ne changent pas. */
+/**
+ * Sel dérivé des sources FR hors `locales/` (`sourceDigest`) : stable tant qu'elles ne changent
+ * pas, identique d'une langue à l'autre (D4).
+ */
 export function deriveSalt(prep: PreparedCase): string {
   return cyrb53Hex(`salt|${prep.src.id}|${prep.src.sourceDigest}`);
 }
@@ -120,8 +125,13 @@ export function claimedGuess(claim: SlotClaim): SlotGuess {
   };
 }
 
-function sortFr(values: Iterable<string>): string[] {
-  return [...new Set(values)].sort((a, b) => a.localeCompare(b, 'fr'));
+function sortIn(locale: Locale, values: Iterable<string>): string[] {
+  return [...new Set(values)].sort((a, b) => a.localeCompare(b, locale));
+}
+
+/** `contentHash` : empreinte de la projection structurelle (identique entre langues, D4). */
+export function structuralHash(compiled: CompiledCase): string {
+  return shortHash(stableStringify(structuralProjection(compiled)));
 }
 
 export function compileCase(
@@ -129,6 +139,7 @@ export function compileCase(
   world: SourceWorld,
   edition: Edition,
   svgCache: Map<string, ReturnType<typeof optimizeSvg>> = new Map(),
+  locale: Locale = 'fr',
 ): CompileOutput {
   const src = prep.src;
   const prog = src.progression;
@@ -139,7 +150,8 @@ export function compileCase(
   const svgProblems: CompileOutput['svgProblems'] = [];
 
   const optimized = (file: string, source: string) => {
-    const key = `${src.id}/${file}`;
+    // La source entre dans la clé : une surcharge de langue n'est pas l'illustration de base.
+    const key = `${src.id}/${file}#${cyrb53Hex(source)}`;
     let r = svgCache.get(key);
     if (!r) {
       r = optimizeSvg(source, `${src.id}-`);
@@ -439,6 +451,7 @@ export function compileCase(
     format: 1,
     id: src.id,
     edition,
+    locale,
     contentHash: '00000000',
     salt,
     meta,
@@ -460,9 +473,9 @@ export function compileCase(
     hints,
     achievements,
     report,
-    candidates: { given: sortFr(given), family: sortFr(family) },
+    candidates: { given: sortIn(locale, given), family: sortIn(locale, family) },
   };
-  compiled.contentHash = shortHash(stableStringify({ compiled, illustrations }));
+  compiled.contentHash = structuralHash(compiled);
   return { compiled, illustrations, svgProblems };
 }
 

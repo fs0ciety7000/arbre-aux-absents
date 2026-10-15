@@ -1,0 +1,20 @@
+{
+  "occupations": {
+    "horloger": "Clockmaker",
+    "brodeuse": "Embroiderer",
+    "passeur": "Ferryman",
+    "institutrice": "Schoolteacher",
+    "relieuse": "Bookbinder",
+    "meunier": "Miller",
+    "vannier": "Basket-maker"
+  },
+  "portraits": {
+    "portrait-a": { "alt": "Moustached man in a wing collar" },
+    "portrait-b": { "alt": "Woman with braided hair" },
+    "portrait-c": { "alt": "Young man in a cap" },
+    "portrait-d": { "alt": "Woman in round spectacles" },
+    "portrait-e": { "alt": "Young woman with a bun" },
+    "portrait-f": { "alt": "Round-faced boy" },
+    "portrait-g": { "alt": "Woman in a headscarf" }
+  }
+}

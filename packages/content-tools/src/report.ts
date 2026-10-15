@@ -1,4 +1,5 @@
 /** Rapport Markdown du solveur (`npm run content:solve -- --report`). */
+import type { Locale } from '@arbre/contract';
 import type { CaseCheck, CheckResult } from './check';
 import { formatIssue, RULE_TITLES, type RuleId } from './issues';
 import type { SolverAction, SolverResult } from './solver';
@@ -76,16 +77,22 @@ function solveSection(title: string, r: SolverResult): string[] {
   return out;
 }
 
-function caseSection(c: CaseCheck): string[] {
+function caseSection(c: CaseCheck, locale: Locale): string[] {
   const out = [`## Affaire \`${c.id}\``, ''];
-  if (!c.solve) return [...out, 'Non résolue (erreurs de structure, voir plus haut).', ''];
-  out.push(...solveSection('Édition complète', c.solve));
-  if (c.demoSolve) out.push(...solveSection('Démo', c.demoSolve));
+  const l = c.locales[locale];
+  if (!l?.solve) return [...out, 'Non résolue (erreurs de structure, voir plus haut).', ''];
+  out.push(...solveSection('Édition complète', l.solve));
+  if (l.demoSolve) out.push(...solveSection('Démo', l.demoSolve));
   return out;
 }
 
-export function solveReport(r: CheckResult): string {
-  const out: string[] = ['# Rapport du solveur', ''];
+/** Rapport Markdown du solveur pour une langue (défaut : langue source). */
+export function solveReport(r: CheckResult, locale?: Locale): string {
+  const loc = locale ?? r.locales.source;
+  const out: string[] = [
+    loc === r.locales.source ? '# Rapport du solveur' : `# Rapport du solveur (${loc})`,
+    '',
+  ];
   out.push(
     'Hypothèses : joueur méthodique (lit tout, visite tout, cherche tout mot-clé lu) ; mots-clés',
     '`hiddenTerm` supposés déduits dès le départ ; cases pré-remplies établies d’emblée ; cases',
@@ -106,6 +113,6 @@ export function solveReport(r: CheckResult): string {
     }
   }
   if (r.cases.length === 0) out.push('Aucune affaire.', '');
-  for (const c of r.cases) out.push(...caseSection(c));
+  for (const c of r.cases) out.push(...caseSection(c, loc));
   return out.join('\n');
 }
