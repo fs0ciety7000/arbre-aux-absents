@@ -155,7 +155,8 @@ titre de pr-03 *“Walkout at the Vernezac furnaces”*. Ne jamais écrire *stri
 - **L. Daubry, restauratrice** (EX-02) : *she*.
 - **Métiers** : *Doreuse sur verre* → *Glass gilder* perd le féminin (seule perte : *Midwife*,
   *Hospitaller nun*, *Schoolmistress*, *Nurse*, *Postmistress* le gardent ou le suggèrent ; les
-  masculins du français sont génériques). À arbitrer en C2 ; *gilder* + *she* dans les pièces.
+  masculins du français sont génériques). **Tranché en C2 : gardé.** Un seul métier de doreur dans
+  la liste, et les pièces disent le sexe (*gilded by Mrs Tessonnal herself*) ; *gilder* + *she*.
 - **receveuse / receveur** : *postmistress* / *postmaster*.
 
 ## 5. Points à valider
@@ -163,5 +164,21 @@ titre de pr-03 *“Walkout at the Vernezac furnaces”*. Ne jamais écrire *stri
 1. `incendie` → *blaze* au lieu de *the 1937 fire* (glossaire §4.5) ; mettre le glossaire à jour.
 2. `greve` → *walkout* au lieu de *the 1936 strike* (glossaire §4.5).
 3. *Not established* dans le rapport malgré la réserve de *establish* (§8).
-4. *Glass gilder* sans marque de genre (§4 ci-dessus).
+4. ~~*Glass gilder* sans marque de genre~~ : tranché en C2, gardé (§4 ci-dessus).
 5. lt-09 : *blaze policy*, tournure inhabituelle pour un anglophone, gardée pour la parité.
+
+## 6. Relecture C2 (`level-designer`)
+
+- **Citations des aides de niveau 3** : les 25 citations anglaises se retrouvent mot pour mot dans
+  les pièces désignées (contrôle par script, à la casse et à l'emphase près). Aucune retouche.
+- **Barre du T** (EX-02) : LT-04 ouvre bien deux phrases par *Tell…*, RG-15 porte *The whole of the
+  foregoing is true*, TG-02 *the Ts*, RP-04 décrit le T de *Tessonnal* : la comparaison se refait en
+  anglais. *a woman who mends paper* (EX-02) validé : il porte le genre de *restauratrice*.
+- **EX-01, « quarante-neuf ans »** : voulu. La brûlure de Bastien à la main droite date de 1927
+  (bible `hautcorvin/04-personnages.md`, marques individuelles) : 1976 − 1927 = 49. Rien à corriger.
+- **OF-08** : le texte (*coupée aux ciseaux, bien droit*) prime ; l'`alt` disait *coupée de travers*.
+  Corrigé en C2 dans le français et l'anglais (*coupée aux ciseaux* / *cut with scissors*). Rien ne
+  repose sur la coupe : EX-02 ne dit que *cut with scissors*.
+- **Broche à la colombe** : liens explicites `[[dove|colombe]]` gardés (glossaire §9.5).
+- **Harmonisation** : *Bureau des Registres* → *Registers Bureau* (RP-05 corrigé : *Provincial
+  Registers Bureau*), comme l'affaire 1.

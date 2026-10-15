@@ -41,3 +41,41 @@
 - gardien hors phare → keeper (ct-02, f3, f5), contredit la table.
 - dv-01/dv-03 « Operator: L. D. » perd le genre.
 - Titres des fins : File in Order, The False Culprit, The Two Faces, Mother and Daughter, Mother and Daughter (Absent), The Whole Tree.
+
+## Relecture C2 (level-designer) — décisions
+
+Tous les points ci-dessus sont traités ; détail dans `GLOSSAIRE.md` §4.3 et §9.5 et dans les deux
+tables d'affaire (Varenque §3 et §4, Hautcorvin §4 et §6).
+
+- **Citations des aides de niveau 3** : contrôle par script (sous-chaîne exacte de la pièce, à la
+  casse et à l'emphase près). Hautcorvin : 25/25 conformes. Varenque : 13 aides réécrites (c02, c04,
+  c07, c08, c11, c13, c14, c18, c21, c22, c26, c29, c30) pour citer le texte exact au lieu d'une
+  paraphrase ou de cellules de tableau recousues (ex. c22 *“woman editor of the banned sheet Vel
+  Taalik”*, c29 *“his daughter, Miss Claude Sauge, a woman engineer”*). Les six titres de pièces
+  cités correspondent. Seule citation hors pièce : *“Artist’s model”* (c08), libellé de métier.
+- **Genre** : *The Photographer of Vellaak*, *The Informer*, *Glass gilder* gardés (le genre est dit
+  dans les pièces, OF-07 *Sh  is not…*, *Mrs Tessonnal herself*) ; DV-03 → *Operator: Miss L. D.* ;
+  c29-1, c04-3, succès `la-nouvelle-fougere` et `celui-que-la-mer-voulait-garder` (Firmin, masculin
+  voulu) conformes. EX-02 *a woman who mends paper* validé.
+- **`lise` verbe** : source française corrigée (OF-02 *qu'il aille au bout du dossier* ; DV-01 *que
+  cela se voie à travers le papier*), liens explicites anglais retirés. Autres liens fortuits
+  repérés et **gardés** (parité tenue, effet jugé inoffensif) : *goéland* minuscule → `le-goeland`
+  (CP-02, CT-02, DV-05, PR-07) ; *tilleuls* (arbres) → `tilleuls` (PH-05, PH-22) ; *gardien* de prison
+  → `gardien` (RG-14) ; *le thalbère* (langue) → `thalbere` (RP-03, affaire 2) ; *colombe* →
+  `colombe` (affaire 2, voulu : la broche).
+- **EX-01 « quarante-neuf ans »** : voulu (brûlure de 1927). **OF-08** : `alt` corrigé (FR et EN)
+  d'après le texte, *coupée aux ciseaux*.
+- **Harmonisation** : *the Citadel* (RG-15, RG-18, RP-04) ; *Registers Bureau* (PR-08, PR-16, PB-04,
+  RG-13, RG-15, RG-19, RP-05 de l'affaire 2). Table Varenque §3 *filigrané* corrigée.
+- **Solveur** : `content:solve -- --locale en` identique au français (118 et 98 pièces, 30 et 28
+  cases, 6 et 4 fins atteignables, 0 erreur). Parité des liens vérifiée aussi **en nombre** par pièce
+  et par mot-clé : 12 écarts de compte seulement, tous dans une pièce qui lie déjà le mot-clé.
+
+### Reste à l'arbitrage humain
+
+- Les citations **françaises** des aides de niveau 3 de la Varenque sont souvent des paraphrases ou
+  des cellules recousues (ex. c02-3 « fils de Anselme Varenque, papetier… », c04-3, c08-3, c13-3,
+  c14-3, c18-3, c21-3, c22-3, c26-3, c29-3 « sa fille Claude, ingénieure », c30-3) : hors périmètre
+  de ce lot (`hints.json` source), à aligner de la même façon par le level-designer en FR.
+- Les liens fortuits gardés ci-dessus (surtout PR-07 *un goéland* → le Goéland) : à confirmer par le
+  scénariste.

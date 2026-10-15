@@ -140,7 +140,16 @@ anglais naturel créerait un lien que le français n'a pas, ou en perdrait un.
 | *Paper Mills* (`papeteries-varenque`) | *Papeteries* lie partout en français (y compris *Papeteries de l'Estuaire* → *Estuary Paper Mills*, lien identique) ; *Papeterie* singulier → *Paper Mill*, non lié. |
 | *Aubrelieu Opera* (`opera`) | Seulement là où le français écrit *Opéra d'Aubrelieu* ; *l'Opéra* seul → *the Opera*. |
 | *fern* (`fougere`) | Toujours *fern*, jamais *bracken* (glossaire §6.2) ; *undated fern* et *fern without a year mark* seulement là où le français écrit *fougère sans date* / *sans millésime*. |
-| *watermark* (`filigrane`) | *filigranes* → *watermarks* (non lié des deux côtés) ; *filigrané* → *watermarked* (non lié). |
+| *watermark* (`filigrane`) | *filigranes* / *filigranés* → *watermarks* / *watermarked* (non liés des deux côtés). **Attention** : *filigrané* au masculin singulier **lie** `filigrane` en français (la normalisation retire l'accent : *filigrane*) ; dans le texte courant, il se rend donc par une tournure qui contient *watermark* (RP-03 : *paper bearing a watermark*). Dans un `alt` ou une cote (`archive:`), rien n'est lié : *watermarked* convient (DV-02, LT-15). |
+
+Ajouts de la relecture C2 :
+
+| Terme | Consigne |
+|---|---|
+| *keeper* hors phare | Le français lie aussi *gardien* quand il désigne le gardien de prison de Kessaar (RG-14, *gardien T. Haask*), CT-02 et les fins f3, f5 : l'anglais garde *keeper* à ces endroits (parité). Ce sont les seuls *keeper* hors phare permis. |
+| *lise* (verbe) | Faux positif de la source (subjonctif de *lire*, qui liait `lise` dans OF-02 et DV-01) : **corrigé dans le français** en C2 (*qu'il aille au bout du dossier* ; *que cela se voie à travers le papier*) ; l'anglais n'a plus de lien explicite (*he reads the file*, *it must show through the paper*). Ne jamais réintroduire *lise* minuscule dans une pièce. |
+| *Registers Bureau* | *Bureau des Registres* → *Registers Bureau* partout (pas *Registers Office* ni *Bureau of Registers*), glossaire §4.3. |
+| *the Citadel* | *la Citadelle* → *the Citadel*, y compris dans les cellules de tableau. |
 
 Glossaire (mis à jour, commit 561f7dc) : *incendie* = *blaze*, *feu* = *fire*, *grève* = *walkout*.
 Cette affaire n'a pas de mot-clé *incendie* ni *grève* ; *feu* au sens du phare se rend par *the
@@ -157,10 +166,12 @@ light* (`gardien` → *keeper of the light*, `automatisation` → *automation of
   engraver* (lie *engraver*, garde le genre).
 - **gardienne**, *tenn-vaardessa* (Maaren) : *a woman keeper (of the light)*.
 - **receveuse** (Tenna) : *postmistress* (genré, comme le français).
-- **La photographe de Vellaak** (titre du secret s1) : *The Photographer of Vellaak* ; le genre se
-  perd, mais le titre ne s'affiche qu'une fois le secret trouvé. À arbitrer par `level-designer` (C2).
-- **Le délateur** (s5) : *The Informer* (neutre ; même remarque). *informer* ≠ *informant*
-  (déclarant des actes, glossaire §5.3).
+- **La photographe de Vellaak** (titre du secret s1) : *The Photographer of Vellaak*. **Tranché en
+  C2 : gardé.** Le titre ne s'affiche qu'une fois le secret trouvé, et OF-07 dit le sexe à la ligne
+  suivante (*Sh  is not who you think*), comme PR-13 et LT-17.
+- **Le délateur** (s5) : *The Informer* (neutre). **Tranché en C2 : gardé** (même raison).
+  *informer* ≠ *informant* (déclarant des actes, glossaire §5.3).
+- **Opératrice : L. D.** (DV-03) : *Operator: Miss L. D.* (C2).
 
 ## 5. Secrets, groupes, rapport, métiers, portraits
 

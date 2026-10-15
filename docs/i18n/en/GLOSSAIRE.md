@@ -361,6 +361,8 @@ Charter*, *the Velmarche Calculating Company*.
 | Garde d'Ordre ; lieutenance de Hautcorvin | Guard of Order ; Hautcorvin Lieutenancy | |
 | BRR, Bureau du Recensement et des Radiations | **Census and Removals Bureau (BRR)** | sigle inchangé |
 | commissaire aux Registres | Commissioner of Registers | métier, affaire 1 |
+| Bureau des Registres (de la province) ; délégué du Bureau des Registres | **Registers Bureau** (*the provincial Registers Bureau*, pl. *Registers Bureaux*) ; Delegate of the Registers Bureau | Relecture C2 : jamais *Registers Office*, *Bureau of Registers* ni minuscule (*Registers bureau*) ; même capitale que *Census and Removals Bureau*. |
+| la Citadelle (d'Aubrelieu) | **the Citadel** | Relecture C2 : traduit partout, y compris entre parenthèses dans les tableaux (*Aubrelieu prison (Citadel)*, *Citadel pit*). |
 | Service d'identification ; fiche anthropométrique | Identification Service ; anthropometric record card | |
 | liste de radiation n° 9 | **Removal List No. 9** | |
 | radier ; radié(e) ; les radiés | **strike off (the registers)** ; struck off ; the struck-off | DEVLOG *struck from the registers* ; tampon `RADIÉE` → `STRUCK OFF` |
@@ -944,6 +946,25 @@ Le `level-designer` relit ces passages (lot C2).
 - Secrets (titres) : *Le Goéland et l'Albatros* → *The Gull and the Albatros* ; *La fille du
   souffleur* → *The Glassblower's Daughter* ; *Le fils de la Thalbère* → *The Thalbère Woman's Son* ;
   la table de l'affaire fixe les autres.
+
+### 9.5 Arbitrages de la relecture C2 (`level-designer`)
+
+- **Titres de secrets neutres gardés** : *The Photographer of Vellaak* (s1) et *The Informer* (s5). Un
+  titre de secret ne s'affiche qu'une fois le secret trouvé ; le genre de la photographe est déjà
+  dit dans la pièce qui lance la piste (OF-07 : *Sh  is not who you think*) et dans PR-13, LT-17.
+- ***Glass gilder*** (`doreuse`) gardé : un seul métier de doreur dans la liste, et la pièce dit le
+  sexe (*gilded by Mrs Tessonnal herself*). Aucune déduction ne repose sur la marque du féminin.
+- **Opératrice : L. D.** (DV-03) → *Operator: Miss L. D.* (le genre y est un indice faible mais
+  gratuit à garder, comme *L. Daubry (Miss), conservator* d'OF-06).
+- **Broche à la colombe** (affaire 2) : liens explicites `[[dove|colombe]]` gardés ; le calembour
+  disparaît, mais le lien vers « Colombe » et l'incise de LT-09 (*a dove for Colombe*) portent
+  l'indice. C13 reste à risque faible (visage d'OF-03 → PH-06).
+- ***keeper*** hors phare (gardien de prison de Kessaar, RG-14 ; CT-02 ; fins f3, f5) : le français
+  lie aussi ces *gardien* ; l'anglais suit (parité). Seule exception à « aucun autre *keeper* ».
+- Citations des aides de niveau 3 : **une citation entre guillemets est une sous-chaîne exacte de la
+  pièce désignée** (à la casse et à l'emphase près). Une cellule de tableau se cite seule
+  (*Service records, 1883–1912: “Mrs Maaren Varenque, née Tennok”*), jamais recousue avec la
+  cellule voisine.
 
 ---
 
