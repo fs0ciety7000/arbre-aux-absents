@@ -8,6 +8,10 @@
     %sveltekit.head%
   </head>
   <body>
-    <div style="display: contents">%sveltekit.body%</div>
+    <!-- Site prérendu : chaque lien charge le document prérendu (data-sveltekit-reload). Sans cela,
+         les pages hydratées (carte, signalement) rendaient les autres pages côté client, alors
+         qu'elles ne sont prévues que pour le prérendu (csr = false) : l'accueil levait une erreur
+         et affichait la page 500. -->
+    <div style="display: contents" data-sveltekit-reload>%sveltekit.body%</div>
   </body>
 </html>
