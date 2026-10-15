@@ -39,6 +39,58 @@ export interface UiStrings {
   stamp: { established: string };
   toggle: { on: string; off: string };
   textField: { characters: string };
+  markdown: {
+    /** Nom accessible de la barre d'outils. */
+    toolbar: string;
+    format: Record<
+      'bold' | 'italic' | 'code' | 'codeBlock' | 'bulletList' | 'numberedList' | 'quote' | 'link',
+      string
+    >;
+    /** Bascule de l'aperçu. */
+    preview: string;
+    /** Nom de la zone d'aperçu. */
+    previewRegion: string;
+    previewEmpty: string;
+    /** Textes insérés quand rien n'est sélectionné. */
+    placeholder: { text: string; code: string; url: string };
+    /** Mention du raccourci dans l'info-bulle : « Ctrl+B ». */
+    shortcut: (key: string, mac: boolean) => string;
+  };
+  attachments: {
+    label: string;
+    hint: (max: number) => string;
+    add: string;
+    /** Bouton de retrait, nom accessible : « Retirer la capture 2 (photo.png) ». */
+    remove: (n: number, name: string) => string;
+    retry: string;
+    /** Texte alternatif de la vignette. */
+    alt: (n: number) => string;
+    status: { preparing: string; uploading: string; ready: string };
+    errors: Record<
+      | 'type'
+      | 'decode'
+      | 'tooLarge'
+      | 'rateLimited'
+      | 'disabled'
+      | 'offline'
+      | 'timeout'
+      | 'unavailable'
+      | 'invalid',
+      string
+    >;
+    /** Images au-delà du maximum, ignorées. */
+    ignored: (n: number, max: number) => string;
+    full: (max: number) => string;
+    drop: string;
+    /** Annonce polie : « 2 captures sur 3 ». */
+    count: (n: number, max: number) => string;
+  };
+  gallery: {
+    label: string;
+    open: (n: number) => string;
+    alt: (n: number) => string;
+    broken: string;
+  };
   keyHint: {
     /** Nom accessible d'un glyphe de manette : « Bouton A » / “A button”. */
     button: (name: string) => string;
@@ -88,6 +140,56 @@ export const uiFr: UiStrings = {
   stamp: { established: 'Établi' },
   toggle: { on: 'Activé', off: 'Désactivé' },
   textField: { characters: 'Caractères : ' },
+  markdown: {
+    toolbar: 'Mise en forme',
+    format: {
+      bold: 'Gras',
+      italic: 'Italique',
+      code: 'Code',
+      codeBlock: 'Bloc de code',
+      bulletList: 'Liste à puces',
+      numberedList: 'Liste numérotée',
+      quote: 'Citation',
+      link: 'Lien',
+    },
+    preview: 'Aperçu',
+    previewRegion: 'Aperçu de la description',
+    previewEmpty: 'Rien à afficher pour l’instant.',
+    placeholder: { text: 'texte', code: 'code', url: 'https://' },
+    shortcut: (key, mac) => (mac ? `⌘${key}` : `Ctrl+${key}`),
+  },
+  attachments: {
+    label: 'Captures d’écran (facultatif)',
+    hint: (max) =>
+      `PNG, JPEG ou WebP, ${max} au plus. Vous pouvez aussi coller (Ctrl+V) ou déposer une image ici. Les images trop grandes sont réduites.`,
+    add: 'Ajouter une capture',
+    remove: (n, name) => `Retirer la capture ${n} (${name})`,
+    retry: 'Réessayer',
+    alt: (n) => `Capture ${n}`,
+    status: { preparing: 'Préparation…', uploading: 'Envoi…', ready: 'Jointe' },
+    errors: {
+      type: 'Format refusé : PNG, JPEG ou WebP.',
+      decode: 'Image illisible.',
+      tooLarge: 'Image trop lourde, même réduite.',
+      rateLimited: 'Trop d’images envoyées : réessayez plus tard.',
+      disabled: 'Envois suspendus pour le moment.',
+      offline: 'Hors ligne : image non envoyée.',
+      timeout: 'Envoi trop long, interrompu.',
+      unavailable: 'Service indisponible : image non envoyée.',
+      invalid: 'Image refusée par le service.',
+    },
+    ignored: (n, max) =>
+      `${n} ${n > 1 ? 'images ignorées' : 'image ignorée'} : ${max} captures au plus.`,
+    full: (max) => `${max} captures au plus : retirez-en une pour en ajouter.`,
+    drop: 'Déposez l’image pour la joindre',
+    count: (n, max) => `${n} ${n > 1 ? 'captures' : 'capture'} sur ${max}`,
+  },
+  gallery: {
+    label: 'Captures jointes',
+    open: (n) => `Agrandir la capture ${n}`,
+    alt: (n) => `Capture ${n} jointe au signalement`,
+    broken: 'Image indisponible',
+  },
   keyHint: {
     button: (name) => `Bouton ${name}`,
     playstation: { south: 'Croix', east: 'Rond', west: 'Carré', north: 'Triangle' },
@@ -141,6 +243,56 @@ export const uiEn = {
   stamp: { established: 'Established' },
   toggle: { on: 'On', off: 'Off' },
   textField: { characters: 'Characters: ' },
+  markdown: {
+    toolbar: 'Formatting',
+    format: {
+      bold: 'Bold',
+      italic: 'Italic',
+      code: 'Code',
+      codeBlock: 'Code block',
+      bulletList: 'Bulleted list',
+      numberedList: 'Numbered list',
+      quote: 'Quote',
+      link: 'Link',
+    },
+    preview: 'Preview',
+    previewRegion: 'Description preview',
+    previewEmpty: 'Nothing to preview yet.',
+    placeholder: { text: 'text', code: 'code', url: 'https://' },
+    shortcut: (key, mac) => (mac ? `⌘${key}` : `Ctrl+${key}`),
+  },
+  attachments: {
+    label: 'Screenshots (optional)',
+    hint: (max) =>
+      `PNG, JPEG or WebP, up to ${max}. You can also paste (Ctrl+V) or drop an image here. Large images are scaled down.`,
+    add: 'Add a screenshot',
+    remove: (n, name) => `Remove screenshot ${n} (${name})`,
+    retry: 'Try again',
+    alt: (n) => `Screenshot ${n}`,
+    status: { preparing: 'Preparing…', uploading: 'Uploading…', ready: 'Attached' },
+    errors: {
+      type: 'Format not accepted: PNG, JPEG or WebP.',
+      decode: 'Unreadable image.',
+      tooLarge: 'Image too heavy, even scaled down.',
+      rateLimited: 'Too many images sent: try again later.',
+      disabled: 'Uploads are paused for now.',
+      offline: 'Offline: image not sent.',
+      timeout: 'Upload took too long and was stopped.',
+      unavailable: 'Service unavailable: image not sent.',
+      invalid: 'Image rejected by the service.',
+    },
+    ignored: (n, max) =>
+      `${n} ${n === 1 ? 'image' : 'images'} ignored: ${max} screenshots at most.`,
+    full: (max) => `${max} screenshots at most: remove one to add another.`,
+    drop: 'Drop the image to attach it',
+    count: (n, max) => `${n} of ${max} ${max === 1 ? 'screenshot' : 'screenshots'}`,
+  },
+  gallery: {
+    label: 'Attached screenshots',
+    open: (n) => `Enlarge screenshot ${n}`,
+    alt: (n) => `Screenshot ${n} attached to the report`,
+    broken: 'Image unavailable',
+  },
   keyHint: {
     button: (name) => `${name} button`,
     playstation: { south: 'Cross', east: 'Circle', west: 'Square', north: 'Triangle' },

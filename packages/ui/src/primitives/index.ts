@@ -1,5 +1,7 @@
 // Primitives UI de L'Arbre aux absents (docs/DESIGN.md §9). Svelte 5, runes.
 export { default as ArtDefs } from './ArtDefs.svelte';
+export { default as AttachmentGallery } from './AttachmentGallery.svelte';
+export { default as AttachmentTray } from './AttachmentTray.svelte';
 export { default as Badge } from './Badge.svelte';
 export { default as Button } from './Button.svelte';
 export { default as Card } from './Card.svelte';
@@ -20,6 +22,8 @@ export { default as KeyHint, isFace, padLabel } from './KeyHint.svelte';
 export type { Device, PadButton, PadStyle } from './KeyHint.svelte';
 export { default as LanguageSwitch } from './LanguageSwitch.svelte';
 export { default as Loader } from './Loader.svelte';
+export { default as MarkdownField } from './MarkdownField.svelte';
+export { default as MarkdownPreview } from './MarkdownPreview.svelte';
 export { default as Panel } from './Panel.svelte';
 export { default as Select } from './Select.svelte';
 export type { SelectOption } from './Select.svelte';

@@ -12,7 +12,9 @@
     "./primitives": "./src/primitives/index.ts",
     "./fonts/*": "./src/fonts/*",
     "./motion": "./src/motion.ts",
-    "./i18n": "./src/i18n.ts"
+    "./i18n": "./src/i18n.ts",
+    "./markdown": "./src/markdown.ts",
+    "./attachments": "./src/attachments.ts"
   },
   "scripts": {
     "check": "npm run typecheck && npm run contrast:check",

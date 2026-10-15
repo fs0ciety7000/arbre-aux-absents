@@ -1140,6 +1140,8 @@ lus dans `UiStrings` (§4.4), jamais en dur.
 | 9.34 | `DecisionCard`, `DecisionGroup` | §6.11 | fiche de décision, tampon `ink` qui frappe ; grisée avec sa raison | radio natif dans un `fieldset`, indisponible `disabled` + description |
 | 9.35 | `LanguageSwitch` | §9.35 | réglette, langue choisie en bande d'étiqueteuse collée | radios natifs dans un `fieldset`, ou liens `hreflang` + `aria-current` ; `lang` par nom |
 | 9.36 | `TicketStatus` | §9.36 | frise de tampons, l'étape actuelle frappe | `<ol>`, `aria-current="step"`, état lu en texte |
+| 9.37 | `MarkdownField`, `MarkdownPreview` | §9.37 | réglette d'outils au-dessus de la feuille, filet en tirets | `role="toolbar"` (un arrêt, flèches), `aria-keyshortcuts`, aperçu `region` |
+| 9.38 | `AttachmentTray`, `AttachmentGallery` | §9.38 | tirages photo à bord blanc posés de travers (±0,6°) | `group` nommé, état de chaque image lu (`status`), retrait nommé ; vignette = bouton qui agrandit |
 | 9.31 | `Coachmark` | `anchor` (fonction) · `kicker` · `text` · `actionLabel`/`onaction` · `skipLabel`/`onskip` · `placement` · `bottomInset` · `id` · snippet | **Note de service** : bande de papier (contexte papier) à liseré safran, posée près de sa cible avec une flèche, liseré pointillé autour de la cible ; se pose comme une feuille (`--dur-open`, `--ease-paper`) | `<aside>` nommé par son surtitre, décrit par son texte ; jamais de focus pris ; §9.31 |
 
 Utilitaires CSS : base.css (`.reading`, `.ink-type`, `.ink-hand`, `.num`, `.caps`, `.grain`,
@@ -1276,6 +1278,52 @@ Prime `--text-muted` (Résolu, Doublon, Non retenu). Tant qu'il n'y a pas d'issu
   <TicketStatus status={t.status} fixedIn={t.fixedIn} closedReason={t.closedReason} animate />
 </PaperSheet>
 ```
+
+### 9.37 Champ Markdown (`MarkdownField`, `MarkdownPreview`) — v2.5
+
+Description des signalements (§13.8, §14.6) : un `<textarea>` (texte brut, compteur `n / max`)
+sous une **réglette d'outils** (`role="toolbar"`, filet bas en tirets `--line-strong`) : Gras
+(`**`), Italique (`_`), Code (`` ` ``), Bloc de code (` ``` `), Liste à puces (`- `), Liste
+numérotée (`1. `), Citation (`> `), Lien (`[texte](url)`), puis la bascule **« Aperçu »**
+(`aria-pressed`, Oswald capitales `--step--1`, liseré `--accent` quand active). Boutons = `IconButton`
+(44 px, info-bulle étiqueteuse **au-dessus**, nom avec le raccourci : « Gras (Ctrl+B) ») ; glyphes
+typographiques (B demi-gras, *I* Literata italique, `<>`, `{ }`, `1.` en Courier Prime, « en
+Literata, `URL` en Oswald soulignée ; icône `list` pour les puces). Pas d'image dans le texte.
+
+- Insertion à la sélection (`applyMarkdown`, pur) : sélection entourée ou, vide, texte de
+  remplacement sélectionné (« texte », « code », `https://`) ; second appui = retrait (bascule) ;
+  listes et citation par ligne (numéros croissants) ; bloc de code sur ses propres lignes. Passe par
+  `insertText` quand le navigateur le permet (Ctrl+Z annule).
+- Clavier : Ctrl/⌘ + B, I, K dans le champ ; barre = un seul arrêt de tabulation, ←/→, Début, Fin ;
+  le focus revient au champ après une insertion.
+- **Aperçu** (`parseMarkdown` → `MarkdownPreview`) : jamais de HTML (arbre rendu en éléments Svelte,
+  texte échappé par construction ; `<img …>` reste du texte) ; liens **non cliquables** (texte
+  souligné `--accent` + adresse en Courier `--text-muted`), seulement `http(s)` ; code et blocs en
+  Courier Prime sur `--surface-1`, citation à filet gauche `--border-strong`. Zone `role="region"`
+  ≤ 24 rem, défilement vertical seul.
+- Téléphone : la réglette passe sur deux lignes (`flex-wrap`), les info-bulles débordent en hauteur
+  seulement (`overflow-x: clip`) : jamais de défilement horizontal.
+
+### 9.38 Captures jointes (`AttachmentTray`, `AttachmentGallery`) — v2.5
+
+**`AttachmentTray`** (formulaires) : un plateau à bord en tirets `--line-strong` ; libellé
+« Captures d'écran (facultatif) », aide (formats, 3 au plus, collage Ctrl+V, dépôt, réduction des
+images trop grandes) ; vignettes en **tirages photo** (`--surface-1`, bord `--line`, `--shadow-1`,
+4:3 `object-fit: cover`, inclinées −0,6° / +0,6°), chacune avec son état lu (`Loader` « Envoi… »,
+`check` « Jointe », `warning` + raison en `--danger`, bord `--danger`), « Réessayer » (`ghost`, erreurs
+passagères) et un `IconButton close` « Retirer la capture 2 (nom) » posé dans l'angle ; puis
+`Button secondary photo` « Ajouter une capture » (désactivé à 3) et le compte « 1 capture sur 3 ».
+Glisser des fichiers : plateau `--accent-tint`, bord `--accent`, « Déposez l'image pour la
+joindre ». Le champ fichier est caché (`display: none`, hors manette). La file d'envoi
+(`AttachmentQueue`, `@arbre/ui/attachments`) vit dans l'application : réduction en WebP (JPEG à
+défaut) au-delà de 2 Mio, 8192 px ou 40 Mpx, une requête par image, retrait = `DELETE`, renvoi des
+pièces proches de l'expiration avant le signalement.
+
+**`AttachmentGallery`** (suivi) : titre Oswald capitales « Captures jointes », vignettes boutons
+(`zoom-in`, soulevées au survol, focus 3 px) « Agrandir la capture n » ; activation = `Dialog
+size="l"` (plein écran au téléphone) avec l'image `contain` ≤ 70 vh. Image injoignable (hors
+ligne, lien refusé) : « Image indisponible » sans casser la fiche. URL signées du service :
+CSP `img-src` du site et du jeu.
 
 ### 9.21 Mots-clés soulignés (`.kw`)
 
@@ -1630,12 +1678,18 @@ de l'Office** : `Dialog surface="paper" size="l"` (plein écran au téléphone, 
 surtitre « Formulaire de signalement », titre « Signaler un problème ».
 
 - **Champs** dans l'ordre : catégorie (`Select`, libellés humains : « Je suis bloqué », « Faute ou
-  texte incorrect »…) ; description (`TextField multiline`, 4 lignes, `maxlength` 4000, compteur ;
-  aide « Au moins 20 caractères. Ce que vous faisiez, ce que vous attendiez. ») ; contact facultatif
+  texte incorrect »…) ; description (`MarkdownField` §9.37, 5 lignes, `maxlength` 4000, compteur ;
+  aide « Au moins 20 caractères. Ce que vous faisiez, ce que vous attendiez. ») ; captures
+  (`AttachmentTray` §9.38 : fichier, collage Ctrl+V dans le formulaire, dépôt ; envoi désactivé,
+  avec sa raison, tant qu'une image part) ; contact facultatif
   (`TextField`, aide « Jamais publié. Seulement pour vous répondre. ») ; « Joindre ma sauvegarde
   anonymisée » (`Toggle showState`, décochée par défaut, description « Sans vos notes ni vos
   recherches »). Le pot de miel `website` est un champ hors écran (`visually-hidden`,
   `tabindex="-1"`, `autocomplete="off"`, `aria-hidden`).
+- **« Informations envoyées avec le signalement »** (v2.5), toujours visible avant l'aperçu : cadre
+  en tirets, titre Oswald capitales `--text-muted`, `<dl>` en grille (version et édition,
+  plateforme, système, navigateur, langue, fenêtre ; valeurs en Courier Prime). Pas de capture
+  automatique de l'écran du jeu (aucun moyen léger et fiable dans le navigateur ni Tauri).
 - **Aperçu des diagnostics** : `<details>` « Voir exactement ce qui sera envoyé » sous les
   champs, fermé par défaut ; contenu `<pre class="ink-type">` du JSON **réel** (celui qui partira,
   recalculé quand la case change), `--step--1`, cadre en tirets `--line-strong`,
@@ -1729,8 +1783,12 @@ focalisé : aucune requête ni cookie YouTube avant le clic. Mention sous le cad
 ### 14.6 Pages de signalement et de suivi (v2.4)
 
 - **`/signaler/`** (et `/en/…`) : même recette que §13.8 posée dans une `PaperSheet` centrée
-  (≤ 48 rem), sans diagnostics de partie (plateforme `site`, langue, fenêtre) ; repli `<noscript>` :
-  adresse du forum itch.io.
+  (≤ 48 rem), sans diagnostics de partie (plateforme `site`, langue, fenêtre, navigateur) ; en plus,
+  « Version du jeu » (`TextField`, préremplie avec la dernière, erreur si ce n'est pas un semver) et
+  « Plateforme du jeu » (`Select`, « Je ne sais pas » par défaut), côte à côte au-delà de 28 rem ;
+  repli `<noscript>` : adresse du forum itch.io.
+- Fiche de suivi (`/suivi/`, et la feuille du jeu §13.9) : captures jointes en `AttachmentGallery`
+  (§9.38) au-dessus des réponses.
 - **`/suivi/#<jeton>`** : la **fiche de suivi**. En-tête : `DymoLabel` rouge du numéro, catégorie
   et dates (`Intl`) en Courier Prime ; `TicketStatus animate` (la frise frappe une fois) ; réponses
   publiques en `PaperSheet` (texte brut, jamais de HTML) ; pied : « Supprimer mon signalement »
