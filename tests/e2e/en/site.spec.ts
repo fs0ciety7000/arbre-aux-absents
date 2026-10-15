@@ -88,8 +88,13 @@ for (const path of EN_PAGES) {
 test('sélecteur de langue : même page dans l’autre langue, au clavier', async ({ page }) => {
   await page.goto(`${SITE}/en/le-monde/`);
   const nav = page.getByRole('navigation', { name: 'Language' });
-  await expect(nav.getByRole('link', { name: 'English' })).toHaveAttribute('aria-current', 'true');
-  const fr = nav.getByRole('link', { name: 'Français' });
+  // Mode `short` : le nom accessible commence par le texte visible (WCAG 2.5.3).
+  await expect(nav.getByRole('link', { name: 'EN, English', exact: true })).toHaveAttribute(
+    'aria-current',
+    'true',
+  );
+  const fr = nav.getByRole('link', { name: 'FR, Français', exact: true });
+  await expect(fr).toHaveText('FR, Français');
   await expect(fr).toHaveAttribute('hreflang', 'fr');
   await fr.focus();
   await page.keyboard.press('Enter');

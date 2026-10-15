@@ -1163,7 +1163,8 @@ pas seulement une couleur. Survol : la langue non choisie passe en `--text` et s
 - **En-tête du site** (`hrefs`) : `nav` + liens `hreflang`, la page courante dans chaque langue
   (mêmes slugs sous `/en/`, D8), `aria-current="true"` sur la langue courante. `short` à 360 px.
 - Chaque nom porte son `lang` (`lang="fr"` sur « Français », `lang="en"` sur « English ») ;
-  `short` affiche FR / EN et lit le nom complet. Cibles ≥ `--hit` ; focus 3 px `--focus` autour de
+  `short` affiche FR / EN et le nom accessible commence par ce texte visible, suivi du nom
+  complet masqué (« EN, English », WCAG 2.5.3 : le nom contient le libellé visible). Cibles ≥ `--hit` ; focus 3 px `--focus` autour de
   l'étiquette (`:has(:focus-visible)`). Couleurs forcées : réglette `CanvasText`, bande choisie
   `CanvasText`/`Canvas` (règle `.mat-label`).
 - **Contrastes** : paires existantes (`--label-tape-text` / `--label-tape`, `--text-muted` sur

@@ -6,7 +6,8 @@
 	  (écran titre, Options du jeu).
 	- Avec `hrefs` : liens `hreflang` dans un `nav`, la langue courante en `aria-current` (en-tête
 	  du site : changer de langue, c'est changer de page).
-	`short` : codes FR / EN à l'écran (en-tête à 360 px), nom complet toujours lu.
+	`short` : codes FR / EN à l'écran (en-tête à 360 px) ; nom lu « EN, English » (le texte visible
+	d'abord, WCAG 2.5.3).
 -->
 <script lang="ts">
   import { LANGUAGE_NAMES, getUiStrings, type UiLocale } from '../i18n';
@@ -17,7 +18,7 @@
     locales?: readonly UiLocale[];
     /** Mode lien : URL de la page courante dans chaque langue. */
     hrefs?: Partial<Record<UiLocale, string>>;
-    /** Codes courts à l'écran (le nom complet reste lu). */
+    /** Codes courts à l'écran (nom lu « EN, English »). */
     short?: boolean;
     /** Légende (déf. « Langue » / “Language”), masquée sauf `labelVisible`. */
     label?: string;
@@ -52,9 +53,8 @@
 {#snippet tag(loc: UiLocale, on: boolean)}
   <span class="tape" class:mat-label={on}>
     {#if short}
-      <span aria-hidden="true">{LANGUAGE_NAMES[loc].short}</span><span class="visually-hidden"
-        >{LANGUAGE_NAMES[loc].name}</span
-      >
+      <!-- Nom accessible « EN, English » : il commence par le texte visible (WCAG 2.5.3). -->
+      {LANGUAGE_NAMES[loc].short}<span class="visually-hidden">, {LANGUAGE_NAMES[loc].name}</span>
     {:else}
       {LANGUAGE_NAMES[loc].name}
     {/if}
