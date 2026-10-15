@@ -4,6 +4,7 @@ import { DatabaseSync } from 'node:sqlite';
 import type { SQLInputValue } from 'node:sqlite';
 import type {
   Locale,
+  OpenTicketStatus,
   ReportCategory,
   ReportSource,
   TicketClosedReason,
@@ -54,6 +55,7 @@ CREATE INDEX IF NOT EXISTS tickets_issue ON tickets (issue_number);
 CREATE INDEX IF NOT EXISTS tickets_pending ON tickets (pending_op, next_attempt_at);
 CREATE INDEX IF NOT EXISTS tickets_closed ON tickets (closed_at);
 CREATE INDEX IF NOT EXISTS tickets_public ON tickets (public, updated_at);
+CREATE INDEX IF NOT EXISTS tickets_open ON tickets (status, created_at);
 `;
 
 export type PendingOp = 'create' | 'redact';
@@ -129,6 +131,19 @@ function toRow(r: Raw): TicketRow {
     public: Number(r.public) === 1,
     title: str(r.title),
   };
+}
+
+/** Colonnes publiables d'un ticket ouvert : jamais contact, charge utile, empreinte ni etag. */
+export interface OpenTicketRow {
+  ticket: string;
+  category: ReportCategory;
+  status: OpenTicketStatus;
+  source: ReportSource;
+  createdAt: number;
+  updatedAt: number;
+  public: boolean;
+  title: string | null;
+  markers: Marker[];
 }
 
 export interface NewTicket {
@@ -451,6 +466,33 @@ export class TicketStore {
       'SELECT * FROM tickets WHERE public = 1 AND issue_number IS NOT NULL ORDER BY updated_at DESC, id DESC LIMIT ?',
       limit,
     );
+  }
+
+  /**
+   * Tickets ouverts (ni corrigés ni classés), les plus récents d'abord : en attente de création
+   * GitHub compris, jamais ceux que le joueur a supprimés (jeton effacé). Seules les colonnes
+   * publiables sont lues.
+   */
+  openTickets(limit: number): OpenTicketRow[] {
+    const rows = this.db
+      .prepare(
+        `SELECT ticket, category, status, source, created_at, updated_at, public, title, replies_json
+         FROM tickets
+         WHERE status IN ('received', 'confirmed', 'in-progress') AND token_hash IS NOT NULL
+         ORDER BY created_at DESC, id DESC LIMIT ?`,
+      )
+      .all(limit) as Raw[];
+    return rows.map((r) => ({
+      ticket: String(r.ticket),
+      category: String(r.category) as ReportCategory,
+      status: String(r.status) as OpenTicketStatus,
+      source: String(r.source) as ReportSource,
+      createdAt: Number(r.created_at),
+      updatedAt: Number(r.updated_at),
+      public: Number(r.public) === 1,
+      title: str(r.title),
+      markers: parseMarkers(r.replies_json),
+    }));
   }
 
   /** Conservation D13. */

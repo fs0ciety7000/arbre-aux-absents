@@ -1,7 +1,9 @@
 import { createHash, randomBytes, randomInt } from 'node:crypto';
+import { REPORT_LIMITS } from '@arbre/contract';
 import type {
   KnownIssue,
   Locale,
+  OpenTicket,
   ReportReceipt,
   ReportSubmission,
   TicketView,
@@ -46,6 +48,9 @@ export const TIMINGS = {
   concurrency: 2,
   knownIssuesTtlMs: MINUTE,
   knownIssuesMax: 100,
+  /** Liste publique des tickets ouverts : même durée de cache, plafond du contrat. */
+  openTicketsTtlMs: MINUTE,
+  openTicketsMax: REPORT_LIMITS.openTickets,
   /** Tentatives au-delà desquelles une erreur GitHub permanente fait abandonner l'opération. */
   maxPermanentAttempts: 8,
 } as const;
@@ -111,6 +116,7 @@ export class ReportService {
   private readonly refreshing = new Map<number, Promise<void>>();
   private draining: Promise<void> | undefined;
   private knownCache = new Map<Locale, { at: number; items: KnownIssue[] }>();
+  private openCache = new Map<Locale, { at: number; items: OpenTicket[] }>();
   /** Requêtes GitHub de fond, abandonnées à l'arrêt. */
   private readonly abort = new AbortController();
 
@@ -142,6 +148,8 @@ export class ReportService {
     const draft = renderIssue(row.ticket, s);
     this.store.setPayload(row.id, JSON.stringify(draft));
     this.log.info('report.created', { ticket: row.ticket, category: s.category, source: s.source });
+    // Le nouveau ticket apparaît aussitôt dans la liste publique des tickets ouverts.
+    this.invalidateKnown();
     this.kick();
     return { ticket: row.ticket, token, followUrl: this.followUrl(token, s.locale) };
   }
@@ -423,8 +431,20 @@ export class ReportService {
 
   // ------------------------------------------------------------------------- problèmes connus
 
+  /** Vide les caches des listes publiques (problèmes connus, tickets ouverts). */
   invalidateKnown(): void {
     this.knownCache.clear();
+    this.openCache.clear();
+  }
+
+  /** Titre public relu par l'équipe (étiquette `public`), anglais si un mainteneur l'a donné. */
+  private publicTitle(
+    row: Pick<TicketRow, 'public' | 'title' | 'markers'>,
+    locale: Locale,
+  ): string | undefined {
+    if (!row.public) return undefined;
+    const title = (locale === 'en' ? titleEn(row.markers) : undefined) ?? row.title;
+    return title ? title.slice(0, 200) : undefined;
   }
 
   knownIssues(locale: Locale): KnownIssue[] {
@@ -434,11 +454,11 @@ export class ReportService {
     const items = this.store
       .publicTickets(TIMINGS.knownIssuesMax)
       .map((row): KnownIssue | undefined => {
-        const title = (locale === 'en' ? titleEn(row.markers) : undefined) ?? row.title;
+        const title = this.publicTitle(row, locale);
         if (!title) return undefined;
         return {
           ticket: row.ticket,
-          title: title.slice(0, 200),
+          title,
           status: row.status,
           ...(row.fixedIn ? { fixedIn: row.fixedIn } : {}),
           updatedAt: row.updatedAt,
@@ -446,6 +466,30 @@ export class ReportService {
       })
       .filter((k): k is KnownIssue => k !== undefined);
     this.knownCache.set(locale, { at: now, items });
+    return items;
+  }
+
+  /**
+   * Liste publique des tickets ouverts (`GET /v1/tickets`) : numéro, catégorie, statut, source,
+   * dates, et titre relu seulement s'il est public. Jamais le texte du joueur ni le titre brut.
+   */
+  openTickets(locale: Locale): OpenTicket[] {
+    const now = this.now();
+    const cached = this.openCache.get(locale);
+    if (cached && now - cached.at < TIMINGS.openTicketsTtlMs) return cached.items;
+    const items = this.store.openTickets(TIMINGS.openTicketsMax).map((row): OpenTicket => {
+      const title = this.publicTitle(row, locale);
+      return {
+        ticket: row.ticket,
+        category: row.category,
+        status: row.status,
+        source: row.source,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+        ...(title ? { title } : {}),
+      };
+    });
+    this.openCache.set(locale, { at: now, items });
     return items;
   }
 

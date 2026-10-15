@@ -3,6 +3,7 @@ import type { IncomingMessage, Server, ServerResponse } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import type { DatabaseSync } from 'node:sqlite';
 import { LocaleSchema, REPORT_LIMITS, REPORT_TOKEN, ReportSubmissionSchema } from '@arbre/contract';
+import type { Locale } from '@arbre/contract';
 import type { Config } from './config';
 import { applyCors, preflight } from './cors';
 import { TicketStore } from './db';
@@ -54,13 +55,14 @@ export interface ReportServer {
   close(): Promise<void>;
 }
 
-type Route = 'healthz' | 'reports' | 'ticket' | 'known' | 'webhook';
+type Route = 'healthz' | 'reports' | 'ticket' | 'known' | 'open' | 'webhook';
 
 const ROUTES: Record<string, { route: Route; methods: readonly string[] }> = {
   '/healthz': { route: 'healthz', methods: ['GET', 'HEAD'] },
   '/v1/reports': { route: 'reports', methods: ['POST'] },
   '/v1/tickets/current': { route: 'ticket', methods: ['GET', 'DELETE'] },
   '/v1/known-issues': { route: 'known', methods: ['GET'] },
+  '/v1/tickets': { route: 'open', methods: ['GET'] },
   '/v1/github/webhook': { route: 'webhook', methods: ['POST'] },
 };
 
@@ -145,13 +147,20 @@ export function createReportServer(deps: ServerDeps): ReportServer {
     sendJson(res, 200, view);
   }
 
-  function knownIssues(req: IncomingMessage, res: ServerResponse, url: URL) {
+  /** Listes publiques (problèmes connus, tickets ouverts) : plafond de lectures, `?locale=`. */
+  function publicList(
+    req: IncomingMessage,
+    res: ServerResponse,
+    url: URL,
+    list: (locale: Locale) => unknown,
+    maxAgeSec: number,
+  ) {
     const hit = limiter.hit(readRules(limiter.clientKey(clientIp(req))));
     if (!hit.ok) return tooMany(res, hit.retryAfterSec);
     const locale = LocaleSchema.safeParse(url.searchParams.get('locale') ?? 'fr');
     if (!locale.success) return sendError(res, 400, 'invalid');
-    sendJson(res, 200, service.knownIssues(locale.data), {
-      'Cache-Control': 'public, max-age=300',
+    sendJson(res, 200, list(locale.data), {
+      'Cache-Control': `public, max-age=${maxAgeSec}`,
     });
   }
 
@@ -219,7 +228,10 @@ export function createReportServer(deps: ServerDeps): ReportServer {
         await ticket(req, res, method);
         break;
       case 'known':
-        knownIssues(req, res, url);
+        publicList(req, res, url, (l) => service.knownIssues(l), 300);
+        break;
+      case 'open':
+        publicList(req, res, url, (l) => service.openTickets(l), 60);
         break;
       case 'webhook':
         await webhook(req, res);

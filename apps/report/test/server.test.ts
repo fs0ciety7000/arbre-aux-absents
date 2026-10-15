@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   KnownIssuesSchema,
+  OpenTicketsSchema,
   ReportErrorBodySchema,
   ReportReceiptSchema,
   TicketViewSchema,
@@ -674,6 +675,126 @@ describe('problèmes connus', () => {
     t.clock.advance(MIN);
     t.app.service.knownIssues('fr');
     expect(reads).toBe(2);
+  });
+});
+
+describe('liste publique des tickets ouverts', () => {
+  const list = (app: TestApp, locale?: string, origin = ORIGIN) =>
+    fetch(`${app.base}/v1/tickets${locale ? `?locale=${locale}` : ''}`, {
+      headers: { Origin: origin },
+    });
+
+  it('tickets ouverts seulement, sans texte du joueur, titre public relu, plus récents d’abord', async () => {
+    t = await startApp();
+    const secret = 'Le dossier ne s’ouvre plus après la troisième audition, rien ne se passe.';
+    const a = await submit(t, { description: secret });
+    t.clock.advance(MIN);
+    await submit(t, { category: 'audio', source: 'site', locale: 'en' });
+    t.clock.advance(MIN);
+    await submit(t, { category: 'text' });
+    t.clock.advance(MIN);
+    const d = await submit(t, { category: 'display' });
+    await t.app.service.drain();
+    const [i1, , i3] = [100, 101, 102].map((n) => t!.gh.issues.get(n)!);
+    // AA-0001 : public, titre relu ; AA-0003 : corrigé (hors liste) ; AA-0004 : supprimé.
+    await hook(t, 'issues', {
+      action: 'labeled',
+      issue: {
+        ...i1,
+        title: 'La carte ne zoome pas sur Android',
+        labels: [{ name: 'public' }, { name: 'statut:confirmé' }],
+      },
+      repository,
+    });
+    await hook(t, 'issues', {
+      action: 'closed',
+      issue: { ...i3, state: 'closed', state_reason: 'completed', milestone: { title: 'v1.2.1' } },
+      repository,
+    });
+    expect((await getTicket(t, d.token, 'DELETE')).status).toBe(204);
+    // Un signalement encore en attente de GitHub apparaît aussi, « reçu ».
+    t.gh.failure = 'down';
+    t.clock.advance(MIN);
+    const e = await submit(t, { category: 'controls' });
+
+    const res = await list(t);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('cache-control')).toBe('public, max-age=60');
+    expect(res.headers.get('access-control-allow-origin')).toBe(ORIGIN);
+    const raw = await res.text();
+    const items = OpenTicketsSchema.parse(JSON.parse(raw));
+    expect(items.map((i) => i.ticket)).toEqual([e.ticket, 'AA-0002', a.ticket]);
+    expect(items[0]).toEqual({
+      ticket: 'AA-0005',
+      category: 'controls',
+      status: 'received',
+      source: 'game',
+      createdAt: t.clock.t,
+      updatedAt: t.clock.t,
+    });
+    expect(items[1]).toMatchObject({ category: 'audio', source: 'site', status: 'received' });
+    expect(items[1]).not.toHaveProperty('title');
+    expect(items[2]).toMatchObject({
+      status: 'confirmed',
+      title: 'La carte ne zoome pas sur Android',
+    });
+    // Ni texte du joueur, ni contact, ni titre GitHub brut, ni jeton.
+    expect(raw).not.toContain('troisième audition');
+    expect(raw).not.toContain('joueuse@example.org');
+    expect(raw).not.toContain(a.token);
+    expect(raw).not.toContain('·');
+    expect(raw).not.toMatch(/token|contact|description|diagnostics/);
+
+    // Titre anglais d'un mainteneur.
+    await hook(t, 'issue_comment', {
+      action: 'created',
+      issue: i1,
+      comment: {
+        id: 31,
+        body: '/public-title-en Map does not zoom on Android',
+        author_association: 'MEMBER',
+        created_at: new Date(t.clock.t).toISOString(),
+      },
+      repository,
+    });
+    const en = OpenTicketsSchema.parse(await (await list(t, 'en')).json());
+    expect(en.find((i) => i.ticket === 'AA-0001')?.title).toBe('Map does not zoom on Android');
+    expect((await list(t, 'de')).status).toBe(400);
+    expect((await list(t, 'fr', 'https://evil.example')).status).toBe(403);
+    const post405 = await fetch(`${t.base}/v1/tickets`, {
+      method: 'POST',
+      headers: { Origin: ORIGIN },
+    });
+    expect(post405.status).toBe(405);
+  });
+
+  it('cache d’une minute, vidé par un nouveau signalement ; plafond de 200', async () => {
+    t = await startApp();
+    const store = t.app.store;
+    let reads = 0;
+    const orig = store.openTickets.bind(store);
+    store.openTickets = (n: number) => {
+      reads++;
+      expect(n).toBe(200);
+      return orig(n);
+    };
+    t.app.service.openTickets('fr');
+    t.app.service.openTickets('fr');
+    expect(reads).toBe(1);
+    await submit(t);
+    expect(t.app.service.openTickets('fr')).toHaveLength(1);
+    expect(reads).toBe(2);
+    t.clock.advance(MIN);
+    t.app.service.openTickets('fr');
+    expect(reads).toBe(3);
+  });
+
+  it('plafond de lectures partagé : 429 avec Retry-After', async () => {
+    t = await startApp();
+    for (let i = 0; i < 60; i++) expect((await list(t)).status).toBe(200);
+    const res = await list(t);
+    expect(res.status).toBe(429);
+    expect(Number(res.headers.get('retry-after'))).toBeGreaterThan(0);
   });
 });
 
