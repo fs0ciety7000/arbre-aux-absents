@@ -151,7 +151,15 @@ export function containerAt(blocks: readonly Block[], path: readonly number[]): 
 
 export const pathKey = (path: readonly number[]): string => path.join('.');
 
-/** Surlignages d'un document indexés par conteneur. */
+/**
+ * Un surlignage est une position dans le texte d'une langue (D5) : il ne s'affiche que dans sa
+ * langue (`lang` absent = français) et reste conservé dans les autres.
+ */
+export function inLanguage(h: { lang?: string }, lang: string): boolean {
+  return (h.lang ?? 'fr') === lang;
+}
+
+/** Surlignages d'un document indexés par conteneur, pour le texte d'une langue. */
 export function rangesByPath(
   highlights: readonly {
     doc: string;
@@ -159,12 +167,14 @@ export function rangesByPath(
     start: number;
     end: number;
     color: HighlightColor;
+    lang?: string;
   }[],
   doc: string,
+  lang = 'fr',
 ): Map<string, HighlightRange[]> {
   const out = new Map<string, HighlightRange[]>();
   highlights.forEach((h, index) => {
-    if (h.doc !== doc) return;
+    if (h.doc !== doc || !inLanguage(h, lang)) return;
     const key = pathKey(h.path);
     const list = out.get(key) ?? [];
     list.push({ start: h.start, end: h.end, color: h.color, index });

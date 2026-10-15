@@ -17,11 +17,14 @@
   import { getGame } from '../lib/game/context';
   import Spot from '../shell/Spot.svelte';
   import { listenCommands, ownsCommands } from './lib/commands';
-  import { worldLayers, worldMap, worldPlaces } from './lib/world';
+  import { localizedWorld } from './lib/world.svelte';
   import { formatPartialDate } from './lib/view';
   import { KIND_LABELS, pm } from './messages';
+  import { intlLocale } from '../i18n/index.svelte';
 
   const game = getGame();
+  /** Carte du monde dans la langue du texte de l'affaire (cartouche, couche `labels`). */
+  const world = $derived(localizedWorld(game.content.locale ?? 'fr'));
 
   let view = $state<'map' | 'list'>('map');
   let mapView: ReturnType<typeof MapView> | undefined = $state();
@@ -32,7 +35,7 @@
 
   function placeOf(id: PlaceId) {
     return (
-      game.content.places[id] ?? (Object.hasOwn(worldPlaces, id) ? worldPlaces[id] : undefined)
+      game.content.places[id] ?? (Object.hasOwn(world.places, id) ? world.places[id] : undefined)
     );
   }
 
@@ -67,7 +70,7 @@
     }),
   );
 
-  const listed = $derived([...places].sort((a, b) => a.name.localeCompare(b.name, 'fr')));
+  const listed = $derived([...places].sort((a, b) => a.name.localeCompare(b.name, intlLocale())));
 
   const selected = $derived.by(() => {
     const id = game.ui.selectedPlace;
@@ -152,14 +155,14 @@
         <div class="stage">
           <MapView
             bind:this={mapView}
-            map={worldMap}
-            layers={worldLayers}
-            enabledLayers={worldMap?.layers}
+            map={world.map}
+            layers={world.layers}
+            enabledLayers={world.map?.layers}
             {places}
             selectedId={game.ui.selectedPlace}
             onselect={select}
             label={pm.map.regionLabel}
-            title={worldMap?.title ?? game.content.meta.title}
+            title={world.map?.title ?? game.content.meta.title}
           />
         </div>
       {:else}

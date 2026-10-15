@@ -113,7 +113,8 @@ const now = () => Date.now();
  * - diffuse les événements (annonces, sons, toasts, cartes de révélation, succès, fin).
  */
 export class GameStoreImpl implements GameStore {
-  readonly content: CompiledCase;
+  /** Affaire compilée : remplacée au changement de langue (`replaceContent`), état intact. */
+  #content = $state.raw<CompiledCase>(null as unknown as CompiledCase);
   readonly ui: DeskUi;
 
   #state = $state.raw<SaveState>(null as unknown as SaveState);
@@ -161,7 +162,7 @@ export class GameStoreImpl implements GameStore {
   #closing = false;
 
   constructor(content: CompiledCase, state: SaveState, host: StoreHost) {
-    this.content = content;
+    this.#content = content;
     this.#state = state;
     this.#host = host;
     this.#backup = { state, at: now() };
@@ -179,6 +180,25 @@ export class GameStoreImpl implements GameStore {
 
   get state(): SaveState {
     return this.#state;
+  }
+
+  get content(): CompiledCase {
+    return this.#content;
+  }
+
+  /**
+   * Changement de langue en cours de partie (ARCHITECTURE §3.4) : la même affaire compilée dans
+   * une autre langue remplace le contenu ; `SaveState` (ids, arbre, surlignages étiquetés par
+   * langue) ne bouge pas. Refusé si ce n'est pas la même affaire (même id, même structure).
+   */
+  replaceContent(next: CompiledCase): boolean {
+    const c = this.#content;
+    if (next === c) return true;
+    if (next.id !== c.id || next.edition !== c.edition || next.contentHash !== c.contentHash) {
+      return false;
+    }
+    this.#content = next;
+    return true;
   }
 
   /** Réglages effectifs : en mode chronométré, aides plafonnées au niveau 1 (§13.4). */

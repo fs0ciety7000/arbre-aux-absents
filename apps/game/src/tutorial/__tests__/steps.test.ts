@@ -108,9 +108,11 @@ describe('tutoriel : nouveautés (données, aucun id d’affaire)', () => {
     expect(newsApplies('claim', claimedCase)).toBe(true);
     expect(newsApplies('decision', c)).toBe(true);
     expect(newsApplies('decision', { ...c, report: [] })).toBe(false);
-    expect(isHearing({ kind: 'report', title: 'Procès-verbal d’audition de Mme X' })).toBe(true);
-    expect(isHearing({ kind: 'letter', title: 'Audition' })).toBe(false);
-    expect(isHearing({ kind: 'report', title: 'Rapport sur le moulin' })).toBe(false);
+    // Drapeau structurel `hearing`, jamais le titre (qui change avec la langue).
+    expect(isHearing({ hearing: true })).toBe(true);
+    expect(isHearing({ hearing: false })).toBe(false);
+    expect(isHearing({})).toBe(false);
+    expect(isHearing(undefined)).toBe(false);
     expect(requiredSteps({ ...c, report: [] })).toEqual([...BASE_STEPS]);
   });
 

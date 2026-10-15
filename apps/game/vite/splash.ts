@@ -102,12 +102,15 @@ export function splash(opts: Options): Plugin {
             (c) => c.type === 'chunk' && /[\\/]src[\\/]boot\.ts$/.test(c.facadeModuleId ?? ''),
           );
           if (boot && boot.type === 'chunk') {
-            const js = new Set<string>([boot.fileName, ...boot.imports]);
-            const css = new Set<string>(boot.viteMetadata?.importedCss ?? []);
-            for (const f of boot.imports) {
+            // Dépendances statiques, transitives (ex. catalogue `i18n/fr` importé par un chunk
+            // partagé) : aucune cascade de requêtes au premier affichage.
+            const js = new Set<string>([boot.fileName]);
+            const css = new Set<string>();
+            for (const f of js) {
               const dep = bundle[f];
-              if (dep?.type === 'chunk')
-                for (const c of dep.viteMetadata?.importedCss ?? []) css.add(c);
+              if (dep?.type !== 'chunk') continue;
+              for (const c of dep.viteMetadata?.importedCss ?? []) css.add(c);
+              for (const i of dep.imports) js.add(i);
             }
             for (const f of js) {
               if (f === ctx.chunk?.fileName) continue;

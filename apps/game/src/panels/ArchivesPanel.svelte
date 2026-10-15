@@ -11,6 +11,7 @@
   import Spot from '../shell/Spot.svelte';
   import { dateKey, formatPartialDate } from './lib/view';
   import { KIND_LABELS, pm } from './messages';
+  import { intlLocale } from '../i18n/index.svelte';
 
   const game = getGame();
 
@@ -32,7 +33,7 @@
 
   const kinds = $derived(
     [...new Set(unlocked.map((id) => game.content.documents[id]!.kind))].sort((a, b) =>
-      KIND_LABELS[a].localeCompare(KIND_LABELS[b], 'fr'),
+      KIND_LABELS[a].localeCompare(KIND_LABELS[b], intlLocale()),
     ),
   );
   const places = $derived(
@@ -42,7 +43,7 @@
       ),
     ]
       .map((id) => ({ id, name: game.content.places[id]?.name ?? id }))
-      .sort((a, b) => a.name.localeCompare(b.name, 'fr')),
+      .sort((a, b) => a.name.localeCompare(b.name, intlLocale())),
   );
 
   const docs = $derived.by(() => {
@@ -63,8 +64,11 @@
       found: (a, b) => (s.unlocked[a] ?? 0) - (s.unlocked[b] ?? 0),
       date: (a, b) => dateKey(c.documents[a]!.date).localeCompare(dateKey(c.documents[b]!.date)),
       kind: (a, b) =>
-        KIND_LABELS[c.documents[a]!.kind].localeCompare(KIND_LABELS[c.documents[b]!.kind], 'fr'),
-      title: (a, b) => c.documents[a]!.title.localeCompare(c.documents[b]!.title, 'fr'),
+        KIND_LABELS[c.documents[a]!.kind].localeCompare(
+          KIND_LABELS[c.documents[b]!.kind],
+          intlLocale(),
+        ),
+      title: (a, b) => c.documents[a]!.title.localeCompare(c.documents[b]!.title, intlLocale()),
     };
     return list.sort((a, b) => cmp[sort](a, b) || (a < b ? -1 : 1));
   });

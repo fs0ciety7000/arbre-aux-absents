@@ -33,19 +33,17 @@
 
   const backups = $derived(app.saves.filter((s) => s.slot === 'auto' && s.caseId !== null));
   const rows = $derived<Row[]>([
-    ...MANUAL.map((slot) => ({
-      key: slot,
-      slot,
-      caseId: null,
-      title: m.slotName(slot),
-      save: app.saves.find((s) => s.slot === slot),
-    })),
+    ...MANUAL.map((slot) => {
+      const save = app.saves.find((s) => s.slot === slot);
+      // Emplacement manuel : son affaire vient du résumé (association par id, jamais par titre).
+      return { key: slot, slot, caseId: save?.caseId ?? null, title: m.slotName(slot), save };
+    }),
     ...(backups.length > 0
       ? backups.map((s) => ({
           key: `auto:${s.caseId}`,
           slot: 'auto' as const,
           caseId: s.caseId,
-          title: m.backupName(s.caseTitle),
+          title: m.backupName(app.caseTitleOf(s)),
           save: s,
         }))
       : [
@@ -97,10 +95,12 @@
     else if (res.error) importError = res.error;
   }
 
-  const slotOptions = MANUAL.map((s) => ({
-    value: s,
-    label: m.slotName(s),
-  }));
+  const slotOptions = $derived(MANUAL.map((s) => ({ value: s, label: m.slotName(s) })));
+
+  // Titres des affaires dans la langue courante (catalogue, petit, en arrière-plan).
+  $effect(() => {
+    if (app.saves.length > 0) void app.ensureCatalog();
+  });
 </script>
 
 <ScreenFrame title={m.title} kicker={m.kicker} onback={() => app.goto('title')}>
@@ -112,7 +112,7 @@
           <Card
             variant="index"
             title={row.title}
-            kicker={s ? s.caseTitle : undefined}
+            kicker={s ? app.caseTitleOf(s) : undefined}
             deal={i}
             tilt={i % 2 ? 0.4 : -0.5}
           >

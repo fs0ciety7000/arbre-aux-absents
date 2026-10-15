@@ -1,7 +1,17 @@
 <script lang="ts">
-  import type { HintSettings, Settings } from '@arbre/contract';
+  import type { HintSettings, LanguageSetting, Settings } from '@arbre/contract';
   import { hintPreset, LONG_PRESS_MS, TEXT_SCALES } from '@arbre/contract';
-  import { Button, KeyHint, Select, Slider, Tabs, Toggle, pushToast } from '@arbre/ui';
+  import {
+    Button,
+    KeyHint,
+    LANGUAGE_NAMES,
+    LanguageSwitch,
+    Select,
+    Slider,
+    Tabs,
+    Toggle,
+    pushToast,
+  } from '@arbre/ui';
   import { announcer } from '../lib/game/announcer.svelte';
   import { getApp } from '../lib/game/context';
   import { input } from '../input/device.svelte';
@@ -16,7 +26,7 @@
   const s = $derived(app.settings);
   let tab = $state('game');
 
-  const tabs = Object.entries(m.tabs).map(([id, label]) => ({ id, label }));
+  const tabs = $derived(Object.entries(m.tabs).map(([id, label]) => ({ id, label })));
   const set = (patch: Partial<Settings>) => app.updateSettings(patch);
   const setHint = (key: keyof Omit<HintSettings, 'preset'>, v: boolean) =>
     set({ hints: { ...s.hints, [key]: v, preset: 'custom' } });
@@ -30,10 +40,27 @@
     'progressiveHints',
   ] as const;
 
-  const presetOptions = [
+  const presetOptions = $derived([
     ...[0, 1, 2, 3].map((p) => ({ value: String(p), label: messages.hintPresets[String(p)]! })),
     { value: 'custom', label: messages.hintPresets.custom!, disabled: true },
-  ];
+  ]);
+
+  /** Les pièces restent dans la langue source (traduction pas encore compilée). */
+  const contentBehind = $derived(
+    app.game
+      ? (app.game.content.locale ?? 'fr') !== app.lang
+      : app.cases.length > 0 && app.contentLocale !== app.lang,
+  );
+
+  // ── Langue (DESIGN §9.35) : réglette = langue résolue ; « système » dans le Select. ──
+  const languageOptions = $derived([
+    {
+      value: 'system',
+      label: m.languageSystemDetail(LANGUAGE_NAMES[app.resolveLanguage('system')].name),
+    },
+    { value: 'fr', label: LANGUAGE_NAMES.fr.name },
+    { value: 'en', label: LANGUAGE_NAMES.en.name },
+  ]);
 
   // ── Remappage ──
   let capturing = $state<CommandId | null>(null);
@@ -50,7 +77,7 @@
       const other = keymap.rebind(id, combos[0]!);
       const text = other
         ? m.keyConflict(messages.commands[other] ?? other)
-        : `${messages.commands[id]} : ${comboLabel(combos[0]!)}`;
+        : m.keyBound(messages.commands[id] ?? id, comboLabel(combos[0]!));
       announcer.say(text);
       if (other) pushToast({ tone: 'info', title: text });
     };
@@ -282,12 +309,22 @@
             />
           </div>
         {:else if id === 'language'}
+          <LanguageSwitch
+            value={app.lang}
+            label={m.language}
+            labelVisible
+            onchange={(loc) => void app.setLanguage(loc)}
+          />
           <Select
             label={m.language}
-            options={[{ value: 'fr', label: m.languageFr }]}
-            value="fr"
-            hint={m.languageNote}
+            options={languageOptions}
+            value={app.languageSetting}
+            hint={m.languageHint}
+            onchange={(e) => void app.setLanguage(e.currentTarget.value as LanguageSetting)}
           />
+          {#if contentBehind}
+            <p class="muted" role="status">{m.languageContentFallback}</p>
+          {/if}
         {:else if id === 'data'}
           <p class="muted">{app.storageWarning ?? m.storageNote}</p>
           {#if app.screen !== 'desk'}

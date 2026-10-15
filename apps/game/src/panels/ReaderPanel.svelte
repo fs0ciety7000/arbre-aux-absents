@@ -29,6 +29,7 @@
   import { carry, DRAG_MIME, encodeCarry, type CarryItem } from './lib/carry.svelte';
   import {
     containerAt,
+    inLanguage,
     inlineText,
     leadIllustration,
     passageText,
@@ -42,7 +43,8 @@
   import DocumentBody from './doc/DocumentBody.svelte';
   import Figure from './doc/Figure.svelte';
   import KeywordBubble, { type BubbleItem } from './doc/KeywordBubble.svelte';
-  import { HL_LABELS, KIND_LABELS, pm } from './messages';
+  import { HL_LABELS, KIND_LABELS, messages, pm } from './messages';
+  import { formatNumber } from '../lib/game/format';
 
   const game = getGame();
 
@@ -58,7 +60,7 @@
   let mode = $state<ReadMode>(game.settings.transcriptByDefault ? 'transcript' : 'original');
   let face = $state<'front' | 'back'>('front');
   let zoom = $state(1);
-  const zoomText = $derived(`×${zoom.toLocaleString('fr-FR')}`);
+  const zoomText = $derived(`×${formatNumber(zoom)}`);
   /** Largeur de la barre d'outils (ResizeObserver de Svelte) → mode compact sous 40 rem. */
   let toolbarWidth = $state(0);
   const compact = $derived(toolbarWidth > 0 && toolbarWidth < 40 * rootFontSize());
@@ -115,9 +117,15 @@
   const only = $derived(
     !flippable || mode === 'transcript' ? null : face === 'front' ? faces.front : faces.back,
   );
-  const highlights = $derived(id ? rangesByPath(game.state.notebook.highlights, id) : new Map());
+  /** Langue du texte affiché : les surlignages d'une autre langue restent gardés, cachés (D5). */
+  const textLang = $derived(game.content.locale ?? 'fr');
+  const highlights = $derived(
+    id ? rangesByPath(game.state.notebook.highlights, id, textLang) : new Map(),
+  );
   const myHighlights = $derived(
-    game.state.notebook.highlights.map((h, index) => ({ ...h, index })).filter((h) => h.doc === id),
+    game.state.notebook.highlights
+      .map((h, index) => ({ ...h, index }))
+      .filter((h) => h.doc === id && inLanguage(h, textLang)),
   );
   const pinned = $derived(
     !!id && game.state.notebook.pins.some((p) => p.kind === 'document' && p.id === id),
@@ -162,7 +170,7 @@
     onkeyworddrag: undefined,
   });
 
-  const figure = (asset: string) => illustration(game.content.id, asset);
+  const figure = (asset: string) => illustration(game.content, asset);
 
   function openBubble(kw: KeywordId, label: string, el: HTMLElement) {
     if (!stage) return;
@@ -280,7 +288,9 @@
       status = pm.reader.highlightNone;
       return;
     }
-    game.dispatch({ type: 'highlight', h: { doc: id, ...p, color } });
+    // Étiqueté avec la langue du texte (absent = français, comme les sauvegardes d'avant l'i18n).
+    const lang = textLang === 'fr' ? {} : { lang: textLang };
+    game.dispatch({ type: 'highlight', h: { doc: id, ...p, color, ...lang } });
     window.getSelection()?.removeAllRanges();
     status = pm.reader.highlightDone;
   }
@@ -526,7 +536,7 @@
               <button
                 type="button"
                 class="swatch"
-                aria-label="{pm.reader.highlight} : {HL_LABELS[c - 1]}"
+                aria-label={messages.labelled(pm.reader.highlight, HL_LABELS[c - 1] ?? '')}
                 onpointerdown={(e) => e.preventDefault()}
                 onclick={() => highlight(c)}
               >
@@ -562,7 +572,7 @@
         onpointerleave={() => (lens = null)}
       >
         <div class="meta">
-          {#if doc.author}<span>{pm.reader.author} : {doc.author}</span>{/if}
+          {#if doc.author}<span>{messages.labelled(pm.reader.author, doc.author)}</span>{/if}
           {#if place}
             <Button
               variant="ghost"
@@ -602,7 +612,7 @@
                   <DocumentBody blocks={doc.body} {opts} {highlights} {figure} {only} />
                 </div>
                 {#if doc.archive}
-                  <p class="doc-fonds">{pm.reader.archive} : {doc.archive}</p>
+                  <p class="doc-fonds">{messages.labelled(pm.reader.archive, doc.archive)}</p>
                 {/if}
               </div>
               {#if look.fastener === 'clip'}

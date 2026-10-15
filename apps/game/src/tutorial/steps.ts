@@ -10,7 +10,7 @@
  *   visible gagne ; aucun : note posée en bas de l'écran).
  */
 import type { CompiledCase, SaveState, SlotGuess, SlotId } from '@arbre/contract';
-import { isComplete, normalize, reportQuestions } from '@arbre/engine';
+import { isComplete, reportQuestions } from '@arbre/engine';
 import type { Device } from '@arbre/ui';
 import type { DeskUi, PanelId } from '../lib/game/types';
 import { messages } from '../messages.fr';
@@ -120,11 +120,11 @@ function claimTouched(c: TutorialContext): boolean {
 }
 
 /**
- * Pièce d'audition : déclencheur générique lu dans les données (procès-verbal = pièce de type
- * `report` dont le titre parle d'audition), sans id d'affaire.
+ * Pièce d'audition : déclencheur générique lu dans les données (`hearing: true` du frontmatter,
+ * structurel, identique dans toutes les langues), sans id d'affaire ni lecture du titre.
  */
-export function isHearing(doc: { kind: string; title: string } | undefined): boolean {
-  return doc?.kind === 'report' && /\baudition\b/.test(normalize(doc.title));
+export function isHearing(doc: { hearing?: boolean } | undefined): boolean {
+  return doc?.hearing === true;
 }
 
 /** Une nouveauté s'applique-t-elle à cette affaire (mécanique présente dans les données) ? */
@@ -148,7 +148,8 @@ export function requiredSteps(content: CompiledCase): TutorialStepId[] {
 const slotSel = (id: SlotId) => `[data-tree-view] [data-slot="${id}"]`;
 const tabSel = (p: PanelId) => [`#desk-rail-tab-${p}`, `#desk-side-tab-${p}`, `#desk-bar-tab-${p}`];
 
-const t = messages.tutorial.steps;
+/** Textes des notes, dans la langue courante (lus à chaque affichage, jamais capturés). */
+const t = () => messages.tutorial.steps;
 
 export const STEPS: readonly TutorialStep[] = [
   {
@@ -160,28 +161,28 @@ export const STEPS: readonly TutorialStep[] = [
       DESK_NEWS.some((id) => !c.seen(id) && newsApplies(id, c.content)),
     done: (c) => readCount(c) > 0,
     anchors: () => ['[data-tour="archives-list"] > li:first-child', ...tabSel('archives')],
-    text: () => t.returning(),
+    text: () => t().returning(),
   },
   {
     id: 'welcome',
     when: () => true,
     done: (c) => readCount(c) > 0,
     anchors: () => ['[data-tour="archives-list"] > li:first-child', ...tabSel('archives')],
-    text: (_c, d) => t.welcome(d),
+    text: (_c, d) => t().welcome(d),
   },
   {
     id: 'reader',
     when: (c) => c.ui.openDocument !== null && shown(c, 'reader'),
     done: (c) => searched(c),
     anchors: () => ['[data-tour="reader-text"] .kw', '#reader-title'],
-    text: (_c, d) => t.reader(d),
+    text: (_c, d) => t().reader(d),
   },
   {
     id: 'catalogue',
     when: (c) => c.seen('reader') || readCount(c) >= 2,
     done: (c) => searched(c),
     anchors: () => ['[data-tour="catalogue-query"]', ...tabSel('catalogue')],
-    text: () => t.catalogue(),
+    text: () => t().catalogue(),
   },
   {
     id: 'tree',
@@ -196,7 +197,7 @@ export const STEPS: readonly TutorialStep[] = [
         ...tabSel('tree'),
       ];
     },
-    text: (_c, d) => t.tree(d),
+    text: (_c, d) => t().tree(d),
   },
   {
     id: 'faces',
@@ -206,7 +207,7 @@ export const STEPS: readonly TutorialStep[] = [
         ([id, g]) => g.portrait !== null && g.portrait !== c.base.tree[id]?.portrait,
       ),
     anchors: () => ['[data-tour="reader-faces"] li:first-child', '[data-tour="reader-faces"]'],
-    text: (_c, d) => t.faces(d),
+    text: (_c, d) => t().faces(d),
   },
   {
     id: 'groups',
@@ -219,7 +220,7 @@ export const STEPS: readonly TutorialStep[] = [
     text: (c) => {
       const id = completeOpen(c)[0];
       const g = id ? c.content.groups.find((x) => x.slots.includes(id)) : undefined;
-      return t.groups(g?.slots.length ?? 3);
+      return t().groups(g?.slots.length ?? 3);
     },
   },
   {
@@ -230,14 +231,14 @@ export const STEPS: readonly TutorialStep[] = [
       const id = newlyLocked(c)[0];
       return [...(id ? [slotSel(id)] : []), ...tabSel('tree')];
     },
-    text: () => t.established(),
+    text: () => t().established(),
   },
   {
     id: 'notebook',
     when: (c) => c.seen('catalogue') && readCount(c) >= 3,
     done: (c) => shown(c, 'notebook'),
     anchors: () => tabSel('notebook'),
-    text: () => t.notebook(),
+    text: () => t().notebook(),
   },
   {
     id: 'map',
@@ -246,14 +247,14 @@ export const STEPS: readonly TutorialStep[] = [
       Object.keys(c.state.read).some((id) => c.content.documents[id]?.place !== undefined),
     done: (c) => shown(c, 'map'),
     anchors: () => tabSel('map'),
-    text: () => t.map(),
+    text: () => t().map(),
   },
   {
     id: 'help',
     when: (c) => c.seen('map') && c.seen('tree'),
     done: () => false,
     anchors: () => ['[data-tour="help"]', ...tabSel('help')],
-    text: () => t.help(),
+    text: () => t().help(),
   },
   {
     id: 'claim',
@@ -263,7 +264,7 @@ export const STEPS: readonly TutorialStep[] = [
       const id = openClaims(c)[0];
       return [...(id ? [slotSel(id)] : []), ...tabSel('tree')];
     },
-    text: () => t.claim(),
+    text: () => t().claim(),
   },
   {
     id: 'hearing',
@@ -273,7 +274,7 @@ export const STEPS: readonly TutorialStep[] = [
     },
     done: () => false,
     anchors: () => ['#reader-title'],
-    text: () => t.hearing(),
+    text: () => t().hearing(),
   },
   {
     id: 'decision',
@@ -281,7 +282,7 @@ export const STEPS: readonly TutorialStep[] = [
     when: (c) => reportQuestions(c.state, c.content).some((q) => q.kind === 'choice'),
     done: () => false,
     anchors: () => ['[data-report-choice]', '#report-title'],
-    text: () => t.decision(),
+    text: () => t().decision(),
   },
 ];
 

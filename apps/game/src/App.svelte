@@ -1,5 +1,13 @@
 <script lang="ts">
-  import { ArtDefs, SkipLink, ToastRegion, paperIn, screenIn } from '@arbre/ui';
+  import {
+    ArtDefs,
+    SkipLink,
+    ToastRegion,
+    UI_STRINGS,
+    paperIn,
+    screenIn,
+    setUiStrings,
+  } from '@arbre/ui';
   import { onMount, type Component } from 'svelte';
   import { progress } from '@arbre/engine';
   import { audio } from './audio/engine';
@@ -11,6 +19,7 @@
   import { setApp } from './lib/game/context';
   import { screenLeave } from './lib/game/screen-motion';
   import { viewport } from './lib/game/viewport.svelte';
+  import { uiLang } from './i18n/index.svelte';
   import { messages } from './messages.fr';
   import Achievements from './screens/Achievements.svelte';
   import Bonus from './screens/Bonus.svelte';
@@ -26,6 +35,8 @@
 
   const app = new AppController();
   setApp(app);
+  // Textes des primitives @arbre/ui dans la langue de l'interface (relu à chaque accès).
+  setUiStrings(() => UI_STRINGS[uiLang()]);
 
   // Écrans qui lisent l'affaire : elle est chargée à leur ouverture (module à part).
   const needsContent = $derived(CONTENT_SCREENS.includes(app.screen));

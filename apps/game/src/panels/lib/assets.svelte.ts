@@ -4,9 +4,13 @@
  * Les accesseurs sont réactifs : `undefined` pendant le chargement, puis la chaîne SVG,
  * ou `null` si l'asset est introuvable ou n'a pas pu être chargé.
  */
-import type { CompiledCase, PortraitId } from '@arbre/contract';
+import type { CompiledCase, Locale, PortraitId } from '@arbre/contract';
+import { DEFAULT_LOCALE } from '@arbre/contract';
 import { SvelteMap } from 'svelte/reactivity';
-import { loadContent, PORTRAIT_KEY } from '../../lib/game/cases';
+import { loadAsset, PORTRAIT_KEY } from '../../lib/game/cases';
+
+/** Affaire affichée : son id et la langue de son texte (surcharges d'illustrations). */
+type CaseRef = Pick<CompiledCase, 'id' | 'locale'>;
 
 type Entry = { svg: string } | { svg: null };
 
@@ -14,18 +18,10 @@ const cache = new SvelteMap<string, Entry>();
 // eslint-disable-next-line svelte/prefer-svelte-reactivity -- non réactif par conception
 const started = new Set<string>();
 
-async function fetchSvg(caseId: string, key: string): Promise<string | null> {
-  const { assets } = await loadContent();
-  const byCase = Object.hasOwn(assets, caseId) ? assets[caseId] : undefined;
-  const src = byCase && Object.hasOwn(byCase, key) ? byCase[key] : undefined;
-  if (src === undefined) return null;
-  return typeof src === 'string' ? src : await src();
-}
-
-function load(id: string, caseId: string, key: string): void {
+function load(id: string, locale: Locale, caseId: string, key: string): void {
   if (started.has(id)) return;
   started.add(id);
-  fetchSvg(caseId, key).then(
+  loadAsset(locale, caseId, key).then(
     (svg) => cache.set(id, { svg }),
     (err: unknown) => {
       console.warn('[assets]', key, err);
@@ -34,20 +30,21 @@ function load(id: string, caseId: string, key: string): void {
   );
 }
 
-function read(caseId: string, key: string): string | null | undefined {
-  const id = `${caseId}\u0000${key}`;
+function read(c: CaseRef, key: string): string | null | undefined {
+  const locale = c.locale ?? DEFAULT_LOCALE;
+  const id = `${locale}\u0000${c.id}\u0000${key}`;
   const hit = cache.get(id);
   if (hit) return hit.svg;
   // Rendu serveur (tests) : rien à charger.
   if (typeof window === 'undefined') return undefined;
   // Pas d'écriture d'état pendant un rendu : le chargement part au prochain micro-tâche.
-  queueMicrotask(() => load(id, caseId, key));
+  queueMicrotask(() => load(id, locale, c.id, key));
   return undefined;
 }
 
-/** SVG d'une illustration (`illustrations/<nom>.svg`) d'une affaire. */
-export function illustration(caseId: string, asset: string): string | null | undefined {
-  return read(caseId, asset);
+/** SVG d'une illustration (`illustrations/<nom>.svg`) d'une affaire, dans la langue de son texte. */
+export function illustration(c: CaseRef, asset: string): string | null | undefined {
+  return read(c, asset);
 }
 
 /** SVG d'un portrait (en ligne dans l'affaire sans le plugin, sinon chargé à la demande). */
@@ -55,5 +52,5 @@ export function portraitSvg(c: CompiledCase, id: PortraitId): string | null | un
   const p = Object.hasOwn(c.portraits, id) ? c.portraits[id] : undefined;
   if (!p) return null;
   if (p.svg) return p.svg;
-  return read(c.id, PORTRAIT_KEY + id);
+  return read(c, PORTRAIT_KEY + id);
 }

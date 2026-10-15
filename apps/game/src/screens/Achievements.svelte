@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Badge, Icon } from '@arbre/ui';
+  import type { CaseInfo } from '../lib/game/case-folders';
   import { getApp } from '../lib/game/context';
   import { formatDay } from '../lib/game/format';
   import { messages } from '../messages.fr';
@@ -12,7 +13,7 @@
   const app = getApp();
   const m = messages.achievements;
   const contents = $derived.by(() => {
-    const all = app.cases.map((c) => c.content);
+    const all: CaseInfo[] = app.cases.map((c) => c.content);
     const g = app.game?.content;
     if (g && !all.some((c) => c.id === g.id)) all.unshift(g);
     return all;

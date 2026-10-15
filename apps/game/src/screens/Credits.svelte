@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { CaseInfo } from '../lib/game/case-folders';
   import { getApp } from '../lib/game/context';
   import { messages } from '../messages.fr';
   import CardorMonogram from './brand/CardorMonogram.svelte';
@@ -11,7 +12,7 @@
   const m = messages.creditsScreen;
   /** Crédits de chaque affaire (ordre des affaires), hors affaire de test. */
   const credited = $derived.by(() => {
-    const all = app.cases.filter((c) => !c.fixture).map((c) => c.content);
+    const all: CaseInfo[] = app.cases.filter((c) => !c.fixture).map((c) => c.content);
     const g = app.game?.content;
     if (g && !all.some((c) => c.id === g.id)) all.unshift(g);
     return all.filter((c) => (c.meta.credits?.length ?? 0) > 0);
@@ -36,7 +37,9 @@
     </ul>
     {#each credited as content (content.id)}
       <section aria-labelledby="case-credits-{content.id}" data-case={content.id}>
-        <h2 id="case-credits-{content.id}">{m.caseCredits} : {content.meta.title}</h2>
+        <h2 id="case-credits-{content.id}">
+          {messages.labelled(m.caseCredits, content.meta.title)}
+        </h2>
         <ul class="lines">
           {#each content.meta.credits ?? [] as line, i (i)}<li>{line}</li>{/each}
         </ul>
