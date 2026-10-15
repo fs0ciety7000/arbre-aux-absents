@@ -222,7 +222,7 @@ Aucun secret dans le repo ; `.env.example` en est le miroir.
 |---|---|---|
 | `ARBRE_EDITION` | `content:build` | `full` (défaut) ou `demo` ; équivaut à `-- --edition` |
 | `VITE_TARGET` | build du jeu | `web` (défaut) ou `tauri` (posé par `apps/game/.env.tauri`) |
-| `VITE_REPORT_API` | builds du jeu et du site | `https://arbre-api.cardormedia.com` (public). Absente : repli « Copier le rapport » |
+| `VITE_REPORT_API` | builds du jeu et du site | `https://arbre-api.cardormedia.com` (public). Absente : même valeur par défaut ; service injoignable : repli « Copier le rapport » et forum itch.io |
 
 Les variables d'exécution du service de signalement (dont `GITHUB_TOKEN` et
 `GITHUB_WEBHOOK_SECRET`) vivent dans Coolify uniquement : §5.
