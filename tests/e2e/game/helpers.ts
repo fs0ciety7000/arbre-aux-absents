@@ -78,8 +78,20 @@ export async function gotoTitle(page: Page): Promise<void> {
   const skip = page.getByRole('button', { name: 'Passer' }).first();
   const newGame = page.getByRole('button', { name: 'Nouvelle partie' });
   await expect(skip.or(newGame).first()).toBeVisible();
-  if (await skip.isVisible()) await skip.click();
+  await skipLaunch(page);
   await expect(newGame).toBeVisible();
+}
+
+/**
+ * Passe le logo du studio (E01) s'il est encore affiché. Le logo part seul (2 s au plus) : un clic
+ * Playwright sur « Passer » vu visible un instant plus tôt peut viser un écran déjà sorti (caché,
+ * puis détaché) et attendre sans fin. Le test et le clic se font donc d'un seul tenant dans la
+ * page ; sinon le logo s'escamote de lui-même.
+ */
+export async function skipLaunch(page: Page): Promise<void> {
+  await page.evaluate(() =>
+    document.querySelector<HTMLButtonElement>('main.launch .stage')?.click(),
+  );
 }
 
 /**

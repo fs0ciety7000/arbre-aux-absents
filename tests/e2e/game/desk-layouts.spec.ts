@@ -5,7 +5,16 @@
  */
 import AxeBuilder from '@axe-core/playwright';
 import type { Locator, Page } from '@playwright/test';
-import { desk, expect, openDocument, reader, showPanel, startNewGame, test } from './helpers';
+import {
+  desk,
+  expect,
+  openDocument,
+  reader,
+  showPanel,
+  skipLaunch,
+  startNewGame,
+  test,
+} from './helpers';
 
 const DOC = 'Note du notaire';
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
@@ -30,16 +39,35 @@ async function reloadAndContinue(page: Page): Promise<void> {
   const skip = page.getByRole('button', { name: 'Passer', exact: true }).first();
   const cont = page.getByRole('button', { name: /^Continuer/ });
   await expect(skip.or(cont).first()).toBeVisible();
-  if (await skip.isVisible()) await skip.click({ timeout: 5_000 }).catch(() => undefined);
+  await skipLaunch(page);
   await cont.click();
   await expect(desk(page)).toBeVisible();
 }
 
-/** Boîte d'un élément une fois son entrée animée terminée. */
+/**
+ * Boîte d'un élément une fois immobile : plus aucune animation en cours et de durée finie sur lui,
+ * ses descendants ni ses ancêtres (entrée de la scène, `screenIn`, après un rechargement). Une
+ * transition Svelte démarre par une animation d'attente puis crée la vraie à la frame suivante :
+ * on reboucle jusqu'à ce qu'il n'en reste aucune.
+ */
 async function settled(el: Locator) {
-  await el.evaluate((node) =>
-    Promise.all(node.getAnimations({ subtree: true }).map((a) => a.finished.catch(() => null))),
-  );
+  await el.evaluate(async (node) => {
+    const moving = () =>
+      document.getAnimations().filter((a) => {
+        const target = (a.effect as KeyframeEffect | null)?.target;
+        const finite = a.effect?.getComputedTiming().endTime !== Infinity;
+        return (
+          a.playState === 'running' &&
+          finite &&
+          target &&
+          (target.contains(node) || node.contains(target))
+        );
+      });
+    for (let list = moving(); list.length > 0; list = moving()) {
+      await Promise.all(list.map((a) => a.finished.catch(() => null)));
+      await new Promise(requestAnimationFrame);
+    }
+  });
   return (await el.boundingBox())!;
 }
 
@@ -146,7 +174,7 @@ test('fiche flottante : déplacée à la souris et au clavier, position mémoris
 
   await reloadAndContinue(page);
   await expect(layoutButton(page, 'Arbre')).toHaveAttribute('aria-pressed', 'true');
-  const box4 = (await card(page).boundingBox())!;
+  const box4 = await settled(card(page));
   expect(Math.abs(box4.x - box3.x)).toBeLessThanOrEqual(2);
   expect(Math.abs(box4.y - box3.y)).toBeLessThanOrEqual(2);
 });
@@ -209,7 +237,7 @@ for (const viewport of [
       await expect(layoutButton(page, name)).toHaveAttribute('aria-pressed', 'true');
       expect(await overflow(page), name).toBeLessThanOrEqual(0);
     }
-    const c = (await card(page).boundingBox())!;
+    const c = await settled(card(page));
     expect(c.x + c.width).toBeLessThanOrEqual(viewport.width);
   });
 }
