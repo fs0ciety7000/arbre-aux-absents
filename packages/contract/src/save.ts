@@ -12,6 +12,8 @@ import type {
   SlotId,
 } from './ids';
 import { IdSchema, MsSchema } from './ids';
+import type { Locale } from './i18n';
+import { LocaleSchema } from './i18n';
 
 export const SAVE_SLOT_IDS = ['auto', 'slot-1', 'slot-2', 'slot-3'] as const;
 export type SaveSlotId = (typeof SAVE_SLOT_IDS)[number];
@@ -51,6 +53,11 @@ export interface Highlight {
   start: number;
   end: number;
   color: HighlightColor;
+  /**
+   * Langue du texte surligné (les positions en dépendent). Absent = 'fr'. Un surlignage n'est
+   * affiché que dans sa langue et conservé dans les autres, jamais retiré (D5).
+   */
+  lang?: Locale;
 }
 
 export interface Note {
@@ -103,6 +110,12 @@ export interface SaveState {
 
 export interface SaveSlotSummary {
   slot: SaveSlotId;
+  /**
+   * Affaire de la sauvegarde : l'UI associe les sauvegardes aux affaires par id, jamais par
+   * `caseTitle` (qui dépend de la langue). Absent ou null : inconnu (résumé déjà écrit avant
+   * l'i18n, ou emplacement manuel pas encore renseigné par la plateforme).
+   */
+  caseId?: CaseId | null;
   caseTitle: string;
   updatedAt: number;
   elapsedMs: number;
@@ -134,6 +147,7 @@ export const HighlightSchema = z
     start: z.number().int().nonnegative(),
     end: z.number().int().nonnegative(),
     color: z.literal([1, 2, 3, 4, 5]),
+    lang: LocaleSchema.optional(),
   })
   .refine((h) => h.start < h.end, { error: 'start doit être < end', path: ['end'] });
 

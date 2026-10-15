@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "keywords": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "terms": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "\\S"
+            }
+          }
+        },
+        "required": [
+          "label",
+          "terms"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "secrets": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "\\S"
+      }
+    },
+    "report": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "options": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            },
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "pattern": "\\S"
+                },
+                "unavailableReason": {
+                  "type": "string",
+                  "maxLength": 140,
+                  "pattern": "\\S"
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "prompt",
+          "options"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "keywords",
+    "secrets"
+  ],
+  "additionalProperties": false
+}

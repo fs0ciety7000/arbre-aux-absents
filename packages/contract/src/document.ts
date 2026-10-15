@@ -32,6 +32,8 @@ export interface DocumentFrontmatter {
   illustration?: { file: string; alt: string };
   /** Non requis par le solveur. */
   optional?: boolean;
+  /** Pièce d'audition (déclencheur du tutoriel) : drapeau structurel, posé en FR seulement. */
+  hearing?: boolean;
 }
 
 export type Inline =
@@ -76,6 +78,7 @@ export const DocumentFrontmatterSchema = z.strictObject({
     })
     .optional(),
   optional: z.boolean().optional(),
+  hearing: z.boolean().optional(),
 });
 
 /** AST typé produit par le parseur Markdown (contrôle des sorties du parseur, tests). */

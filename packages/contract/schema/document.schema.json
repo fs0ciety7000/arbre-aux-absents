@@ -82,6 +82,9 @@
     },
     "optional": {
       "type": "boolean"
+    },
+    "hearing": {
+      "type": "boolean"
     }
   },
   "required": [

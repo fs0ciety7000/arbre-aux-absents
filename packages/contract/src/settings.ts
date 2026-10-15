@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import type { AchievementId, CaseId, EndingId } from './ids';
 import { IdSchema, MsSchema } from './ids';
+import type { LanguageSetting } from './i18n';
+import { LanguageSettingSchema } from './i18n';
+import type { ReportRef } from './report-ref';
+import { REPORT_REF_LIMITS, ReportRefSchema } from './report-ref';
 
 export const TEXT_SCALES = [0.875, 1, 1.25, 1.5, 2] as const;
 export type TextScale = (typeof TEXT_SCALES)[number];
@@ -49,6 +53,8 @@ export interface Settings {
   longPressMs: (typeof LONG_PRESS_MS)[number];
   confirmClear: boolean;
   inputGlyphs: 'auto' | 'keyboard' | 'gamepad';
+  /** Facultatif : anciens profils valides ; absent = 'system'. */
+  language?: LanguageSetting;
 }
 
 /** Contenu des préréglages d'aide (§10). */
@@ -87,6 +93,8 @@ export interface Profile {
   completed: Record<CaseId, CaseCompletion>;
   /** Absent : tutoriel jamais commencé (profils antérieurs compris). */
   tutorial?: TutorialProgress;
+  /** « Mes signalements » (≤ 20, les plus récents d'abord). Absent : aucun signalement. */
+  reports?: ReportRef[];
 }
 
 /** Réglages par défaut (docs/game/GAME_DESIGN.md §10, §16, §17). */
@@ -168,6 +176,7 @@ export const SettingsSchema = z.strictObject({
   longPressMs: z.literal(LONG_PRESS_MS),
   confirmClear: z.boolean(),
   inputGlyphs: z.enum(['auto', 'keyboard', 'gamepad']),
+  language: LanguageSettingSchema.optional(),
 });
 
 export const CaseCompletionSchema = z.strictObject({
@@ -186,4 +195,5 @@ export const ProfileSchema = z.strictObject({
   achievements: z.record(IdSchema, MsSchema),
   completed: z.record(IdSchema, CaseCompletionSchema),
   tutorial: TutorialProgressSchema.optional(),
+  reports: z.array(ReportRefSchema).max(REPORT_REF_LIMITS.max).optional(),
 });

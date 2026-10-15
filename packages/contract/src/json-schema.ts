@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CONTENT_FILE_SCHEMAS, PLAYER_DATA_SCHEMAS } from './content-files';
+import { CONTENT_FILE_SCHEMAS, I18N_FILE_SCHEMAS, PLAYER_DATA_SCHEMAS } from './content-files';
 
 export type JsonSchemaDocument = Record<string, unknown>;
 
@@ -8,7 +8,7 @@ export type JsonSchemaDocument = Record<string, unknown>;
  * éditeurs. Les raffinements (`refine`) ne sont pas représentables : `content:check` reste juge.
  */
 export function buildJsonSchemas(): Record<string, JsonSchemaDocument> {
-  const all = { ...CONTENT_FILE_SCHEMAS, ...PLAYER_DATA_SCHEMAS };
+  const all = { ...CONTENT_FILE_SCHEMAS, ...I18N_FILE_SCHEMAS, ...PLAYER_DATA_SCHEMAS };
   const out: Record<string, JsonSchemaDocument> = {};
   for (const [name, schema] of Object.entries(all)) {
     out[name] = z.toJSONSchema(schema, {

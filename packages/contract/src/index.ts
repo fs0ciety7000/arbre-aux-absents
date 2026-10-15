@@ -13,3 +13,6 @@ export * from './engine-api';
 export * from './platform';
 export * from './content-files';
 export * from './json-schema';
+export * from './i18n';
+export * from './report-ref';
+export * from './report';

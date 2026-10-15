@@ -185,6 +185,14 @@
         "keyboard",
         "gamepad"
       ]
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "system",
+        "fr",
+        "en"
+      ]
     }
   },
   "required": [

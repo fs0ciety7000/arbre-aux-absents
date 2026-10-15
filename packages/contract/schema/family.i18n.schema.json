@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "occupations": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "pattern": "\\S"
+      }
+    },
+    "portraits": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "alt": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "caption": {
+            "type": "string",
+            "pattern": "\\S"
+          }
+        },
+        "required": [
+          "alt"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "occupations",
+    "portraits"
+  ],
+  "additionalProperties": false
+}

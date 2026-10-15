@@ -2,6 +2,18 @@ import type { z } from 'zod';
 import { CaseMetaSchema } from './case';
 import { DocumentFrontmatterSchema } from './document';
 import { FamilySchema } from './family';
+import {
+  AchievementsTranslationSchema,
+  CaseMetaTranslationSchema,
+  DocumentFrontmatterTranslationSchema,
+  EndingFrontmatterTranslationSchema,
+  FamilyTranslationSchema,
+  HintsTranslationSchema,
+  LocalesConfigSchema,
+  ProgressionTranslationSchema,
+  TreeTranslationSchema,
+  WorldTranslationSchema,
+} from './i18n';
 import { AchievementsFileSchema, HintsFileSchema, ProgressionSchema } from './progression';
 import { ProfileSchema, SettingsSchema } from './settings';
 import { SaveStateSchema } from './save';
@@ -22,6 +34,24 @@ export const CONTENT_FILE_SCHEMAS = {
   document: DocumentFrontmatterSchema,
   map: WorldMapSchema,
   place: PlaceSchema,
+} as const satisfies Record<string, z.ZodType>;
+
+/**
+ * Traductions (ARCHITECTURE §3.6, §3.7 règle 12) : `content/locales.json`, calques
+ * `content/cases/<id>/locales/<loc>/*.json`, frontmatter des documents et fins traduits,
+ * `content/world/locales/<loc>.json`.
+ */
+export const I18N_FILE_SCHEMAS = {
+  locales: LocalesConfigSchema,
+  'case.i18n': CaseMetaTranslationSchema,
+  'family.i18n': FamilyTranslationSchema,
+  'tree.i18n': TreeTranslationSchema,
+  'progression.i18n': ProgressionTranslationSchema,
+  'hints.i18n': HintsTranslationSchema,
+  'achievements.i18n': AchievementsTranslationSchema,
+  'document.i18n': DocumentFrontmatterTranslationSchema,
+  'ending.i18n': EndingFrontmatterTranslationSchema,
+  'world.i18n': WorldTranslationSchema,
 } as const satisfies Record<string, z.ZodType>;
 
 /** Schémas des données joueur (sauvegarde, profil, réglages). */
