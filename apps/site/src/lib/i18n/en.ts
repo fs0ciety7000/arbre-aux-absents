@@ -36,6 +36,7 @@ export const en = {
       'credits/': 'Credits',
     },
     exploreMap: 'Explore the map',
+    report: 'Report',
   },
 
   footer: {

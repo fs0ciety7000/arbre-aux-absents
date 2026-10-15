@@ -14,9 +14,10 @@
   /** Textes de l'habillage (load du layout). */
   let { t }: { t: ChromeStrings } = $props();
 
-  // Pages de signalement (lot B4) : dans le pied de page seulement. À 64 rem, la navigation large
-  // occupe déjà toute la place (mesuré : ~760 px disponibles, ~770 px pris) ; un lien de plus
-  // déborderait. On y accède aussi depuis le jeu (Signaler, Mes signalements).
+  // « Signaler » (signaler/) : lien enveloppe + libellé court en fin de navigation. À 64 rem la
+  // navigation large occupe déjà presque toute la place : entre 64 et 80 rem, seule l'enveloppe
+  // reste visible (le libellé reste le nom accessible, et l'infobulle `title`). Dans le menu
+  // étroit, libellé complet. Tickets ouverts et problèmes connus : pied de page et pages liées.
   const links = ['le-monde/', 'artbook/', 'charte/', 'presse/', 'credits/'] as const;
 
   const lang = $derived(t.lang);
@@ -49,6 +50,17 @@
               >
             </li>
           {/each}
+          <li>
+            <a
+              class="report"
+              href={resolve(localPath(lang, 'signaler/'))}
+              title={t.header.report}
+              aria-current={current('signaler/') ? 'page' : undefined}
+              ><Icon name="envelope" size="1.1rem" /><span class="report-label"
+                >{t.header.report}</span
+              ></a
+            >
+          </li>
         </ul>
         <Button variant="primary" href={localHref(lang, 'le-monde/')} iconName="map"
           >{t.header.exploreMap}</Button
@@ -70,6 +82,14 @@
                 >
               </li>
             {/each}
+            <li>
+              <a
+                class="report"
+                href={resolve(localPath(lang, 'signaler/'))}
+                aria-current={current('signaler/') ? 'page' : undefined}
+                ><Icon name="envelope" size="1.1rem" /><span>{t.header.report}</span></a
+              >
+            </li>
           </ul>
           <Button variant="primary" block href={localHref(lang, 'le-monde/')} iconName="map"
             >{t.header.exploreMap}</Button
@@ -115,6 +135,7 @@
     gap: 0;
   }
   .tools {
+    position: relative;
     display: flex;
     align-items: center;
     gap: var(--space-4);
@@ -154,9 +175,39 @@
     text-decoration-thickness: 2px;
     text-underline-offset: 0.5em;
   }
+  .report {
+    gap: var(--space-2);
+  }
+  /* 64 à 80 rem : l'enveloppe seule (le libellé reste le nom accessible) et liens resserrés, pour
+     que la navigation tienne à 1024 px (mesuré : ~1030 px pris sinon, en anglais). */
+  @media (min-width: 64rem) and (max-width: 79.9375rem) {
+    .inner {
+      gap: var(--space-4);
+    }
+    .wide,
+    .tools {
+      gap: var(--space-3);
+    }
+    .wide ul {
+      gap: 0;
+    }
+    .wide a:not(:global(.btn)) {
+      padding-inline: var(--space-2);
+      font-size: var(--step--1);
+      white-space: nowrap;
+    }
+    .wide .report-label {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+  /* Le menu s'ancre au bord droit des outils (pas du bouton) : il reste dans l'écran à 360 px. */
   .narrow {
     display: none;
-    position: relative;
   }
   summary {
     display: inline-flex;

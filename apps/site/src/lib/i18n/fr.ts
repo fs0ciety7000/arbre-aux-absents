@@ -40,6 +40,8 @@ export const fr = {
       'credits/': 'Crédits',
     },
     exploreMap: 'Explorer la carte',
+    /** Lien court vers `signaler/` (en-tête). */
+    report: 'Signaler',
   },
 
   footer: {

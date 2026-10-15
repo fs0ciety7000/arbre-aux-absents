@@ -135,7 +135,7 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 - [x] Version 1.2.0 du jeu (anglais + signalement en jeu) envoyée sur itch.io par la CI.
 - [x] Liste publique des tickets ouverts : `GET /v1/tickets` (contrat `OpenTicket`, sans texte du
       joueur, titre seulement si `public`) et page `/tickets/` (FR/EN, sitemap, pied de page, liens
-      depuis signaler/suivi/problèmes connus).
+      depuis signaler/suivi/problèmes connus) ; lien « Signaler » dans l'en-tête du site.
 
 ## Backlog
 

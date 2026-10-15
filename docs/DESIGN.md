@@ -1659,7 +1659,12 @@ focalisé : aucune requête ni cookie YouTube avant le clic. Mention sous le cad
   size="s"` du statut (Reçu, Confirmé, En cours) incliné −4° / +3°, nommé « Statut : Reçu ». Au-dessus,
   le total en Oswald et une `<dl>` des comptes par statut. Feuille sous 34 rem **de conteneur** :
   numéro et tampon sur une ligne, sujet dessous. Pas de nouvelle primitive ni de nouveau token.
-- **En-tête du site** : `LanguageSwitch hrefs short` à droite de la navigation (§9.35).
+- **En-tête du site** : `LanguageSwitch hrefs short` à droite de la navigation (§9.35). Dernier
+  lien de la navigation : **« Signaler »** (`Icon envelope` + libellé court, vers `/signaler/`). Entre
+  64 et 80 rem, l'enveloppe seule (libellé gardé comme nom accessible, `title` en infobulle), liens
+  en `--step--1` avec `--space-2` de marge et écarts resserrés, pour tenir à 1024 px ; dans le menu
+  `<details>` étroit, libellé complet. Le menu s'ancre au bord droit des outils (dans l'écran à
+  360 px).
 
 ### 14.4 Pied de page
 
