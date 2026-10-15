@@ -107,6 +107,17 @@ export const enDesk = {
       listLabel: 'Candidates found',
       declared: 'Declared:',
       declaredSource: '(petition)',
+      portraitSearch: 'Search for a face',
+      portraitSearchHint: 'Description or document title',
+      showDescriptions: 'Show descriptions',
+      onlyOpenDoc: 'Only the open document',
+      count: (shown: number, total: number) =>
+        shown === total
+          ? `${total} face${total > 1 ? 's' : ''}`
+          : `${shown} of ${total} face${total > 1 ? 's' : ''}`,
+      noPortraitMatch: 'No face matches.',
+      clearFilters: 'Clear the filters',
+      preview: 'Preview',
     },
     archives: {
       title: 'Archives',

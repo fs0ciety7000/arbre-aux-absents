@@ -2,6 +2,7 @@
 	Boîte de dialogue modale (DESIGN.md §9.6) sur <dialog> + showModal() :
 	reste de la page inerte, Échap, retour du focus, nom et description accessibles.
 	Sous 600 px elle devient une feuille basse plein largeur (Sélecteur de candidat, fiches).
+	`size="xl"` : presque tout le Bureau, hauteur fixe (galeries longues : choix d'un portrait).
 	`surface="paper"` pour les cartes de révélation et les fiches papier.
 -->
 <script lang="ts">
@@ -14,7 +15,7 @@
     title: string;
     kicker?: string;
     description?: string;
-    size?: 's' | 'm' | 'l';
+    size?: 's' | 'm' | 'l' | 'xl';
     surface?: 'desk' | 'paper';
     /** Fermeture par clic sur le fond (déf. true). Échap ferme toujours. */
     dismissible?: boolean;
@@ -157,6 +158,15 @@
   }
   .l {
     --dialog-w: 48rem;
+  }
+  /* Presque tout le Bureau, hauteur fixe : le contenu filtré ne fait pas sauter la boîte. */
+  .xl {
+    --dialog-w: 90rem;
+    block-size: calc(100dvh - 2 * var(--gutter));
+    max-height: calc(100dvh - 2 * var(--gutter));
+  }
+  .xl .frame {
+    block-size: 100%;
   }
   .paper {
     background: var(--canvas);

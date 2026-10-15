@@ -107,6 +107,17 @@ export const frDesk = {
       listLabel: 'Candidats découverts',
       declared: 'Déclaré :',
       declaredSource: '(requête)',
+      portraitSearch: 'Chercher un visage',
+      portraitSearchHint: 'Description ou titre d’un document',
+      showDescriptions: 'Afficher les descriptions',
+      onlyOpenDoc: 'Seulement le document ouvert',
+      count: (shown: number, total: number) =>
+        shown === total
+          ? `${total} visage${total > 1 ? 's' : ''}`
+          : `${shown} visage${shown > 1 ? 's' : ''} sur ${total}`,
+      noPortraitMatch: 'Aucun visage ne correspond.',
+      clearFilters: 'Effacer les filtres',
+      preview: 'Aperçu',
     },
     archives: {
       title: 'Archives',

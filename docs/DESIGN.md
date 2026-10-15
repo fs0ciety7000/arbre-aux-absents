@@ -607,8 +607,8 @@ nouveau côte à côte, fiche ≤ `min(20rem, 48cqi)`.
 └─────────────────────────────────────────────────────┘   + env(safe-area-inset-bottom)
 ```
 
-Sélecteur de candidat : popover 320 px (desktop), feuille centrée 480 px (tablette), feuille
-basse plein écran (téléphone) → `Dialog mobile="fullscreen"` + `Combobox mode="inline"`.
+Sélecteur de candidat : prénom, nom, métier → `Dialog size="s" mobile="fullscreen"` +
+`Combobox mode="inline"` ; portrait → grande grille de visages (`Dialog size="xl"`, recette §13.13).
 
 v2 : la zone principale est un **sous-main** (`.desk-surface`, lumière de lampe en haut à droite,
 vignette, grain) ; chaque panneau principal (Arbre, Carte, Tableau) est une **chemise**
@@ -1151,7 +1151,7 @@ lus dans `UiStrings` (§4.4), jamais en dur.
 | 9.3 | `Tabs` | `items` · `value` · `label` · `variant: line\|bar\|rail\|folder` · `compact` · `activation` · snippet | **`folder`** (v2) : onglets de chemise kraft, actif monté et lié au carton, trait vermillon ; Oswald capitales ; `line` et `folder` passent en icônes seules quand ça déborde | Motif ARIA tabs complet |
 | 9.4 | `Panel` | `title` · `kicker` · `surface: desk\|paper\|kraft` · `enter: sheet\|settle\|false` · … | Sous-main surpiqué (desk), feuille (paper), **carton** (kraft) ; titre Fraunces `--step-2`, surtitre `.kicker` | `<section aria-labelledby>` |
 | 9.5 | `Card` | `variant: fiche\|document\|photo\|index` · `deal` · … | **`index`** : fiche bristol réglée ; `deal` = rang de distribution ; survol soulevé `--shadow-lifted` | Titre = lien/bouton |
-| 9.6 | `Dialog` | inchangée | se pose, sort escamotée ; surpiqûre ; surtitre Oswald ; titre `--step-3` ; au téléphone, `m-sheet` et `m-fullscreen` (pleine largeur) entrent et sortent en translation verticale seule, sans rotation ni échelle (jamais de défilement horizontal, même pendant l'animation) | `<dialog>` modal |
+| 9.6 | `Dialog` | `size: s\|m\|l\|xl` (`xl` : 90 rem au plus, hauteur fixe = fenêtre − 2 `--gutter`, pour les longues galeries) ; reste inchangée | se pose, sort escamotée ; surpiqûre ; surtitre Oswald ; titre `--step-3` ; au téléphone, `m-sheet` et `m-fullscreen` (pleine largeur) entrent et sortent en translation verticale seule, sans rotation ni échelle (jamais de défilement horizontal, même pendant l'animation) | `<dialog>` modal |
 | 9.7 | `TextField` | inchangée | trait d'encre au focus | |
 | 9.8–9.9 | `Select`, `Combobox` | inchangées | | |
 | 9.10 | `Toggle` | inchangée | curseur qui claque (`--ease-snap`) | `role="switch"` |
@@ -1812,6 +1812,43 @@ Jeu installé seulement (desktop, Android ; jamais sur le web). Composant du jeu
   `mv-rise` suit `prefers-reduced-motion`. Pas de nouveau token.
 
 ---
+
+### 13.13 Choix d'un portrait (Sélecteur P10, champ Portrait) — v2.7
+
+Retour de jeu : avec tous les portraits débloqués et leurs longues descriptions, la petite boîte
+à trois colonnes devenait ingérable. `PortraitPicker.svelte` dans `Dialog size="xl"
+mobile="fullscreen"` :
+
+- **Outils** en tête : `TextField type="search"` « Chercher un visage » (aide « Description ou
+  titre d'un document » ; mots sans accents ni casse, tous exigés, dans la description, les
+  titres des documents « vu dans » et le numéro), `Toggle` « Afficher les descriptions » (replié
+  par défaut, gardé pour la session), `Toggle` « Seulement le document ouvert » (titre en
+  description ; proposé seulement si le document ouvert a révélé un visage), compteur
+  `role="status"` « 12 visages sur 30 ». Aucun résultat : « Aucun visage ne correspond. » +
+  « Effacer les filtres ».
+- **Grille** `repeat(auto-fill, minmax(9rem, 1fr))` (11 rem descriptions affichées, à partir de la
+  tablette) : 6 colonnes environ à 1440 px, 2 au téléphone. **Tuile** = bouton `--surface-2`,
+  bord `--line-strong` (→ `--accent` au survol, liseré `--accent` doublé pour le choix actuel +
+  coche) : portrait 4:5 sur `--art-paper`, numéro en `--font-label` capitales (« Visage n° 3 »,
+  même numéro que la Galerie des visages), « vu dans : premier document (+n) » sur deux lignes au
+  plus (`--text-muted`, `--step--1`), « déjà utilisé dans n cases ».
+- **Description repliée, jamais perdue** : le texte complet est dans la tuile (`.visually-hidden`
+  quand replié), donc dans son nom accessible ; la liste complète des documents est sa
+  description (`aria-describedby`) ; `aria-pressed` marque le choix actuel.
+- **Aperçu** (≥ 64 rem) : colonne de 20 rem à droite, portrait en grand, numéro, description
+  complète en `--leading-read`, tous les documents ; suit la tuile survolée, sinon focalisée,
+  sinon le choix actuel. Aide visuelle seulement (`aria-hidden`, tout est déjà dans la tuile).
+- **Défilement** : à partir de la tablette, la boîte a une hauteur fixe ; les outils restent en
+  place, la grille et l'aperçu défilent chacun dans leur colonne. Téléphone : plein écran, tout
+  défile d'un bloc ; aucun défilement horizontal à 390 px.
+- **Clavier et manette** : la grille est un seul arrêt de tabulation (tuile active, sinon le
+  choix actuel, sinon la première), `←` `→` `↑` `↓` (colonnes lues sur la mise en page), Début /
+  Fin, Page préc. / suiv. (trois rangées) ; Entrée ou Espace choisit ; la croix de la manette
+  passe d'une tuile à l'autre (navigation spatiale), A choisit, B ferme. Focus initial sur la
+  tuile active (pas de clavier virtuel imposé au téléphone) ; Échap / « Fermer » rendent le focus
+  à la ligne « Portrait » de la fiche.
+- **Mouvement** : seule la couleur du bord change (`--dur-fade-fast`) ; rien en mouvement réduit
+  de plus. `forced-colors` : contour `CanvasText` sur le choix actuel.
 
 ## 14. Recettes du site
 

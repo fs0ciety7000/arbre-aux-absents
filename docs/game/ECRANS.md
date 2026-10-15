@@ -104,7 +104,9 @@ Points de rupture (largeur de la fenêtre, pas de l'appareil) :
 - **Lecteur détachable** en fenêtre flottante (desktop natif) ou en second volet : jusqu'à
   **2 documents** comparés côte à côte (comparaison de signatures, d'écritures, de dates).
   *Reporté au backlog, hors 2.0 ; affaire 2, E04 et case revendiquée : `AFFAIRE-2.md`.*
-- Le Sélecteur de candidat P10 s'ouvre en **popover** ancré à la case (320 × max 480 px).
+- Le Sélecteur de candidat P10 : petite boîte filtrable pour un prénom, un nom ou un métier ;
+  **grande boîte** (presque tout le Bureau) pour un portrait : grille de visages, descriptions
+  repliées, aperçu à droite, recherche et filtre « document ouvert » (DESIGN §13.13).
 - **Dispositions** (desktop et tablette paysage ; `Settings.layout`, mémorisée) : sélecteur à
   trois boutons dans l'en-tête, `Alt+1/2/3` :
   - **Enquête** (défaut) : arbre + volet côte à côte, poignée libre (largeur mémorisée).
@@ -131,7 +133,8 @@ Points de rupture (largeur de la fenêtre, pas de l'appareil) :
 - **Portrait** : zone principale plein écran + **tiroir bas** (hauteur 40 % / 90 %, deux crans,
   poignée de 24 px) pour le Lecteur et les onglets secondaires. Barre d'onglets en bas comme le
   téléphone.
-- Sélecteur de candidat : feuille modale centrée (480 px de large).
+- Sélecteur de candidat : feuille modale centrée (prénom, nom, métier) ; portrait : grande boîte
+  à hauteur fixe, sans aperçu sous 1024 px (descriptions par l'interrupteur).
 - Paysage : mêmes trois dispositions qu'au desktop. Portrait (et téléphone) : pas de sélecteur
   (un panneau à la fois) ; le plein écran du document reste disponible.
 
@@ -157,8 +160,8 @@ Points de rupture (largeur de la fenêtre, pas de l'appareil) :
 - **Arbre sur 360 px** : vue par **génération** (balayage horizontal entre générations,
   indicateur 1·2·3·4) + vue Ensemble zoomable ; une case mesure min. 144 × 168 px ; toucher
   une case ouvre sa **fiche** en feuille basse (champs en lignes de 56 px).
-- Sélecteur de candidat : **feuille basse plein écran** avec champ de filtre en haut, clavier
-  virtuel, liste à lignes de 56 px.
+- Sélecteur de candidat : **plein écran** avec champ de filtre en haut, liste à lignes de 56 px ;
+  portrait : grille de deux colonnes, descriptions repliées (interrupteur), tout défile d'un bloc.
 - Carte : plein écran, vue Liste en bascule dans l'en-tête.
 - Texte minimal 16 px à 100 % ; aucune information en survol.
 
