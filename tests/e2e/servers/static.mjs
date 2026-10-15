@@ -1,5 +1,5 @@
 // Serveur statique du site prérendu, au plus près de nginx.conf : `/x` → `/x/` (301) puis
-// `index.html`, sinon `404.html` en 404 ; gzip (comme gzip_static) ; même CSP, avec les
+// `index.html`, sinon `404.html` en 404 (`en/404.html` sous `/en/`) ; gzip (comme gzip_static) ; même CSP, avec les
 // empreintes des scripts et styles en ligne calculées par scripts/csp-hashes.sh. Construit le site
 // d'abord, sauf E2E_SKIP_BUILD=1.
 import { execFileSync } from 'node:child_process';
@@ -28,9 +28,17 @@ const CSP =
   `default-src 'self'; script-src 'self' ${nginxVar('csp_script_hashes')}; ` +
   `style-src 'self' ${nginxVar('csp_style_hashes')}; ` +
   "style-src-attr 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; " +
-  "connect-src 'self'; manifest-src 'self'; worker-src 'self'; frame-src https://itch.io https://www.youtube-nocookie.com; " +
+  "connect-src 'self' https://arbre-api.cardormedia.com; manifest-src 'self'; worker-src 'self'; " +
+  'frame-src https://itch.io https://www.youtube-nocookie.com; ' +
   "object-src 'none'; " +
   "base-uri 'self'; form-action 'self'; frame-ancestors 'none'";
+
+// /jouer/ (jeu web, s'il est copié à côté du site) : politique propre, comme dans nginx.conf.
+const CSP_PLAY =
+  `default-src 'self'; script-src 'self'; style-src 'self' ${nginxVar('csp_style_hashes')}; ` +
+  "style-src-attr 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob:; " +
+  "connect-src 'self' https://arbre-api.cardormedia.com; manifest-src 'self'; worker-src 'self'; " +
+  "object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'";
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -61,7 +69,11 @@ createServer((req, res) => {
   const rel = normalize(decodeURIComponent(url.pathname)).replace(/^([/\\])+/, '');
   const base = resolve(root, rel);
   const headers = { 'x-content-type-options': 'nosniff' };
-  if (process.env.E2E_NO_CSP !== '1') headers['content-security-policy'] = CSP;
+  if (process.env.E2E_NO_CSP !== '1') {
+    headers['content-security-policy'] = url.pathname.startsWith('/jouer/') ? CSP_PLAY : CSP;
+  }
+  // Suivi d'un signalement : le jeton est dans le fragment, aucun Referer (nginx.conf).
+  if (/^\/(en\/)?suivi(\/|$)/.test(url.pathname)) headers['referrer-policy'] = 'no-referrer';
   if (base !== root && !base.startsWith(root + sep)) {
     res.writeHead(400, headers).end();
     return;
@@ -75,7 +87,12 @@ createServer((req, res) => {
     : isFile(join(base, 'index.html'))
       ? join(base, 'index.html')
       : null;
-  const target = found ?? join(root, '404.html');
+  // 404 : celle du site anglais sous /en/ (nginx.conf : error_page 404 /en/404.html).
+  const notFound =
+    url.pathname.startsWith('/en/') && isFile(join(root, 'en/404.html'))
+      ? join(root, 'en/404.html')
+      : join(root, '404.html');
+  const target = found ?? notFound;
   const ext = extname(target);
   let body = readFileSync(target);
   headers['content-type'] = TYPES[ext] ?? 'application/octet-stream';

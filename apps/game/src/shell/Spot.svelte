@@ -3,9 +3,16 @@
   (un petit fichier par vignette, 2 à 6 Ko gzip), inlinée sans `{@html}` (svgContent nettoie),
   décorative. Sur le bureau de nuit : `.art.on-night` ; sur une feuille : palette papier.
   L'encre se pose au montage (fondu + flou qui sèche, `mv-ink`), rien en mouvement réduit.
+  En anglais : la variante `art/keyart/locales/en/spot-<nom>.svg` si elle existe (textes dessinés,
+  `art/tools/locales_en.py`), sinon la française ; `uiLang()` lu dans l'effet suit la langue.
 -->
 <script lang="ts" module>
+  import type { Locale } from '@arbre/contract';
   const files = import.meta.glob<string>('../../../../art/keyart/spot-*.svg', {
+    query: '?raw',
+    import: 'default',
+  });
+  const filesEn = import.meta.glob<string>('../../../../art/keyart/locales/en/spot-*.svg', {
     query: '?raw',
     import: 'default',
   });
@@ -22,13 +29,16 @@
     | 'stamp'
     | 'tree';
 
-  function loader(name: SpotName): (() => Promise<string>) | undefined {
-    return files[`../../../../art/keyart/spot-${name}.svg`];
+  function loader(name: SpotName, lang: Locale): (() => Promise<string>) | undefined {
+    const en =
+      lang === 'en' ? filesEn[`../../../../art/keyart/locales/en/spot-${name}.svg`] : undefined;
+    return en ?? files[`../../../../art/keyart/spot-${name}.svg`];
   }
 </script>
 
 <script lang="ts">
   import { svgContent } from '@arbre/map/svelte';
+  import { uiLang } from '../i18n/index.svelte';
 
   interface Props {
     name: SpotName;
@@ -42,7 +52,7 @@
 
   let markup = $state<string | null>(null);
   $effect(() => {
-    const load = loader(name);
+    const load = loader(name, uiLang());
     let alive = true;
     void load?.().then(
       (svg) => alive && (markup = svg),

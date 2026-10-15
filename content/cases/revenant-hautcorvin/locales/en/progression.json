@@ -1,0 +1,181 @@
+{
+  "keywords": {
+    "evariste-tessonnal": { "label": "Évariste Tessonnal", "terms": ["Évariste Tessonnal"] },
+    "clotilde-mervaux": { "label": "Clotilde Mervaux", "terms": ["Clotilde Mervaux"] },
+    "honore-tessonnal": { "label": "Honoré Tessonnal", "terms": ["Honoré Tessonnal"] },
+    "eugenie-ravenel": { "label": "Eugénie Ravenel", "terms": ["Eugénie Ravenel"] },
+    "leonce-tessonnal": { "label": "Léonce Tessonnal", "terms": ["Léonce Tessonnal"] },
+    "marguerite-tessonnal": { "label": "Marguerite Tessonnal", "terms": ["Marguerite Tessonnal"] },
+    "soeur-agathe": { "label": "Sister Agathe", "terms": ["Sister Agathe"] },
+    "colombe-tessonnal": { "label": "Colombe Tessonnal", "terms": ["Colombe Tessonnal"] },
+    "colombe-brossal": { "label": "Colombe Brossal", "terms": ["Colombe Brossal"] },
+    "colo": { "label": "Colo", "terms": ["Colo"] },
+    "aime-brossal": { "label": "Aimé Brossal", "terms": ["Aimé Brossal", "A. Brossal"] },
+    "bastien-tessonnal": { "label": "Bastien Tessonnal", "terms": ["Bastien Tessonnal"] },
+    "tessonnal-bastien": { "label": "Tessonnal Bastien", "terms": ["Tessonnal Bastien"] },
+    "andrin-dalvarin": { "label": "Andrin Dalvarin", "terms": ["Andrin Dalvarin"] },
+    "dalvarin-andrin": { "label": "Dalvarin Andrin", "terms": ["Dalvarin Andrin"] },
+    "a-dalvarin": { "label": "A. Dalvarin", "terms": ["A. Dalvarin"] },
+    "danela-dalvarin": { "label": "Danela Dalvarin", "terms": ["Danela Dalvarin", "D. Dalvarin"] },
+    "danela": { "label": "Danela", "terms": ["Danela"] },
+    "dranko-dalvarin": { "label": "Dranko Dalvarin", "terms": ["Dranko Dalvarin", "Dranko"] },
+    "jadela-rovin": { "label": "Jadela Rovin", "terms": ["Jadela Rovin"] },
+    "barthelemy-neviot": { "label": "Barthélemy Neviot", "terms": ["Barthélemy Neviot"] },
+    "b-neviot": { "label": "B. Neviot", "terms": ["B. Neviot"] },
+    "annette-combal": { "label": "Annette Combal", "terms": ["Annette Combal"] },
+    "annette-neviot": { "label": "Annette Neviot", "terms": ["Annette Neviot"] },
+    "jules-neviot": { "label": "Jules Neviot", "terms": ["Jules Neviot", "J. Neviot"] },
+    "philomene-ardouin": { "label": "Philomène Ardouin", "terms": ["Philomène Ardouin"] },
+    "lucie-neviot": { "label": "Lucie Neviot", "terms": ["Lucie Neviot", "Neviot Lucie"] },
+    "victorin-sarrade": {
+      "label": "Victorin Sarrade",
+      "terms": ["Victorin Sarrade", "V. Sarrade"]
+    },
+    "remi-neviot": { "label": "Rémi Neviot", "terms": ["Rémi Neviot"] },
+    "odette-lamberge": { "label": "Odette Lamberge", "terms": ["Odette Lamberge"] },
+    "odette-neviot": { "label": "Odette Neviot", "terms": ["Odette Neviot"] },
+    "hugues-brossal": { "label": "Hugues Brossal", "terms": ["Hugues Brossal"] },
+    "sabine-orlhac": { "label": "Sabine Orlhac", "terms": ["Sabine Orlhac"] },
+    "sabine-brossal": { "label": "Sabine Brossal", "terms": ["Sabine Brossal", "S. Brossal"] },
+    "isaure-brossal": { "label": "Isaure Brossal", "terms": ["Isaure Brossal"] },
+    "isaure-escande": { "label": "Isaure Escande", "terms": ["Isaure Escande"] },
+    "julien-escande": { "label": "Julien Escande", "terms": ["Julien Escande"] },
+    "leon-escande": { "label": "Léon Escande", "terms": ["Léon Escande"] },
+    "agnes-neviot": { "label": "Agnès Neviot", "terms": ["Agnès Neviot"] },
+    "pierre-sarrade": { "label": "Pierre Sarrade", "terms": ["Pierre Sarrade"] },
+    "gilles-neviot": { "label": "Gilles Neviot", "terms": ["Gilles Neviot"] },
+    "brigitte-neviot": { "label": "Brigitte Neviot", "terms": ["Brigitte Neviot"] },
+    "toussaint-mallet": { "label": "Toussaint Mallet", "terms": ["Toussaint Mallet", "T. Mallet"] },
+    "teodor-haask": { "label": "Teodor Haask", "terms": ["Teodor Haask", "T. Haask"] },
+    "achille-fauvel": { "label": "Achille Fauvel", "terms": ["Achille Fauvel", "Fauvel"] },
+    "pradeil": { "label": "Father Pradeil", "terms": ["Pradeil"] },
+    "thalbere": { "label": "the Thalbère", "terms": ["the Thalbère", "the Thalbère woman"] },
+    "bastien": { "label": "Bastien", "terms": ["Bastien"] },
+    "andrin": { "label": "Andrin", "terms": ["Andrin"] },
+    "leonce": { "label": "Léonce", "terms": ["Léonce"] },
+    "eugenie": { "label": "Eugénie", "terms": ["Eugénie"] },
+    "colombe": { "label": "Colombe", "terms": ["Colombe"] },
+    "agnes": { "label": "Agnès", "terms": ["Agnès"] },
+    "lucie": { "label": "Lucie", "terms": ["Lucie"] },
+    "verreries": { "label": "Hautcorvin Glassworks", "terms": ["Hautcorvin Glassworks"] },
+    "poste-de-vernezac": { "label": "Vernezac post office", "terms": ["Vernezac post office"] },
+    "telegramme": { "label": "Telegram", "terms": ["telegram", "telegrams"] },
+    "guides-de-vernezac": {
+      "label": "Vernezac Guides' Company",
+      "terms": ["Vernezac Guides' Company", "Vernezac guides"]
+    },
+    "refuge-de-l-ourse": { "label": "Refuge de l'Ourse", "terms": ["refuge de l'Ourse"] },
+    "pas-de-l-ourse": { "label": "Pas de l'Ourse", "terms": ["Pas de l'Ourse"] },
+    "gardienne-de-l-ourse": {
+      "label": "The keeper of the Ourse",
+      "terms": ["keeper of the Ourse"]
+    },
+    "douanes-de-la-veze": { "label": "Vèze customs", "terms": ["Vèze customs"] },
+    "combe-aux-sables": { "label": "Combe-aux-Sables", "terms": ["Combe-aux-Sables"] },
+    "grande-exposition": { "label": "Grand Exhibition", "terms": ["Grand Exhibition"] },
+    "lentille-de-tennok": { "label": "Tennok lens", "terms": ["Tennok lens"] },
+    "studio-orlhac": { "label": "Studio Orlhac", "terms": ["Studio Orlhac"] },
+    "incendie": { "label": "The 1937 blaze", "terms": ["blaze"] },
+    "halle-des-fours": { "label": "Furnace hall", "terms": ["furnace hall"] },
+    "four-n-2": { "label": "Furnace No. 2", "terms": ["Furnace No. 2"] },
+    "greve": { "label": "The 1936 walkout", "terms": ["walkout"] },
+    "magasin-des-emballages": { "label": "Packing store", "terms": ["packing store"] },
+    "l-egide": { "label": "L'Égide", "terms": ["L'Égide"] },
+    "registre-des-rondes": { "label": "Rounds register", "terms": ["rounds register"] },
+    "pli-cachete": { "label": "Sealed envelope of 1958", "terms": ["sealed envelope"] },
+    "bulletin-d-ordre": { "label": "Bulletin of Order", "terms": ["Bulletin of Order"] },
+    "coupe-du-regent": { "label": "Regent's Cup", "terms": ["Regent's Cup"] },
+    "saint-eloi": { "label": "St Éloi competition", "terms": ["Saint-Éloi", "St Éloi"] },
+    "atelier-de-gravure": { "label": "Engraving workshop", "terms": ["engraving workshop"] },
+    "parrain": { "label": "Godfather", "terms": ["godfather"] },
+    "marraine": { "label": "Godmother", "terms": ["godmother"] },
+    "expulsion": { "label": "The 1916 expulsion", "terms": ["expulsion"] },
+    "dalvica": { "label": "Dalvica (Dalvezac)", "terms": ["Dalvica", "Dalvezac"] },
+    "brenica": { "label": "Brénica (Brenzac)", "terms": ["Brénica", "Brenzac"] },
+    "verrerie-de-brenica": { "label": "Brénica Glassworks", "terms": ["Brénica Glassworks"] },
+    "messager-de-brenzac": { "label": "The Brenzac Messenger", "terms": ["Brenzac Messenger"] },
+    "kessaar": { "label": "Kessaar", "terms": ["Kessaar"] },
+    "matricule-214": { "label": "Prisoner number 214", "terms": ["0214", "214"] },
+    "matricule-1171": { "label": "Prisoner number 1171", "terms": ["1171"] },
+    "cellule-14": { "label": "Cell 14", "terms": ["cell 14"] },
+    "revenant": {
+      "label": "“The Revenant of Hautcorvin”",
+      "terms": ["The Revenant of Hautcorvin"]
+    },
+    "la-sentinelle": {
+      "label": "The Corvins Sentinel",
+      "terms": ["The Corvins Sentinel", "The Sentinel"]
+    },
+    "fete-de-la-neige": { "label": "Snow Festival", "terms": ["Snow Festival"] },
+    "ecole-de-ski": { "label": "Ski school", "terms": ["ski school"] },
+    "ecole-de-vernezac": { "label": "Vernezac school", "terms": ["Vernezac school"] },
+    "avion-postal": { "label": "Mail plane", "terms": ["mail plane"] },
+    "auberge-des-guides": { "label": "Auberge des Guides", "terms": ["Auberge des Guides"] },
+    "hospice-de-hautcorvin": { "label": "Hautcorvin hospice", "terms": ["Hautcorvin hospice"] },
+    "verre-grave": {
+      "label": "Engraved glass",
+      "terms": ["engraved glass", "To the glassblower's daughter"]
+    },
+    "boite-de-lucie": { "label": "Lucie's box", "terms": ["Lucie's box"] },
+    "carnet-des-moutons": { "label": "Sheep notebook", "terms": ["sheep notebook", "sheep"] },
+    "journal-de-soeur-agathe": {
+      "label": "Sister Agathe's diary",
+      "terms": ["Sister Agathe's diary"]
+    },
+    "tables-des-deces": { "label": "Death indexes", "terms": ["death indexes"] }
+  },
+  "secrets": {
+    "s1-le-feu-de-1937": "The Fire of 1937",
+    "s2-le-pas-de-l-ourse": "The Pas de l'Ourse",
+    "s3-le-fils-de-la-thalbere": "The Thalbère Woman's Son",
+    "s4-la-coupe-du-regent": "The Regent's Cup",
+    "s5-la-fille-du-souffleur": "The Glassblower's Daughter"
+  },
+  "report": {
+    "q1-incendie": {
+      "prompt": "Who set fire to the furnace hall in 1937?",
+      "options": {
+        "bastien": { "label": "Bastien Tessonnal (1938 removal list)" },
+        "aime": { "label": "Aimé Brossal" },
+        "non-etabli": { "label": "Not established" }
+      }
+    },
+    "q2-passeurs": {
+      "prompt": "Who took the struck-off across the Pas de l'Ourse?",
+      "options": {
+        "andrin": { "label": "Andrin Dalvarin (suspected by the Guard, 1938)" },
+        "lucie-et-jules": { "label": "Lucie Neviot and her father, Jules Neviot" },
+        "non-etabli": { "label": "Not established" }
+      }
+    },
+    "q3-pere-d-andrin": {
+      "prompt": "Whose son is Andrin Dalvarin?",
+      "options": {
+        "leonce": { "label": "Léonce Tessonnal, his godfather" },
+        "honore": { "label": "Honoré Tessonnal" },
+        "non-etabli": { "label": "Not established" }
+      }
+    },
+    "q4-radiation-d-andrin": {
+      "prompt": "Why was Andrin Dalvarin struck off?",
+      "options": {
+        "outrage": { "label": "Insulting the Regent" },
+        "gravure": { "label": "He had engraved his brother's name; Aimé Brossal informed on him" },
+        "non-etabli": { "label": "Not established" }
+      }
+    },
+    "decision": {
+      "prompt": "The Office's decision",
+      "options": {
+        "denoncer": { "label": "Reject the petition and report the impersonation." },
+        "retablir-chacun": {
+          "label": "Re-register Bastien Tessonnal posthumously; acknowledge Agnès Neviot as his daughter; register Andrin Dalvarin under his own name.",
+          "unavailableReason": "Agnès's parentage is not established by two documents."
+        },
+        "laisser-vivre": {
+          "label": "Grant the petition: register the claimant under the name of Bastien Tessonnal."
+        }
+      }
+    }
+  }
+}

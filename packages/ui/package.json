@@ -11,9 +11,11 @@
     "./art-classes": "./src/art-classes.ts",
     "./primitives": "./src/primitives/index.ts",
     "./fonts/*": "./src/fonts/*",
-    "./motion": "./src/motion.ts"
+    "./motion": "./src/motion.ts",
+    "./i18n": "./src/i18n.ts"
   },
   "scripts": {
+    "check": "npm run typecheck && npm run contrast:check",
     "typecheck": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
     "contrast:check": "node scripts/contrast.mjs --strict",
     "icons:ink": "node scripts/ink-icons.mjs && prettier --write src/primitives/icons.ts src/primitives/ornaments.ts"

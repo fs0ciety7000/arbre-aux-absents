@@ -3,6 +3,7 @@
 	au-delà de 300 ms (`delay`). Statique en mouvement réduit (le texte reste).
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   interface Props {
     label?: string;
     /** Montre aussi le libellé à l'écran. */
@@ -10,7 +11,9 @@
     /** Délai d'apparition en ms (déf. 300). */
     delay?: number;
   }
-  let { label = 'Chargement…', showLabel = false, delay = 300 }: Props = $props();
+  let { label: labelProp, showLabel = false, delay = 300 }: Props = $props();
+  const ui = getUiStrings();
+  const label = $derived(labelProp ?? ui.loader.label);
 </script>
 
 <span class="loader" role="status" style:--delay="{delay}ms">

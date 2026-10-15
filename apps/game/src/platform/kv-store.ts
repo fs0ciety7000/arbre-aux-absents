@@ -12,6 +12,7 @@ import {
   assertCaseId,
   assertSlot,
   caseIdOfRaw,
+  caseIdOfSummary,
   isCaseId,
   decodeImported,
   decodeStored,
@@ -20,6 +21,7 @@ import {
   readSummary,
   serialize,
   summaryFromRaw,
+  summaryToStore,
   latestBackup,
   withCase,
   type FileIo,
@@ -161,15 +163,21 @@ export function createKvSaveStore(
       const out: GameSlotSummary[] = [];
       for (const [i, slot] of MANUAL_SLOTS.entries()) {
         const sum = readSummary(sums[i] ?? null, slot);
-        if (sum) {
-          out.push(withCase(sum, null));
+        const known = sum ? caseIdOfSummary(sum) : null;
+        if (sum && known !== null) {
+          out.push(withCase(sum, known));
           continue;
         }
-        // Résumé absent ou invalide : on ne lit la partie complète que dans ce cas.
+        // Résumé absent, invalide ou sans affaire (écrit avant l'i18n) : on ne lit la partie
+        // complète que dans ce cas, pour son affaire.
         const raw = await read(KEYS.save(slot), what);
         if (raw === null) continue;
+        if (sum) {
+          out.push(withCase(sum, caseIdOfRaw(raw)));
+          continue;
+        }
         const fallback = summaryFromRaw(raw, slot, summarize());
-        if (fallback) out.push(withCase(fallback, null));
+        if (fallback) out.push(withCase(fallback, caseIdOfRaw(raw)));
       }
       out.push(...(await listBackups(what)));
       return out;
@@ -194,7 +202,7 @@ export function createKvSaveStore(
         keys = [KEYS.backup(s.caseId), KEYS.backupSummary(s.caseId)];
       }
       const text = serialize(s);
-      const summary = serialize(summarize()(s));
+      const summary = serialize(summaryToStore(s, summarize()));
       try {
         await kv.setMany([
           [keys[0], text],

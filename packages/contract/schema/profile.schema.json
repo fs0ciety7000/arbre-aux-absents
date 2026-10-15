@@ -192,6 +192,14 @@
             "keyboard",
             "gamepad"
           ]
+        },
+        "language": {
+          "type": "string",
+          "enum": [
+            "system",
+            "fr",
+            "en"
+          ]
         }
       },
       "required": [
@@ -279,6 +287,39 @@
         "seen"
       ],
       "additionalProperties": false
+    },
+    "reports": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ticket": {
+            "type": "string",
+            "pattern": "^[A-Z]{1,8}-\\d{4,}$"
+          },
+          "token": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{22}$"
+          },
+          "createdAt": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 80
+          }
+        },
+        "required": [
+          "ticket",
+          "token",
+          "createdAt",
+          "summary"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [

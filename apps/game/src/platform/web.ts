@@ -10,14 +10,19 @@ import {
   STORAGE_PREFIX,
   fallbackSummarize,
   listenEscape,
+  platformStrings,
+  readSystemLocales,
   tooLarge,
+  webOpenExternal,
   withTimeout,
   type FileIo,
   type GamePlatform,
+  type LanguageSource,
   type Summarizer,
+  type WindowOpener,
 } from './common';
 import { createKvSaveStore, type KvBackend } from './kv-store';
-import { MEMORY_STORAGE_WARNING, createMemoryKv } from './memory';
+import { createMemoryKv } from './memory';
 
 export const IDB_NAME = STORAGE_PREFIX;
 export const IDB_VERSION = 1;
@@ -230,6 +235,10 @@ export interface WebPlatformDeps {
   idbTimeoutMs?: number;
   /** Intercepte « précédent » du navigateur via une entrée d'historique (défaut : true). */
   useHistory?: boolean;
+  /** Source des langues du système (défaut : `navigator`) ; `null` pour aucune. */
+  navigator?: LanguageSource | null;
+  /** Ouverture des liens externes (défaut : `window`). */
+  opener?: WindowOpener;
 }
 
 export interface WebPlatform extends GamePlatform {
@@ -245,25 +254,23 @@ function safe<T>(get: () => T): T | null {
   }
 }
 
-async function pickBackend(
-  deps: WebPlatformDeps,
-): Promise<{ kv: KvBackend; warning: string | null }> {
+async function pickBackend(deps: WebPlatformDeps): Promise<{ kv: KvBackend; memory: boolean }> {
   const factory = deps.indexedDB !== undefined ? deps.indexedDB : safe(() => globalThis.indexedDB);
   if (factory) {
     try {
       const db = await openIdb(factory, deps.idbTimeoutMs);
       const kv = idbBackend(db);
       await kv.get('profile'); // sonde : certains navigateurs ouvrent puis refusent les lectures
-      return { kv, warning: null };
+      return { kv, memory: false };
     } catch (err) {
       console.warn('[platform] IndexedDB indisponible, repli localStorage', err);
     }
   }
   const ls =
     deps.localStorage !== undefined ? deps.localStorage : safe(() => globalThis.localStorage);
-  if (ls && probeLocalStorage(ls)) return { kv: localStorageBackend(ls), warning: null };
+  if (ls && probeLocalStorage(ls)) return { kv: localStorageBackend(ls), memory: false };
   console.warn('[platform] aucun stockage persistant, mode mémoire');
-  return { kv: createMemoryKv(), warning: MEMORY_STORAGE_WARNING };
+  return { kv: createMemoryKv(), memory: true };
 }
 
 /** Demande un stockage persistant (Safari/Firefox purgent l'iframe itch sinon). Au mieux. */
@@ -278,7 +285,7 @@ async function requestPersistence(sm: WebPlatformDeps['storageManager']): Promis
 export async function createWebPlatform(deps: WebPlatformDeps = {}): Promise<WebPlatform> {
   const win = deps.window ?? (typeof window === 'undefined' ? undefined : window);
   const doc = deps.document ?? (typeof document === 'undefined' ? undefined : document);
-  const { kv, warning } = await pickBackend(deps);
+  const { kv, memory } = await pickBackend(deps);
   const sm =
     deps.storageManager !== undefined
       ? deps.storageManager
@@ -319,13 +326,21 @@ export async function createWebPlatform(deps: WebPlatformDeps = {}): Promise<Web
   }
 
   const fullscreenOk = !!doc && safe(() => doc.fullscreenEnabled) === true;
+  const nav: LanguageSource | null =
+    deps.navigator !== undefined ? deps.navigator : safe(() => globalThis.navigator);
 
   const platform: WebPlatform = {
     kind: 'web',
     backend: kv.name,
-    storageWarning: warning,
+    // Relu à chaque accès : suit la langue de l'interface (`platformStrings`).
+    get storageWarning() {
+      return memory ? platformStrings().storageMemory : null;
+    },
     saves: createKvSaveStore(kv, deps.summarize ?? (() => fallbackSummarize), io),
     onBack: (cb) => registry.add(cb),
+    // Relu à chaque appel : `languagechange` peut modifier les préférences en cours de partie.
+    systemLocales: () => readSystemLocales(nav),
+    openExternal: webOpenExternal(deps.opener ?? win),
   };
   if (fullscreenOk && doc) {
     platform.setFullscreen = async (on) => {

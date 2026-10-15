@@ -7,6 +7,7 @@
   import type { Block } from '@arbre/contract';
   import { Stamp } from '@arbre/ui';
   import { layoutInlines, pathKey, type HighlightRange } from '../lib/doc-layout';
+  import { messages } from '../messages';
   import { BODY_LABELS, type BodyOptions, type KeywordState } from './context';
   import Figure from './Figure.svelte';
   import Inlines from './Inlines.svelte';
@@ -139,7 +140,7 @@
       {#if opts.mode === 'original'}
         <div class="doc-stamp"><Stamp text={b.text} tone="ink" size="s" rotate={-4} /></div>
       {:else}
-        <p class="stamp-t">[{BODY_LABELS.stamp} : {b.text}]</p>
+        <p class="stamp-t">[{messages.labelled(BODY_LABELS.stamp, b.text)}]</p>
       {/if}
     {:else if b.t === 'hr'}
       <hr />

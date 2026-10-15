@@ -296,6 +296,7 @@ export const fixtureCase: CompiledCase = {
   format: 1,
   id: 'affaire-test',
   edition: 'full',
+  locale: 'fr',
   contentHash: 'a1b2c3d4',
   salt: SALT,
   meta: {

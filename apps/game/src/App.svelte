@@ -1,5 +1,14 @@
 <script lang="ts">
-  import { ArtDefs, SkipLink, ToastRegion, paperIn, screenIn } from '@arbre/ui';
+  import {
+    ArtDefs,
+    SkipLink,
+    ToastRegion,
+    UI_STRINGS,
+    paperIn,
+    pushToast,
+    screenIn,
+    setUiStrings,
+  } from '@arbre/ui';
   import { onMount, type Component } from 'svelte';
   import { progress } from '@arbre/engine';
   import { audio } from './audio/engine';
@@ -7,10 +16,11 @@
   import { installGamepad, installKeyboard } from './input/controller';
   import { input } from './input/device.svelte';
   import { announcer } from './lib/game/announcer.svelte';
-  import { AppController, CONTENT_SCREENS } from './lib/game/app.svelte';
+  import { AppController, CONTENT_SCREENS, type ReportRequest } from './lib/game/app.svelte';
   import { setApp } from './lib/game/context';
   import { screenLeave } from './lib/game/screen-motion';
   import { viewport } from './lib/game/viewport.svelte';
+  import { uiLang } from './i18n/index.svelte';
   import { messages } from './messages.fr';
   import Achievements from './screens/Achievements.svelte';
   import Bonus from './screens/Bonus.svelte';
@@ -26,6 +36,8 @@
 
   const app = new AppController();
   setApp(app);
+  // Textes des primitives @arbre/ui dans la langue de l'interface (relu à chaque accès).
+  setUiStrings(() => UI_STRINGS[uiLang()]);
 
   // Écrans qui lisent l'affaire : elle est chargée à leur ouverture (module à part).
   const needsContent = $derived(CONTENT_SCREENS.includes(app.screen));
@@ -47,6 +59,34 @@
   $effect(() => {
     if (app.screen === 'credits' && !Credits) {
       void import('./screens/Credits.svelte').then((m) => (Credits = m.default));
+    }
+  });
+
+  // Signaler un problème, Mes signalements (DESIGN §13.8, §13.9) : chargés à la demande.
+  let Report = $state<Component<{ request: ReportRequest }> | null>(null);
+  let MyReports = $state<Component | null>(null);
+  $effect(() => {
+    if (app.reportRequest && !Report) {
+      import('./screens/Report.svelte').then(
+        (m) => (Report = m.default),
+        (err: unknown) => {
+          console.warn('[signalement]', err);
+          app.closeReport();
+          pushToast({ tone: 'warning', title: messages.errors.panelLoad });
+        },
+      );
+    }
+  });
+  $effect(() => {
+    if (app.myReportsOpen && !MyReports) {
+      import('./screens/MyReports.svelte').then(
+        (m) => (MyReports = m.default),
+        (err: unknown) => {
+          console.warn('[signalement]', err);
+          app.closeMyReports();
+          pushToast({ tone: 'warning', title: messages.errors.panelLoad });
+        },
+      );
     }
   });
 
@@ -177,6 +217,13 @@
       >{messages.toasts.exportNow}</button
     >
   </div>
+{/if}
+
+{#if app.reportRequest && Report}
+  <Report request={app.reportRequest} />
+{/if}
+{#if app.myReportsOpen && MyReports}
+  <MyReports />
 {/if}
 
 <ToastRegion offset={toastOffset} />

@@ -82,6 +82,11 @@ vi.mock('@tauri-apps/plugin-dialog', () => ({
   open: vi.fn(async () => dialogState.openPath),
 }));
 vi.mock('@tauri-apps/api/window', () => ({ getCurrentWindow: () => win }));
+const opener = vi.hoisted(() => ({
+  openUrl: vi.fn(async (_url: string | URL) => {}),
+}));
+// Module virtuel tant que la dépendance n'est pas installée (lot devops) : même API.
+vi.mock('@tauri-apps/plugin-opener', () => ({ openUrl: opener.openUrl }));
 vi.mock('@tauri-apps/api/app', () => ({
   onBackButtonPress: vi.fn(async (h: (p: { canGoBack: boolean }) => void) => {
     appState.handler = h;
@@ -104,6 +109,7 @@ beforeEach(() => {
   appState.handler = null;
   appState.unregister.mockClear();
   win.close.mockClear();
+  opener.openUrl.mockReset();
   vi.unstubAllGlobals();
 });
 
@@ -187,7 +193,7 @@ describe('tauri : sauvegardes', () => {
     await store.save('auto', makeSave('auto'));
     // Emplacements manuels d'abord, puis un secours par affaire.
     expect((await store.list()).map((s) => [s.slot, s.caseTitle, s.caseId])).toEqual([
-      ['slot-1', 'T', null],
+      ['slot-1', 'T', 'affaire-test'],
       ['auto', 'T', 'affaire-test'],
     ]);
   });
@@ -219,6 +225,36 @@ describe('tauri : sauvegardes', () => {
       code: 'not-found',
     });
     expect(fsState.files.size).toBe(0);
+  });
+});
+
+describe('tauri : affaire des emplacements manuels (i18n)', () => {
+  it('list renseigne caseId de chaque emplacement, y compris les manuels', async () => {
+    const store = createTauriSaveStore();
+    await store.save('slot-1', makeSave('slot-1', { caseId: 'premiere-affaire' }));
+    await store.save('slot-3', makeSave('slot-3', { caseId: 'deuxieme-affaire' }));
+    await store.save('auto', makeSave('auto', { caseId: 'premiere-affaire' }));
+    expect((await store.list()).map((s) => [s.slot, s.caseId])).toEqual([
+      ['slot-1', 'premiere-affaire'],
+      ['slot-3', 'deuxieme-affaire'],
+      ['auto', 'premiere-affaire'],
+    ]);
+    expect(JSON.parse(fsState.files.get('saves/slot-3.summary.json')!)).toMatchObject({
+      caseId: 'deuxieme-affaire',
+    });
+  });
+
+  it('résumé écrit avant l’i18n (sans caseId) : affaire relue dans la partie', async () => {
+    const store = createTauriSaveStore();
+    await store.save('slot-2', makeSave('slot-2', { caseId: 'deuxieme-affaire' }));
+    const sum = JSON.parse(fsState.files.get('saves/slot-2.summary.json')!) as Record<
+      string,
+      unknown
+    >;
+    delete sum['caseId'];
+    fsState.files.set('saves/slot-2.summary.json', JSON.stringify(sum));
+    const [row] = await store.list();
+    expect(row).toMatchObject({ slot: 'slot-2', caseId: 'deuxieme-affaire' });
   });
 });
 
@@ -363,8 +399,89 @@ describe('tauri : plateforme', () => {
     expect(await p.saves.load('auto')).toEqual(makeSave('auto'));
   });
 
+  it('systemLocales : langues de la WebView, filtrées', async () => {
+    vi.stubGlobal('navigator', {
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0)',
+      languages: ['fr-BE', 'fr-BE', 'en', '', 'x y'],
+      language: 'fr-BE',
+    });
+    const p = await createTauriPlatform();
+    expect(p.systemLocales()).toEqual(['fr-BE', 'en']);
+  });
+
+  it('openExternal : plugin-opener chargé à la demande, URL autorisées seulement', async () => {
+    vi.stubGlobal('navigator', { userAgent: 'Mozilla/5.0 (X11; Linux x86_64)' });
+    const p = await createTauriPlatform();
+    expect(await p.openExternal?.('https://arbre.cardormedia.com/suivi/#abc')).toBe(true);
+    expect(opener.openUrl).toHaveBeenCalledWith('https://arbre.cardormedia.com/suivi/#abc');
+    for (const bad of [
+      'http://arbre.cardormedia.com/',
+      'https://evil.example/',
+      'https://arbre.cardormedia.com.evil.example/',
+      'https://user@arbre.cardormedia.com/',
+      'javascript:alert(1)',
+      'file:///etc/passwd',
+      '',
+    ]) {
+      expect(await p.openExternal?.(bad)).toBe(false);
+    }
+    expect(opener.openUrl).toHaveBeenCalledOnce();
+  });
+
+  it('openExternal : échec du plugin (absent, refusé) → false, sans exception', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    opener.openUrl.mockRejectedValueOnce(new Error('not allowed by scope'));
+    const p = await createTauriPlatform();
+    expect(await p.openExternal?.('https://cardorinteractive.itch.io/arbre')).toBe(false);
+    const injected = await createTauriPlatform({
+      openUrl: async () => {
+        throw new Error('plugin absent');
+      },
+    });
+    expect(await injected.openExternal?.('https://cardorinteractive.itch.io/arbre')).toBe(false);
+    warn.mockRestore();
+  });
+
   it('detectKind', () => {
     expect(detectKind('… Android 13 …')).toBe('android');
     expect(detectKind('Macintosh')).toBe('desktop');
+  });
+});
+
+describe('tauri : textes dans la langue de l’interface', () => {
+  it('avertissement, titres et filtre des dialogues suivent `setPlatformStrings`', async () => {
+    const { setPlatformStrings } = await import('../common');
+    const { en } = await import('../../i18n/en');
+    const { fr } = await import('../../i18n/fr');
+    const { save, open } = await import('@tauri-apps/plugin-dialog');
+    fsState.failMkdir = true;
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const p = await createTauriPlatform();
+    warn.mockRestore();
+    fsState.failMkdir = false;
+    expect(p.storageWarning).toBe(TAURI_STORAGE_WARNING);
+    let lang: 'fr' | 'en' = 'en';
+    setPlatformStrings(() => (lang === 'en' ? en.platform : fr.platform));
+    try {
+      expect(p.storageWarning).toBe(en.platform.storageTauri);
+      const store = createTauriSaveStore();
+      await store.save('slot-1', makeSave('slot-1'));
+      vi.mocked(save).mockClear();
+      vi.mocked(open).mockClear();
+      await store.exportFile('slot-1');
+      await store.importFile();
+      expect(vi.mocked(save).mock.calls[0]?.[0]).toMatchObject({
+        title: 'Export the save',
+        filters: [{ name: 'Save', extensions: ['json'] }],
+      });
+      expect(vi.mocked(open).mock.calls[0]?.[0]).toMatchObject({
+        title: 'Import a save',
+        filters: [{ name: 'Save', extensions: ['json'] }],
+      });
+      lang = 'fr';
+      expect(p.storageWarning).toBe(TAURI_STORAGE_WARNING);
+    } finally {
+      setPlatformStrings(null);
+    }
   });
 });

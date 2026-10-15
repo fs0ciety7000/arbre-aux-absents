@@ -64,7 +64,7 @@ describe('web : IndexedDB', () => {
         elapsedMs: 2,
         mode: 'timed',
         progress: 0.25,
-        caseId: null,
+        caseId: 'affaire-test',
       },
     ]);
     expect(calls).toBe(1); // le résumé stocké suffit

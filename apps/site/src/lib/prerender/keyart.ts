@@ -10,6 +10,10 @@
  * - **la scène vivante** (le reste, ~26 Ko) : inline dans `<KeyArt animate>`, posée exactement
  *   par-dessus (même viewBox, même cadrage) ; seules ces couches bougent, en transform/opacity.
  * L'ordre de peinture est conservé, le rendu est identique à l'image d'origine.
+ *
+ * Langues : un fichier de `art/keyart/locales/<langue>/` remplace son homonyme français dans
+ * cette langue (texte dessiné : étiquettes, tampon). Ses SVG autonomes portent le suffixe
+ * `-<langue>` (`keyart-desk-en.<hash>.svg`) ; sans surcharge, la langue reprend le français.
  */
 import wideSrc from '../../../../../art/keyart/keyart-desk.svg?raw';
 import tallSrc from '../../../../../art/keyart/keyart-desk-tall.svg?raw';
@@ -19,9 +23,17 @@ import tamponSrc from '../../../../../art/keyart/flourish-tampon.svg?raw';
 import { parseSvg, type SvgChild, type SvgNode } from '#lib/svg/parse';
 import { serialize, standaloneSvg, type StandaloneSvg } from '#lib/prerender/standalone';
 import { resolve } from '$app/paths';
+import type { Locale } from '@arbre/contract';
 import type { ArtImage } from '#lib/prerender/art';
 
 const spotFiles = import.meta.glob('../../../../../art/keyart/spot-*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+
+/** Surcharges par langue : `art/keyart/locales/<langue>/<nom>.svg`. */
+const localeFiles = import.meta.glob('../../../../../art/keyart/locales/*/*.svg', {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -48,7 +60,7 @@ export interface KeyArtParts {
   alt: string;
 }
 
-function split(name: string, source: string): KeyArtParts {
+function split(name: string, source: string, file = name): KeyArtParts {
   const root = parseSvg(source);
   if (!root) throw new Error(`keyart: ${name} illisible`);
   const viewBox = root.a.viewBox ?? '0 0 1600 900';
@@ -75,20 +87,48 @@ function split(name: string, source: string): KeyArtParts {
     live.map(serialize).join('') +
     '</svg>';
   const desc = /<desc>([\s\S]*?)<\/desc>/.exec(source)?.[1]?.trim() ?? '';
-  return { still: standaloneSvg(name, viewBox, still), live: liveMarkup, alt: desc };
-}
-
-let cache: { wide: KeyArtParts; tall: KeyArtParts } | undefined;
-
-/** L'art clé, 16:9 et 4:5 (recomposé pour le téléphone). */
-export function keyArt(): { wide: KeyArtParts; tall: KeyArtParts } {
-  return (cache ??= {
-    wide: split('keyart-desk', wideSrc),
-    tall: split('keyart-desk-tall', tallSrc),
-  });
+  return { still: standaloneSvg(file, viewBox, still), live: liveMarkup, alt: desc };
 }
 
 const base = (path: string) => path.slice(path.lastIndexOf('/') + 1).replace(/\.svg$/, '');
+
+/** Langues qui ont des surcharges, et leurs fichiers (`en` → `keyart-desk` → source). */
+const OVERRIDES = new Map<string, Map<string, string>>();
+for (const [p, src] of Object.entries(localeFiles)) {
+  const lang = /\/locales\/([^/]+)\//.exec(p)?.[1];
+  if (!lang) continue;
+  if (!OVERRIDES.has(lang)) OVERRIDES.set(lang, new Map());
+  OVERRIDES.get(lang)!.set(base(p), src);
+}
+
+/** Source d'un fichier dans une langue (surcharge, sinon le français) et nom de son SVG autonome. */
+function pick(lang: Locale, name: string, fallback: string): { source: string; file: string } {
+  const own = OVERRIDES.get(lang)?.get(name);
+  return own ? { source: own, file: `${name}-${lang}` } : { source: fallback, file: name };
+}
+
+/** Langues à produire pour la route `/art/[file]` : le français et chaque langue surchargée. */
+const LANGS = (): Locale[] => [
+  'fr',
+  ...([...OVERRIDES.keys()].filter((l) => l !== 'fr') as Locale[]),
+];
+
+const cache = new Map<Locale, { wide: KeyArtParts; tall: KeyArtParts }>();
+
+/** L'art clé, 16:9 et 4:5 (recomposé pour le téléphone), dans une langue. */
+export function keyArt(lang: Locale = 'fr'): { wide: KeyArtParts; tall: KeyArtParts } {
+  let v = cache.get(lang);
+  if (!v) {
+    const w = pick(lang, 'keyart-desk', wideSrc);
+    const t = pick(lang, 'keyart-desk-tall', tallSrc);
+    v = {
+      wide: split('keyart-desk', w.source, w.file),
+      tall: split('keyart-desk-tall', t.source, t.file),
+    };
+    cache.set(lang, v);
+  }
+  return v;
+}
 
 function standaloneFrom(name: string, source: string): StandaloneSvg {
   const root = parseSvg(source);
@@ -108,11 +148,19 @@ export type SpotName =
   | 'lighthouse'
   | 'register';
 
-let spotCache: Map<string, StandaloneSvg> | undefined;
-function spots(): Map<string, StandaloneSvg> {
-  return (spotCache ??= new Map(
-    Object.entries(spotFiles).map(([p, src]) => [base(p), standaloneFrom(base(p), src)]),
-  ));
+const spotCache = new Map<Locale, Map<string, StandaloneSvg>>();
+function spots(lang: Locale): Map<string, StandaloneSvg> {
+  let v = spotCache.get(lang);
+  if (!v) {
+    v = new Map(
+      Object.entries(spotFiles).map(([p, src]) => {
+        const { source, file } = pick(lang, base(p), src);
+        return [base(p), standaloneFrom(file, source)];
+      }),
+    );
+    spotCache.set(lang, v);
+  }
+  return v;
 }
 
 let vineCache: StandaloneSvg | undefined;
@@ -124,60 +172,89 @@ const image = (f: StandaloneSvg): ArtImage => ({
   height: f.height,
 });
 
-/** Vignette d'aquarelle (`spot-<nom>.svg`), servie en SVG autonome. */
-export function spotImage(name: SpotName): ArtImage {
-  const f = spots().get(`spot-${name}`);
+/** Vignette d'aquarelle (`spot-<nom>.svg`) dans une langue, servie en SVG autonome. */
+export function spotImage(name: SpotName, lang: Locale = 'fr'): ArtImage {
+  const f = spots(lang).get(`spot-${name}`);
   if (!f) throw new Error(`keyart: vignette spot-${name} introuvable`);
   return image(f);
 }
 
-/** Vigne de fougère (séparateur de section), servie en SVG autonome. */
+/** Vigne de fougère (séparateur de section), servie en SVG autonome (sans texte). */
 export function vineImage(): ArtImage {
   return image(vine());
 }
 
-let flourishCache: Record<'seal' | 'tampon', StandaloneSvg> | undefined;
-const flourishes = () =>
-  (flourishCache ??= {
-    seal: standaloneFrom('flourish-seal', sealSrc),
-    tampon: standaloneFrom('flourish-tampon', tamponSrc),
-  });
-
-/** Ornements gravés (sceau, tampon « Établi »), servis en SVG autonomes. */
-export function flourishImage(name: 'seal' | 'tampon'): ArtImage {
-  return image(flourishes()[name]);
+type FlourishName = 'seal' | 'tampon';
+const flourishCache = new Map<Locale, Record<FlourishName, StandaloneSvg>>();
+function flourishes(lang: Locale): Record<FlourishName, StandaloneSvg> {
+  let v = flourishCache.get(lang);
+  if (!v) {
+    const seal = pick(lang, 'flourish-seal', sealSrc);
+    const tampon = pick(lang, 'flourish-tampon', tamponSrc);
+    v = {
+      seal: standaloneFrom(seal.file, seal.source),
+      tampon: standaloneFrom(tampon.file, tampon.source),
+    };
+    flourishCache.set(lang, v);
+  }
+  return v;
 }
 
-let fullCache: { wide: StandaloneSvg; tall: StandaloneSvg } | undefined;
-const full = () =>
-  (fullCache ??= {
-    wide: standaloneFrom('keyart-desk-full', wideSrc),
-    tall: standaloneFrom('keyart-desk-tall-full', tallSrc),
-  });
+/** Ornements gravés (sceau, tampon « Établi »), servis en SVG autonomes. */
+export function flourishImage(name: FlourishName, lang: Locale = 'fr'): ArtImage {
+  return image(flourishes(lang)[name]);
+}
+
+const fullCache = new Map<Locale, { wide: StandaloneSvg; tall: StandaloneSvg }>();
+function full(lang: Locale) {
+  let v = fullCache.get(lang);
+  if (!v) {
+    const w = pick(lang, 'keyart-desk', wideSrc);
+    const t = pick(lang, 'keyart-desk-tall', tallSrc);
+    const suffix = (f: string) => f.replace(/^(keyart-desk(?:-tall)?)/, '$1-full');
+    v = {
+      wide: standaloneFrom(suffix(w.file), w.source),
+      tall: standaloneFrom(suffix(t.file), t.source),
+    };
+    fullCache.set(lang, v);
+  }
+  return v;
+}
 
 /** L'art clé entier, figé (artbook, 404) : une seule image autonome, chargée en différé. */
-export function keyArtFullImages(): { wide: ArtImage; tall: ArtImage; alt: string } {
-  return { wide: image(full().wide), tall: image(full().tall), alt: keyArt().wide.alt };
+export function keyArtFullImages(lang: Locale = 'fr'): {
+  wide: ArtImage;
+  tall: ArtImage;
+  alt: string;
+} {
+  const f = full(lang);
+  return { wide: image(f.wide), tall: image(f.tall), alt: keyArt(lang).wide.alt };
 }
 
 /** Fond de l'art clé (16:9 et 4:5) en images autonomes. */
-export function keyArtImages(): { wide: ArtImage; tall: ArtImage } {
-  const { wide, tall } = keyArt();
+export function keyArtImages(lang: Locale = 'fr'): { wide: ArtImage; tall: ArtImage } {
+  const { wide, tall } = keyArt(lang);
   return { wide: image(wide.still), tall: image(tall.still) };
 }
 
-/** Tous les SVG autonomes de ce module (route `/art/[file]`). */
+/** Tous les SVG autonomes de ce module, dans chaque langue (route `/art/[file]`, noms uniques). */
 export function keyArtFiles(): StandaloneSvg[] {
-  const { wide, tall } = keyArt();
-  const f = flourishes();
-  return [
-    wide.still,
-    tall.still,
-    full().wide,
-    full().tall,
-    vine(),
-    f.seal,
-    f.tampon,
-    ...spots().values(),
-  ];
+  const byFile = new Map<string, StandaloneSvg>();
+  for (const lang of LANGS()) {
+    const { wide, tall } = keyArt(lang);
+    const fl = flourishes(lang);
+    const fu = full(lang);
+    for (const f of [
+      wide.still,
+      tall.still,
+      fu.wide,
+      fu.tall,
+      fl.seal,
+      fl.tampon,
+      ...spots(lang).values(),
+    ])
+      byFile.set(f.file, f);
+  }
+  byFile.set(vine().file, vine());
+  return [...byFile.values()];
 }

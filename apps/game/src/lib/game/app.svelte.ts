@@ -3,13 +3,25 @@ import type {
   CompiledCase,
   EndingId,
   GameMode,
+  LanguageSetting,
+  Locale,
+  ParseSaveErrorCode,
   Profile,
+  ReportCategory,
+  ReportRef,
   SaveSlotId,
   SaveSlotSummary,
   SaveState,
   Settings,
 } from '@arbre/contract';
-import { defaultProfile, defaultSettings, hintPreset, ProfileSchema } from '@arbre/contract';
+import {
+  DEFAULT_LOCALE,
+  defaultProfile,
+  defaultSettings,
+  hintPreset,
+  ProfileSchema,
+  REPORT_REF_LIMITS,
+} from '@arbre/contract';
 import { claimedFields, newGame, parseSave, summarize, visibleSlots } from '@arbre/engine';
 import { pushToast } from '@arbre/ui';
 import type { Component } from 'svelte';
@@ -20,9 +32,17 @@ import {
   type GameSaveStore,
   type GameSlotSummary,
 } from '../../platform/index';
-import { messages } from '../../messages.fr';
+import {
+  applyMessages,
+  ensureMessages,
+  loadMessages,
+  messages,
+  uiLang,
+  type Messages,
+} from '../../i18n/index.svelte';
+import { navigatorLocales, resolveUiLanguage } from '../../i18n/resolve';
 import { announcer } from './announcer.svelte';
-import { loadContent, type CaseEntry } from './cases';
+import { loadCase, loadCatalog, loadedCase, type CaseEntry } from './cases';
 import { loadPlatform } from './platform-loader';
 import { applySettings } from './settings-dom';
 import { GameStoreImpl, type StoreHost } from './store.svelte';
@@ -44,6 +64,17 @@ export interface NewGameRequest {
   slot: SaveSlotId;
   hintPreset: 0 | 1 | 2 | 3;
   skipTutorial: boolean;
+}
+
+/** Ouverture de « Signaler un problème » ; `error` : depuis l'écran d'erreur. */
+export interface ReportRequest {
+  error?: { code: string; message: string };
+}
+
+export interface ReportDraft {
+  category: ReportCategory;
+  description: string;
+  contact: string;
 }
 
 export type LoadResult = { ok: true } | { ok: false; error: string; corrupt: boolean };
@@ -74,7 +105,10 @@ export class AppController implements StoreHost {
   /** Écran à rouvrir en quittant Options/Succès/Stats hors partie. */
   returnTo = $state<ScreenId>('title');
   profile = $state<Profile>(defaultProfile());
+  /** Catalogue d'affaires (titres, succès, fins) dans la langue du contenu. */
   cases = $state.raw<CaseEntry[]>([]);
+  /** Langue du texte des affaires : celle de l'interface si elle est compilée, sinon la source. */
+  contentLocale = $state<Locale>(DEFAULT_LOCALE);
   contentStatus = $state<ContentStatus>('idle');
   /** Bureau (panneaux), chargé avec l'affaire. */
   desk = $state.raw<DeskComponent | null>(null);
@@ -82,23 +116,60 @@ export class AppController implements StoreHost {
   /** Emplacements manuels, puis un secours par affaire (AFFAIRE-2 §2.3). */
   saves = $state.raw<GameSlotSummary[]>([]);
   ready = $state(false);
-  /** Avertissement de stockage de la plateforme (mode secours, iframe itch…). */
-  storageWarning = $state<string | null>(null);
+  /** Signaler un problème (DESIGN §13.8) : ouvert, avec le contexte d'une erreur éventuelle. */
+  reportRequest = $state.raw<ReportRequest | null>(null);
+  /** Brouillon d'un signalement fermé sans envoi (session seulement, jamais enregistré). */
+  reportDraft: ReportDraft | null = null;
+  /** « Mes signalements » (DESIGN §13.9) ouvert. */
+  myReportsOpen = $state(false);
   saveError = $state(false);
   fatal = $state<FatalError | null>(null);
   ending = $state<EndingId | null>(null);
 
-  #platform: GamePlatform | null = null;
+  #platform = $state.raw<GamePlatform | null>(null);
   #profileTimer: ReturnType<typeof setTimeout> | undefined;
   #backUnsub: (() => void) | null = null;
   #contentLoad: Promise<boolean> | null = null;
+  #catalogLoad: Promise<boolean> | null = null;
+  #catalogReady = false;
+  /** Dernière bascule de langue demandée (les précédentes, plus lentes, sont ignorées). */
+  #langSeq = 0;
 
   get platform(): GamePlatform | null {
     return this.#platform;
   }
 
+  /** Avertissement de stockage de la plateforme (mode secours, iframe itch…), langue courante. */
+  get storageWarning(): string | null {
+    return this.#platform?.storageWarning ?? null;
+  }
+
   get settings(): Settings {
     return this.profile.settings;
+  }
+
+  /** Langue de l'interface (réactive). */
+  get lang(): Locale {
+    return uiLang();
+  }
+
+  /** Réglage de langue du profil (`system` par défaut, anciens profils compris). */
+  get languageSetting(): LanguageSetting {
+    return this.settings.language ?? 'system';
+  }
+
+  /** Langues du système (plateforme, sinon navigateur). */
+  systemLocales(): readonly string[] {
+    try {
+      return this.#platform?.systemLocales?.() ?? navigatorLocales();
+    } catch {
+      return navigatorLocales();
+    }
+  }
+
+  /** Langue résolue d'un réglage : profil, puis `?lang=`, puis langues du système (D6). */
+  resolveLanguage(setting: LanguageSetting = this.languageSetting): Locale {
+    return resolveUiLanguage(setting, this.systemLocales());
   }
 
   /** Le Bureau n'est pas visible (écran par-dessus, ou autre écran) : chrono arrêté. */
@@ -119,16 +190,17 @@ export class AppController implements StoreHost {
       // L'affaire (lourde) n'est pas attendue ici : chargée en commençant ou en reprenant une
       // partie (`ensureContent`). Résumés de repli d'ici là (écrits à chaque sauvegarde).
       const loaded = await loadPlatform((s) => {
-        const entry = this.findCase(s.caseId);
-        return entry ? summarize(s, entry.content) : fallbackSummary(s);
+        const c = loadedCase(s.caseId);
+        return c ? summarize(s, c) : fallbackSummary(s);
       });
       this.#platform = loaded.platform;
-      this.storageWarning = loaded.storageWarning;
       const raw = await this.#safe(() => loaded.platform.saves.loadProfile(), null);
       const parsed = ProfileSchema.safeParse(raw);
       if (parsed.success) this.profile = parsed.data as Profile;
       applySettings(this.settings);
       this.#configureAudio();
+      // Langue du profil avant l'écran titre (le démarrage a déjà appliqué `?lang=` / système).
+      await this.applyLanguage(this.resolveLanguage());
       await this.refreshSaves();
       this.#backUnsub = loaded.platform.onBack(() => this.back());
     } catch (err) {
@@ -138,30 +210,112 @@ export class AppController implements StoreHost {
   }
 
   /**
-   * Charge l'affaire compilée et le Bureau (une fois). Renvoie false en cas d'échec réseau
-   * (état `error`, nouvel essai possible).
+   * Charge le catalogue d'affaires (langue du contenu) et le Bureau (une fois). Renvoie false
+   * en cas d'échec réseau (état `error`, nouvel essai possible). L'affaire elle-même n'est
+   * chargée qu'en ouvrant une partie (`caseContent`).
    */
   ensureContent(): Promise<boolean> {
     if (this.contentStatus === 'ready') return Promise.resolve(true);
     if (this.#contentLoad) return this.#contentLoad;
     this.contentStatus = 'loading';
-    const run = Promise.all([loadContent(), import('../../shell/Desk.svelte')]).then(
-      ([content, desk]) => {
-        this.cases = content.cases;
+    // Textes des panneaux (section différée du catalogue) avec le Bureau.
+    const run = Promise.all([
+      this.ensureCatalog(true),
+      import('../../shell/Desk.svelte'),
+      ensureMessages('desk'),
+    ])
+      .then(([, desk]) => {
         this.desk = desk.default as DeskComponent;
         this.contentStatus = 'ready';
         return true;
-      },
-      (err: unknown) => {
+      })
+      .catch((err: unknown) => {
         console.error('[affaire]', err);
         this.contentStatus = 'error';
         return false;
-      },
-    );
+      });
     this.#contentLoad = run.finally(() => {
       this.#contentLoad = null;
     });
     return this.#contentLoad;
+  }
+
+  /**
+   * Catalogue d'affaires seul (titres des parties à l'écran titre et aux emplacements) : petit
+   * fichier, chargé en arrière-plan. `strict` : l'échec est remonté (sinon ignoré).
+   */
+  ensureCatalog(strict = false): Promise<boolean> {
+    if (this.#catalogReady) return Promise.resolve(true);
+    if (this.#catalogLoad) return this.#catalogLoad;
+    const lang = this.lang;
+    const run = loadCatalog(lang).then(
+      (cat) => {
+        this.cases = cat.cases;
+        this.contentLocale = cat.locale;
+        this.#catalogReady = true;
+        // La langue a changé pendant le chargement : on remet le catalogue à la page.
+        if (this.lang !== lang) void this.applyLanguage(this.lang);
+        return true;
+      },
+      (err: unknown) => {
+        if (strict) throw err;
+        console.warn('[catalogue]', err);
+        return false;
+      },
+    );
+    this.#catalogLoad = run.finally(() => {
+      this.#catalogLoad = null;
+    });
+    return this.#catalogLoad;
+  }
+
+  /** Affaire compilée dans la langue courante (ou la source), ou `null` si le chargement échoue. */
+  async caseContent(id: string): Promise<CompiledCase | null> {
+    try {
+      return await loadCase(this.lang, id);
+    } catch (err) {
+      console.error('[affaire]', id, err);
+      return null;
+    }
+  }
+
+  // ── Langue ─────────────────────────────────────────────────────────
+
+  /** Choix du joueur (écran titre, Options) : écrit dans le profil, puis bascule. */
+  async setLanguage(setting: LanguageSetting): Promise<void> {
+    if (setting !== this.languageSetting) this.updateSettings({ language: setting });
+    await this.applyLanguage(this.resolveLanguage(setting));
+  }
+
+  /**
+   * Bascule de langue : catalogue de l'interface (anglais chargé à la demande), catalogue
+   * d'affaires et affaire en cours dans la nouvelle langue, puis tout est appliqué d'un coup.
+   * La partie (`SaveState`) n'est pas touchée : seul `content` est remplacé. Un échec de
+   * chargement laisse la langue précédente (ou le texte précédent des affaires).
+   */
+  async applyLanguage(lang: Locale): Promise<void> {
+    const seq = ++this.#langSeq;
+    const game = this.game;
+    let ui: Messages;
+    try {
+      ui = await loadMessages(lang);
+    } catch (err) {
+      console.warn('[langue]', lang, err);
+      return;
+    }
+    // Un catalogue d'affaires en cours de chargement (ancienne langue) est attendu d'abord.
+    if (this.#catalogLoad) await this.#catalogLoad.catch(() => false);
+    const [cat, content] = await Promise.all([
+      this.#catalogReady ? loadCatalog(lang).catch(() => null) : null,
+      game ? loadCase(lang, game.content.id).catch(() => null) : null,
+    ]);
+    if (seq !== this.#langSeq) return;
+    applyMessages(lang, ui);
+    if (cat) {
+      this.cases = cat.cases;
+      this.contentLocale = cat.locale;
+    }
+    if (game && content && this.game === game) game.replaceContent(content);
   }
 
   dispose(): void {
@@ -176,6 +330,15 @@ export class AppController implements StoreHost {
 
   findCase(id: string): CaseEntry | undefined {
     return this.cases.find((c) => c.content.id === id);
+  }
+
+  /**
+   * Titre d'affaire d'une partie sauvegardée, dans la langue courante : le résumé garde le titre
+   * de la langue où il a été écrit ; l'association se fait par `caseId`, jamais par titre.
+   */
+  caseTitleOf(s: Pick<SaveSlotSummary, 'caseId' | 'caseTitle'>): string {
+    const id = s.caseId;
+    return (id ? this.findCase(id)?.content.meta.title : undefined) ?? s.caseTitle;
   }
 
   // ── Écrans ─────────────────────────────────────────────────────────
@@ -283,6 +446,36 @@ export class AppController implements StoreHost {
     this.saveError = !ok;
   }
 
+  // ── Signalements ───────────────────────────────────────────────────
+
+  /** Ouvre « Signaler un problème » (écran titre, pause, aide, écran d'erreur). */
+  openReport(request: ReportRequest = {}): void {
+    this.reportRequest = request;
+  }
+
+  closeReport(): void {
+    this.reportRequest = null;
+  }
+
+  openMyReports(): void {
+    this.myReportsOpen = true;
+  }
+
+  closeMyReports(): void {
+    this.myReportsOpen = false;
+  }
+
+  /** Signalements envoyés depuis cet appareil (les plus récents d'abord). */
+  get reports(): ReportRef[] {
+    return this.profile.reports ?? [];
+  }
+
+  /** Remplace la liste des signalements du profil (≤ 20) et l'enregistre aussitôt. */
+  setReports(reports: ReportRef[]): void {
+    this.profile = { ...this.profile, reports: reports.slice(0, REPORT_REF_LIMITS.max) };
+    void this.saveProfile();
+  }
+
   // ── Emplacements ───────────────────────────────────────────────────
 
   async refreshSaves(): Promise<void> {
@@ -329,8 +522,15 @@ export class AppController implements StoreHost {
     const entry =
       (id && this.findCase(id)) || (this.cases.length === 1 ? this.cases[0] : undefined);
     if (!entry) return { ok: false, error: messages.slots.importInvalid };
-    const res = parseSave(raw, entry.content);
-    if (!res.ok) return { ok: false, error: messages.slots.importInvalid };
+    const content = await this.caseContent(entry.content.id);
+    if (!content) return { ok: false, error: messages.errors.contentLoad };
+    const res = parseSave(raw, content);
+    if (!res.ok) {
+      return {
+        ok: false,
+        error: res.code === 'newerVersion' ? messages.slots.newer : messages.slots.importInvalid,
+      };
+    }
     await this.saveStore.save(slot, { ...res.state, slot });
     await this.refreshSaves();
     return { ok: true };
@@ -338,13 +538,16 @@ export class AppController implements StoreHost {
 
   // ── Parties ────────────────────────────────────────────────────────
 
-  async startNewGame(req: NewGameRequest): Promise<void> {
-    if (!(await this.ensureContent())) return;
-    const entry = this.findCase(req.caseId);
-    if (!entry) return;
+  /** Renvoie false si l'affaire n'a pas pu être chargée (réseau). */
+  async startNewGame(req: NewGameRequest): Promise<boolean> {
+    if (!(await this.ensureContent())) return false;
+    if (!this.findCase(req.caseId)) return false;
+    const content = await this.caseContent(req.caseId);
+    if (!content) return false;
     if (req.mode !== 'timed') this.updateSettings({ hints: hintPreset(req.hintPreset) });
-    const state = newGame(entry.content, { slot: req.slot, mode: req.mode, at: Date.now() });
-    this.#openGame(entry.content, state, { skipTutorial: req.skipTutorial, fresh: true });
+    const state = newGame(content, { slot: req.slot, mode: req.mode, at: Date.now() });
+    this.#openGame(content, state, { skipTutorial: req.skipTutorial, fresh: true });
+    return true;
   }
 
   /** `caseId` : secours de cette affaire (`slot === 'auto'`) ; sinon le plus récent. */
@@ -366,16 +569,11 @@ export class AppController implements StoreHost {
     const id = guessCaseId(raw);
     const entry = id ? this.findCase(id) : undefined;
     if (!entry) return { ok: false, error: messages.slots.unknownCase, corrupt: false };
-    const res = parseSave(raw, entry.content);
-    if (!res.ok) {
-      const newer = /plus récente/.test(res.error);
-      return {
-        ok: false,
-        error: newer ? messages.slots.newer : messages.slots.corrupt,
-        corrupt: !newer,
-      };
-    }
-    this.#openGame(entry.content, res.state, { skipTutorial: true, fresh: false });
+    const content = await this.caseContent(entry.content.id);
+    if (!content) return { ok: false, error: messages.errors.contentLoad, corrupt: false };
+    const res = parseSave(raw, content);
+    if (!res.ok) return { ok: false, ...parseFailure(res.code) };
+    this.#openGame(content, res.state, { skipTutorial: true, fresh: false });
     return { ok: true };
   }
 
@@ -487,8 +685,8 @@ export class AppController implements StoreHost {
   }
 
   summarize(state: SaveState): SaveSlotSummary | null {
-    const entry = this.findCase(state.caseId);
-    return entry ? summarize(state, entry.content) : null;
+    const c = this.game?.content.id === state.caseId ? this.game.content : loadedCase(state.caseId);
+    return c ? summarize(state, c) : null;
   }
 
   async #safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
@@ -501,9 +699,17 @@ export class AppController implements StoreHost {
   }
 }
 
+/** Message d'un échec de `parseSave` selon son code (jamais selon le texte technique). */
+export function parseFailure(code: ParseSaveErrorCode): { error: string; corrupt: boolean } {
+  if (code === 'newerVersion') return { error: messages.slots.newer, corrupt: false };
+  if (code === 'otherCase') return { error: messages.slots.unknownCase, corrupt: false };
+  return { error: messages.slots.corrupt, corrupt: true };
+}
+
 function fallbackSummary(s: SaveState): SaveSlotSummary {
   return {
     slot: s.slot,
+    caseId: s.caseId,
     caseTitle: s.caseId,
     updatedAt: s.updatedAt,
     elapsedMs: s.elapsedMs,

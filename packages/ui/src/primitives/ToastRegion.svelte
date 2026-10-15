@@ -3,6 +3,7 @@
 	Desktop : bas droite ; téléphone : au-dessus de la barre d'onglets.
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import Toast from './Toast.svelte';
   import { dismissToast, getToasts } from './toasts.svelte';
 
@@ -11,7 +12,9 @@
     offset?: string;
     label?: string;
   }
-  let { offset = '0px', label = 'Notifications' }: Props = $props();
+  let { offset = '0px', label: labelProp }: Props = $props();
+  const ui = getUiStrings();
+  const label = $derived(labelProp ?? ui.toast.region);
   const toasts = $derived(getToasts());
 </script>
 

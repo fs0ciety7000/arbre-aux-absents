@@ -1,11 +1,15 @@
-import { getPlatform, setSaveSummarizer, type GamePlatform } from '../../platform/index';
-import { createMemoryPlatform } from '../../platform/index';
+import {
+  createMemoryPlatform,
+  getPlatform,
+  setPlatformStrings,
+  setSaveSummarizer,
+  type GamePlatform,
+} from '../../platform/index';
+import { messages } from '../../i18n/index.svelte';
 import type { SaveSlotSummary, SaveState } from '@arbre/contract';
 
 export interface LoadedPlatform {
   platform: GamePlatform;
-  /** Avertissement de stockage (mode secours, iframe itch…) ou null. */
-  storageWarning: string | null;
 }
 
 /**
@@ -16,12 +20,13 @@ export async function loadPlatform(
   summarize: (s: SaveState) => SaveSlotSummary,
 ): Promise<LoadedPlatform> {
   setSaveSummarizer(summarize);
+  // Textes de la plateforme (avertissements, dialogues de fichier) dans la langue courante.
+  setPlatformStrings(() => messages.platform);
   try {
     const platform = await getPlatform();
-    return { platform, storageWarning: platform.storageWarning };
+    return { platform };
   } catch (err) {
     console.warn('[plateforme] repli en mémoire', err);
-    const platform = createMemoryPlatform();
-    return { platform, storageWarning: platform.storageWarning };
+    return { platform: createMemoryPlatform() };
   }
 }

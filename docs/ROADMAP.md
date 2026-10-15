@@ -107,6 +107,29 @@ Fait :
 - [x] Correctifs QA : étiquette Dalvezac sous les contrôles de la carte du site (axe `target-size`), focus de
       la confirmation « Rétablir la déclaration », portrait déclaré lisible dans la fiche, secours par affaire
 
+## Session 2 — 15 oct. 2026 (traduction anglaise et signalement de problèmes, branche `claude/i18n-en`)
+
+Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
+
+- [x] Vague 0 (orchestrateur) : contrat `packages/contract/src/{i18n,report,report-ref}.ts`, champs
+      `hearing`, `Highlight.lang`, `SaveSlotSummary.caseId`, `Settings.language`, `Profile.reports`,
+      `ParseSaveErrorCode`, `systemLocales`/`openExternal` ; schémas JSON régénérés ; ARCHITECTURE §1–§6
+      et nouveau §8 ; WORKFLOW (périmètres, agent `traducteur`) ; `content/locales.json` (fr source,
+      en draft) ; scripts `content:i18n` (emplacement réservé) et `dev:report` ; `.env.example`.
+      Transition : `CompiledCase.locale`, `ParseSaveResult.code` et `Platform.systemLocales` restent
+      facultatifs dans le type jusqu'à A2/C1 pour garder `check` vert.
+- [x] A1 à A5 (contenu, moteur et plateforme, UI, service `apps/report`, infra), check vert (G1).
+- [x] T0, T0-V, T0-H : glossaire, monde, terminologie des deux affaires (blaze/walkout, woman engineer).
+- [x] T1 (V1–V6, H1–H5) : 216 pièces, 10 fins, aides, succès ; T2 : 13 illustrations, cartouche de carte,
+      illustration titre et vignette du tampon en anglais.
+- [x] B1 (UI du jeu, changement de langue en partie), B3 (site `/en/`, `hreflang`, sitemap), B2 et B4
+      (signalement dans le jeu et sur le site, suivi, problèmes connus, confidentialité).
+- [x] C1 : `en` ready, ancien format généré retiré, `CompiledCase.locale` obligatoire ; solveur anglais
+      = français (118/30 et 98/28, toutes les fins) ; premier affichage du jeu ramené à +1,4 Ko gz.
+- [x] C2 : citations des aides alignées sur les pièces, faux liens « lise » corrigés dans la source FR.
+- [x] C3 : projet e2e en-GB (172 réussis), revue sécurité, images Docker site et service avec /healthz.
+- [ ] C4 · devops · déploiement `arbre-api.cardormedia.com` (DNS, app Coolify, jeton, webhook, étiquettes).
+
 ## Backlog
 
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
@@ -140,6 +163,14 @@ Fait :
 - Contrat : remappage des touches dans `Settings`, emplacement dédié au mode chronométré, fractionnés sauvegardés.
 - Illustrations : qualité inégale (pb-01, photos de groupe aux tenues répétées) ; vrais profils pour ph-16/17.
 - Playtests : difficulté réelle des homonymes (Augustin, Firmin) et des cases à risque (C17, C21, C19, C25).
+
+- Signalement : la limite de débit fait confiance à `CF-Connecting-IP` ; fermer l'origine à tout ce qui
+      n'est pas Cloudflare (Authenticated Origin Pulls ou pare-feu) avant d'ouvrir largement.
+- Aides françaises de la Succession Varenque (c02, c04, c08, c13, c14, c18, c21, c22, c26, c29, c30) :
+      citer le texte exact des pièces, comme l'anglais.
+- Liens fortuits à confirmer (scénariste) : « goéland » minuscule → `le-goeland` (cp-02, ct-02, dv-05,
+      pr-07), « tilleuls » (ph-05, ph-22), gardien de prison (rg-14), « le thalbère » langue (rp-03 H).
+- Cartouche de carte : la ligne « dressée et gravée par… » mord sur le filet hachuré (`labels.py`).
 
 ## Décisions
 
@@ -175,3 +206,19 @@ Fait :
 | 14/10 | La case revendiquée a deux champs faux (visage, métier) et un nom juste | Le joueur conteste sans tout jeter ; une déclaration juste sur 4 champs est une erreur de contenu. |
 | 14/10 | Option de décision indisponible affichée grisée avec sa raison (`unavailableReason`) | Le joueur voit ce qu'il lui manque au lieu d'une option qui disparaît. |
 | 14/10 | La démo n'inclut pas l'affaire 2 ; emplacements manuels partagés, secours par affaire | Démo inchangée ; une partie d'une affaire n'écrase jamais le secours de l'autre. |
+| 15/10 | D1 · i18n : le FR reste la **source de vérité** ; traductions dans des dossiers `content/cases/<id>/locales/<loc>/` | Aucun fichier FR déplacé, périmètres disjoints ; ajouter une langue = ajouter un dossier. |
+| 15/10 | D2 · Traductions JSON en **calques** (champs traduisibles seuls, indexés par id FR), tout le reste hérité | Dérive structurelle impossible par construction. |
+| 15/10 | D3 · Noms propres jamais traduits ; institutions et événements tranchés dans le glossaire ; **anglais britannique** ; titre du jeu inchangé, titres d'affaires traduits | Cohérence avec le DEVLOG ; marque conservée. |
+| 15/10 | D4 · Sel et `contentHash` calculés sur la **structure** (sources FR hors `locales/`), identiques entre langues | Sauvegardes et changement de langue en cours de partie sans migration. |
+| 15/10 | D5 · `Highlight.lang` : surlignage affiché seulement dans sa langue, conservé dans l'autre | Les positions dépendent du texte. |
+| 15/10 | D6 · Langue `system` : `fr-*` → français, toute autre → anglais ; `?lang=en` sur `/jouer/` comme indice (à valider par le propriétaire) | Un germanophone lit plus probablement l'anglais. |
+| 15/10 | D7 · Écran d'attente HTML neutre, message sans JS bilingue, aucun script en ligne | CSP ; titre identique dans les deux langues. |
+| 15/10 | D8 · Site : préfixe `/en/` avec les mêmes slugs, `hreflang` (fr, en, x-default → fr), aucune redirection automatique | Site statique, nginx sans logique, référencement propre. |
+| 15/10 | D9 · Service de signalement : app Coolify `arbre-api.cardormedia.com`, Node 22, `node:http` + `node:sqlite`, zod embarqué, volume `/data` | CORS nécessaire de toute façon ; certificat Cloudflare ; pas de proxy fragile. |
+| 15/10 | D10 · Numéro de ticket propre au service (`AA-0042`), lien de suivi `…/suivi/#<jeton>`, jeton 128 bits stocké haché | Ni GitHub ni l'URL du ticket exposés ; jeton absent des journaux et du Referer. |
+| 15/10 | D11 · `@tauri-apps/plugin-opener` limité à `arbre.cardormedia.com` et `cardorinteractive.itch.io` | Plugin officiel léger ; seule manière propre d'ouvrir un lien externe sous Tauri. |
+| 15/10 | D12 · Signalements dans un dépôt GitHub **privé** dédié `fs0ciety7000/arbre-aux-absents-signalements` (`GITHUB_REPO`) ; le contact n'est jamais envoyé à GitHub | Décision du propriétaire : la description libre peut contenir des données personnelles, le dépôt du jeu est public. |
+| 15/10 | D13 · Conservation : contact effacé 30 j après clôture, ticket supprimé 12 mois après clôture, suppression immédiate à la demande ; aucune IP stockée ni journalisée | Minimisation (RGPD). |
+| 15/10 | D14 · Termes de recherche anglais : *blaze* (incendie), *walkout* (grève), *woman engineer* (ingénieure) ; lieux de la carte jamais traduits ; titres « The Varenque Succession », « The Revenant of Hautcorvin » | Éviter les liens que le français n'a pas (*fire*, *strike* = *strike off*, *engineer* masculin) et garder les indices de genre. |
+| 15/10 | D15 · `TicketStatus` en quatre étapes (Reçu → Confirmé → En cours → Corrigé vX ou Classé) | `fixed` et `closed` sont deux fins exclusives : une cinquième étape attendrait toujours. |
+| 15/10 | D16 · Textes des panneaux du jeu chargés avec le bureau ; paquets `@arbre/*` sans effets de bord pour le découpage | Tenir le budget du premier affichage (+1,4 Ko gz contre +4 Ko permis). |

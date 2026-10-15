@@ -12,6 +12,12 @@
 > **v2.3 — 14 oct. 2026 — rapport de l'affaire 2** : tampons de décision (§6.11 : `DecisionCard`,
 > `DecisionGroup`) et variante bureau sombre de l'encre déclarée (`--claim-ink-desk`, §6.9).
 >
+> **v2.4 — 15 oct. 2026 — anglais et signalements** : textes par défaut des primitives en
+> contexte (§4.4 : `UiStrings`, `uiFr`, `uiEn`, `setUiStrings`), typographie anglaise (§4.4),
+> sélecteur de langue (§9.35 `LanguageSwitch`), suivi de signalement (§9.36 `TicketStatus`),
+> recettes « Signaler un problème », aperçu des diagnostics, « Mes signalements » et page de suivi
+> (§13.8–13.10, §14.6). Aucun nouveau token de couleur.
+>
 > | Quoi | Où |
 > |---|---|
 > | Tokens | `packages/ui/src/styles/tokens.css` (palette brute, sémantique, matières, contextes, réglages, mouvement) |
@@ -22,6 +28,7 @@
 > | Classes d'art | `packages/ui/src/styles/art.css` + `ART_CLASSES` dans `packages/ui/src/art-classes.ts` |
 > | Entrée CSS | `packages/ui/src/styles/index.css` (fonts → tokens → base → materials → motion → art → keyart), une fois par app |
 > | Primitives | `packages/ui/src/primitives/*.svelte` (Svelte 5, runes), barrel `primitives/index.ts`, tout réexporté par `@arbre/ui` |
+> | Textes des primitives | `packages/ui/src/i18n.ts` (`UiStrings`, `uiFr`, `uiEn`, contexte), aussi `@arbre/ui/i18n` |
 > | Icônes, ornements | géométrie `primitives/icon-geometry.ts`, `ornament-geometry.ts` → encrage `npm run icons:ink -w @arbre/ui` → `icons.ts`, `ornaments.ts` (générés) |
 > | Art clé | `art/keyart/` (SVG générés, voir son README) ; primitive `KeyArt` |
 > | Contrastes | `node packages/ui/scripts/contrast.mjs` (`--md` pour l'annexe, `--strict` pour la CI) |
@@ -382,6 +389,41 @@ en Fraunces italique `--text-muted`. Tailles : `hero` (`--step-6`, écran titre,
 encrés un à un (flou → net, `mv-ink`, rang × `--stagger`), volute balayée (`InkReveal`), accroche
 qui monte. `glow` : halo de lampe qui vacille derrière. Le texte reste du vrai texte
 (`aria-label` sur le titre, mots `aria-hidden`).
+
+### 4.4 Langues : textes des primitives et typographie anglaise (v2.4)
+
+**Textes par défaut des primitives.** Aucune primitive ne porte de français en dur : fermetures
+(`Dialog`, `Panel`, `Toast`), région des notifications, `Combobox` (indication, état vide, liste,
+compte annoncé), `ClaimTag` (« Déclaré »), `DecisionCard` (« Visé », « Indisponible : »),
+`CaseFolder` (« Dernière décision : »), `Loader`, `SkipLink`, `Card` (« Épinglé »), `Stamp`
+(« Établi »), `Toggle` (Activé / Désactivé), `TextField` (compteur), `KeyHint` (noms des boutons
+de manette, lettres des sticks G/D → L/R), `LanguageSwitch`, `TicketStatus`. Ils viennent de
+`UiStrings` (`packages/ui/src/i18n.ts`) :
+
+- `uiFr` (défaut, sans contexte) et `uiEn` (`satisfies UiStrings` : clé manquante ou en trop = erreur
+  de typage), `UI_STRINGS[locale]`, `LANGUAGE_NAMES` (« Français », « English » : chaque langue
+  s'écrit **dans sa langue**, jamais traduite).
+- `setUiStrings(() => UI_STRINGS[lang])` à l'initialisation du composant racine (jeu : `App`,
+  site : `+layout`). Passer une **fonction** qui lit un état réactif : le changement de langue en
+  cours de partie se propage à toutes les primitives sans les remonter. `getUiStrings()` dans une
+  primitive (ou un composant de l'app) rend un objet qui relit la source à chaque accès.
+- Une prop explicite (`closeLabel`, `label`, `stamp`…) l'emporte toujours : API inchangée.
+- `padLabel(bouton, style, strings?)` prend les textes en troisième argument (déf. français).
+- `Wordmark` pose `lang="fr"` sur le titre : « L'Arbre aux absents » ne se traduit pas (D3) et
+  se prononce en français dans l'interface anglaise.
+
+**Typographie anglaise** (anglais britannique ; vocabulaire : `docs/i18n/en/GLOSSAIRE.md`).
+
+| Sujet | Règle |
+|---|---|
+| Longueurs | Prévoir **+15 à 30 %** sur les libellés courts traduits du français vers l'anglais *et* l'inverse selon les mots (« Close » < « Fermer », mais « Last decision: » ≈ « Dernière décision : », « Report progress », « Fixed or closed »). Aucun libellé ne doit dépendre d'une largeur fixe : `white-space: nowrap` seulement sur les tampons, étiquettes et touches ; les rangées passent à la ligne (`flex-wrap`). Les onglets compacts (§9.3 bis) mesurent les libellés réels : rien à régler par langue. |
+| Capitales | Oswald capitales par CSS (`text-transform: uppercase`), jamais dans la chaîne : l'anglais s'écrit en **casse de phrase** (« Resume the investigation », pas « Resume The Investigation ») ; les lecteurs d'écran lisent la casse du source. Les capitales anglaises sont plus larges (W, M) : l'approche `--tracking-stamp` reste, pas de réglage par langue. |
+| Étiqueteuse (Dymo) | Bande d'une ligne, ≤ 18 caractères visés (« LAST FILED », « ORC 74-118 ») ; au-delà, abréger dans le catalogue (jamais d'ellipse sur une étiqueteuse). Les cotes et numéros (`AA-0042`) ne se traduisent pas. |
+| Tampons | Un mot ou deux : « Established », « Endorsed », « Declared », « Closed ». « Fixed in v1.2.0 » est le plus long (frise testée à 360 px). |
+| Ponctuation | Pas d'espace avant `: ; ! ?` (les espaces fines insécables françaises disparaissent : préfixes `Unavailable: `, `Last decision: `). Guillemets “…” (‘…’ à l'intérieur) ; la `.claim-value` dessine « » en français et “ ” sous `:lang(en)` (`materials.css`, suit `lang` de `<html>`). |
+| Nombres, dates | Toujours `Intl` sur la langue courante : « 17 April 1923 », « 12 Oct 2026 », séparateur décimal point, milliers virgule ; jamais de date ou de nombre concaténé à la main. |
+| Coupure | `hyphens: auto` suit `lang` : `<html lang>` à jour dès la bascule (sinon coupures françaises sur du texte anglais). |
+| Polices | Toutes les polices couvrent l'anglais (latin) ; aucune tranche à ajouter. Caveat reste la manuscrite. |
 
 ---
 
@@ -1007,7 +1049,8 @@ revoir seulement pour une scène défilée complexe (artbook interactif).
 ### 9.0 bis Règles communes
 
 Svelte 5 runes, tokens sémantiques seulement, focus `outline 3px --focus` décalé de 2 px, cibles
-≥ 44 px, conformes en contextes lampe, papier, kraft, HC et couleurs forcées, texte en français.
+≥ 44 px, conformes en contextes lampe, papier, kraft, HC et couleurs forcées ; textes par défaut
+lus dans `UiStrings` (§4.4), jamais en dur.
 `{@html}` interdit **sauf** `KeyArt` (SVG du dépôt, vérifié par `checkSvg`).
 
 | # | Primitive | API | v2 : matière et mouvement | Accessibilité |
@@ -1039,6 +1082,8 @@ Svelte 5 runes, tokens sémantiques seulement, focus `outline 3px --focus` déca
 | 9.32 | `ClaimTag` | §6.9 | cartouche agrafé, transition `unclaim` | texte réel, ou `decorative` (`aria-hidden`) |
 | 9.33 | `CaseFolder`, `CaseFolderGroup` | §6.10 | chemise kraft qui se soulève ; `deal` | radio natif dans un `fieldset` |
 | 9.34 | `DecisionCard`, `DecisionGroup` | §6.11 | fiche de décision, tampon `ink` qui frappe ; grisée avec sa raison | radio natif dans un `fieldset`, indisponible `disabled` + description |
+| 9.35 | `LanguageSwitch` | §9.35 | réglette, langue choisie en bande d'étiqueteuse collée | radios natifs dans un `fieldset`, ou liens `hreflang` + `aria-current` ; `lang` par nom |
+| 9.36 | `TicketStatus` | §9.36 | frise de tampons, l'étape actuelle frappe | `<ol>`, `aria-current="step"`, état lu en texte |
 | 9.31 | `Coachmark` | `anchor` (fonction) · `kicker` · `text` · `actionLabel`/`onaction` · `skipLabel`/`onskip` · `placement` · `bottomInset` · `id` · snippet | **Note de service** : bande de papier (contexte papier) à liseré safran, posée près de sa cible avec une flèche, liseré pointillé autour de la cible ; se pose comme une feuille (`--dur-open`, `--ease-paper`) | `<aside>` nommé par son surtitre, décrit par son texte ; jamais de focus pris ; §9.31 |
 
 Utilitaires CSS : base.css (`.reading`, `.ink-type`, `.ink-hand`, `.num`, `.caps`, `.grain`,
@@ -1103,6 +1148,78 @@ toucher. Une seule note à la fois, **au moment du geste** (jamais de diaporama 
   verbe du périphérique actif (« touchez », « cliquez sur », « sélectionnez »).
 - **Contrastes** : paires existantes du contexte papier (`--text` / `--surface-1`,
   `--accent` sur papier pour le surtitre, bouton primaire) : aucun nouveau token.
+
+### 9.35 Sélecteur de langue (`LanguageSwitch`) — v2.4
+
+Une **réglette** (liseré `--line`, `--radius-s`) où la langue choisie est une **bande
+d'étiqueteuse collée** (`.mat-label` bleue, relief, de travers de −1,5°) et l'autre de simples
+capitales Oswald `--text-muted`. La différence est une **forme** (bande en relief contre texte nu),
+pas seulement une couleur. Survol : la langue non choisie passe en `--text` et se soulève de
+`--lift` ; la bande se pose en `--dur-fast` `--ease-snap` (transform seul ; mouvement réduit : 0).
+
+- **Écran titre** (sans `hrefs`) : `fieldset` + radios natifs invisibles couvrant chaque
+  étiquette (Tab entre une fois, flèches pour changer, Espace). Légende « Langue » / “Language”
+  masquée sauf `labelVisible`. Sous le menu, à droite des crédits.
+- **En-tête du site** (`hrefs`) : `nav` + liens `hreflang`, la page courante dans chaque langue
+  (mêmes slugs sous `/en/`, D8), `aria-current="true"` sur la langue courante. `short` à 360 px.
+- Chaque nom porte son `lang` (`lang="fr"` sur « Français », `lang="en"` sur « English ») ;
+  `short` affiche FR / EN ; le nom accessible (`aria-label` du lien ou du radio) commence par ce
+  texte visible, suivi du nom complet (« EN, English », WCAG 2.5.3 : le nom contient le libellé
+  visible). Cibles ≥ `--hit` ; focus 3 px `--focus` autour de
+  l'étiquette (`:has(:focus-visible)`). Couleurs forcées : réglette `CanvasText`, bande choisie
+  `CanvasText`/`Canvas` (règle `.mat-label`).
+- **Contrastes** : paires existantes (`--label-tape-text` / `--label-tape`, `--text-muted` sur
+  `--canvas` et `--surface-*`, tous contextes) : aucun nouveau token.
+- **API** : `value` (bindable, `'fr' | 'en'`) · `onchange(locale)` · `locales` · `hrefs` · `short`
+  · `label` · `labelVisible` · `name` · `class`.
+
+```svelte
+<LanguageSwitch value={app.lang} onchange={(l) => app.setLanguage(l)} />            <!-- titre -->
+<LanguageSwitch value={lang} hrefs={{ fr: `/le-monde/`, en: `/en/le-monde/` }} short /> <!-- site -->
+```
+
+Le réglage `system` (« Langue du système ») n'est pas dans la réglette : c'est une option du
+`Select` des Options (ARCHITECTURE, `LanguageSetting`), **seul contrôle de langue des Options**
+(pas de réglette à côté : deux contrôles nommés « Langue » seraient ambigus au lecteur d'écran).
+La réglette de l'écran titre montre la langue résolue.
+
+### 9.36 Suivi d'un signalement (`TicketStatus`) — v2.4
+
+Une **frise de tampons** : Reçu → Confirmé → En cours → **issue**. L'issue est un seul cran à
+deux visages, parce que les deux statuts terminaux s'excluent (ARCHITECTURE §8 : un ticket fermé
+avec jalon est `fixed`, sans jalon `closed`) : « Corrigé v1.2.0 » au **tampon violet de la vérité
+établie** (`tone="established"`), ou « Classé » à l'encre neutre, suivi de sa raison en Courier
+Prime `--text-muted` (Résolu, Doublon, Non retenu). Tant qu'il n'y a pas d'issue, le cran porte
+« Corrigé ou classé » en attente.
+
+- **États** : étape franchie = tampon `ink` `size="s"`, pastille pleine, fil plein
+  (`--text-muted`) ; étape actuelle = tampon qui **frappe** (`animate`, §9.15 ; mouvement réduit :
+  fondu) ; à venir = cadre de tampon vide en tirets `--line-strong`, libellé Oswald `--text-muted`,
+  pastille creuse, fil en tirets. Un statut sauté (Reçu → En cours) marque les étapes précédentes
+  franchies : la frise dit où en est le ticket, pas son historique.
+- **Disposition** : en colonne (fil vertical) sous 36 rem **de conteneur** (`@container`) ; en
+  ligne au-delà (4 colonnes égales, fil horizontal, tampons centrés sous les pastilles). Tampons
+  inclinés −4° / +3° en alternance. 360 px : sans débordement, « Fixed in v1.2.0 » compris.
+- **Matière** : posée sur papier (`PaperSheet`, `Panel surface="paper"`) ou sur le bureau ; pas sur
+  `.mat-card` sans `data-surface="paper"` (les jetons resteraient ceux du bureau).
+- **Accessibilité** : `<ol>` nommée « Suivi du signalement » ; étape actuelle `aria-current="step"` ;
+  chaque tampon `role="img"` nommé « Reçu, étape franchie », « Classé · Doublon, étape actuelle » ;
+  étapes à venir en texte + « à venir » masqué. Jamais la couleur seule (tampon, pastille, tirets).
+  Couleurs forcées : pastilles, fils et cadres `CanvasText`.
+- **Contrastes** (mesurés, §17) : `--text-muted` sur `--surface-1` 9,96:1 (lampe), 7,30:1
+  (papier), 7,81:1 (kraft) ; `--established` sur `--surface-1` 7,53:1 / 7,23:1 / 5,53:1 ; HC ≥ 10,76:1
+  et ≥ 14,61:1. Aucun nouveau token.
+- **API** : `status: 'received' | 'confirmed' | 'in-progress' | 'fixed' | 'closed'` (= `TicketStatus`
+  du contrat) · `fixedIn` · `closedReason: 'resolved' | 'duplicate' | 'not-planned'` · `animate` ·
+  `label` · `class`. Textes : `UiStrings.ticket` (`status`, `fixedIn(v)`, `closedReason`,
+  `outcome`, `state`), réutilisables par l'hôte pour l'en-tête du ticket.
+
+```svelte
+<PaperSheet>
+  <p><DymoLabel text={t.ticket} tone="red" /> <span class="ink-type">{categoryLabel} · {date}</span></p>
+  <TicketStatus status={t.status} fixedIn={t.fixedIn} closedReason={t.closedReason} animate />
+</PaperSheet>
+```
 
 ### 9.21 Mots-clés soulignés (`.kw`)
 
@@ -1320,6 +1437,9 @@ ornements, curseurs `data-cursors="ink"`, catalogue de mouvement rejouable (§8.
 `motion.ts`, `Tabs variant="folder"`, `Folder`, `PaperSheet`, `IndexCard`, `Card variant="index"`,
 `FlipCard`, `Celebrate`, `KeyArt` (16:9 et 4:5, `ArtDefs`), sélecteurs mouvement / contraste /
 vision des couleurs.
+v2.4 (fait) : section « Langue et signalements » : `LanguageSwitch` (radios, court, liens) qui
+pose `setUiStrings` sur toute la page, `TicketStatus` (statut au choix, tampon rejouable, trois
+variantes), maquette « Signaler un problème » avec aperçu des diagnostics.
 v2.2 (fait) : section « Case revendiquée et chemises d'affaire » (fiche ordinaire, revendiquée
 avec retrait / rétablissement animé, établie ; `ClaimTag` seul ; `CaseFolderGroup` de deux chemises,
 mention et tampon de décision).
@@ -1433,6 +1553,56 @@ une question `choice` (décision) se pose en tampons de décision (§6.11) ;
 validation : `Stamp` « Établi » ou « Contredit » en cascade (`--stagger`) ; écran de fin : art clé
 `fade="edges"` + `Wordmark size="title"` + `Celebrate` une fois ; crédits avec logos (§11).
 
+### 13.8 « Signaler un problème » (v2.4)
+
+Accès : écran titre (lien discret sous les crédits), Pause, Aide, écran d'erreur. Un **formulaire
+de l'Office** : `Dialog surface="paper" size="l"` (plein écran au téléphone, `mobile="fullscreen"`),
+surtitre « Formulaire de signalement », titre « Signaler un problème ».
+
+- **Champs** dans l'ordre : catégorie (`Select`, libellés humains : « Je suis bloqué », « Faute ou
+  texte incorrect »…) ; description (`TextField multiline`, 4 lignes, `maxlength` 4000, compteur ;
+  aide « Au moins 20 caractères. Ce que vous faisiez, ce que vous attendiez. ») ; contact facultatif
+  (`TextField`, aide « Jamais publié. Seulement pour vous répondre. ») ; « Joindre ma sauvegarde
+  anonymisée » (`Toggle showState`, décochée par défaut, description « Sans vos notes ni vos
+  recherches »). Le pot de miel `website` est un champ hors écran (`visually-hidden`,
+  `tabindex="-1"`, `autocomplete="off"`, `aria-hidden`).
+- **Aperçu des diagnostics** : `<details>` « Voir exactement ce qui sera envoyé » sous les
+  champs, fermé par défaut ; contenu `<pre class="ink-type">` du JSON **réel** (celui qui partira,
+  recalculé quand la case change), `--step--1`, cadre en tirets `--line-strong`,
+  `max-block-size: 16rem` avec défilement **vertical** et `white-space: pre-wrap` (jamais de
+  défilement horizontal à 360 px) ; résumé ≥ `--hit`, focus 3 px. Une ligne au-dessus en clair :
+  « Version 1.2.0 · démo · Android · English · Succession Varenque ».
+- **Actions** : `Button primary` « Envoyer le signalement » (`envelope`, `loading` pendant
+  l'envoi, 10 s au plus) ; `ghost` « Annuler ». Envoi désactivé tant que la description fait moins de
+  20 caractères, avec la raison en aide (pas de bouton grisé muet).
+- **Reçu** : la feuille est **tamponnée** « Reçu » (`Stamp animate`), numéro sur une étiqueteuse
+  rouge (`DymoLabel` `AA-0042`), phrase « Gardez ce numéro : le suivi est aussi dans Mes
+  signalements », `Button secondary` « Ouvrir le suivi sur le site » (`external`). Annonce polie.
+- **Échec** (hors ligne, 503, 429) : `Toast tone="warning"` + dans la feuille un encart papier
+  (`--surface-2`) « Le service ne répond pas. Rien n'est perdu : » avec « Copier le rapport »
+  (`secondary`, `Toast success` « Rapport copié ») et « Forum itch.io » (`ghost`, `external`).
+  429 : le délai (`Retry-After`) en clair. Jamais de perte du texte saisi.
+
+### 13.9 « Mes signalements » (v2.4)
+
+Panneau des Options (ou de l'Aide) : un **tiroir de fiches**. Chaque signalement =
+`Card variant="index"` : cote `DymoLabel` rouge `AA-0042`, catégorie et date (`Intl`) en Courier
+Prime, **dernier tampon** de la frise (`Stamp size="s"`, violet si corrigé), activation = ouvre la
+feuille de suivi (`Dialog surface="paper"`, `TicketStatus animate`, réponses de l'équipe en
+`PaperSheet` citées, texte brut en `--font-read`, date au-dessus). Actions de la feuille :
+« Ouvrir sur le site » (`secondary`, `external`), « Supprimer mon signalement » (`danger`,
+confirmation `Dialog` « Supprimer ce signalement ? Le ticket ne sera plus lisible. », focus initial
+sur « Garder »). Vide : vignette `spot-archives.svg` (`.art.on-night`) + « Aucun signalement
+envoyé depuis cet appareil. » Statut indisponible (hors ligne) : la frise garde le dernier statut
+connu, mention « vu le 12 oct. » en `--text-muted`.
+
+### 13.10 Typographie anglaise des écrans
+
+Recettes inchangées en anglais (§4.4) ; vérifier à 360 et 390 px : menu de l'écran titre
+(« Resume the investigation »), onglets du Bureau (le mode compact se déclenche plus tôt, c'est
+voulu), barre du Lecteur, rapport final (« Endorsed »), chemises d'affaire (« Last decision: »).
+Le `LanguageSwitch` de l'écran titre se place sous le menu ; les Options n'ont que le `Select` de langue (§9.35).
+
 ---
 
 ## 14. Recettes du site
@@ -1469,6 +1639,20 @@ Courier Prime. C'est un **lien** vers YouTube (repli sans JS) que `video-facade.
 accueil seulement) change en bouton puis remplace au clic par le lecteur `youtube-nocookie.com`
 focalisé : aucune requête ni cookie YouTube avant le clic. Mention sous le cadre en Courier Prime
 `--text-muted`.
+
+### 14.6 Pages de signalement et de suivi (v2.4)
+
+- **`/signaler/`** (et `/en/…`) : même recette que §13.8 posée dans une `PaperSheet` centrée
+  (≤ 48 rem), sans diagnostics de partie (plateforme `site`, langue, fenêtre) ; repli `<noscript>` :
+  adresse du forum itch.io.
+- **`/suivi/#<jeton>`** : la **fiche de suivi**. En-tête : `DymoLabel` rouge du numéro, catégorie
+  et dates (`Intl`) en Courier Prime ; `TicketStatus animate` (la frise frappe une fois) ; réponses
+  publiques en `PaperSheet` (texte brut, jamais de HTML) ; pied : « Supprimer mon signalement »
+  (`danger`, confirmation). Jeton inconnu ou expiré : `Panel surface="paper"` « Ce suivi n'existe
+  plus » + lien vers `/signaler/`. Le fragment est effacé de l'historique dès la lecture.
+- **`/problemes-connus/`** : liste de `Card variant="index"` (titre, `TicketStatus` réduite à son
+  dernier tampon, « Corrigé v1.2.0 » en tête de fiche), triée par mise à jour.
+- **En-tête du site** : `LanguageSwitch hrefs short` à droite de la navigation (§9.35).
 
 ### 14.4 Pied de page
 

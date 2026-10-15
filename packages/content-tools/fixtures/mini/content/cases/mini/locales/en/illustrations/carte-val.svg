@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200">
+  <defs><clipPath id="carte-val-cadre"><rect width="300" height="200" rx="2"/></clipPath></defs>
+  <g clip-path="url(#carte-val-cadre)">
+    <rect class="photo-paper" width="300" height="200"/>
+    <path class="photo-mid" d="M0 140 Q150 100 300 150 L300 200 L0 200 Z"/>
+    <path class="photo-dark" stroke="currentColor" fill="none" d="M40 130 L260 120"/>
+  </g>
+</svg>

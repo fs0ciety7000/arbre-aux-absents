@@ -6,31 +6,53 @@
 -->
 <script lang="ts">
   import type { MapLayer } from '@arbre/contract';
-  import { MapView, type MapPlaceView } from '@arbre/map/svelte';
+  import { MapView, type MapPlaceView, type MapStrings } from '@arbre/map/svelte';
   import { Button, Loader } from '@arbre/ui';
   import { onMount } from 'svelte';
   import { loadMapLayers } from '#lib/art/map-layers';
-  import { MAP_LAYERS, PLACES, WORLD_MAP } from '#lib/content/world';
+  import { currentLang } from '#lib/i18n/app';
+  import { MAP_LAYERS, WORLD_MAP, type SitePlace } from '#lib/content/world';
+
+  interface Props {
+    /** Lieux décrits dans la langue de la page (prérendu, `places.ts`). */
+    places: SitePlace[];
+    /** Titre de la carte dans la langue de la page. */
+    title: string;
+    /** Textes de la carte (`STRINGS[lang].map`), passés en données : page hydratée. */
+    t: {
+      label: string;
+      failed: string;
+      retry: string;
+      loading: string;
+      noscript: string;
+      selected: string;
+      hint: string;
+      view: MapStrings;
+    };
+  }
+  let { places: sitePlaces, title, t }: Props = $props();
 
   let layers: Partial<Record<MapLayer, string>> | null = $state(null);
   let failed = $state(false);
   let selectedId: string | null = $state(null);
 
-  const places: MapPlaceView[] = PLACES.map((p) => ({
-    id: p.id,
-    name: p.name,
-    position: p.position,
-    state: 'open',
-    focusZoom: p.focusZoom,
-    hitRadius: p.hitRadius,
-    summary: p.kindLabel,
-  }));
-  const selected = $derived(PLACES.find((p) => p.id === selectedId) ?? null);
+  const places: MapPlaceView[] = $derived(
+    sitePlaces.map((p) => ({
+      id: p.id,
+      name: p.name,
+      position: p.position,
+      state: 'open',
+      focusZoom: p.focusZoom,
+      hitRadius: p.hitRadius,
+      summary: p.kindLabel,
+    })),
+  );
+  const selected = $derived(sitePlaces.find((p) => p.id === selectedId) ?? null);
 
   async function load() {
     failed = false;
     try {
-      layers = await loadMapLayers();
+      layers = await loadMapLayers(currentLang());
     } catch {
       failed = true;
     }
@@ -51,36 +73,34 @@
         {places}
         {selectedId}
         onselect={(id) => (selectedId = id)}
-        label="Carte interactive de la Velmarche"
-        title={WORLD_MAP.title}
+        label={t.label}
+        strings={t.view}
+        {title}
       />
     {:else if failed}
       <div class="state" role="alert">
-        <p>La carte n’a pas pu se charger. La liste des lieux, plus bas, reste disponible.</p>
-        <Button variant="secondary" iconName="map" onclick={load}>Réessayer</Button>
+        <p>{t.failed}</p>
+        <Button variant="secondary" iconName="map" onclick={load}>{t.retry}</Button>
       </div>
     {:else}
       <div class="state">
-        <Loader label="Chargement de la carte" showLabel delay={0} />
+        <Loader label={t.loading} showLabel delay={0} />
         <noscript>
-          <p>La carte interactive demande JavaScript. La liste des lieux, plus bas, la remplace.</p>
+          <p>{t.noscript}</p>
         </noscript>
       </div>
     {/if}
   </div>
 
   <section class="detail" aria-labelledby="place-detail-title">
-    <h2 id="place-detail-title" class="kicker">Lieu choisi</h2>
+    <h2 id="place-detail-title" class="kicker">{t.selected}</h2>
     <div aria-live="polite">
       {#if selected}
         <p class="name">{selected.name}</p>
         <p class="kind">{selected.kindLabel}</p>
         <p class="desc">{selected.description}</p>
       {:else}
-        <p class="empty">
-          Choisissez un lieu sur la carte, à la souris, au doigt ou au clavier (Tab, puis les
-          flèches pour passer d’un lieu à son voisin).
-        </p>
+        <p class="empty">{t.hint}</p>
       {/if}
     </div>
   </section>

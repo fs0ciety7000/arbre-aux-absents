@@ -53,12 +53,22 @@ export function linkTermsOf(c: CompleteCase): LinkTerm[] {
   );
 }
 
-export function prepareCase(c: CompleteCase): PreparedCase {
+/**
+ * Pièces restées dans la langue source dans une affaire traduite (traduction partielle) : elles
+ * sont liées avec les termes de la source, comme en FR, pour ne pas fausser les contrôles.
+ */
+export interface PrepareFallback {
+  terms: LinkTerm[];
+  documents: ReadonlySet<string>;
+  endings: ReadonlySet<string>;
+}
+
+export function prepareCase(c: CompleteCase, fallback?: PrepareFallback): PreparedCase {
   const terms = linkTermsOf(c);
   const overlaps: PreparedCase['overlaps'] = [];
   const documents = new Map<string, PreparedDocument>();
   for (const d of c.documents.values()) {
-    const linked = autolinkBlocks(d.body, terms);
+    const linked = autolinkBlocks(d.body, fallback?.documents.has(d.id) ? fallback.terms : terms);
     for (const o of linked.overlaps) overlaps.push({ file: d.file, overlap: o });
     const text = [d.frontmatter.title, ...blockTexts(linked.blocks)].join('\n');
     documents.set(d.id, {
@@ -72,12 +82,13 @@ export function prepareCase(c: CompleteCase): PreparedCase {
   }
   const endings = new Map<string, PreparedEnding>();
   for (const e of c.endings.values()) {
-    const linked = autolinkBlocks(e.body, terms);
+    const eTerms = fallback?.endings.has(e.id) ? fallback.terms : terms;
+    const linked = autolinkBlocks(e.body, eTerms);
     for (const o of linked.overlaps) overlaps.push({ file: e.file, overlap: o });
     const split = splitSections(e.body);
     const sections = split.sections.map((sec) => ({
       ...sec,
-      body: autolinkBlocks(sec.body, terms).blocks,
+      body: autolinkBlocks(sec.body, eTerms).blocks,
     }));
     endings.set(e.id, {
       ...e,

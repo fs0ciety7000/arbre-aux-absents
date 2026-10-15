@@ -5,18 +5,23 @@
  */
 import {
   BackRegistry,
+  allowedExternalUrl,
   fallbackSummarize,
+  globalNavigator,
   listenEscape,
+  platformStrings,
+  readSystemLocales,
+  webOpenExternal,
   type FileIo,
   type GamePlatform,
   type GameSaveStore,
   type Summarizer,
 } from './common';
+import { fr } from '../i18n/fr';
 import { createKvSaveStore, type KvBackend } from './kv-store';
 
-export const MEMORY_STORAGE_WARNING =
-  'Le stockage de ce navigateur est indisponible : votre partie sera perdue à la fermeture. ' +
-  'Exportez-la pour la conserver.';
+/** Avertissement du mode mémoire, en français (la langue courante : `platformStrings()`). */
+export const MEMORY_STORAGE_WARNING: string = fr.platform.storageMemory;
 
 /** Pas de fichier possible : export ignoré, import annulé. */
 export const NO_FILE_IO: FileIo = {
@@ -60,11 +65,21 @@ export function createMemorySaveStore(
 }
 
 export interface MemoryPlatformOptions extends MemoryStoreOptions {
-  /** Message affiché ; `null` pour les tests. Défaut : `MEMORY_STORAGE_WARNING`. */
+  /**
+   * Message affiché ; `null` pour les tests. Défaut : l'avertissement du mode mémoire dans la
+   * langue courante (`platformStrings().storageMemory`, `MEMORY_STORAGE_WARNING` en français).
+   */
   storageWarning?: string | null;
   kind?: GamePlatform['kind'];
   /** Cible des touches (Échap) ; absente en test sans DOM. */
   keyTarget?: Pick<EventTarget, 'addEventListener' | 'removeEventListener'>;
+  /** Langues du système ; défaut : `navigator.languages` s'il existe, sinon aucune. */
+  systemLocales?: readonly string[];
+  /**
+   * Ouverture d'un lien externe ; défaut : comme le web (`window.open`) si une fenêtre existe,
+   * sinon refus. Ne reçoit que des URL autorisées (`allowedExternalUrl`, filtrée ici).
+   */
+  openExternal?: (url: string) => Promise<boolean>;
 }
 
 export interface MemoryPlatform extends GamePlatform {
@@ -78,13 +93,40 @@ export function createMemoryPlatform(opts: MemoryPlatformOptions = {}): MemoryPl
   // Échap reste branché pour la durée de vie de la plateforme (singleton de l'app).
   if (opts.keyTarget) listenEscape(opts.keyTarget, registry);
   const kv = createMemoryKv();
+  const locales =
+    opts.systemLocales !== undefined
+      ? readSystemLocales({ languages: opts.systemLocales })
+      : readSystemLocales(globalNavigator());
+  const fixedWarning = opts.storageWarning;
   return {
     kind: opts.kind ?? 'web',
     kv,
     saves: createMemorySaveStore(opts, kv),
-    storageWarning:
-      opts.storageWarning === undefined ? MEMORY_STORAGE_WARNING : opts.storageWarning,
+    get storageWarning() {
+      return fixedWarning === undefined ? platformStrings().storageMemory : fixedWarning;
+    },
     onBack: (cb) => registry.add(cb),
     back: () => registry.dispatch(),
+    systemLocales: () => locales,
+    openExternal: opts.openExternal
+      ? guardedOpener(opts.openExternal)
+      : webOpenExternal(defaultWindow()),
+  };
+}
+
+function defaultWindow(): Window | undefined {
+  return typeof window === 'undefined' ? undefined : window;
+}
+
+/** N'appelle `open` qu'avec une URL autorisée ; jamais d'exception. */
+function guardedOpener(open: (url: string) => Promise<boolean>): (url: string) => Promise<boolean> {
+  return async (url) => {
+    const href = allowedExternalUrl(url);
+    if (href === null) return false;
+    try {
+      return await open(href);
+    } catch {
+      return false;
+    }
   };
 }

@@ -81,7 +81,8 @@ describe('secours par affaire', () => {
     await p.saves.save('slot-1', makeSave('slot-1', { caseId: CASE_1 }));
     await p.saves.save('slot-1', makeSave('slot-1', { caseId: CASE_2 }));
     expect(await p.saves.load('slot-1')).toMatchObject({ caseId: CASE_2 });
-    expect((await p.saves.list()).map((s) => [s.slot, s.caseId])).toEqual([['slot-1', null]]);
+    // Un seul emplacement, dont l'affaire est celle de la dernière partie écrite.
+    expect((await p.saves.list()).map((s) => [s.slot, s.caseId])).toEqual([['slot-1', CASE_2]]);
   });
 
   it('refuse un identifiant d’affaire hors format (clé arbitraire)', async () => {

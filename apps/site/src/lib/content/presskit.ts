@@ -47,6 +47,16 @@ interface ManifestFile {
 
 const KIT = 'presse/kit/';
 
+/** Textes du kit dans une langue (`STRINGS[lang].presskit`) : les fichiers, eux, restent en français. */
+export interface KitTexts {
+  size: (bytes: number) => string;
+  groups: Record<string, { title: string; intro: string }>;
+  /** Libellé du manifeste → libellé traduit (`null` : tels quels). */
+  labels: Record<string, string> | null;
+  /** Précisions du manifeste : remplacements successifs (`null` : telles quelles). */
+  details: [RegExp, string][] | null;
+}
+
 /** Taille lisible en français (« 1,2 Mo », « 340 Ko »). */
 export function humanSize(bytes = 0): string {
   const fr = (n: number, d: number) => n.toFixed(d).replace('.', ',');
@@ -56,71 +66,62 @@ export function humanSize(bytes = 0): string {
 
 const files = manifest.files as ManifestFile[];
 
-const GROUPS: { id: string; title: string; intro: string }[] = [
-  {
-    id: 'documents',
-    title: 'Documents',
-    intro: 'L’artbook et la fiche presse, en PDF.',
-  },
-  {
-    id: 'logos',
-    title: 'Titre du jeu et emblème',
-    intro:
-      'Le titre en quatre teintes : couleurs sur fond sombre (usage principal), couleurs sur fond clair, noir, blanc. SVG au texte vectorisé, PNG transparents.',
-  },
-  {
-    id: 'affiches',
-    title: 'Affiches A3',
-    intro: 'PDF vectoriel pour l’impression, PNG pour l’écran.',
-  },
-  {
-    id: 'bannieres',
-    title: 'Bannières et visuels sociaux',
-    intro: 'Le titre toujours posé dans la zone calme de l’art clé, zones sûres respectées.',
-  },
-];
+/** Groupes de la page, dans l'ordre. */
+const GROUP_IDS = ['documents', 'logos', 'affiches', 'bannieres'] as const;
 
-function rows(group: string): KitRow[] {
-  const out: KitRow[] = [];
-  for (const f of files.filter((g) => g.group === group)) {
-    let row = out.find((r) => r.label === f.label);
-    if (!row) out.push((row = { label: f.label, links: [] }));
-    row.links.push({
-      href: KIT + f.path,
-      format: f.format,
-      detail: f.detail,
-      size: humanSize(f.bytes),
-    });
+/** Le kit présenté dans une langue (libellés, précisions et tailles traduits). */
+export function presskit(t: KitTexts) {
+  const label = (l: string) => t.labels?.[l] ?? l;
+  const detail = (d: string) => (t.details ?? []).reduce((out, [re, by]) => out.replace(re, by), d);
+  const size = (bytes = 0) => t.size(bytes);
+
+  function rows(group: string): KitRow[] {
+    const out: KitRow[] = [];
+    for (const f of files.filter((g) => g.group === group)) {
+      let row = out.find((r) => r.label === label(f.label));
+      if (!row) out.push((row = { label: label(f.label), links: [] }));
+      row.links.push({
+        href: KIT + f.path,
+        format: f.format,
+        detail: detail(f.detail),
+        size: size(f.bytes),
+      });
+    }
+    return out;
   }
-  return out;
-}
 
-export const KIT_GROUPS: KitGroup[] = GROUPS.map((g) => ({ ...g, rows: rows(g.id) }));
-
-/** Captures d'écran déjà publiées (`/itch/`). */
-export const KIT_CAPTURES: KitRow[] = manifest.captures.map((c) => ({
-  label: c.label,
-  links: [{ href: c.path, format: c.format, detail: c.detail, size: humanSize(c.bytes) }],
-}));
-
-/** L'archive complète. */
-export const KIT_ZIP = (() => {
-  const z = files.find((f) => f.group === 'archive');
-  return z ? { href: KIT + z.path, size: humanSize(z.bytes), label: z.label } : null;
-})();
-
-/** Les PDF avec aperçu (affiches, artbook, fiche), en tête de la section. */
-export const KIT_FEATURES: KitFeature[] = files
-  .filter((f) => f.format === 'PDF' && f.preview)
-  .map((f) => ({
-    label: f.label.replace(/\s*:.*$/, ''),
-    href: KIT + f.path,
-    preview: KIT + f.preview,
-    width: f.previewSize?.[0] ?? 480,
-    height: f.previewSize?.[1] ?? 480,
-    detail: f.detail,
-    size: humanSize(f.bytes),
+  const groups: KitGroup[] = GROUP_IDS.map((id) => ({
+    id,
+    title: t.groups[id]?.title ?? id,
+    intro: t.groups[id]?.intro ?? '',
+    rows: rows(id),
   }));
+
+  /** Captures d'écran déjà publiées (`/itch/`). */
+  const captures: KitRow[] = manifest.captures.map((c) => ({
+    label: label(c.label),
+    links: [{ href: c.path, format: c.format, detail: detail(c.detail), size: size(c.bytes) }],
+  }));
+
+  /** L'archive complète. */
+  const z = files.find((f) => f.group === 'archive');
+  const zip = z ? { href: KIT + z.path, size: size(z.bytes), label: label(z.label) } : null;
+
+  /** Les PDF avec aperçu (affiches, artbook, fiche), en tête de la section. */
+  const features: KitFeature[] = files
+    .filter((f) => f.format === 'PDF' && f.preview)
+    .map((f) => ({
+      label: label(f.label).replace(/\s*:.*$/, ''),
+      href: KIT + f.path,
+      preview: KIT + f.preview,
+      width: f.previewSize?.[0] ?? 480,
+      height: f.previewSize?.[1] ?? 480,
+      detail: detail(f.detail),
+      size: size(f.bytes),
+    }));
+
+  return { groups, captures, zip, features };
+}
 
 /** Poids total du kit (fichiers publiés, archive comprise). */
 export const KIT_TOTAL = humanSize(files.reduce((n, f) => n + (f.bytes ?? 0), 0));

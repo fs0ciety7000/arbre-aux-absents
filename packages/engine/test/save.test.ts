@@ -1,4 +1,9 @@
-import { SAVE_LIMITS, SaveStateSchema, type SaveState } from '@arbre/contract';
+import {
+  PARSE_SAVE_ERROR_CODES,
+  SAVE_LIMITS,
+  SaveStateSchema,
+  type SaveState,
+} from '@arbre/contract';
 import { describe, expect, it } from 'vitest';
 import { MAX_SAVE_CHARS, migrateSave, parseSave, type Migration } from '../src';
 import { C, deepFreeze, fill, find, open, play, researched, start, clone } from './helpers';
@@ -30,28 +35,51 @@ describe('parseSave', () => {
   });
 
   it.each([
-    ['JSON invalide', '{"schemaVersion":1,', 'illisible'],
-    ['tableau', '[]', 'objet attendu'],
-    ['nombre', 42, 'objet attendu'],
-    ['null', null, 'objet attendu'],
-    ['sans version', { caseId: 'affaire-test' }, 'Version'],
-    ['version négative', { schemaVersion: -1 }, 'Version'],
-    ['version future', { schemaVersion: 2 }, 'plus récente'],
-    ['trop volumineux', 'x'.repeat(MAX_SAVE_CHARS + 1), 'volumineuse'],
-  ])('refus : %s', (_, raw, message) => {
+    ['JSON invalide', '{"schemaVersion":1,', 'illisible', 'invalidJson'],
+    ['tableau', '[]', 'objet attendu', 'notObject'],
+    ['nombre', 42, 'objet attendu', 'notObject'],
+    ['null', null, 'objet attendu', 'notObject'],
+    ['sans version', { caseId: 'affaire-test' }, 'Version', 'noVersion'],
+    ['version négative', { schemaVersion: -1 }, 'Version', 'noVersion'],
+    ['version non entière', { schemaVersion: 1.5 }, 'Version', 'noVersion'],
+    ['version texte', { schemaVersion: '1' }, 'Version', 'noVersion'],
+    ['version future', { schemaVersion: 2 }, 'plus récente', 'newerVersion'],
+    ['trop volumineux', 'x'.repeat(MAX_SAVE_CHARS + 1), 'volumineuse', 'tooLarge'],
+  ] as const)('refus : %s (code %s)', (_, raw, message, code) => {
     const r = parseSave(raw, C);
     expect(r.ok).toBe(false);
-    if (!r.ok) expect(r.error).toContain(message);
+    if (!r.ok) {
+      expect(r.error).toContain(message);
+      expect(r.code).toBe(code);
+      expect(PARSE_SAVE_ERROR_CODES).toContain(r.code);
+    }
   });
 
   it('refus : champ corrompu (chemin indiqué), clé inconnue, autre affaire', () => {
     const s = sample();
     const bad = parseSave({ ...s, elapsedMs: -5 }, C);
-    expect(bad).toEqual({ ok: false, error: 'Sauvegarde corrompue (elapsedMs).' });
+    expect(bad).toEqual({ ok: false, error: 'Sauvegarde corrompue (elapsedMs).', code: 'corrupt' });
     const extra = parseSave({ ...s, triche: true }, C);
-    expect(extra.ok).toBe(false);
+    expect(extra).toMatchObject({ ok: false, code: 'corrupt' });
+    const badLang = parseSave(
+      {
+        ...s,
+        notebook: {
+          ...s.notebook,
+          highlights: [
+            { doc: 'lettre-notaire', path: [0], start: 0, end: 4, color: 2, lang: 'de' },
+          ],
+        },
+      },
+      C,
+    );
+    expect(badLang).toMatchObject({ ok: false, code: 'corrupt' });
     const other = parseSave({ ...s, caseId: 'autre-affaire' }, C);
-    expect(other).toEqual({ ok: false, error: 'Cette sauvegarde appartient à une autre affaire.' });
+    expect(other).toEqual({
+      ok: false,
+      error: 'Cette sauvegarde appartient à une autre affaire.',
+      code: 'otherCase',
+    });
   });
 
   it('retire les ids inconnus du contenu et les liste', () => {
@@ -212,6 +240,7 @@ describe('migrateSave', () => {
     expect(migrateSave(v0, {})).toEqual({
       ok: false,
       error: 'Aucune migration depuis la version 0.',
+      code: 'migrationFailed',
     });
     expect(
       migrateSave(v0, {
@@ -219,18 +248,24 @@ describe('migrateSave', () => {
           throw new Error('x');
         },
       }),
-    ).toEqual({ ok: false, error: 'Migration depuis la version 0 impossible.' });
+    ).toEqual({
+      ok: false,
+      error: 'Migration depuis la version 0 impossible.',
+      code: 'migrationFailed',
+    });
     expect(migrateSave(v0, { 0: (r) => ({ ...r, schemaVersion: 5 }) })).toEqual({
       ok: false,
       error: 'Migration depuis la version 0 incohérente.',
+      code: 'migrationFailed',
     });
-    expect(migrateSave({ schemaVersion: 1.5 })).toMatchObject({ ok: false });
+    expect(migrateSave({ schemaVersion: 1.5 })).toMatchObject({ ok: false, code: 'noVersion' });
   });
 
   it('parseSave refuse une version ancienne sans migration connue', () => {
     expect(parseSave({ ...start(), schemaVersion: 0 }, C)).toEqual({
       ok: false,
       error: 'Aucune migration depuis la version 0.',
+      code: 'migrationFailed',
     });
   });
 });

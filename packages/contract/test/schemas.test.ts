@@ -340,6 +340,16 @@ describe('schémas JSON', () => {
         'save',
         'settings',
         'tree',
+        'locales',
+        'case.i18n',
+        'family.i18n',
+        'tree.i18n',
+        'progression.i18n',
+        'hints.i18n',
+        'achievements.i18n',
+        'document.i18n',
+        'ending.i18n',
+        'world.i18n',
       ].sort(),
     );
     for (const schema of Object.values(schemas)) {

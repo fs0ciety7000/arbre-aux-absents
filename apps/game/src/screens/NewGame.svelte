@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { GameMode, SaveSlotId } from '@arbre/contract';
-  import { Badge, Button, CaseFolder, CaseFolderGroup, Dialog, Select } from '@arbre/ui';
+  import { Badge, Button, CaseFolder, CaseFolderGroup, Dialog, Select, pushToast } from '@arbre/ui';
   import { getApp } from '../lib/game/context';
   import { messages } from '../messages.fr';
   import ScreenFrame from './ScreenFrame.svelte';
@@ -41,16 +41,20 @@
     { value: 'standard', label: m.modeStandard },
     { value: 'timed', label: timedOk ? m.modeTimed : m.modeTimedLocked, disabled: !timedOk },
   ]);
-  const tutorialOptions = TUTORIAL_MODES.map((v) => ({ value: v, label: m.tutorialModes[v] }));
-  const presetOptions = [0, 1, 2, 3].map((p) => ({
-    value: String(p),
-    label: messages.hintPresets[String(p)] ?? String(p),
-  }));
+  const tutorialOptions = $derived(
+    TUTORIAL_MODES.map((v) => ({ value: v, label: m.tutorialModes[v] })),
+  );
+  const presetOptions = $derived(
+    [0, 1, 2, 3].map((p) => ({
+      value: String(p),
+      label: messages.hintPresets[String(p)] ?? String(p),
+    })),
+  );
   const slotOptions = $derived(
     SLOTS.map((s) => {
       const used = app.saves.find((x) => x.slot === s);
       const name = messages.slots.slotName(s);
-      return { value: s, label: used ? m.slotUsed(name, used.caseTitle) : m.slotFree(name) };
+      return { value: s, label: used ? m.slotUsed(name, app.caseTitleOf(used)) : m.slotFree(name) };
     }),
   );
 
@@ -67,8 +71,15 @@
     starting = true;
     // Le cran choisi s'écrit dans le profil ; les bulles suivent au Bureau.
     const tutorial = tutorialMode as TutorialMode;
-    prepareTutorial(app, tutorial, entry.content);
-    await app.startNewGame({
+    // L'affaire complète (notes requises par ses mécaniques) : chargée ici, gardée en cache.
+    const content = await app.caseContent(caseId);
+    if (!content) {
+      starting = false;
+      pushToast({ tone: 'danger', title: messages.errors.contentLoad });
+      return;
+    }
+    prepareTutorial(app, tutorial, content);
+    const ok = await app.startNewGame({
       caseId,
       mode: timedOk ? (mode as GameMode) : 'standard',
       slot: slot as SaveSlotId,
@@ -76,6 +87,7 @@
       skipTutorial: tutorial === 'none',
     });
     starting = false;
+    if (!ok) pushToast({ tone: 'danger', title: messages.errors.contentLoad });
   }
 </script>
 

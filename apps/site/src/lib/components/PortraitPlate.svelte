@@ -13,11 +13,20 @@
     /** Inclinaison décorative (±2°). */
     tilt?: number;
     caption?: boolean;
+    /** Cote de la planche (déf. « Pl. I ») et texte du repli sans dessin, dans la langue de la page. */
+    cote?: string;
+    missing?: string;
   }
-  let { plate, tilt = 0, caption = true }: Props = $props();
+  let {
+    plate,
+    tilt = 0,
+    caption = true,
+    cote = `Pl. ${plate.plate}`,
+    missing = 'Portrait à venir',
+  }: Props = $props();
 </script>
 
-<IndexCard cote="Pl. {plate.plate}" {tilt} class="plate">
+<IndexCard {cote} {tilt} class="plate">
   <figure>
     {#if plate.image}
       <img
@@ -30,8 +39,8 @@
         decoding="async"
       />
     {:else}
-      <div class="missing" role="img" aria-label="Portrait à venir">
-        <span aria-hidden="true">Portrait à venir</span>
+      <div class="missing" role="img" aria-label={missing}>
+        <span aria-hidden="true">{missing}</span>
       </div>
     {/if}
     {#if caption}

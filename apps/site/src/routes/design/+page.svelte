@@ -26,6 +26,7 @@
     IndexCard,
     InkReveal,
     KeyHint,
+    LanguageSwitch,
     Loader,
     Ornament,
     ORNAMENT_NAMES,
@@ -36,14 +37,19 @@
     Stamp,
     Tabs,
     Tape,
+    TicketStatus,
     TextField,
     Toggle,
     Tooltip,
     ToastRegion,
     Wordmark,
     pushToast,
+    setUiStrings,
+    UI_STRINGS,
     type Candidate,
     type TabItem,
+    type UiLocale,
+    type UiTicketStatus,
   } from '@arbre/ui';
   import {
     deal,
@@ -108,6 +114,53 @@
   let declared = $state({ given: true, family: true, occupation: true });
   const anyDeclared = $derived(declared.given || declared.family || declared.occupation);
   let caseChoice = $state('hautcorvin');
+
+  // ── Langue et signalements (DESIGN §4.4, §9.35, §9.36, §13.8–13.10) ─
+  // Toutes les primitives de la page lisent leurs textes par défaut dans ce contexte : basculer
+  // en English traduit les boutons de fermeture, l'état des interrupteurs, les tampons…
+  let uiLang = $state<UiLocale>('fr');
+  setUiStrings(() => UI_STRINGS[uiLang]);
+  let ticketStatus = $state<UiTicketStatus>('in-progress');
+  let ticketKey = $state(0);
+  const ticketStatuses: { value: UiTicketStatus; label: string }[] = [
+    { value: 'received', label: 'Reçu' },
+    { value: 'confirmed', label: 'Confirmé' },
+    { value: 'in-progress', label: 'En cours' },
+    { value: 'fixed', label: 'Corrigé (v1.2.0)' },
+    { value: 'closed', label: 'Classé (doublon)' },
+  ];
+  let reportCategory = $state('blocked');
+  let reportText = $state('');
+  let reportContact = $state('');
+  let attachSave = $state(false);
+  const reportCategories = [
+    { value: 'bug', label: 'Quelque chose ne marche pas' },
+    { value: 'blocked', label: 'Je suis bloqué' },
+    { value: 'text', label: 'Faute ou texte incorrect' },
+    { value: 'display', label: 'Affichage' },
+    { value: 'audio', label: 'Son' },
+    { value: 'controls', label: 'Commandes' },
+    { value: 'performance', label: 'Lenteur' },
+    { value: 'other', label: 'Autre' },
+  ];
+  const diagnosticsPreview = $derived(
+    JSON.stringify(
+      {
+        appVersion: '1.2.0',
+        edition: 'demo',
+        platform: 'web',
+        os: 'Android',
+        locale: uiLang,
+        caseId: 'succession-varenque',
+        contentHash: '3f9a0c1e',
+        viewport: { w: 390, h: 844, dpr: 3 },
+        settings: { textScale: 1.25, motion: 'reduced' },
+        ...(attachSave ? { save: '{ … sauvegarde anonymisée, 12 Ko … }' } : {}),
+      },
+      null,
+      2,
+    ),
+  );
 
   // ── Couleurs ──────────────────────────────────────────────────────
   const semantic = [
@@ -763,6 +816,91 @@
       <Badge tone="accent" dot>Nouveau</Badge>
       <Badge tone="established" variant="outline" iconName="lock">Établi</Badge>
     </div>
+  </section>
+
+  <!-- 7 bis. Langue et signalements -->
+  <section aria-labelledby="d-i18n" class="demo">
+    <h2 id="d-i18n">Langue et signalements (§4.4, §9.35, §9.36, §13.8–13.10)</h2>
+    <p class="hint">
+      Le sélecteur pose aussi la langue des textes par défaut de <strong>toutes</strong> les
+      primitives de cette page (<code>setUiStrings</code>) : fermetures, interrupteurs, tampons,
+      combobox, frise de suivi.
+    </p>
+    <div class="row">
+      <LanguageSwitch bind:value={uiLang} labelVisible />
+      <LanguageSwitch bind:value={uiLang} short />
+      <LanguageSwitch
+        value={uiLang}
+        hrefs={{ fr: '#d-i18n', en: '#d-i18n' }}
+        onchange={(l) => (uiLang = l)}
+        short
+      />
+    </div>
+
+    <h3>Suivi d’un signalement (<code>TicketStatus</code>)</h3>
+    <div class="row">
+      <Select label="Statut" options={ticketStatuses} bind:value={ticketStatus} />
+      <Button variant="ghost" iconName="stamp" onclick={() => ticketKey++}>Rejouer le tampon</Button
+      >
+    </div>
+    <PaperSheet class="ticket-card">
+      <p class="ticket-head">
+        <DymoLabel text="AA-0042" tone="red" tilt={-1} />
+        <span class="ink-type">Je suis bloqué · 12/10/2026</span>
+      </p>
+      {#key ticketKey}
+        <TicketStatus
+          status={ticketStatus}
+          fixedIn={ticketStatus === 'fixed' ? 'v1.2.0' : undefined}
+          closedReason={ticketStatus === 'closed' ? 'duplicate' : undefined}
+          animate
+        />
+      {/key}
+    </PaperSheet>
+    <div class="ticket-variants">
+      <TicketStatus status="received" />
+      <TicketStatus status="fixed" fixedIn="v1.2.0" />
+      <TicketStatus status="closed" closedReason="not-planned" />
+    </div>
+
+    <h3>Écran « Signaler un problème » (maquette, §13.8)</h3>
+    <PaperSheet class="report-mock">
+      <p class="kicker">Formulaire de signalement</p>
+      <div class="fields">
+        <Select
+          label="De quoi s’agit-il ?"
+          options={reportCategories}
+          bind:value={reportCategory}
+        />
+        <TextField
+          label="Que s’est-il passé ?"
+          multiline
+          rows={4}
+          maxlength={4000}
+          hint="Au moins 20 caractères. Ce que vous faisiez, ce que vous attendiez."
+          bind:value={reportText}
+        />
+        <TextField
+          label="Contact (facultatif)"
+          hint="Jamais publié. Seulement pour vous répondre."
+          bind:value={reportContact}
+        />
+        <Toggle
+          label="Joindre ma sauvegarde anonymisée"
+          description="Sans vos notes ni vos recherches."
+          bind:checked={attachSave}
+          showState
+        />
+      </div>
+      <details class="diag">
+        <summary>Voir exactement ce qui sera envoyé</summary>
+        <pre class="ink-type">{diagnosticsPreview}</pre>
+      </details>
+      <div class="row">
+        <Button variant="primary" iconName="envelope">Envoyer le signalement</Button>
+        <Button variant="ghost">Copier le rapport</Button>
+      </div>
+    </PaperSheet>
   </section>
 
   <!-- 8. Champs -->
@@ -1520,6 +1658,50 @@
   }
   .photo-ph svg {
     inline-size: 100%;
+  }
+  :global(.ticket-card) {
+    display: grid;
+    gap: var(--space-4);
+    max-inline-size: 48rem;
+    padding: var(--space-5);
+  }
+  .ticket-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-3);
+  }
+  .ticket-variants {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--space-6);
+  }
+  :global(.report-mock) {
+    display: grid;
+    gap: var(--space-5);
+    max-inline-size: 48rem;
+  }
+  .diag summary {
+    cursor: pointer;
+    min-block-size: var(--hit);
+    display: flex;
+    align-items: center;
+  }
+  .diag summary:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+  .diag pre {
+    margin: 0;
+    padding: var(--space-3);
+    max-block-size: 16rem;
+    overflow: auto;
+    border: var(--border) dashed var(--line-strong);
+    border-radius: var(--radius-xs);
+    font-size: var(--step--1);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
   .fields {
     display: grid;

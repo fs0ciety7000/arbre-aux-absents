@@ -23,4 +23,14 @@ export interface Platform {
   /** Retourne une fonction de désinscription ; `cb` renvoie true si l'événement est consommé. */
   onBack(cb: () => boolean): () => void;
   quit?(): void;
+  /**
+   * Langues préférées du système (`navigator.languages`), dans l'ordre. Sert à résoudre le
+   * réglage de langue `system`.
+   */
+  systemLocales(): readonly string[];
+  /**
+   * Ouvre une URL externe (suivi d'un signalement, forum itch.io) : `plugin-opener` sous Tauri,
+   * limité aux origines autorisées ; `window.open(…, 'noopener')` sur le web. false si refusé.
+   */
+  openExternal?(url: string): Promise<boolean>;
 }

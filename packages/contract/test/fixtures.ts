@@ -232,6 +232,7 @@ export const compiledCase: CompiledCase = {
   format: 1,
   id: 'maison-vellard',
   edition: 'demo',
+  locale: 'fr',
   contentHash: '0a1b2c3d',
   salt: 'sel',
   meta: caseMeta,

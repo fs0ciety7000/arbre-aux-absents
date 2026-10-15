@@ -5,6 +5,8 @@
  * AZERTY). Les remappages vivent dans le stockage local de l'appareil : `Settings` n'a pas
  * encore de champ `keymap` (proposition au contrat).
  */
+import { messages } from '../i18n/index.svelte';
+
 export const COMMANDS = [
   'back',
   'tab.tree',
@@ -111,25 +113,20 @@ export function combosOf(e: KeyboardEvent): string[] {
 /** Libellé lisible d'une combinaison (« Ctrl + [ », « Échap »). */
 export function comboLabel(combo: string): string {
   const NAMES: Record<string, string> = {
-    Escape: 'Échap',
     ArrowLeft: '←',
     ArrowRight: '→',
     ArrowUp: '↑',
     ArrowDown: '↓',
-    PageUp: 'PgPréc',
-    PageDown: 'PgSuiv',
-    Delete: 'Suppr',
-    Shift: 'Maj',
     BracketLeft: '[',
     BracketRight: ']',
-    ContextMenu: 'Menu',
-    ' ': 'Espace',
   };
+  // Noms de touches dans la langue de l'interface (Échap / Esc…).
+  const local = messages.keys;
   return combo
     .split('+')
     .map((p, i, all) => (p === '' && i === all.length - 1 ? '+' : p))
     .filter((p) => p !== '')
-    .map((p) => NAMES[p] ?? (p.length === 1 ? p.toUpperCase() : p))
+    .map((p) => local[p] ?? NAMES[p] ?? (p.length === 1 ? p.toUpperCase() : p))
     .join(' + ');
 }
 

@@ -4,13 +4,14 @@
 > **Site en ligne depuis le 13/10/2026** (feu vert de l'utilisateur) : https://arbre.cardormedia.com
 > (domaine de production depuis le 13/10 au soir ; `arbre.fs0ciety.org` redirige en 301, `nginx.conf`).
 
-Deux livrables, deux chaînes :
+Trois livrables, trois chaînes :
 
 | Livrable | Où | Chaîne |
 |---|---|---|
 | Site vitrine (`apps/site`) | `arbre.cardormedia.com` (ancien : `arbre.fs0ciety.org` → 301), Coolify | `Dockerfile` → nginx statique |
 | Jeu web (`apps/game`, build Vite) | `arbre.cardormedia.com/jouer/`, même image | copié dans le site au build Docker, CSP propre (`nginx.conf`) |
 | Jeu (`apps/game`) | Windows, macOS, Linux, Android ; démo HTML5 itch.io | `.github/workflows/tauri.yml` ; build web dans `ci.yml` |
+| Service de signalement (`apps/report`) | `arbre-api.cardormedia.com`, Coolify (app séparée) | `apps/report/Dockerfile` → Node 22 + SQLite sur `/data` (§5) |
 
 ## 1. Site vitrine (Coolify)
 
@@ -46,6 +47,8 @@ Deux livrables, deux chaînes :
   `style-src-attr 'unsafe-inline'` reste pour les attributs `style` du HTML prérendu (variables CSS
   posées par les composants : une empreinte ne les couvrirait qu'avec `'unsafe-hashes'`) ;
   `img-src 'self' data:` (fond de la carte d'accueil embarqué en `data:`) ; `object-src 'none'` ;
+  `connect-src 'self' https://arbre-api.cardormedia.com` (service de signalement, §5 ; aussi sur
+  `/jouer/`) ;
   `frame-src https://itch.io https://www.youtube-nocookie.com` (widget itch.io ; lecteur de la
   bande-annonce, chargé seulement au clic sur la façade de l'accueil, script en ligne haché comme
   les autres) ; `frame-ancestors 'none'` ; `base-uri`/`form-action 'self'`. Plus `nosniff`, `X-Frame-Options`,
@@ -55,6 +58,10 @@ Deux livrables, deux chaînes :
 - `gzip_static on` (fichiers précompressés), pas de compression à la volée. Cloudflare ajoute Brotli.
 - **404** : `404.html` du site s'il existe (route prérendue `src/routes/404/`), sinon une page HTML
   minimale ; jamais la page par défaut de nginx. Fichiers cachés (`/.xxx`) → 404.
+- **Site anglais** (`/en/`, mêmes slugs) : sa 404 est `/en/404.html` (prérendue), sinon une page
+  minimale en anglais.
+- **Pages de suivi** (`/suivi/`, `/en/suivi/`) : `Referrer-Policy: no-referrer` (le jeton de suivi
+  est dans le fragment, D10) ; ailleurs `strict-origin-when-cross-origin` (`map $uri $referrer_policy`).
 - Redirections relatives (`absolute_redirect off`) : pas de fuite du port 8080 derrière le proxy.
 
 ### En local
@@ -62,7 +69,7 @@ Deux livrables, deux chaînes :
 ```bash
 docker build -t arbre-site .
 docker run --rm -p 8080:8080 arbre-site     # http://localhost:8080 , curl localhost:8080/healthz
-sh scripts/docker-smoke.sh arbre-site 8080  # démarre, attend « healthy », vérifie santé, CSP, cache, 404
+sh scripts/docker-smoke.sh arbre-site 8080  # démarre, attend « healthy », vérifie santé, CSP, cache, 404 (FR et /en/), suivi
 ```
 
 ### Coolify (en production)
@@ -112,7 +119,8 @@ certificat Let's Encrypt d'origine.
 
 ## 2. Jeu : builds natifs (Tauri 2)
 
-Configuration : `apps/game/src-tauri/` (Tauri ≥ 2.12, plugins `fs` et `dialog`, aucune commande Rust).
+Configuration : `apps/game/src-tauri/` (Tauri ≥ 2.12, plugins `fs`, `dialog` et `opener`, aucune
+commande Rust).
 
 | Élément | Valeur |
 |---|---|
@@ -121,8 +129,8 @@ Configuration : `apps/game/src-tauri/` (Tauri ≥ 2.12, plugins `fs` et `dialog`
 | Version | celle de `apps/game/package.json` |
 | Frontend | `frontendDist: ../dist`, `devUrl: http://localhost:5173` |
 | Avant build | `npm run tauri:before-build` = `content:build` + `vite build --mode tauri` (`apps/game/.env.tauri` → `VITE_TARGET=tauri`) |
-| CSP | `default-src 'self'`, `script-src 'self'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob:`, `media-src 'self' blob:`, `connect-src ipc:` ; aucun domaine distant |
-| Capabilities | `core:default`, plein écran, fermeture, `dialog` open/save, `fs` lecture/écriture/renommage/suppression **limités à `$APPDATA/saves/**`** (les chemins choisis dans un dialogue d'export/import sont ajoutés au scope par le plugin) |
+| CSP | `default-src 'self'`, `script-src 'self'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob:`, `media-src 'self' blob:`, `connect-src 'self' ipc: http://ipc.localhost https://arbre-api.cardormedia.com` (service de signalement, §5) ; aucun autre domaine distant. L'origine de l'API y est **figée** : si `VITE_REPORT_API` change, changer aussi ce `connect-src`. `vite build --mode tauri` **échoue** si elles divergent (`apps/game/vite/report-csp.ts`) |
+| Capabilities | `core:default`, plein écran, fermeture, `dialog` open/save, `fs` lecture/écriture/renommage/suppression **limités à `$APPDATA/saves/**`** (les chemins choisis dans un dialogue d'export/import sont ajoutés au scope par le plugin) ; `opener:allow-open-url` **limité à `https://arbre.cardormedia.com/*` et `https://cardorinteractive.itch.io/*`** (suivi des signalements, forum itch ; D11), sans `opener:default` |
 | Linux | AppImage (`bundleMediaFramework: true`, GStreamer embarqué pour l'audio) + deb + rpm |
 | Windows | NSIS par utilisateur, bootstrapper WebView2 |
 | macOS | binaire universel (Intel + Apple Silicon), dmg, `minimumSystemVersion` 10.15 |
@@ -183,7 +191,8 @@ affiche les commandes sans rien envoyer. Le job `itch` de `tauri.yml` le lance s
 | `check` | `npm ci`, `content:build` (modules générés gitignorés), `npm run check` |
 | `build` | `npm run build` → artefacts `game-web`, `site` ; build démo (`content:build -- --edition demo`, sortie `apps/game/dist-demo`) → `game-web-demo` ; `package:itch -- --skip-build` → `itch-zips` (`dist/itch/*.zip`) |
 | `e2e` | si `tests/e2e/` existe : build, `playwright install --with-deps chromium webkit`, `npm run test:e2e` (sinon `playwright test --project=chromium --project=webkit`) ; rapport en artefact en cas d'échec |
-| `docker` | buildx (cache GHA) puis `scripts/docker-smoke.sh` : run, `healthy`, `curl /healthz`, CSP, cache, 404 |
+| `docker` | buildx (cache GHA) puis `scripts/docker-smoke.sh` : run, `healthy`, `curl /healthz`, CSP (dont `connect-src`), cache, 404 FR et `/en/`, `Referrer-Policy` du suivi |
+| `docker-report` | buildx de `apps/report/Dockerfile` (cache GHA `scope=report`) puis `scripts/docker-smoke.sh --report` : `healthy`, non-root, `/healthz` JSON, base créée dans `/data`, pas de `node_modules`, CORS autorisé/refusé, 404 |
 | `rust-lint` | Ubuntu 24.04 + `libwebkit2gtk-4.1-dev` : `cargo fmt --check`, `cargo clippy --locked -D warnings` |
 
 Cache : npm (`setup-node`), cargo (`Swatinem/rust-cache`), couches Docker (`type=gha`).
@@ -213,6 +222,10 @@ Aucun secret dans le repo ; `.env.example` en est le miroir.
 |---|---|---|
 | `ARBRE_EDITION` | `content:build` | `full` (défaut) ou `demo` ; équivaut à `-- --edition` |
 | `VITE_TARGET` | build du jeu | `web` (défaut) ou `tauri` (posé par `apps/game/.env.tauri`) |
+| `VITE_REPORT_API` | builds du jeu et du site | `https://arbre-api.cardormedia.com` (public). Absente : même valeur par défaut ; service injoignable : repli « Copier le rapport » et forum itch.io. La CSP du build web du jeu la suit ; celles de Tauri (`tauri.conf.json`, vérifiée au build `--mode tauri`) et de nginx (`nginx.conf`) l'écrivent en dur : les changer ensemble |
+
+Les variables d'exécution du service de signalement (dont `GITHUB_TOKEN` et
+`GITHUB_WEBHOOK_SECRET`) vivent dans Coolify uniquement : §5.
 
 ### Secrets GitHub Actions (à créer par l'utilisateur, tous optionnels)
 
@@ -230,3 +243,128 @@ Aucun secret dans le repo ; `.env.example` en est le miroir.
 
 `GITHUB_TOKEN` (automatique) suffit pour les releases. Coolify et Cloudflare se configurent dans
 leurs interfaces ; leurs jetons d'API restent sur le poste de l'opérateur.
+
+## 5. Service de signalement (`apps/report`, Coolify)
+
+Signaler un problème depuis le jeu ou le site, puis suivre son ticket sans compte (ARCHITECTURE §8,
+décisions D9 à D13). App Coolify **séparée** du site : `https://arbre-api.cardormedia.com`.
+
+| Élément | Valeur |
+|---|---|
+| Domaine | `https://arbre-api.cardormedia.com` (sous-domaine à un niveau : couvert par le certificat Cloudflare) |
+| Build | `apps/report/Dockerfile`, **contexte `.`** (racine du repo). BuildKit lit `apps/report/Dockerfile.dockerignore` (liste blanche : `package.json`, `package-lock.json`, `tsconfig.base.json`, `packages/contract/`, `apps/report/`) à la place du `.dockerignore` du site, qui exclut `apps/report` |
+| Image | `node:22-bookworm-slim` épinglée par digest (la même que le site) ; étape `build` : `npm ci --ignore-scripts` (lockfile figé, racine + `@arbre/report`), `npm run build -w @arbre/report` → `dist/server.js` et `dist/admin.js` autonomes (zod et le contrat embarqués) ; étape `runtime` : `dist/` + `package.json` seulement, **aucun `node_modules`**, fichiers à root en lecture seule, utilisateur `node` (1000) |
+| Port exposé | `8090` |
+| Healthcheck | `GET /healthz` → `200 {ok, github: 'ok'\|'degraded', pending, failed}` (aussi `HEALTHCHECK` Docker, `node -e fetch`). `degraded` : jeton GitHub refusé (401) ou GitHub injoignable ; la soumission reste acceptée (file `pending`) |
+| Stockage | **volume persistant `/data`** (base SQLite, `DATA_DIR=/data`), seul dossier inscriptible ; `VOLUME /data` dans l'image. Sans volume Coolify nommé, chaque redéploiement repart d'une base vide (tickets et jetons de suivi perdus) |
+| Commande | `node dist/server.js` (`NODE_OPTIONS=--disable-warning=ExperimentalWarning` pour `node:sqlite`) |
+| Branche | celle du site (auto-deploy) ; voir « Ordre de déploiement » |
+
+### En local
+
+```bash
+docker build -f apps/report/Dockerfile -t arbre-report .
+docker run --rm -p 8090:8090 -v arbre-report-data:/data arbre-report   # curl localhost:8090/healthz
+sh scripts/docker-smoke.sh --report arbre-report 8090   # healthy, non-root, /healthz, /data, CORS, 404
+```
+
+Sans `GITHUB_TOKEN`, le service démarre et ne parle pas à GitHub (tout reste dans la file
+`pending`) : c'est le mode du test de fumée. En dev sans Docker : `npm run dev:report` (variables
+dans `apps/report/.env.local`, gitignoré).
+
+### DNS Cloudflare
+
+Zone `cardormedia.com` : **CNAME** `arbre-api` → `arbre.cardormedia.com` (ou **A** `arbre-api` →
+`152.53.176.13`, comme `arbre`), **proxied**. SSL/TLS « Full (strict) », certificat d'origine
+Let's Encrypt géré par Coolify (526 une à deux minutes au premier déploiement, comme pour le site).
+Cloudflare transmet `CF-Connecting-IP`, seule entrée de la limitation de débit (HMAC en mémoire,
+jamais stocké) : le service doit rester derrière le proxy Cloudflare.
+
+### Coolify
+
+Projet « Arbre aux absents », environnement `production`, **nouvelle application** :
+
+1. Source : même GitHub App et même repo `fs0ciety7000/arbre-aux-absents`, même branche que le site.
+2. Build pack **Dockerfile** ; *Base directory* `/` ; *Dockerfile location* `/apps/report/Dockerfile`.
+3. Port exposé `8090` ; domaine `https://arbre-api.cardormedia.com`.
+4. Healthcheck : `GET http://127.0.0.1:8090/healthz`.
+5. *Persistent storage* : volume nommé (ex. `arbre-report-data`) monté sur **`/data`**.
+6. Variables d'environnement (miroir : `.env.example`, bloc « Service de signalement ») ; cocher
+   *Is secret* pour `GITHUB_TOKEN` et `GITHUB_WEBHOOK_SECRET`, jamais *Build variable* :
+
+| Variable | Valeur |
+|---|---|
+| `GITHUB_TOKEN` | jeton fine-grained (ci-dessous) — **secret** |
+| `GITHUB_REPO` | `fs0ciety7000/arbre-aux-absents-signalements` (dépôt **privé**, D12) |
+| `GITHUB_WEBHOOK_SECRET` | ≥ 16 caractères aléatoires (`openssl rand -hex 32`), le même que dans le webhook — **secret** |
+| `ALLOWED_ORIGINS` | `https://arbre.cardormedia.com,tauri://localhost,http://tauri.localhost,https://html-classic.itch.zone` |
+| `PUBLIC_SITE_URL` | `https://arbre.cardormedia.com` |
+| `DATA_DIR` | `/data` |
+| `REPORTS_ENABLED` | `true` (`false` : interrupteur d'urgence, `POST /v1/reports` → 503 `disabled`) |
+| `TICKET_PREFIX` | `AA` |
+
+Le contact laissé par un joueur ne se lit que depuis le terminal Coolify de l'app :
+`node dist/admin.js contact AA-0042`. Aucune route HTTP d'administration.
+
+`/healthz` `failed` > 0 : une opération GitHub a été abandonnée après 8 erreurs 4xx permanentes
+(ticket refusé par GitHub, ex. 422). `node dist/admin.js pending` liste les lignes `ÉCHEC` (ticket,
+opération, statut HTTP) ; `status AA-0042` les détaille ; une fois la cause corrigée,
+`retry AA-0042` remet l'opération dans la file. Le joueur garde son ticket (« reçu ») entre-temps.
+
+### Jeton GitHub fine-grained
+
+GitHub › Settings › Developer settings › Fine-grained tokens › *Generate new token* :
+
+- *Resource owner* `fs0ciety7000` ; *Repository access* : **Only select repositories** →
+  `fs0ciety7000/arbre-aux-absents-signalements` seulement ;
+- *Repository permissions* : **Issues : Read and write**, **Metadata : Read-only** (obligatoire),
+  rien d'autre ;
+- expiration : 1 an au plus. **Noter la date d'expiration** (agenda + ROADMAP) et poser un rappel
+  deux semaines avant. Un jeton expiré fait passer `/healthz` en `degraded` ; les signalements
+  restent acceptés et s'accumulent dans la file `pending` jusqu'au nouveau jeton (Coolify ›
+  variables › redéployer).
+
+### Webhook GitHub
+
+Dépôt `fs0ciety7000/arbre-aux-absents-signalements` › Settings › Webhooks › *Add webhook* :
+
+- *Payload URL* `https://arbre-api.cardormedia.com/v1/github/webhook` ; *Content type*
+  `application/json` ; *Secret* = `GITHUB_WEBHOOK_SECRET` (vérifié en HMAC SHA-256) ;
+- *Let me select individual events* : **Issues**, **Issue comments**, **Milestones** (rien d'autre) ;
+- après l'enregistrement, *Recent Deliveries* : le `ping` doit recevoir une réponse 2xx.
+
+Le rapprochement toutes les 30 min et le rafraîchissement à la lecture rattrapent un webhook perdu.
+
+### Étiquettes et jalons
+
+```bash
+gh auth login                                     # compte administrateur du dépôt des signalements
+sh scripts/report-labels.sh --dry-run             # affiche les commandes
+sh scripts/report-labels.sh --milestone v1.2.0    # crée/met à jour les étiquettes + le jalon
+```
+
+Le script crée (idempotent, `gh label create --force`) : `signalement`, `source:jeu`,
+`source:site`, `cat:<catégorie>` (les 8 de `REPORT_CATEGORIES`), `langue:en`, `statut:confirmé`,
+`statut:en-cours`, `doublon`, `public`. Ces noms sont lus par le service : ne pas les renommer.
+
+**Jalons `vX.Y.Z`** : un par version publiée du jeu (`--milestone vX.Y.Z`, ou GitHub › Issues ›
+Milestones). Fermer un ticket « completed » avec le jalon de la version qui le corrige : le joueur
+voit « Corrigé dans vX.Y.Z ». Fermé sans jalon : « Classé (résolu) » ; « not planned » : « Classé
+(non retenu) ». Réponse visible du joueur : commentaire d'un mainteneur dont la première ligne
+est `/public`. Problème connu : étiquette `public` (titre relu avant) et, en anglais, commentaire
+`/public-title-en <titre>`.
+
+### Ordre de déploiement
+
+1. DNS `arbre-api`, puis app Coolify (volume, variables), puis `curl https://arbre-api.cardormedia.com/healthz`.
+2. Étiquettes (`scripts/report-labels.sh`) et webhook (ping 2xx).
+3. Test réel : un signalement depuis le site → ticket dans le dépôt privé, lien de suivi qui
+   affiche « Reçu » ; poser `statut:confirmé` → le suivi passe à « Confirmé ».
+4. Seulement ensuite : redéployer le site et publier les builds du jeu construits avec
+   `VITE_REPORT_API` (CSP déjà ouverte vers `arbre-api`). Le service doit être en ligne **avant**
+   tout build de jeu qui pointe vers lui ; pendant l'intervalle, le repli hors ligne du jeu
+   (« Copier le rapport ») couvre les joueurs.
+
+Vérification : `curl -s https://arbre-api.cardormedia.com/healthz` (`"ok":true`, `github: "ok"`),
+`curl -sI -X OPTIONS -H 'Origin: https://arbre.cardormedia.com' -H 'Access-Control-Request-Method: POST' https://arbre-api.cardormedia.com/v1/reports`
+(`access-control-allow-origin`).

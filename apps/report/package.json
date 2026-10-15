@@ -1,0 +1,23 @@
+{
+  "name": "@arbre/report",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Service de signalement de problèmes avec suivi (ARCHITECTURE §8) : node:http + node:sqlite, zod embarqué.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.17"
+  },
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=.env.local src/bin/server.ts --dev",
+    "build": "vite build && vite build --mode admin",
+    "start": "node --disable-warning=ExperimentalWarning dist/server.js",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@arbre/contract": "*",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "vite": "^8.3.4"
+  }
+}

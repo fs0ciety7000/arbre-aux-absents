@@ -1,10 +1,12 @@
 /**
  * npm run content:build [-- --edition full|demo] [-- --root <dossier> --out <dossier>]
  *
- * Compile le contenu (éditions complète et démo) et écrit apps/game/src/generated/ et
- * apps/site/src/generated/. `--edition` choisit l'édition importée par le jeu (défaut : full ;
- * aussi via ARBRE_EDITION). Avec `--root` hors dépôt, rien n'est écrit sans `--out` (le jeu
- * dans <out>/game, le site dans <out>/site). Refuse d'écrire si content:check échoue.
+ * Compile le contenu (éditions complète et démo, langue source et langues `ready`) et écrit
+ * apps/game/src/generated/ et apps/site/src/generated/ (ARCHITECTURE §3.3). `--edition` choisit
+ * l'édition importée par le jeu (défaut : full ; aussi via ARBRE_EDITION). Avec `--root` hors
+ * dépôt, rien n'est écrit sans `--out` (le jeu dans <out>/game, le site dans <out>/site). Refuse
+ * d'écrire si content:check échoue. Le module généré `cases.ts` charge à la demande catalogues,
+ * affaires et illustrations par langue et par édition.
  */
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -32,7 +34,12 @@ if (values.edition !== 'full' && values.edition !== 'demo') {
 const edition: Edition = values.edition;
 const root = await resolveRoot(values.root);
 const result = await checkContentRoot(root);
-const errors = printIssues(result.issues);
+const drafts = new Set(
+  result.locales.targets.filter((t) => t.level === 'draft').map((t) => t.locale),
+);
+const errors = printIssues(result.issues, console, {
+  summarize: (i) => i.rule === 12 && i.severity === 'warning' && !!i.locale && drafts.has(i.locale),
+});
 if (errors > 0) {
   console.error(
     `content:build — ${errors} erreur(s) : rien n'est écrit (voir npm run content:check).`,
@@ -56,5 +63,5 @@ if (values.out) {
 }
 const changed = await writeGenerated(result, targets, edition);
 console.log(
-  `content:build — ${result.cases.length} affaire(s), jeu en édition ${edition}, ${changed.length} fichier(s) mis à jour.`,
+  `content:build — ${result.cases.length} affaire(s), langue(s) ${result.locales.compiled.join(', ')}, jeu en édition ${edition}, ${changed.length} fichier(s) mis à jour.`,
 );

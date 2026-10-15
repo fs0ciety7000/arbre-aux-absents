@@ -5,6 +5,7 @@
 	`surface="paper"` pour les cartes de révélation et les fiches papier.
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import type { Snippet } from 'svelte';
   import IconButton from './IconButton.svelte';
 
@@ -35,12 +36,14 @@
     surface = 'desk',
     dismissible = true,
     mobile = 'sheet',
-    closeLabel = 'Fermer',
+    closeLabel: closeLabelProp,
     onclose,
     children,
     actions,
     id = `dialog-${Math.random().toString(36).slice(2, 8)}`,
   }: Props = $props();
+  const ui = getUiStrings();
+  const closeLabel = $derived(closeLabelProp ?? ui.dialog.close);
 
   let dialog: HTMLDialogElement | undefined = $state();
   let opener: HTMLElement | null = null;

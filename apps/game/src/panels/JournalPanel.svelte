@@ -13,6 +13,7 @@
   import DocumentBody from './doc/DocumentBody.svelte';
   import type { BodyOptions } from './doc/context';
   import { pm } from './messages';
+  import { formatDateTime } from '../lib/game/format';
 
   interface Entry {
     key: string;
@@ -24,7 +25,6 @@
   }
 
   const game = getGame();
-  const time = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
 
   /** Cartes de révélation de la session (`GameStore.reveals`). */
   const reveals = $derived(game.reveals);
@@ -102,7 +102,7 @@
     game.state.ending ? endingSections(game.state.ending, game.state, game.content) : [],
   );
   const opts: BodyOptions = { mode: 'original', decorative: false, kwState: () => 'known' };
-  const figure = (asset: string) => illustration(game.content.id, asset);
+  const figure = (asset: string) => illustration(game.content, asset);
 </script>
 
 <Panel title={pm.journal.title} class="journal-panel">
@@ -119,7 +119,7 @@
           <p class="title">{pm.journal.started}</p>
           <p class="at num">
             <time datetime={new Date(game.state.createdAt).toISOString()}
-              >{time.format(game.state.createdAt)}</time
+              >{formatDateTime(game.state.createdAt)}</time
             >
           </p>
         </div>
@@ -134,7 +134,7 @@
             <p class="title">{e.title}</p>
             {#each e.lines as line, j (j)}<p class="line">{line}</p>{/each}
             <p class="at num">
-              <time datetime={new Date(e.at).toISOString()}>{time.format(e.at)}</time>
+              <time datetime={new Date(e.at).toISOString()}>{formatDateTime(e.at)}</time>
             </p>
             {#if e.tone === 'ending' && sections.length > 0}
               <Button iconName="reader" onclick={() => (replay = true)}>{pm.journal.replay}</Button>

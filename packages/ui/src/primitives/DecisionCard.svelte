@@ -10,6 +10,7 @@
 	À poser dans `DecisionGroup` (empilées sous 600 px, en ligne au-delà).
 -->
 <script lang="ts">
+  import { getUiStrings } from '../i18n';
   import type { Snippet } from 'svelte';
   import Icon from './Icon.svelte';
   import Stamp from './Stamp.svelte';
@@ -42,14 +43,17 @@
     checked = false,
     onselect,
     label,
-    stamp = 'Visé',
+    stamp: stampProp,
     reason,
-    reasonLabel = 'Indisponible : ',
+    reasonLabel: reasonLabelProp,
     action,
     deal,
     class: className = '',
     id = `decision-${Math.random().toString(36).slice(2, 8)}`,
   }: Props = $props();
+  const ui = getUiStrings();
+  const stamp = $derived(stampProp ?? ui.decision.stamp);
+  const reasonLabel = $derived(reasonLabelProp ?? ui.decision.unavailable);
 
   const disabled = $derived(reason !== undefined);
 </script>

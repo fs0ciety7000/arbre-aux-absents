@@ -2,7 +2,17 @@
  * `content:check` (ARCHITECTURE §3.7) : les 11 règles, solveur compris. Ne fait aucune écriture.
  */
 import { gzipSync } from 'node:zlib';
-import type { CompiledCase, MapLayer, Person, Place, SlotClaim, WorldMap } from '@arbre/contract';
+import type {
+  Block,
+  CompiledCase,
+  Locale,
+  MapLayer,
+  Person,
+  Place,
+  SlotClaim,
+  WorldMap,
+} from '@arbre/contract';
+import { catalogFor } from './catalog';
 import { collectRefs } from './autolink';
 import {
   compileCase,
@@ -12,9 +22,36 @@ import {
   type CompileOutput,
 } from './compile';
 import { conditionRefs, type AnyCondition, type AtomRef } from './conditions';
-import { IssueList } from './issues';
-import { isComplete, loadContent, type ContentSource, type SourceWorld } from './load';
-import { blockTexts } from './markdown';
+import { IssueList, RULE_TITLES, type Issue, type RuleId } from './issues';
+import {
+  isComplete,
+  loadContent,
+  sourceLocale,
+  targetLocales,
+  type CaseTranslation,
+  type ContentSource,
+  type SourceWorld,
+  type TranslationProblem,
+  type WorldTranslationSource,
+} from './load';
+import {
+  CASE_UNIT,
+  WORLD_LABELS_UNIT,
+  WORLD_UNIT,
+  localeLevel,
+  localizeCase,
+  localizeWorld,
+  markupCounts,
+  paragraphs,
+  parityProblems,
+  svgShapeProblems,
+  termProblems,
+  wordCount,
+  worldParityProblems,
+  type LocaleLevel,
+} from './locales';
+import { diffProjection, figureAssets, structuralProjection, unitOfPath } from './projection';
+import { blockTexts, inlineText } from './markdown';
 import { COMMON_SECTION, splitSections } from './sections';
 import { mentions, prepareCase, type CompleteCase, type PreparedCase } from './prepare';
 import { normalize } from './shared';
@@ -29,6 +66,8 @@ export const BUDGETS = {
   layersTotal: 300 * 1024,
   caseText: 600 * 1024,
   mapNodes: 6000,
+  /** Catalogue d'affaires d'une langue et d'une édition (règle 12). */
+  catalog: 20 * 1024,
 } as const;
 
 export interface CompiledWorld {
@@ -37,8 +76,11 @@ export interface CompiledWorld {
   layers: Partial<Record<MapLayer, string>>;
 }
 
-export interface CaseCheck {
-  id: string;
+/** Résultat de compilation et de résolution d'une affaire dans une langue. */
+export interface LocaleCheck {
+  locale: Locale;
+  /** `source` (FR), `draft` (avertissements, sans solveur) ou `ready` (erreurs, règles rejouées). */
+  level: 'source' | LocaleLevel;
   prep?: PreparedCase;
   full?: CompileOutput;
   demo?: CompileOutput;
@@ -46,11 +88,44 @@ export interface CaseCheck {
   demoSolve?: SolverResult;
 }
 
+export interface CaseCheck {
+  id: string;
+  /** Langue source (FR) : mêmes valeurs que `locales.fr`. */
+  prep?: PreparedCase;
+  full?: CompileOutput;
+  demo?: CompileOutput;
+  solve?: SolverResult;
+  demoSolve?: SolverResult;
+  /** Par langue analysée (source comprise). */
+  locales: Partial<Record<Locale, LocaleCheck>>;
+}
+
+export interface LocalesSummary {
+  source: Locale;
+  /** Langues cibles analysées et leur niveau. */
+  targets: { locale: Locale; level: LocaleLevel }[];
+  /** Langues à écrire par `content:build` : source et langues `ready` (statut du fichier). */
+  compiled: Locale[];
+}
+
 export interface CheckResult {
   source: ContentSource;
   issues: IssueList;
   cases: CaseCheck[];
+  /** Monde de la langue source. */
   world: CompiledWorld;
+  /** Monde par langue analysée (source comprise). */
+  worlds: Partial<Record<Locale, CompiledWorld>>;
+  locales: LocalesSummary;
+}
+
+export interface CheckOptions {
+  /**
+   * Langues analysées comme `ready` (erreurs, compilation, solveur) quel que soit leur statut :
+   * `content:i18n`, `content:solve -- --locale`. Elles ne sont pas écrites par le build si
+   * leur statut reste `draft`.
+   */
+  strictLocales?: readonly Locale[];
 }
 
 const gz = (s: string) => gzipSync(Buffer.from(s, 'utf8'), { level: 9 }).length;
@@ -63,13 +138,35 @@ function duplicates(ids: string[]): string[] {
   return [...dup];
 }
 
-export async function checkContentRoot(root: string): Promise<CheckResult> {
+export async function checkContentRoot(
+  root: string,
+  options: CheckOptions = {},
+): Promise<CheckResult> {
   const issues = new IssueList();
   const source = await loadContent(root, issues);
   const world = checkWorld(source.world, issues);
+  const src = sourceLocale(source.locales);
+  const targets = targetLocales(source.locales).map((locale) => ({
+    locale,
+    level: localeLevel(source.locales, locale, options.strictLocales),
+  }));
+  const compiledLocales: Locale[] = [
+    src,
+    ...targets
+      .filter((t) => source.locales?.locales[t.locale].status === 'ready')
+      .map((t) => t.locale),
+  ];
+  const worlds: CheckResult['worlds'] = { [src]: world };
+  const localizedWorlds = new Map<Locale, SourceWorld>();
+  for (const { locale, level } of targets) {
+    const wt = source.world.translations.get(locale);
+    const lw = localizeWorld(source.world, wt);
+    localizedWorlds.set(locale, lw);
+    worlds[locale] = checkWorldLocale(source.world, world, lw, wt, locale, level, issues);
+  }
   const cases: CaseCheck[] = [];
   for (const c of source.cases) {
-    const cc: CaseCheck = { id: c.id };
+    const cc: CaseCheck = { id: c.id, locales: {} };
     cases.push(cc);
     if (c.missing.length > 0) {
       issues.warn(
@@ -83,10 +180,72 @@ export async function checkContentRoot(root: string): Promise<CheckResult> {
       issues.error(1, c.dir, 'affaire invalide : compilation et solveur ignorés');
       continue;
     }
-    checkCase(c, source.world, issues, cc);
+    const cache = new Map<string, ReturnType<typeof optimizeSvg>>();
+    checkCase(c, source.world, issues, cc, cache);
+    cc.locales[src] = {
+      locale: src,
+      level: 'source',
+      ...(cc.prep ? { prep: cc.prep } : {}),
+      ...(cc.full ? { full: cc.full } : {}),
+      ...(cc.demo ? { demo: cc.demo } : {}),
+      ...(cc.solve ? { solve: cc.solve } : {}),
+      ...(cc.demoSolve ? { demoSolve: cc.demoSolve } : {}),
+    };
+    for (const { locale, level } of targets) {
+      checkCaseLocale(
+        c,
+        source.world,
+        localizedWorlds.get(locale) ?? source.world,
+        c.translations.get(locale),
+        locale,
+        level,
+        issues,
+        cc,
+        cache,
+      );
+    }
   }
   checkAcrossCases(source, issues);
-  return { source, issues, cases, world };
+  checkCatalogs(cases, [src, ...targets.map((t) => t.locale)], src, targets, issues);
+  return {
+    source,
+    issues,
+    cases,
+    world,
+    worlds,
+    locales: { source: src, targets, compiled: compiledLocales },
+  };
+}
+
+/** Budget du catalogue d'affaires par langue et par édition (règle 9, règle 12 hors source). */
+function checkCatalogs(
+  cases: CaseCheck[],
+  locales: Locale[],
+  src: Locale,
+  targets: { locale: Locale; level: LocaleLevel }[],
+  issues: IssueList,
+): void {
+  for (const locale of locales) {
+    for (const edition of ['full', 'demo'] as const) {
+      const compiled = cases.flatMap((c) => {
+        const out = c.locales[locale]?.[edition];
+        return out ? [out.compiled] : [];
+      });
+      if (compiled.length === 0) continue;
+      const size = gz(JSON.stringify(catalogFor(compiled)));
+      if (size <= BUDGETS.catalog) continue;
+      const message = `catalogue ${edition}.${locale} ${kb(size)} gzip > ${kb(BUDGETS.catalog)}`;
+      if (locale === src) issues.error(9, 'content/cases', message);
+      else {
+        const level = targets.find((t) => t.locale === locale)?.level ?? 'draft';
+        issues.report(level === 'ready' ? 'error' : 'warning', 12, 'content/cases', message, {
+          locale,
+          unit: CASE_UNIT,
+          code: 'budget',
+        });
+      }
+    }
+  }
 }
 
 /**
@@ -197,7 +356,13 @@ function checkWorld(w: SourceWorld, issues: IssueList): CompiledWorld {
 
 // ---------------------------------------------------------------- affaire
 
-function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: CaseCheck): void {
+function checkCase(
+  c: CompleteCase,
+  world: SourceWorld,
+  issues: IssueList,
+  out: CaseCheck,
+  cache: Map<string, ReturnType<typeof optimizeSvg>>,
+): void {
   const f = (name: string) => `${c.dir}/${name}`;
   const prog = c.progression;
   const errorsBefore = issues.errors.length;
@@ -671,6 +836,11 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
   // ---- Compilation, solveur
   const prep = prepareCase(c);
   out.prep = prep;
+  reportOverlaps(prep, issues);
+  verifyCase(c, prep, world, issues, out, cache, 'fr', true);
+}
+
+function reportOverlaps(prep: PreparedCase, issues: IssueList): void {
   for (const { file, overlap } of prep.overlaps) {
     issues.error(
       5,
@@ -678,10 +848,29 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
       `chevauchement de liens « ${overlap.text} » : « ${overlap.kept} » / « ${overlap.dropped} »`,
     );
   }
-  const cache = new Map<string, ReturnType<typeof optimizeSvg>>();
-  const full = compileCase(prep, world, 'full', cache);
+}
+
+/**
+ * Compilation (éditions complète et démo), solveur et règles 5 (présence), 6, 9, 10, 11.
+ * Rejouée par langue (règle 12.7) sur l'affaire traduite.
+ */
+function verifyCase(
+  c: CompleteCase,
+  prep: PreparedCase,
+  world: SourceWorld,
+  issues: IssueList,
+  out: Omit<LocaleCheck, 'locale' | 'level'>,
+  cache: Map<string, ReturnType<typeof optimizeSvg>>,
+  locale: Locale,
+  reportSvg: boolean,
+): void {
+  const f = (name: string) => `${c.dir}/${name}`;
+  const prog = c.progression;
+  const full = compileCase(prep, world, 'full', cache, locale);
   out.full = full;
-  for (const s of full.svgProblems) for (const p of s.problems) issues.error(8, s.file, p.message);
+  if (reportSvg)
+    for (const s of full.svgProblems)
+      for (const p of s.problems) issues.error(8, s.file, p.message);
   const result = solve(solverModelFor(full.compiled, prep));
   out.solve = result;
 
@@ -769,7 +958,7 @@ function checkCase(c: CompleteCase, world: SourceWorld, issues: IssueList, out: 
       `l'intro « ${c.meta.intro} » doit faire partie de la démo`,
     );
   }
-  const demo = compileCase(prep, world, 'demo', cache);
+  const demo = compileCase(prep, world, 'demo', cache, locale);
   out.demo = demo;
   if (demo.compiled.progression.start.length === 0) {
     issues.error(10, f('progression.json'), 'aucun document de départ dans la démo');
@@ -969,5 +1158,291 @@ export function demoCanaries(demo: CompileOutput, prep: PreparedCase): string[] 
     if (!(file in demo.illustrations) && bundle.includes(file))
       out.push(`illustration hors démo ${file}`);
   }
+  return out;
+}
+
+// ---------------------------------------------------------------- traductions (règle 12)
+
+/** Émetteur de problèmes de règle 12 pour une langue (sévérité selon son niveau). */
+function localeEmitter(
+  issues: IssueList,
+  locale: Locale,
+  level: LocaleLevel,
+  caseId: string | undefined,
+) {
+  const sev: Issue['severity'] = level === 'ready' ? 'error' : 'warning';
+  return (p: TranslationProblem, warnOnly = false) =>
+    issues.report(warnOnly ? 'warning' : sev, 12, p.file, p.message, {
+      line: p.line,
+      locale,
+      caseId,
+      unit: p.unit,
+      code: p.code,
+    });
+}
+
+/** Unité traduite d'un fichier (FR ou calque) d'une affaire. */
+function unitOfFile(file: string, caseDir: string, layerDir: string): string {
+  for (const pre of [`${layerDir}/`, `${caseDir}/`]) {
+    if (file.startsWith(pre)) {
+      const rest = file.slice(pre.length);
+      if (/^(documents|endings|illustrations)\//.test(rest)) return rest;
+      return CASE_UNIT;
+    }
+  }
+  return CASE_UNIT;
+}
+
+const sortedSet = (xs: Iterable<string>) => [...new Set(xs)].sort();
+
+function setDiff(a: string[], b: string[]): string | null {
+  const sa = new Set(a);
+  const sb = new Set(b);
+  const missing = [...sa].filter((x) => !sb.has(x));
+  const extra = [...sb].filter((x) => !sa.has(x));
+  if (!missing.length && !extra.length) return null;
+  return [
+    missing.length ? `manque ${missing.join(', ')}` : '',
+    extra.length ? `en trop ${extra.join(', ')}` : '',
+  ]
+    .filter(Boolean)
+    .join(' ; ');
+}
+
+/** Paragraphes de plus de 8 mots identiques au FR (oubli de traduction, 12.9). */
+function untranslatedParagraphs(source: Block[], translated: Block[]): string[] {
+  const text = (b: Block) => (b.t === 'p' ? inlineText(b.c).replace(/\s+/g, ' ').trim() : '');
+  const fr = new Set(paragraphs(source, text));
+  return paragraphs(translated, text).filter((p) => wordCount(p) > 8 && fr.has(p));
+}
+
+/**
+ * Règle 12 pour une affaire et une langue : parité, termes, surcharges SVG, mots-clés liés et
+ * figures par document, sections des fins, projection structurelle par édition ; en `ready`,
+ * règles 5, 6, 9, 10 et 11 rejouées sur l'affaire traduite.
+ */
+function checkCaseLocale(
+  c: CompleteCase,
+  world: SourceWorld,
+  lworld: SourceWorld,
+  t: CaseTranslation | undefined,
+  locale: Locale,
+  level: LocaleLevel,
+  issues: IssueList,
+  cc: CaseCheck,
+  cache: Map<string, ReturnType<typeof optimizeSvg>>,
+): void {
+  const dir = t?.dir ?? `${c.dir}/locales/${locale}`;
+  const emit = localeEmitter(issues, locale, level, c.id);
+  const at = (unit: string, message: string, code: string, line?: number): TranslationProblem => ({
+    unit,
+    file: unit === CASE_UNIT ? dir : `${dir}/${unit}`,
+    message,
+    code,
+    ...(line ? { line } : {}),
+  });
+  for (const p of t?.problems ?? []) emit(p);
+  for (const p of parityProblems(c, t, dir)) emit(p);
+  const loc = localizeCase(c, t);
+  for (const p of termProblems(c, loc.case, t, world.places, dir)) emit(p);
+
+  // 12.8 : surcharges SVG (même viewBox, mêmes ids, règles 8 et 9).
+  for (const [file, svg] of t?.illustrations ?? []) {
+    const base = c.illustrations.get(file);
+    if (base === undefined) continue; // « en trop » : parité
+    const stem = file.slice('illustrations/'.length, -4);
+    for (const p of checkSvg(svg, { idPrefix: stem }))
+      emit(at(file, `règle 8 : ${p.message}`, 'svg', p.line));
+    for (const m of svgShapeProblems(base, svg)) emit(at(file, m, 'svg'));
+    const opt = optimizeSvg(svg, `${c.id}-`);
+    for (const p of opt.problems) emit(at(file, `règle 8 : ${p.message}`, 'svg'));
+    const size = gz(opt.svg);
+    if (size > BUDGETS.illustration)
+      emit(
+        at(file, `règle 9 : illustration ${kb(size)} gzip > ${kb(BUDGETS.illustration)}`, 'budget'),
+      );
+  }
+
+  // Sans compilation FR valide, la structure de référence manque : on s'arrête à la parité.
+  if (!cc.prep || !cc.full) return;
+  const lprep = prepareCase(loc.case, loc.fallback);
+  for (const { file, overlap } of lprep.overlaps) {
+    emit(
+      at(
+        unitOfFile(file, c.dir, dir),
+        `règle 5 : chevauchement de liens « ${overlap.text} » : « ${overlap.kept} » / « ${overlap.dropped} »`,
+        'links',
+      ),
+    );
+  }
+
+  // 12.3 : mots-clés liés (après liens automatiques) et figures identiques au FR ; balisage.
+  for (const id of loc.translatedDocuments) {
+    const fr = cc.prep.documents.get(id);
+    const tr = lprep.documents.get(id);
+    if (!fr || !tr) continue;
+    const unit = `documents/${id}.md`;
+    const links = setDiff(sortedSet(fr.keywords), sortedSet(tr.keywords));
+    if (links) emit(at(unit, `mots-clés liés différents du FR : ${links}`, 'links'));
+    const ff = figureAssets(fr.body);
+    const tf = figureAssets(tr.body);
+    if (ff.join('|') !== tf.join('|'))
+      emit(
+        at(
+          unit,
+          `figures différentes du FR (même ordre exigé) : ${ff.join(', ') || '—'} / ${tf.join(', ') || '—'}`,
+          'figures',
+        ),
+      );
+    const a = markupCounts(fr.body);
+    const b = markupCounts(tr.body);
+    if (a.redacted !== b.redacted)
+      emit(at(unit, `${b.redacted} ::redacted pour ${a.redacted} en FR`, 'markup'), true);
+    if (a.stamp !== b.stamp)
+      emit(at(unit, `${b.stamp} ::stamp pour ${a.stamp} en FR`, 'markup'), true);
+    const same = untranslatedParagraphs(
+      c.documents.get(id)!.body,
+      loc.case.documents.get(id)!.body,
+    );
+    if (same.length)
+      emit(
+        at(
+          unit,
+          `paragraphe identique au FR (oubli ?) : « ${same[0]!.slice(0, 60)} »`,
+          'untranslated',
+        ),
+        true,
+      );
+  }
+  // 12.4 : fins, mêmes étiquettes de section dans le même ordre.
+  const brokenSections = new Set<string>();
+  for (const id of loc.translatedEndings) {
+    const fr = c.endings.get(id);
+    const tr = loc.case.endings.get(id);
+    if (!fr || !tr) continue;
+    const unit = `endings/${id}.md`;
+    const a = splitSections(fr.body);
+    const b = splitSections(tr.body);
+    for (const m of b.errors) emit(at(unit, m, 'sections'));
+    const la = a.sections.map((x) => x.label ?? '(début)');
+    const lb = b.sections.map((x) => x.label ?? '(début)');
+    if (la.join('|') !== lb.join('|')) {
+      brokenSections.add(id);
+      emit(at(unit, `sections ${lb.join(', ')} ; attendu (FR) ${la.join(', ')}`, 'sections'));
+    }
+    const same = untranslatedParagraphs(fr.body, tr.body);
+    if (same.length)
+      emit(
+        at(
+          unit,
+          `paragraphe identique au FR (oubli ?) : « ${same[0]!.slice(0, 60)} »`,
+          'untranslated',
+        ),
+        true,
+      );
+  }
+
+  // Compilation ; en `ready`, règles rejouées (12.7).
+  const lc: LocaleCheck = { locale, level, prep: lprep };
+  cc.locales[locale] = lc;
+  if (level === 'ready') {
+    const replay = new IssueList();
+    verifyCase(loc.case, lprep, lworld, replay, lc, cache, locale, false);
+    for (const i of replay.items) {
+      issues.report(
+        i.severity === 'warning' ? 'warning' : 'error',
+        12,
+        i.file,
+        `règle ${i.rule} (${RULE_TITLES[i.rule as RuleId]}) : ${i.message}`,
+        {
+          line: i.line,
+          locale,
+          caseId: c.id,
+          unit: unitOfFile(i.file, c.dir, dir),
+          code: 'replay',
+        },
+      );
+    }
+  } else {
+    lc.full = compileCase(lprep, lworld, 'full', cache, locale);
+    if (c.progression.demo && cc.demo) lc.demo = compileCase(lprep, lworld, 'demo', cache, locale);
+  }
+
+  // 12.6 : projection structurelle identique au FR, par édition.
+  const seen = new Set<string>();
+  for (const edition of ['full', 'demo'] as const) {
+    const a = cc[edition]?.compiled;
+    const b = lc[edition]?.compiled;
+    if (!a || !b) continue;
+    for (const d of diffProjection(structuralProjection(a), structuralProjection(b))) {
+      const m = /^documents\.([^.]+)\.(keywords|figures)$/.exec(d.path);
+      if (m && loc.translatedDocuments.has(m[1]!)) continue; // déjà signalé (12.3)
+      const e = /^endings\.([^.]+)\.sections/.exec(d.path);
+      if (e && brokenSections.has(e[1]!)) continue; // déjà signalé (12.4)
+      if (seen.has(d.path)) continue;
+      seen.add(d.path);
+      const unit = unitOfPath(d.path);
+      emit(
+        at(
+          unit === WORLD_UNIT ? CASE_UNIT : unit,
+          `structure différente du FR (${edition}) en ${d.path} : ${d.message}`,
+          'structure',
+        ),
+      );
+    }
+  }
+}
+
+/** Règle 12 pour le monde d'une langue : parité, surcharge de `labels` (12.8). */
+function checkWorldLocale(
+  w: SourceWorld,
+  frWorld: CompiledWorld,
+  lw: SourceWorld,
+  wt: WorldTranslationSource | undefined,
+  locale: Locale,
+  level: LocaleLevel,
+  issues: IssueList,
+): CompiledWorld {
+  const emit = localeEmitter(issues, locale, level, undefined);
+  const file = wt?.file ?? `content/world/locales/${locale}.json`;
+  const t: WorldTranslationSource = wt ?? { locale, file, invalid: false, problems: [] };
+  for (const p of t.problems) emit(p);
+  for (const p of worldParityProblems(w, t)) emit(p);
+  const out: CompiledWorld = {
+    map: lw.map ?? null,
+    places: Object.fromEntries(lw.places),
+    layers: { ...frWorld.layers },
+  };
+  if (t.labels === undefined) return out;
+  const labelsFile = `art/map/locales/${locale}/labels.svg`;
+  const at = (message: string, code: string, line?: number): TranslationProblem => ({
+    unit: WORLD_LABELS_UNIT,
+    file: labelsFile,
+    message,
+    code,
+    ...(line ? { line } : {}),
+  });
+  const base = w.layers.get('labels');
+  if (!w.map || base === undefined || !w.map.layers.includes('labels')) {
+    emit(at('surcharge sans couche labels de base', 'extra'));
+    return out;
+  }
+  const viewBox = `0 0 ${1000 * w.map.aspect} 1000`;
+  for (const p of checkSvg(t.labels, { idPrefix: 'labels', viewBox }))
+    emit(at(`règle 8 : ${p.message}`, 'svg', p.line));
+  for (const m of svgShapeProblems(base, t.labels)) emit(at(m, 'svg'));
+  const opt = optimizeSvg(t.labels, '');
+  for (const p of opt.problems) emit(at(`règle 8 : ${p.message}`, 'svg'));
+  out.layers.labels = opt.svg;
+  let total = 0;
+  let nodes = 0;
+  for (const svg of Object.values(out.layers)) {
+    total += gz(svg);
+    nodes += countElements(svg);
+  }
+  if (total > BUDGETS.layersTotal)
+    emit(at(`règle 9 : couches ${kb(total)} gzip > ${kb(BUDGETS.layersTotal)}`, 'budget'));
+  if (nodes > BUDGETS.mapNodes)
+    emit(at(`règle 9 : DOM de la carte : ${nodes} nœuds > ${BUDGETS.mapNodes}`, 'budget'));
   return out;
 }

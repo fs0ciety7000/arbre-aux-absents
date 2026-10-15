@@ -1,5 +1,6 @@
 import type {
   CompiledCase,
+  ParseSaveErrorCode,
   ParseSaveResult,
   Pin,
   SaveSlotSummary,
@@ -21,7 +22,17 @@ export type Migration = (raw: Record<string, unknown>) => Record<string, unknown
 /** Migrations par version de départ. Aucune pour l'instant (schéma 1). */
 export const SAVE_MIGRATIONS: Readonly<Record<number, Migration>> = Object.freeze({});
 
-type MigrateResult = { ok: true; raw: Record<string, unknown> } | { ok: false; error: string };
+type MigrateResult =
+  | { ok: true; raw: Record<string, unknown> }
+  | { ok: false; error: string; code: ParseSaveErrorCode };
+
+/** Échec de lecture : message technique (journaux) + code pour un message localisé. */
+function fail(
+  code: ParseSaveErrorCode,
+  error: string,
+): { ok: false; error: string; code: ParseSaveErrorCode } {
+  return { ok: false, error, code };
+}
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -36,22 +47,22 @@ export function migrateSave(
   let current = raw;
   const initial = current['schemaVersion'];
   if (typeof initial !== 'number' || !Number.isInteger(initial) || initial < 0) {
-    return { ok: false, error: 'Version de sauvegarde absente ou invalide.' };
+    return fail('noVersion', 'Version de sauvegarde absente ou invalide.');
   }
   let version: number = initial;
   if (version > target) {
-    return { ok: false, error: 'Sauvegarde créée par une version plus récente du jeu.' };
+    return fail('newerVersion', 'Sauvegarde créée par une version plus récente du jeu.');
   }
   while (version < target) {
     const step = migrations[version];
-    if (!step) return { ok: false, error: `Aucune migration depuis la version ${version}.` };
+    if (!step) return fail('migrationFailed', `Aucune migration depuis la version ${version}.`);
     try {
       current = step(current);
     } catch {
-      return { ok: false, error: `Migration depuis la version ${version} impossible.` };
+      return fail('migrationFailed', `Migration depuis la version ${version} impossible.`);
     }
     if (current['schemaVersion'] !== version + 1) {
-      return { ok: false, error: `Migration depuis la version ${version} incohérente.` };
+      return fail('migrationFailed', `Migration depuis la version ${version} incohérente.`);
     }
     version += 1;
   }
@@ -219,14 +230,14 @@ function dropUnknown(s: SaveState, c: CompiledCase, dropped: string[]): SaveStat
 export function parseSave(raw: unknown, c: CompiledCase): ParseSaveResult {
   let value = raw;
   if (typeof value === 'string') {
-    if (value.length > MAX_SAVE_CHARS) return { ok: false, error: 'Sauvegarde trop volumineuse.' };
+    if (value.length > MAX_SAVE_CHARS) return fail('tooLarge', 'Sauvegarde trop volumineuse.');
     try {
       value = JSON.parse(value) as unknown;
     } catch {
-      return { ok: false, error: 'Sauvegarde illisible (JSON invalide).' };
+      return fail('invalidJson', 'Sauvegarde illisible (JSON invalide).');
     }
   }
-  if (!isRecord(value)) return { ok: false, error: 'Sauvegarde illisible (objet attendu).' };
+  if (!isRecord(value)) return fail('notObject', 'Sauvegarde illisible (objet attendu).');
 
   const migrated = migrateSave(value);
   if (!migrated.ok) return migrated;
@@ -235,11 +246,11 @@ export function parseSave(raw: unknown, c: CompiledCase): ParseSaveResult {
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
     const where = issue && issue.path.length > 0 ? ` (${issue.path.join('.')})` : '';
-    return { ok: false, error: `Sauvegarde corrompue${where}.` };
+    return fail('corrupt', `Sauvegarde corrompue${where}.`);
   }
   const state = parsed.data as SaveState;
   if (state.caseId !== c.id) {
-    return { ok: false, error: 'Cette sauvegarde appartient à une autre affaire.' };
+    return fail('otherCase', 'Cette sauvegarde appartient à une autre affaire.');
   }
 
   const dropped: string[] = [];
@@ -251,10 +262,14 @@ export function parseSave(raw: unknown, c: CompiledCase): ParseSaveResult {
   return { ok: true, state: final, dropped };
 }
 
-/** Résumé d'un emplacement pour l'écran de chargement. */
+/**
+ * Résumé d'un emplacement pour l'écran de chargement. `caseId` vient de la sauvegarde : l'UI
+ * associe les parties aux affaires par id, jamais par `caseTitle` (qui dépend de la langue).
+ */
 export function summarize(s: SaveState, c: CompiledCase): SaveSlotSummary {
   return {
     slot: s.slot,
+    caseId: s.caseId,
     caseTitle: c.meta.title,
     updatedAt: s.updatedAt,
     elapsedMs: s.elapsedMs,

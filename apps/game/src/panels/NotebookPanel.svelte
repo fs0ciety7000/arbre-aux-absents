@@ -11,9 +11,10 @@
   import { tick } from 'svelte';
   import { getGame } from '../lib/game/context';
   import { carry } from './lib/carry.svelte';
-  import { passageText } from './lib/doc-layout';
+  import { inLanguage, passageText } from './lib/doc-layout';
   import { carryFromText, documentTitle, keywordOrigins } from './lib/view';
   import { KEYWORD_RUBRICS, pm, RUBRIC_EMPTY } from './messages';
+  import { intlLocale } from '../i18n/index.svelte';
 
   const game = getGame();
 
@@ -32,7 +33,7 @@
       : new Set<string>(),
   );
 
-  const rubrics = Object.keys(KEYWORD_RUBRICS) as Keyword['kind'][];
+  const rubrics = $derived(Object.keys(KEYWORD_RUBRICS) as Keyword['kind'][]);
 
   const grouped = $derived.by(() => {
     const q = fold(filter);
@@ -43,7 +44,7 @@
       alpha: (a: string, b: string) =>
         (game.content.keywords[a]?.label ?? a).localeCompare(
           game.content.keywords[b]?.label ?? b,
-          'fr',
+          intlLocale(),
         ),
       freq: (a: string, b: string) =>
         (mentions[b] ?? 0) - (mentions[a] ?? 0) || order.get(a)! - order.get(b)!,
@@ -86,7 +87,7 @@
   const passages = $derived(
     game.state.notebook.highlights
       .map((h, index) => ({ ...h, index }))
-      .filter((h) => game.content.documents[h.doc]),
+      .filter((h) => game.content.documents[h.doc] && inLanguage(h, game.content.locale ?? 'fr')),
   );
 
   function targetLabel(t: { kind: string; id: string } | undefined): string | null {

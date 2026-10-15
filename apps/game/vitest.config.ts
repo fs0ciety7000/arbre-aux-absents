@@ -7,6 +7,8 @@ export default defineConfig({
   resolve: { conditions: ['browser'] },
   test: {
     include: ['src/**/*.test.ts'],
+    // Sections différées du catalogue (`pm`…) chargées comme une fois le Bureau ouvert.
+    setupFiles: ['src/i18n/test-setup.ts'],
     environment: 'node',
   },
 });

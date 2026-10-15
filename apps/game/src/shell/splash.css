@@ -73,11 +73,15 @@ body {
 .splash-tagline {
   margin: 0;
   max-width: 34rem;
+  /* Place du slogan (deux lignes au plus), écrit au lancement dans la langue choisie. */
+  min-block-size: 2lh;
   font-family: var(--font-display);
   font-style: italic;
   font-size: var(--step-1);
 }
 .splash-error {
+  display: grid;
+  gap: var(--space-2);
   margin: var(--space-4) 0 0;
   color: var(--danger);
 }

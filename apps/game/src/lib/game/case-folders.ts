@@ -2,21 +2,27 @@
  * Chemises d'affaire de l'écran Nouvelle partie (E04, AFFAIRE-2 §2.1) : état affiché sur chaque
  * chemise et affaire choisie par défaut. Pur (aucun état, aucun DOM).
  */
-import type { CompiledCase, Profile, SaveSlotSummary } from '@arbre/contract';
-import { messages } from '../../messages.fr';
+import type { CaseCatalogEntry, Profile, SaveSlotSummary } from '@arbre/contract';
+import { messages } from '../../i18n/index.svelte';
 import type { CaseEntry } from './cases';
 
+/** Ce qu'une chemise lit de l'affaire (entrée du catalogue ou affaire compilée). */
+export type CaseInfo = Pick<CaseCatalogEntry, 'id' | 'meta' | 'achievements' | 'endings'>;
+
 /**
- * Parties d'une affaire. Les résumés d'emplacement ne portent que le titre de l'affaire : on
- * les rapproche par titre (deux affaires n'ont jamais le même titre).
+ * Parties d'une affaire, associées par `caseId` (le titre change avec la langue). Un résumé
+ * écrit avant l'i18n, sans `caseId`, n'est rattaché à aucune affaire.
  */
-export function savesOf(c: CompiledCase, saves: readonly SaveSlotSummary[]): SaveSlotSummary[] {
-  return saves.filter((s) => s.caseTitle === c.meta.title);
+export function savesOf(
+  c: Pick<CaseInfo, 'id'>,
+  saves: readonly SaveSlotSummary[],
+): SaveSlotSummary[] {
+  return saves.filter((s) => s.caseId === c.id);
 }
 
 /** « Non ouvert » · « En cours, 42 % » · « Rapport remis · fins vues 2 / 4 ». */
 export function caseStatus(
-  c: CompiledCase,
+  c: Pick<CaseInfo, 'id' | 'endings'>,
   saves: readonly SaveSlotSummary[],
   profile: Profile,
 ): string {
@@ -39,6 +45,6 @@ export function defaultCaseId(
 ): string {
   let last: SaveSlotSummary | null = null;
   for (const s of saves) if (!last || s.updatedAt > last.updatedAt) last = s;
-  const played = last ? cases.find((c) => c.content.meta.title === last.caseTitle) : undefined;
+  const played = last?.caseId ? cases.find((c) => c.content.id === last.caseId) : undefined;
   return (played ?? cases[0])?.content.id ?? '';
 }

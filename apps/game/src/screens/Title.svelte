@@ -7,6 +7,7 @@
     Icon,
     KeyArt,
     LampLight,
+    LanguageSwitch,
     Wordmark,
     type IconName,
   } from '@arbre/ui';
@@ -33,6 +34,12 @@
   let hot = $state<string | null>(null);
 
   const last = $derived(app.lastSave);
+  /** Titre de l'affaire de la dernière partie, dans la langue courante (catalogue). */
+  const lastTitle = $derived(last ? app.caseTitleOf(last) : '');
+  // Catalogue d'affaires en arrière-plan (petit) : titre traduit sous « Continuer ».
+  $effect(() => {
+    if (last) void app.ensureCatalog();
+  });
   const canQuit = $derived(Boolean(app.platform?.quit) && app.platform?.kind === 'desktop');
   const dev = $derived(app.cases.some((c) => c.fixture));
 
@@ -123,14 +130,14 @@
     label: string;
     icon: IconName;
   }
-  const more: Entry[] = [
+  const more: Entry[] = $derived([
     { id: 'slots', label: m.load, icon: 'archives' },
     { id: 'options', label: m.options, icon: 'settings' },
     { id: 'achievements', label: m.achievements, icon: 'star' },
     { id: 'stats', label: m.stats, icon: 'list' },
     { id: 'bonus', label: m.bonus, icon: 'layers' },
     { id: 'credits', label: m.credits, icon: 'quill' },
-  ];
+  ]);
   const HOT_ENTRY: Record<string, string> = {
     lamp: 'main',
     tree: 'new-game',
@@ -209,7 +216,7 @@
             >
               <span class="label">
                 {m.continue}
-                <span class="detail">{last.caseTitle}</span>
+                <span class="detail">{lastTitle}</span>
               </span>
             </Button>
           </li>
@@ -250,8 +257,7 @@
       <p class="save mv-rise" style:--i="8">
         <DymoLabel text={m.lastFiled} tilt={-1.5} />
         <span class="when num">{formatDateTime(last.updatedAt)}</span>
-        <span class="when num"
-          >{m.lastFiledDetail(Math.round(last.progress * 100), last.caseTitle)}</span
+        <span class="when num">{m.lastFiledDetail(Math.round(last.progress * 100), lastTitle)}</span
         >
       </p>
     {/if}
@@ -262,12 +268,24 @@
     {#if app.storageWarning}
       <p class="warning" role="status"><Icon name="warning" /> {app.storageWarning}</p>
     {/if}
+
+    <!-- Sélecteur de langue (DESIGN §9.35, §13.10) : sous le menu ; « système » est dans Options. -->
+    <div class="language mv-rise" style:--i="9">
+      <LanguageSwitch value={app.lang} onchange={(loc) => void app.setLanguage(loc)} />
+    </div>
   </div>
 
   <footer class="studio">
-    <Icon name="fern" size="1rem" />
-    <span>{messages.credits}</span>
-    {#if dev}<Badge tone="warning" variant="outline">{m.devBadge}</Badge>{/if}
+    <p class="studio-line">
+      <Icon name="fern" size="1rem" />
+      <span>{messages.credits}</span>
+      {#if dev}<Badge tone="warning" variant="outline">{m.devBadge}</Badge>{/if}
+    </p>
+    <!-- Signaler un problème (DESIGN §13.8) : lien discret sous les crédits. -->
+    <button type="button" class="report-link" onclick={() => app.openReport()}>
+      <Icon name="envelope" size="1rem" />
+      {messages.bugReport.entry}
+    </button>
   </footer>
 </main>
 
@@ -425,19 +443,53 @@
   .warning {
     color: var(--warning);
   }
+  .language {
+    display: flex;
+    justify-content: flex-end;
+  }
   .studio {
     position: absolute;
     inset: auto auto var(--space-4) var(--space-5);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-2);
+    display: grid;
+    justify-items: start;
+    gap: var(--space-1);
     padding-block-end: env(safe-area-inset-bottom);
     font-family: var(--font-label);
     font-size: var(--step--1);
     letter-spacing: var(--tracking-stamp);
     text-transform: uppercase;
     color: var(--text-muted);
+  }
+  .studio-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+  }
+  /* Lien discret : texte souligné, cible ≥ 44 px, focus visible. */
+  .report-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--hit);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--text-muted);
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+  .report-link:hover {
+    color: var(--text);
+  }
+  .report-link:focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
   }
 
   /* ── Sous 760 px : art 4:5 recomposé, menu dessous (§13.1) ── */

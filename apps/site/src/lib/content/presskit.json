@@ -16,7 +16,7 @@
       "label": "Fiche presse : présentation courte et longue, fiche technique, liens",
       "format": "PDF",
       "detail": "A4 portrait, 2 pages, imprimable",
-      "bytes": 628141,
+      "bytes": 628162,
       "preview": "apercus/arbre-aux-absents-fiche-presse.jpg",
       "previewSize": [340, 480]
     },
@@ -424,7 +424,7 @@
       "label": "Le kit complet : logos, affiches, bannières, artbook et fiche",
       "format": "ZIP",
       "detail": "tout le kit, avec un fichier LISEZMOI",
-      "bytes": 19279728
+      "bytes": 19279739
     }
   ],
   "captures": [

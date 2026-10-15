@@ -87,6 +87,7 @@ describe('partie complète de la fixture', () => {
     ]);
     expect(summarize(state, C)).toEqual({
       slot: 'slot-1',
+      caseId: 'affaire-test',
       caseTitle: 'Les Marrel de Port-Lanne',
       updatedAt: 30000,
       elapsedMs: 4000,

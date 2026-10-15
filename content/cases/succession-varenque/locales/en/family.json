@@ -1,0 +1,128 @@
+{
+  "occupations": {
+    "papetier": "Papermaker",
+    "botaniste": "Botanist",
+    "capitaine": "Master mariner",
+    "gardien-de-phare": "Lighthouse keeper",
+    "depute": "Deputy",
+    "philanthrope": "Philanthropist",
+    "affichiste": "Poster artist",
+    "blanchisseuse": "Laundress",
+    "institutrice": "Schoolmistress",
+    "patron-de-canot": "Lifeboat coxswain",
+    "receveuse": "Postmistress",
+    "directeur-papeteries": "Director of the Paper Mills",
+    "pianiste": "Pianist",
+    "cantatrice": "Opera singer",
+    "commissaire": "Commissioner of Registers",
+    "graveuse": "Watermark engraver",
+    "typographe": "Typesetter",
+    "aviateur": "Aviator",
+    "costumiere": "Costume maker",
+    "patron-pecheur": "Fishing skipper",
+    "sage-femme": "Midwife",
+    "journaliste": "Journalist",
+    "etudiant": "Student",
+    "avocat": "Barrister",
+    "speakerine": "Television announcer",
+    "medecin": "Doctor",
+    "restauratrice": "Paper conservator",
+    "ingenieure": "Engineer",
+    "comptable": "Bookkeeper",
+    "photographe": "Photographer",
+    "modele": "Artist's model",
+    "industriel": "Industrialist"
+  },
+  "portraits": {
+    "portrait-bc3567": {
+      "alt": "A man of about forty with a square face, a receding hairline, brown hair swept back and mutton-chop whiskers; a pale scar runs through his left eyebrow. Dark frock coat, waistcoat, watch chain."
+    },
+    "portrait-29659a": {
+      "alt": "A woman of about thirty-five with a fine oval face, brown hair in bandeaux parted in the middle, a white forelock above the forehead, on the left. High lace collar fastened with a brooch in the shape of a fern frond."
+    },
+    "portrait-4a82f7": {
+      "alt": "A young man of about twenty-three with a broad nose and a thick black beard, a gold ring in his left ear. Naval officer's cap, double-breasted pea jacket."
+    },
+    "portrait-760253": {
+      "alt": "A woman of about sixty with a strong jaw and very pale eyes, grey plaits worn as a crown and held by an embroidered ribbon. Collar embroidered with zigzags, woollen shawl."
+    },
+    "portrait-8630c4": {
+      "alt": "A stout man of about thirty with a waxed handlebar moustache, a pince-nez on a black ribbon, pomaded hair combed back with a pale glint in it. Wing collar."
+    },
+    "portrait-8d9d49": {
+      "alt": "A very tall woman of about thirty-five with a long face, a dimple in her chin and an ostrich-feather hat; a lorgnette hangs from her belt."
+    },
+    "portrait-42809c": {
+      "alt": "A man of about thirty with a pointed brown beard; a slight outward squint in his left eye. Wide-brimmed felt hat, a big loose bow in place of a tie, paint-stained fingers."
+    },
+    "portrait-cc6447": {
+      "alt": "A young woman with a round face, curly black hair in a loose bun, a smile that shows gapped front teeth, a small scar on her chin. Canvas apron, sleeves rolled up."
+    },
+    "portrait-b6b0c8": {
+      "alt": "A very old woman with white hair plaited into a crown, a mole on her right cheek, a direct gaze; a silver fob watch is pinned to her breast."
+    },
+    "portrait-257a14": {
+      "alt": "A clean-shaven man of about forty with a weathered face and deep-set eyes, in a zigzag-patterned jersey; the ring and little fingers of his left hand are missing. An oilskin thrown over one shoulder."
+    },
+    "portrait-50fb40": {
+      "alt": "A woman of about fifty with a broad smile, round spectacles, freckles, a headscarf knotted at the nape, lustrine oversleeves."
+    },
+    "portrait-3e6f98": {
+      "alt": "A man of about forty with round tortoiseshell spectacles, a cleft chin, hair slicked down with a centre parting, his back slightly stooped. Three-piece suit."
+    },
+    "portrait-c71578": {
+      "alt": "A young woman with black hair in a short bob, a long neck, slender hands; a long jade necklace hangs down over her dress."
+    },
+    "portrait-1357d6": {
+      "alt": "A woman of about thirty with tong-waved hair and a beauty spot above her lip, on the left; a string of pearls, a stage gown."
+    },
+    "portrait-c7c452": {
+      "alt": "A very thin man of about forty with a fine moustache, a neat side parting and heavy eyelids; a gold signet ring engraved with an initial on his right little finger, a nick in the edge of his right ear."
+    },
+    "portrait-184f23": {
+      "alt": "A woman of about thirty with straight brown hair cut to the chin, a white forelock above the forehead, on the left, thick eyebrows. Workshop smock; the back of her right hand bears a burn scar."
+    },
+    "portrait-f5fe3a": {
+      "alt": "A tall man of about thirty with curly fair hair and a broken front tooth in his smile; flat cap, ink-blackened fingers."
+    },
+    "portrait-2d1f2a": {
+      "alt": "A young man of about twenty-five with dimples and a slight outward squint in his left eye; leather helmet, flying goggles pushed up, leather jacket."
+    },
+    "portrait-54a494": {
+      "alt": "A woman of about thirty in a knotted turban, with large hoops in both ears and thick black eyebrows; a pincushion strapped to her wrist."
+    },
+    "portrait-7164a9": {
+      "alt": "A clean-shaven man of about thirty, a gold ring in his left ear, a gull tattooed on his right forearm; sailor's cap, zigzag jersey."
+    },
+    "portrait-f16ac0": {
+      "alt": "A broad-faced woman of about thirty, her plaits pinned in a tight crown, a dark birthmark on the right side of her neck; a leather satchel worn across her body."
+    },
+    "portrait-a28dd4": {
+      "alt": "A woman of about thirty with short bobbed hair, freckles, thin spectacles on a chain; a man's jacket."
+    },
+    "portrait-d3d513": {
+      "alt": "A young man of about twenty with a cleft chin and a lock of hair falling over his right eye; striped scarf, open shirt collar."
+    },
+    "portrait-46c403": {
+      "alt": "A man of about forty with large ears and a cleft chin, greying temples, a bow tie."
+    },
+    "portrait-09b8e5": {
+      "alt": "A young blonde woman with her hair swept up in a bouffant, eyeliner flicked out into a cat's eye, pearl earrings, Peter Pan collar."
+    },
+    "portrait-353114": {
+      "alt": "A woman of about forty with short curly hair, tortoiseshell-rimmed spectacles and a cleft chin; dark tailored suit."
+    },
+    "portrait-f51ba3": {
+      "alt": "A man of about forty with a broken nose, curly hair receding at the temples, a pipe in the corner of his mouth, a polo neck."
+    },
+    "portrait-83e166": {
+      "alt": "A woman of about thirty with curly light-brown hair, thick eyebrows, a cloth band across her forehead; white cotton gloves, grey workshop smock."
+    },
+    "portrait-4d7e12": {
+      "alt": "A woman of about thirty with very short hair and a slight outward squint in her left eye; polo neck, a slide rule in her breast pocket."
+    },
+    "portrait-e547d8": {
+      "alt": "A very tall man of about forty with a red beard, a gold ring in his left ear; darned zigzag jersey."
+    }
+  }
+}

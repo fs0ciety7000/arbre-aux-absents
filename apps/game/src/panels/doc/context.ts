@@ -1,5 +1,6 @@
 /** Options de rendu partagées par `DocumentBody` et ses inlines récursifs. */
 import type { KeywordId } from '@arbre/contract';
+import { pm } from '../messages';
 
 export type KeywordState = 'new' | 'known' | 'searched';
 export type ReadMode = 'original' | 'transcript';
@@ -16,16 +17,5 @@ export interface BodyOptions {
   kwDescription?: (state: KeywordState) => string;
 }
 
-export const BODY_LABELS = {
-  redacted: 'passage caviardé',
-  stamp: 'Tampon',
-  figure: 'Illustration',
-  imageError: 'L’image n’a pas pu être chargée.',
-  imageLoading: 'Chargement de l’illustration…',
-  /** État d'un mot-clé, pour les lecteurs d'écran (le style seul ne suffit pas). */
-  kwState: {
-    new: 'nouveau mot-clé',
-    known: 'mot-clé déjà rencontré',
-    searched: 'déjà consulté au Catalogue',
-  } satisfies Record<KeywordState, string>,
-};
+/** Textes du corps de document (langue courante : vue réactive du catalogue). */
+export const BODY_LABELS = pm.reader;

@@ -2,6 +2,7 @@ import type { OutcomeCondition } from './condition';
 import type { CaseMeta } from './case';
 import type { Block, DocumentFrontmatter } from './document';
 import type { Occupation, Portrait } from './family';
+import type { Locale } from './i18n';
 import type {
   CaseId,
   DocumentId,
@@ -73,7 +74,15 @@ export interface CompiledCase {
   format: 1;
   id: CaseId;
   edition: Edition;
-  /** 8 hex */
+  /**
+   * Langue du texte compilé. Le sel, les réponses et la structure sont identiques d'une langue
+   * à l'autre (D4) : seule cette donnée et les champs traduisibles changent.
+   */
+  locale: Locale;
+  /**
+   * 8 hex. Empreinte **structurelle** : calculée sur les sources FR hors `locales/` (ids,
+   * conditions, structure), identique pour toutes les langues d'une même édition.
+   */
   contentHash: string;
   salt: string;
   meta: CaseMeta;

@@ -62,9 +62,9 @@
       {#if Logo}<Logo />{/if}
     </span>
     <span class="studio">{messages.studio}</span>
-    <span class="presents">{messages.launch.presents}</span>
+    <span class="presents fade">{messages.launch.presents}</span>
     <span class="game-title">L’Arbre <em>aux</em> absents</span>
-    <span class="tagline">{messages.tagline}</span>
+    <span class="tagline fade">{messages.tagline}</span>
   </button>
   <div class="skip">
     <Button variant="ghost" onclick={next} disabled={!app.ready}>{messages.launch.skip}</Button>
@@ -144,9 +144,19 @@
   }
   .tagline {
     max-width: 34rem;
+    min-block-size: 2lh;
     font-family: var(--font-display);
     font-style: italic;
     font-size: var(--step-1);
+  }
+  /* Écrits dans la langue choisie : l'écran d'attente HTML (neutre) n'en réservait que la place. */
+  .fade {
+    animation: m-fade-in var(--dur-slow) var(--ease-out) backwards;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fade {
+      animation: none;
+    }
   }
   .skip {
     position: absolute;

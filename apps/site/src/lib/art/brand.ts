@@ -47,3 +47,11 @@ export const HOUSE_LOGOS: BrandLogo[] = [
   load('interactive'),
   load('creative'),
 ];
+
+/**
+ * La signature avec les rôles d'une langue (`STRINGS[lang].brand`) ; les noms de la maison ne se
+ * traduisent pas. Ce module n'importe pas les catalogues (page hydratée).
+ */
+export function houseLogos(roles: Record<BrandId, string>): BrandLogo[] {
+  return HOUSE_LOGOS.map((l) => ({ ...l, role: roles[l.id] }));
+}

@@ -1,0 +1,141 @@
+{
+  "occupations": {
+    "directeur-verreries": "Director of the Glassworks",
+    "doreuse": "Glass gilder",
+    "charbonnier": "Charcoal burner",
+    "carrier": "Quarryman",
+    "sage-femme": "Midwife",
+    "maitre-verrier": "Master glassmaker",
+    "modiste": "Milliner",
+    "graveur-sur-verre": "Glass engraver",
+    "religieuse": "Hospitaller nun",
+    "opticien": "Lens maker (lighthouse lenses)",
+    "guide-de-montagne": "Mountain guide",
+    "aubergiste": "Innkeeper",
+    "fonde-de-pouvoir": "Company secretary",
+    "souffleur": "Glassblower",
+    "gardien-de-refuge": "Refuge keeper",
+    "douanier": "Customs officer",
+    "institutrice": "Schoolmistress",
+    "ingenieur-verrier": "Glass engineer",
+    "photographe": "Photographer",
+    "journaliste": "Journalist",
+    "notaire": "Notary",
+    "infirmiere": "Nurse",
+    "moniteur-de-ski": "Ski instructor",
+    "receveuse": "Postmistress",
+    "chef-de-nuit": "Night foreman",
+    "passeur": "Border runner",
+    "verrier": "Glassworker"
+  },
+  "portraits": {
+    "hc-portrait-d7e593": {
+      "alt": "Man in his forties with a chinstrap beard, hair parted in the middle, round spectacles pushed up on his forehead, a dimple in the left cheek; a watch chain and a medal on his lapel."
+    },
+    "hc-portrait-6be089": {
+      "alt": "Woman in her thirties with fine, arched eyebrows, hair in a high bun, a high collar fastened with a round brooch of gilded glass."
+    },
+    "hc-portrait-99f01e": {
+      "alt": "Man of sixty with straight, thick eyebrows, a drooping moustache and a felt cap; soot in the lines of his face."
+    },
+    "hc-portrait-4b552c": {
+      "alt": "Old man with a horseshoe beard and a round hat; his three-fingered left hand grips the handle of a shovel."
+    },
+    "hc-portrait-88bd18": {
+      "alt": "Woman in her sixties with a round face, a black bonnet tied under the chin, iron-rimmed spectacles, a leather satchel across her body."
+    },
+    "hc-portrait-c57bab": {
+      "alt": "Old man with a white mane and bushy eyebrows, a dimple in the left cheek; his burnt hands rest on the knob of a glassblower's pipe."
+    },
+    "hc-portrait-645993": {
+      "alt": "Young woman with very pale grey eyes and a long neck, a velvet ribbon tied close round her throat, a wide hat with a flat-lying plume."
+    },
+    "hc-portrait-a749e4": {
+      "alt": "Young woman with black eyes and straight, thick eyebrows, her plait coiled in a low crown, an embroidered headscarf, a leather apron."
+    },
+    "hc-portrait-74c12f": {
+      "alt": "Nun in her thirties in a white cornette with wide wings, steel-rimmed spectacles, a dimple in the left cheek, a blue glass cross on her breast."
+    },
+    "hc-portrait-edb6ac": {
+      "alt": "Man in his thirties with a crew cut, a thin moustache and iron-rimmed spectacles, a dimple in the left cheek; a round lens maker's loupe hangs from a cord."
+    },
+    "hc-portrait-5434f7": {
+      "alt": "Man in his thirties with a thick moustache, a hat with a grouse feather, a rope across his body and a numbered badge on his jacket."
+    },
+    "hc-portrait-84d732": {
+      "alt": "Woman in her thirties with round cheeks, hair in a high bun, a checked apron, a bunch of keys at her belt."
+    },
+    "hc-portrait-6be051": {
+      "alt": "Elderly woman with white hair cut in a bob, grey eyes behind thick-framed spectacles, a dimple in the left cheek; a black coat fastened with a bird-shaped glass brooch."
+    },
+    "hc-portrait-698a96": {
+      "alt": "Man in his forties with a pencil moustache, slicked hair with a parting, a stiff collar, a pocket handkerchief; his right eyebrow raised."
+    },
+    "hc-portrait-e57af4": {
+      "alt": "Young man with broad cheeks and light grey eyes, a cowlick in the middle of the forehead, a dimple in the left cheek; a canvas cap pushed back, his mouth half open on a chipped front tooth."
+    },
+    "hc-portrait-8ebec4": {
+      "alt": "Young woman with brown eyes, a black plait over her shoulder, a polo-neck jumper, a horn whistle hanging at her neck."
+    },
+    "hc-portrait-727348": {
+      "alt": "Thin man in his sixties, white hair cropped short, straight, thick black eyebrows, black eyes, a dimple in the left cheek; an engraver's loupe hangs from a cord over a suit too big for him."
+    },
+    "hc-portrait-b193e0": {
+      "alt": "Young man with a full oval face, black eyes under straight, thick eyebrows, an even hairline, a dimple in the left cheek; a leather apron over his shoulders."
+    },
+    "hc-portrait-afb200": {
+      "alt": "Thin man in his forties, greying at the temples, straight, thick black eyebrows, a dimple in the left cheek; a loupe hangs from a cord."
+    },
+    "hc-portrait-cfb2f4": {
+      "alt": "Very tall man in his thirties with sticking-out ears and a short moustache, a customs officer's kepi under his arm."
+    },
+    "hc-portrait-0bc7f4": {
+      "alt": "Man in his forties with a weathered face and a short beard, a bobble hat with a flat bobble, a numbered badge on his jacket."
+    },
+    "hc-portrait-3e3f69": {
+      "alt": "Woman in her thirties with a low bun, round spectacles, a grey smock; a stick of chalk in her hand."
+    },
+    "hc-portrait-0fd2d1": {
+      "alt": "Man in his thirties with grey eyes, thinning on the crown, spectacles, a bow tie, a dimple in the left cheek."
+    },
+    "hc-portrait-6bdeab": {
+      "alt": "Young woman with a straight fringe and shoulder-length hair, hoop earrings, a lopsided smile."
+    },
+    "hc-portrait-e5dba3": {
+      "alt": "Woman in her forties with grey eyes, a loose bun, a dimple in the left cheek; a raincoat with the collar turned up, a pencil tucked behind her ear."
+    },
+    "hc-portrait-57be9b": {
+      "alt": "Man in his thirties with a short beard, half-moon spectacles, a three-piece suit, a signet ring."
+    },
+    "hc-portrait-76ae76": {
+      "alt": "Woman in her thirties with grey eyes and short black hair, a cowlick in the middle of the forehead, a dimple in the left cheek; a nurse's uniform, a horn whistle at her neck."
+    },
+    "hc-portrait-8c555b": {
+      "alt": "Tanned young man with sticking-out ears, a bobble hat, glacier goggles pushed up on his forehead."
+    },
+    "hc-portrait-21215f": {
+      "alt": "Man in his forties with a black beard and a woollen cap, an ice axe on his shoulder and a numbered badge on his jacket."
+    },
+    "hc-portrait-fc120e": {
+      "alt": "Woman in her thirties with backcombed hair, cat-eye spectacles, a post office uniform jacket, a pencil in her hand."
+    },
+    "hc-portrait-55e3f9": {
+      "alt": "Old workman in his sixties, bareheaded, thin grey hair over his forehead, a short grey moustache, a grey jacket open over a white shirt."
+    },
+    "hc-portrait-c859c6": {
+      "alt": "Man in his fifties with a thin moustache, a stiff collar, hair slicked flat."
+    },
+    "hc-portrait-a4c325": {
+      "alt": "Man in his forties in customs uniform, with a moustache, a kepi on his head."
+    },
+    "hc-portrait-775ac0": {
+      "alt": "Man in his sixties, grey hair combed into a parting, a full grey moustache, a wing collar and black tie, a dark suit and waistcoat, a watch chain; the same strong nose as the man beside him."
+    },
+    "hc-portrait-6be6ce": {
+      "alt": "Woman in her forties with thick eyebrows, a headscarf knotted over her hair."
+    },
+    "hc-portrait-77facd": {
+      "alt": "Priest in his fifties, bareheaded, grey hair cropped short, a buttoned black cassock with a Roman collar."
+    }
+  }
+}

@@ -84,8 +84,27 @@ export interface ValidationResult {
   groups: GroupId[];
 }
 
+export const PARSE_SAVE_ERROR_CODES = [
+  'tooLarge',
+  'invalidJson',
+  'notObject',
+  'noVersion',
+  'newerVersion',
+  'migrationFailed',
+  'corrupt',
+  'otherCase',
+] as const;
+/** Cause d'un échec de `parseSave`, pour un message localisé (l'UI ne lit jamais `error`). */
+export type ParseSaveErrorCode = (typeof PARSE_SAVE_ERROR_CODES)[number];
+
 export type ParseSaveResult =
-  { ok: true; state: SaveState; dropped: string[] } | { ok: false; error: string };
+  | { ok: true; state: SaveState; dropped: string[] }
+  | {
+      ok: false;
+      /** Message technique (français), pour les journaux. */
+      error: string;
+      code: ParseSaveErrorCode;
+    };
 
 /**
  * Signatures du moteur pur (`packages/engine`) : déterministe, le temps arrive par `at`,

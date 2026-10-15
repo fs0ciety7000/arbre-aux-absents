@@ -1,0 +1,273 @@
+{
+  "keywords": {
+    "anselme-varenque": { "label": "Anselme Varenque", "terms": ["Anselme Varenque"] },
+    "clemence-aubertot": { "label": "Clémence Aubertot", "terms": ["Clémence Aubertot"] },
+    "firmin-varenque": { "label": "Firmin Varenque", "terms": ["Firmin Varenque"] },
+    "maaren-tennok": { "label": "Maaren Tennok", "terms": ["Maaren Tennok"] },
+    "maaren-tennokessa": {
+      "label": "Maaren Tennokessa",
+      "terms": ["Maaren Tennokessa", "Tennokessa"]
+    },
+    "joren-tennok": { "label": "Joren Tennok", "terms": ["Joren Tennok"] },
+    "augustin-varenque": {
+      "label": "Augustin Varenque",
+      "terms": ["Augustin Varenque", "Varenque Augustin"]
+    },
+    "augustin-v": { "label": "Augustin V.", "terms": ["Augustin V."] },
+    "henriette-sorbelle": { "label": "Henriette Sorbelle", "terms": ["Henriette Sorbelle"] },
+    "sorbelle": { "label": "Sorbelle", "terms": ["Sorbelle", "Sorbelle Bank"] },
+    "lucien-varenque": {
+      "label": "Lucien Varenque",
+      "terms": ["Lucien Varenque", "Varenque Lucien"]
+    },
+    "pauline-sauge": {
+      "label": "Pauline Sauge",
+      "terms": ["Pauline Sauge", "P. Sauge", "Sauge P.", "Pauline S."]
+    },
+    "adelaide-varenque": { "label": "Adélaïde Varenque", "terms": ["Adélaïde Varenque"] },
+    "tante-ade": { "label": "Aunt Adé", "terms": ["Aunt Adé"] },
+    "aldrik-varenque": { "label": "Aldrik Varenque", "terms": ["Aldrik Varenque"] },
+    "a-varenque": { "label": "A. Varenque", "terms": ["A. Varenque"] },
+    "tenna-orrvik": { "label": "Tenna Orrvik", "terms": ["Tenna Orrvik"] },
+    "orrvik": { "label": "Orrvik", "terms": ["Orrvik", "T. Orrvik", "Orrvikessa"] },
+    "gaspard-varenque": { "label": "Gaspard Varenque", "terms": ["Gaspard Varenque"] },
+    "irene-castagne": { "label": "Irène Castagne", "terms": ["Irène Castagne"] },
+    "castagne": { "label": "Castagne", "terms": ["Castagne"] },
+    "blanche-varenque": { "label": "Blanche Varenque", "terms": ["Blanche Varenque"] },
+    "blanche-daubry": { "label": "Blanche Daubry", "terms": ["Blanche Daubry"] },
+    "blanche-aubertine": {
+      "label": "Blanche Aubertine",
+      "terms": ["Blanche Aubertine", "Aubertine Blanche"]
+    },
+    "marcel-daubry": { "label": "Marcel Daubry", "terms": ["Marcel Daubry", "Daubry Marcel"] },
+    "daubry": { "label": "Daubry", "terms": ["Daubry"] },
+    "odile-varenque": { "label": "Odile Varenque", "terms": ["Odile Varenque", "Varenque Odile"] },
+    "orrin-kessvel": { "label": "Orrin Kessvel", "terms": ["Orrin Kessvel"] },
+    "kessvel": { "label": "Kessvel", "terms": ["Kessvel", "O. Kessvel"] },
+    "victor-sauge": { "label": "Victor Sauge", "terms": ["Victor Sauge", "Sauge Victor"] },
+    "ninon-brial": { "label": "Ninon Brial", "terms": ["Ninon Brial"] },
+    "selda-varenque": { "label": "Selda Varenque", "terms": ["Selda Varenque", "Varenque Selda"] },
+    "hessa-draavik": { "label": "Hessa Draavik", "terms": ["Hessa Draavik"] },
+    "hessa-draavikessa": {
+      "label": "Hessa Draavikessa",
+      "terms": ["Hessa Draavikessa", "Draavikessa"]
+    },
+    "tavik-varenque": { "label": "Tavik Varenque", "terms": ["Tavik Varenque"] },
+    "armand-varenque": {
+      "label": "Armand Varenque",
+      "terms": ["Armand Varenque", "Varenque Armand"]
+    },
+    "mathilde-rouviere": { "label": "Mathilde Rouvière", "terms": ["Mathilde Rouvière"] },
+    "helene-varenque": { "label": "Hélène Varenque", "terms": ["Hélène Varenque"] },
+    "helene-marsal": { "label": "Hélène Marsal", "terms": ["Hélène Marsal", "Marsal Hélène"] },
+    "paul-marsal": { "label": "Paul Marsal", "terms": ["Paul Marsal", "Marsal Paul"] },
+    "lise-daubry": { "label": "Lise Daubry", "terms": ["Lise Daubry"] },
+    "l-daubry": { "label": "L. Daubry", "terms": ["L. Daubry"] },
+    "claude-sauge": { "label": "Claude Sauge", "terms": ["Claude Sauge"] },
+    "c-sauge": { "label": "C. Sauge", "terms": ["C. Sauge", "Sauge C."] },
+    "nora-ilvess": { "label": "Nora Ilvess", "terms": ["Nora Ilvess", "Ilvess Nora"] },
+    "marc-dobrin": { "label": "Marc Dobrin", "terms": ["Marc Dobrin"] },
+    "teodor-haask": { "label": "Teodor Haask", "terms": ["Teodor Haask", "T. Haask"] },
+    "jorre-haask": { "label": "Jorre Haask", "terms": ["Jorre Haask"] },
+    "haask": { "label": "Haask", "terms": ["Haask"] },
+    "brunesseau": { "label": "Maître Brunesseau", "terms": ["Brunesseau"] },
+    "desaulnes": { "label": "Desaulnes", "terms": ["Desaulnes"] },
+    "hautfeuille": { "label": "Mr Hautfeuille", "terms": ["Hautfeuille"] },
+    "anselme": { "label": "Anselme", "terms": ["Anselme"] },
+    "clemence": { "label": "Clémence", "terms": ["Clémence"] },
+    "augustin": { "label": "Augustin", "terms": ["Augustin"] },
+    "lucien": { "label": "Lucien", "terms": ["Lucien"] },
+    "adelaide": { "label": "Adélaïde", "terms": ["Adélaïde"] },
+    "gaspard": { "label": "Gaspard", "terms": ["Gaspard"] },
+    "irene": { "label": "Irène", "terms": ["Irène"] },
+    "odile": { "label": "Odile", "terms": ["Odile"] },
+    "firmin": { "label": "Firmin", "terms": ["Firmin"] },
+    "maaren": { "label": "Maaren", "terms": ["Maaren"] },
+    "aldrik": { "label": "Aldrik", "terms": ["Aldrik"] },
+    "tenna": { "label": "Tenna", "terms": ["Tenna"] },
+    "henriette": { "label": "Henriette", "terms": ["Henriette"] },
+    "victor": { "label": "Victor", "terms": ["Victor"] },
+    "pauline": { "label": "Pauline", "terms": ["Pauline"] },
+    "hessa": { "label": "Hessa", "terms": ["Hessa"] },
+    "selda": { "label": "Selda", "terms": ["Selda"] },
+    "tavik": { "label": "Tavik", "terms": ["Tavik"] },
+    "lise": { "label": "Lise", "terms": ["Lise"] },
+    "elise": { "label": "Élise", "terms": ["Élise"] },
+    "ninon": { "label": "Ninon", "terms": ["Ninon"] },
+    "claude": { "label": "Claude", "terms": ["Claude"] },
+    "orrin": { "label": "Orrin", "terms": ["Orrin"] },
+    "mathilde": { "label": "Mathilde", "terms": ["Mathilde"] },
+    "armand": { "label": "Armand", "terms": ["Armand"] },
+    "helene": { "label": "Hélène", "terms": ["Hélène"] },
+    "paul": { "label": "Paul", "terms": ["Paul"] },
+    "marcel": { "label": "Marcel", "terms": ["Marcel"] },
+    "maask": { "label": "Maask", "terms": ["Maask"] },
+    "le-goeland": { "label": "the Gull", "terms": ["the Gull", "Gull"] },
+    "varenque": { "label": "Varenque", "terms": ["Varenque"] },
+    "moulinvert": { "label": "Moulinvert", "terms": ["Moulinvert"] },
+    "tilleuls": { "label": "Les Tilleuls", "terms": ["Tilleuls"] },
+    "tennok": { "label": "Tennok", "terms": ["Tennok"] },
+    "vellaak": { "label": "Vellaak", "terms": ["Vellaak"] },
+    "aubrelieu": { "label": "Aubrelieu", "terms": ["Aubrelieu"] },
+    "port-senane": { "label": "Port-Sénane", "terms": ["Port-Sénane"] },
+    "saint-ormel": { "label": "Saint-Ormel", "terms": ["Saint-Ormel"] },
+    "grisenoue": { "label": "Grisenoue", "terms": ["Grisenoue"] },
+    "kessaar": { "label": "Kessaar", "terms": ["Kessaar"] },
+    "bains-de-merande": { "label": "Bains-de-Mérande", "terms": ["Bains-de-Mérande"] },
+    "thermes-de-merande": { "label": "Thermes de Mérande", "terms": ["Thermes de Mérande"] },
+    "brenzac": { "label": "Brenzac", "terms": ["Brenzac"] },
+    "col-de-corvenne": { "label": "Col de Corvenne", "terms": ["col de Corvenne"] },
+    "monts-corvins": { "label": "Monts Corvins", "terms": ["monts Corvins", "Corvins"] },
+    "lac-d-aulne": { "label": "Lac d'Aulne", "terms": ["lac d'Aulne"] },
+    "moulin-de-la-sorbe": { "label": "Moulin de la Sorbe", "terms": ["moulin de la Sorbe"] },
+    "rue-des-tanneurs": { "label": "rue des Tanneurs", "terms": ["rue des Tanneurs"] },
+    "papeteries-varenque": {
+      "label": "Varenque Paper Mills",
+      "terms": ["Varenque Paper Mills", "Paper Mills"]
+    },
+    "studio-lumen": { "label": "Studio Lumen", "terms": ["Studio Lumen"] },
+    "lecteur": { "label": "LX-2 Reader", "terms": ["LX-2 Reader", "LX-2"] },
+    "cvc": {
+      "label": "Velmarche Calculating Company",
+      "terms": ["Velmarche Calculating Company", "CVC"]
+    },
+    "vel-taalik": { "label": "Vel Taalik", "terms": ["Vel Taalik"] },
+    "bulletin-d-ordre": { "label": "Bulletin of Order", "terms": ["Bulletin of Order"] },
+    "oeuvre-des-lavandieres": {
+      "label": "Washerwomen's Charity",
+      "terms": ["Washerwomen's Charity"]
+    },
+    "pupilles": { "label": "Wards' Charity", "terms": ["Wards' Charity", "Wards"] },
+    "aero-velmarche": { "label": "Aéro-Velmarche", "terms": ["Aéro-Velmarche"] },
+    "rtv": { "label": "RTV", "terms": ["RTV"] },
+    "savonnerie-merande": { "label": "Mérande Soapworks", "terms": ["Mérande Soapworks"] },
+    "paquebots": { "label": "Orvelle Packet Company", "terms": ["Orvelle Packet Company"] },
+    "phares-et-balises": { "label": "Lights and Beacons", "terms": ["Lights and Beacons"] },
+    "opera": { "label": "Aubrelieu Opera", "terms": ["Aubrelieu Opera"] },
+    "grande-exposition": { "label": "Grand Exhibition", "terms": ["Grand Exhibition"] },
+    "proces-des-papetiers": { "label": "Papermakers' Trial", "terms": ["Papermakers' Trial"] },
+    "papiers-de-la-regence": { "label": "The Regency Papers", "terms": ["Regency Papers"] },
+    "nuit-des-affiches": { "label": "Night of the Posters", "terms": ["Night of the Posters"] },
+    "absents": { "label": "the absent", "terms": ["the absent", "declared absent"] },
+    "adoption": { "label": "adoption", "terms": ["adoption", "full adoption"] },
+    "albatros": { "label": "Albatros", "terms": ["Albatros"] },
+    "exil": { "label": "exile", "terms": ["exile"] },
+    "fougere": { "label": "fern", "terms": ["fern", "Fern network"] },
+    "fougere-sans-date": {
+      "label": "undated fern",
+      "terms": ["undated fern", "fern without a year mark"]
+    },
+    "filigrane": { "label": "watermark", "terms": ["watermark"] },
+    "herbier": { "label": "herbarium", "terms": ["herbarium"] },
+    "meche": { "label": "forelock", "terms": ["forelock"] },
+    "registre-bleu": { "label": "blue register", "terms": ["blue register"] },
+    "mf-74-112": { "label": "MF-74-112", "terms": ["MF-74-112"] },
+    "carnets-gris": { "label": "grey booklets", "terms": ["grey booklets", "grey booklet"] },
+    "caveau": { "label": "Varenque vault", "terms": ["vault"] },
+    "p-4471": { "label": "P-4471", "terms": ["P-4471"] },
+    "visages-de-la-cote": { "label": "Faces of the Coast", "terms": ["Faces of the Coast"] },
+    "la-lavandiere": { "label": "The Washerwoman", "terms": ["The Washerwoman"] },
+    "lavandiere": { "label": "washerwoman", "terms": ["washerwoman"] },
+    "lanterne-d-ostrie": { "label": "The Lantern of Ostrie", "terms": ["Lantern of Ostrie"] },
+    "hirondelle": { "label": "L'Hirondelle", "terms": ["Hirondelle"] },
+    "acte-de-reconnaissance": {
+      "label": "deed of acknowledgement",
+      "terms": ["deed of acknowledgement"]
+    },
+    "automatisation": { "label": "automation of the light", "terms": ["automation", "automated"] },
+    "papetier": { "label": "papermaker", "terms": ["papermaker"] },
+    "botaniste": { "label": "botanist", "terms": ["botanist"] },
+    "capitaine": { "label": "captain", "terms": ["captain", "master mariner"] },
+    "gardien": {
+      "label": "keeper of the light",
+      "terms": ["keeper", "light keeper", "keeper of the light"]
+    },
+    "phare": { "label": "lighthouse", "terms": ["lighthouse"] },
+    "canot-de-sauvetage": { "label": "lifeboat", "terms": ["lifeboat", "life-boat"] },
+    "depute": { "label": "Deputy", "terms": ["Deputy"] },
+    "blanchisseuse": { "label": "laundress", "terms": ["laundress"] },
+    "affichiste": { "label": "poster artist", "terms": ["poster artist", "poster painter"] },
+    "institutrice": { "label": "schoolmistress", "terms": ["schoolmistress"] },
+    "receveuse": { "label": "postmistress", "terms": ["postmistress", "post-mistress"] },
+    "pianiste": { "label": "pianist", "terms": ["pianist"] },
+    "soprano": { "label": "soprano", "terms": ["soprano", "operatic artiste"] },
+    "commissaire-aux-registres": {
+      "label": "Commissioner of Registers",
+      "terms": ["Commissioner of Registers"]
+    },
+    "graveuse": { "label": "engraver", "terms": ["engraver", "watermark engraver"] },
+    "typographe": { "label": "typesetter", "terms": ["typesetter"] },
+    "aviateur": { "label": "aviator", "terms": ["aviator"] },
+    "costumiere": { "label": "costume maker", "terms": ["costume maker"] },
+    "patron-pecheur": { "label": "fishing skipper", "terms": ["fishing skipper"] },
+    "sage-femme": { "label": "midwife", "terms": ["midwife", "midwives"] },
+    "etudiant": { "label": "student", "terms": ["student"] },
+    "speakerine": { "label": "announcer", "terms": ["announcer"] },
+    "photographe": { "label": "photographer", "terms": ["photographer"] },
+    "restauratrice": { "label": "conservator", "terms": ["conservator"] },
+    "ingenieure": { "label": "woman engineer", "terms": ["woman engineer"] },
+    "journaliste": { "label": "journalist", "terms": ["journalist"] }
+  },
+  "secrets": {
+    "s1-photographe-de-vellaak": "The Photographer of Vellaak",
+    "s2-registre-bleu": "The Blue Register",
+    "s3-reconnaissance-de-1917": "The Acknowledgement of 1917",
+    "s4-goeland-et-albatros": "The Gull and the Albatros",
+    "s5-delateur": "The Informer",
+    "s6-secret-d-adelaide": "Adélaïde's Secret"
+  },
+  "report": {
+    "q1-denonciation": {
+      "prompt": "Who denounced the Fern network?",
+      "options": {
+        "gaspard": { "label": "Gaspard Varenque" },
+        "marcel": { "label": "Marcel Daubry" },
+        "non-etabli": { "label": "Not established" }
+      }
+    },
+    "q2-odile": {
+      "prompt": "Did Odile Varenque die on Kessaar?",
+      "options": {
+        "oui": { "label": "Yes, as the register states" },
+        "nora-ilvess": { "label": "No: she is living under the name Nora Ilvess" },
+        "non-etabli": { "label": "Not established" }
+      }
+    },
+    "q3-gaspard": {
+      "prompt": "What did Gaspard Varenque do after 1944?",
+      "options": {
+        "rien": { "label": "Nothing more" },
+        "fourni": { "label": "He supplied the network with paper" },
+        "non-etabli": { "label": "Not established" }
+      }
+    },
+    "q4-victor": {
+      "prompt": "Was Victor Sauge acknowledged by his father?",
+      "options": {
+        "oui-1917": { "label": "Yes, by Lucien Varenque, in 1917" },
+        "non-etabli": { "label": "Not established" }
+      }
+    },
+    "q5-albatros": {
+      "prompt": "Who was the Albatros carrying?",
+      "options": {
+        "firmin": { "label": "Firmin Varenque and his sailors" },
+        "non-etabli": { "label": "Not established" }
+      }
+    },
+    "q6-fausse-mort": {
+      "prompt": "Who organised Odile Varenque's faked death?",
+      "options": {
+        "adelaide": { "label": "Adélaïde Varenque, with Teodor Haask and Firmin Varenque" },
+        "non-etabli": { "label": "Not established" }
+      }
+    },
+    "choix-nora": {
+      "prompt": "Nora Ilvess is Odile Varenque. What does the public report say?",
+      "options": {
+        "inscrire": { "label": "Enter her under her own name, Odile Varenque" },
+        "taire": { "label": "Leave her absent and tell no one but Lise" }
+      }
+    }
+  }
+}

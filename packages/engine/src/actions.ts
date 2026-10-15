@@ -382,9 +382,13 @@ export function applyAction(
       if (own(c.documents, h.doc) === undefined) return reject(s, 'unknownId', guard);
       if (own(s.unlocked, h.doc) === undefined) return reject(s, 'notAvailable', guard);
       const list = s.notebook.highlights;
+      // Les positions dépendent du texte : un même intervalle dans deux langues n'est pas un
+      // doublon (D5). `lang` absent = 'fr' ; il est conservé tel quel dans la sauvegarde.
+      const lang = h.lang ?? 'fr';
       const dup = list.some(
         (x) =>
           x.doc === h.doc &&
+          (x.lang ?? 'fr') === lang &&
           x.start === h.start &&
           x.end === h.end &&
           x.color === h.color &&

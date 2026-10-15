@@ -151,6 +151,18 @@
     </ol>
     <Button iconName="quill" onclick={replayTutorial}>{pm.help.replayTutorial}</Button>
   </section>
+
+  <section aria-labelledby="help-report">
+    <h3 id="help-report"><Icon name="envelope" size="1.25rem" /> {messages.bugReport.entry}</h3>
+    <div class="report-actions">
+      <Button iconName="envelope" onclick={() => app.openReport()}
+        >{messages.bugReport.entry}</Button
+      >
+      <Button variant="ghost" iconName="list" onclick={() => app.openMyReports()}
+        >{messages.bugReport.mine}</Button
+      >
+    </div>
+  </section>
 </Panel>
 
 <Dialog
@@ -260,5 +272,10 @@
   }
   .text {
     color: var(--text);
+  }
+  .report-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
   }
 </style>

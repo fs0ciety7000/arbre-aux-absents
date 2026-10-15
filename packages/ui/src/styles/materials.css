@@ -182,6 +182,15 @@
   content: '\202F\00BB';
   content: '\202F\00BB' / '';
 }
+/* Anglais (DESIGN §4.4) : guillemets anglais, sans espace fine */
+.claim-value:lang(en)::before {
+  content: '\201C';
+  content: '\201C' / '';
+}
+.claim-value:lang(en)::after {
+  content: '\201D';
+  content: '\201D' / '';
+}
 /* Pile : la valeur qui sort (transition unclaim) et celle qui entre occupent la même case,
    sans pousser la mise en page. */
 .claim-stack {

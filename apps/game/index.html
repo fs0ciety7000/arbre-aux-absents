@@ -18,11 +18,18 @@
       <div class="splash-stage">
         <span class="splash-logo" aria-hidden="true"></span>
         <span class="splash-studio splash-fade">CM Interactive</span>
-        <span class="splash-presents splash-fade">présente</span>
+        <!-- Neutre (docs/i18n/PLAN.md D7) : la langue n'est connue qu'au démarrage de l'app ;
+             « présente » et le slogan apparaissent alors en fondu (screens/Launch.svelte). -->
+        <span class="splash-presents" aria-hidden="true">&nbsp;</span>
         <h1 class="splash-title">L’Arbre <em>aux</em> absents</h1>
-        <p class="splash-tagline">Une enquête généalogique dans un monde imaginaire.</p>
+        <p class="splash-tagline" aria-hidden="true">&nbsp;</p>
         <p class="splash-error" role="alert" hidden>
-          Le jeu n’a pas pu se charger. Vérifiez votre connexion, puis rechargez la page.
+          <span lang="fr">
+            Le jeu n’a pas pu se charger. Vérifiez votre connexion, puis rechargez la page.
+          </span>
+          <span lang="en"
+            >The game could not load. Check your connection, then reload the page.</span
+          >
         </p>
       </div>
     </div>

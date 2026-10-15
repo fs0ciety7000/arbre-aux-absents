@@ -38,13 +38,14 @@ Chemins indicatifs (exemple Next.js) : les vrais dossiers de chaque agent sont c
 | `architect` | Plans, contrats, revues d'architecture. **Lecture seule.** |
 | `game-designer` | `docs/game/**` |
 | `level-designer` | `docs/level/**`, `content/cases/<id>/{tree,progression,hints,achievements}.json` |
-| `scenariste` | `docs/scenario/**`, `docs/monde/**`, `content/cases/<id>/{case,family}.json`, `documents/**`, `endings/**` |
-| `cartographe` | `content/world/**`, `art/**`, `content/cases/<id>/{portraits,illustrations}/**` |
+| `scenariste` | `docs/scenario/**`, `docs/monde/**`, `content/cases/<id>/{case,family}.json`, `documents/**`, `endings/**` ; traductions : `docs/i18n/**`, `content/**/locales/<loc>/*.json`, `…/documents/**`, `…/endings/**` (relecture `level-designer` pour progression, aides, succès) |
+| `traducteur` | Traduction FR → EN (anglais britannique) d'un lot : `content/cases/<id>/locales/en/<chemins du lot>` ; glossaire `docs/i18n/en/GLOSSAIRE.md` en lecture (tenu par `scenariste`). Vérifie avec `npm run content:i18n`. |
+| `cartographe` | `content/world/**`, `art/**`, `content/cases/<id>/{portraits,illustrations}/**`, surcharges `content/**/locales/<loc>/illustrations/**`, `art/map/locales/**` |
 | `design-lead` | `docs/DESIGN.md`, `packages/ui/**`, `apps/site/src/routes/design/**` |
-| `frontend` (jeu) | `apps/game/src/**` (hors `platform/`), `packages/map/src/svelte/**` |
-| `frontend` (site) | `apps/site/src/**` (hors `routes/design/`) |
-| `backend` | `packages/engine/**`, `packages/content-tools/**`, `packages/map/src/camera/**`, `apps/game/src/platform/**`, `scripts/*.ts` |
-| `devops` | `apps/game/src-tauri/**`, `Dockerfile`, `nginx.conf`, `.dockerignore`, `.github/**`, `docs/DEPLOYMENT.md`, `scripts/*.sh` |
+| `frontend` (jeu) | `apps/game/src/**` (hors `platform/`, dont `i18n/**`), `apps/game/vite/**`, `packages/map/src/svelte/**` |
+| `frontend` (site) | `apps/site/src/**` (hors `routes/design/`, dont `params/**`, `lib/i18n/**`) |
+| `backend` | `packages/engine/**`, `packages/content-tools/**`, `packages/map/src/camera/**`, `apps/game/src/platform/**`, `scripts/*.ts`, service de signalement `apps/report/{src,test}/**`, `apps/report/package.json` (+ `tsconfig.json`, `vite.config.ts`) |
+| `devops` | `apps/game/src-tauri/**`, `Dockerfile`, `nginx.conf`, `.dockerignore`, `apps/report/Dockerfile`, `apps/report/Dockerfile.dockerignore`, `.github/**`, `docs/DEPLOYMENT.md`, `scripts/*.sh` |
 | `qa-reviewer` | Revue de diff, `tests/e2e/**`, a11y, perf, sécu. Ne modifie que les tests. |
 
 Agents généraux toujours disponibles : `Explore` (recherche large dans le code), `Plan`

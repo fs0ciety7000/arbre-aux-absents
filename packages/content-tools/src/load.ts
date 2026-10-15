@@ -6,7 +6,18 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import { basename, join, relative } from 'node:path';
 import {
   AchievementsFileSchema,
+  AchievementsTranslationSchema,
   CaseMetaSchema,
+  CaseMetaTranslationSchema,
+  DocumentFrontmatterTranslationSchema,
+  EndingFrontmatterTranslationSchema,
+  FamilyTranslationSchema,
+  HintsTranslationSchema,
+  LOCALES,
+  LocalesConfigSchema,
+  ProgressionTranslationSchema,
+  TreeTranslationSchema,
+  WorldTranslationSchema,
   DocumentFrontmatterSchema,
   FamilySchema,
   HintsFileSchema,
@@ -18,7 +29,17 @@ import {
   TreeSpecSchema,
   WorldMapSchema,
   type Achievement,
+  type AchievementsTranslation,
   type Block,
+  type CaseMetaTranslation,
+  type DocumentFrontmatterTranslation,
+  type FamilyTranslation,
+  type HintsTranslation,
+  type Locale,
+  type LocalesConfig,
+  type ProgressionTranslation,
+  type TreeTranslation,
+  type WorldTranslation,
   type CaseMeta,
   type DocumentFrontmatter,
   type Family,
@@ -52,6 +73,67 @@ export interface SourceEnding {
   body: Block[];
 }
 
+/** Problème d'un fichier de traduction, émis par `check` avec la sévérité de la langue. */
+export interface TranslationProblem {
+  /** Unité (voir `Issue.unit`). */
+  unit: string;
+  file: string;
+  message: string;
+  line?: number;
+  code: string;
+}
+
+export interface TranslatedDocument {
+  id: string;
+  file: string;
+  frontmatter: DocumentFrontmatterTranslation;
+  body: Block[];
+}
+
+export interface TranslatedEnding {
+  id: string;
+  file: string;
+  title: string;
+  body: Block[];
+}
+
+/** Fichiers JSON d'un calque de traduction (`locales/<loc>/<nom>.json`). */
+export interface CaseTranslationJson {
+  case?: CaseMetaTranslation;
+  family?: FamilyTranslation;
+  tree?: TreeTranslation;
+  progression?: ProgressionTranslation;
+  hints?: HintsTranslation;
+  achievements?: AchievementsTranslation;
+}
+
+/** Calque de traduction d'une affaire (`content/cases/<id>/locales/<loc>/`). */
+export interface CaseTranslation {
+  locale: Locale;
+  /** Répertoire relatif à la racine. */
+  dir: string;
+  json: CaseTranslationJson;
+  /** Unités présentes mais invalides (JSON, schéma, frontmatter) : pas « manquantes ». */
+  invalid: Set<string>;
+  documents: Map<string, TranslatedDocument>;
+  endings: Map<string, TranslatedEnding>;
+  /** `illustrations/<nom>.svg` → source de la surcharge. */
+  illustrations: Map<string, string>;
+  problems: TranslationProblem[];
+}
+
+/** Traduction du monde (`content/world/locales/<loc>.json`, `art/map/locales/<loc>/labels.svg`). */
+export interface WorldTranslationSource {
+  locale: Locale;
+  file: string;
+  data?: WorldTranslation;
+  /** Fichier présent mais invalide. */
+  invalid: boolean;
+  /** Surcharge de la couche `labels`. */
+  labels?: string;
+  problems: TranslationProblem[];
+}
+
 export interface SourceCase {
   id: string;
   /** Répertoire relatif à la racine (pour les messages). */
@@ -68,8 +150,10 @@ export interface SourceCase {
   portraits: Map<string, string>;
   /** `illustrations/<nom>.svg` → source. */
   illustrations: Map<string, string>;
-  /** Empreinte des sources (base du sel). */
+  /** Empreinte des sources FR hors `locales/` (base du sel, identique entre langues). */
   sourceDigest: string;
+  /** Calques de traduction, par langue cible déclarée dans `content/locales.json`. */
+  translations: Map<Locale, CaseTranslation>;
   /**
    * Fichiers obligatoires absents : l'affaire est un brouillon en cours d'écriture (avertissement,
    * fichiers présents contrôlés, ni compilation ni solveur).
@@ -82,6 +166,8 @@ export interface SourceWorld {
   places: Map<string, Place>;
   /** Couches `art/map/<couche>.svg` présentes. */
   layers: Map<MapLayer, string>;
+  /** Traductions du monde, par langue cible. */
+  translations: Map<Locale, WorldTranslationSource>;
 }
 
 export interface ContentSource {
@@ -92,6 +178,19 @@ export interface ContentSource {
   world: SourceWorld;
   cases: SourceCase[];
   filesRead: number;
+  /** `content/locales.json` ; null s'il est absent (français seul) ou invalide. */
+  locales: LocalesConfig | null;
+}
+
+/** Langue source (`default`) d'une configuration, `fr` sans configuration. */
+export function sourceLocale(config: LocalesConfig | null): Locale {
+  return config?.default ?? 'fr';
+}
+
+/** Langues cibles (statut `draft` ou `ready`), dans l'ordre de `LOCALES`. */
+export function targetLocales(config: LocalesConfig | null): Locale[] {
+  if (!config) return [];
+  return LOCALES.filter((l) => config.locales[l].status !== 'source');
 }
 
 /** Vrai si toutes les pièces nécessaires à la compilation sont valides. */
@@ -123,7 +222,7 @@ function zodMessages(error: z.ZodError): string[] {
 
 const CASE_FILES = ['case', 'family', 'tree', 'progression', 'hints', 'achievements'] as const;
 const REQUIRED = new Set(['case', 'family', 'tree', 'progression']);
-const CASE_DIRS = new Set(['documents', 'endings', 'portraits', 'illustrations']);
+const CASE_DIRS = new Set(['documents', 'endings', 'portraits', 'illustrations', 'locales']);
 
 export async function loadContent(root: string, issues: IssueList): Promise<ContentSource> {
   const rel = (p: string) => relative(root, p).split('\\').join('/') || '.';
@@ -165,7 +264,15 @@ export async function loadContent(root: string, issues: IssueList): Promise<Cont
 
   // ---- Monde ----
   const content = join(root, 'content');
-  const world: SourceWorld = { places: new Map(), layers: new Map() };
+  // ---- Langues ----
+  let locales: LocalesConfig | null = null;
+  const localesFile = join(content, 'locales.json');
+  const localesJson = await readJson(localesFile);
+  if (localesJson.ok)
+    locales = validate(LocalesConfigSchema, localesJson.data, localesFile) ?? null;
+  const targets = targetLocales(locales);
+
+  const world: SourceWorld = { places: new Map(), layers: new Map(), translations: new Map() };
   const mapFile = join(content, 'world', 'map.json');
   const mapJson = await readJson(mapFile);
   if (mapJson.ok) world.map = validate(WorldMapSchema, mapJson.data, mapFile);
@@ -191,6 +298,44 @@ export async function loadContent(root: string, issues: IssueList): Promise<Cont
     const text = await readText(join(root, 'art', 'map', `${layer}.svg`));
     if (text !== null) world.layers.set(layer, text);
   }
+  for (const name of await listDir(join(content, 'world', 'locales'))) {
+    const loc = basename(name, '.json') as Locale;
+    if (!name.endsWith('.json') || !targets.includes(loc)) {
+      issues.warn(
+        1,
+        rel(join(content, 'world', 'locales', name)),
+        'fichier de langue inattendu (langue cible absente de content/locales.json) : ignoré',
+      );
+    }
+  }
+  for (const loc of targets) {
+    const path = join(content, 'world', 'locales', `${loc}.json`);
+    const t: WorldTranslationSource = {
+      locale: loc,
+      file: rel(path),
+      invalid: false,
+      problems: [],
+    };
+    const text = await readText(path);
+    if (text !== null) {
+      const problem = (message: string, code: string) =>
+        t.problems.push({ unit: 'world', file: t.file, message, code });
+      try {
+        const r = WorldTranslationSchema.safeParse(JSON.parse(text));
+        if (r.success) t.data = r.data;
+        else {
+          t.invalid = true;
+          for (const m of zodMessages(r.error)) problem(m, 'schema');
+        }
+      } catch (e) {
+        t.invalid = true;
+        problem(`JSON invalide : ${(e as Error).message}`, 'schema');
+      }
+    }
+    const labels = await readText(join(root, 'art', 'map', 'locales', loc, 'labels.svg'));
+    if (labels !== null) t.labels = labels;
+    world.translations.set(loc, t);
+  }
 
   // ---- Affaires ----
   const cases: SourceCase[] = [];
@@ -210,6 +355,7 @@ export async function loadContent(root: string, issues: IssueList): Promise<Cont
       portraits: new Map(),
       illustrations: new Map(),
       sourceDigest: '',
+      translations: new Map(),
       missing: [],
     };
 
@@ -339,11 +485,140 @@ export async function loadContent(root: string, issues: IssueList): Promise<Cont
     }
 
     c.sourceDigest = digest.sort().join('\n');
+
+    // Calques de traduction (hors empreinte : le sel ne dépend pas de la langue, D4).
+    for (const name of await listDir(join(dir, 'locales'))) {
+      if (!targets.includes(name as Locale)) {
+        issues.warn(
+          1,
+          rel(join(dir, 'locales', name)),
+          'dossier de langue inattendu (langue cible absente de content/locales.json) : ignoré',
+        );
+      }
+    }
+    for (const loc of targets) {
+      const ldir = join(dir, 'locales', loc);
+      if (!(await isDir(ldir))) continue;
+      c.translations.set(loc, await loadTranslation(ldir, loc));
+    }
     cases.push(c);
   }
 
+  async function loadTranslation(ldir: string, locale: Locale): Promise<CaseTranslation> {
+    const t: CaseTranslation = {
+      locale,
+      dir: rel(ldir),
+      json: {},
+      invalid: new Set(),
+      documents: new Map(),
+      endings: new Map(),
+      illustrations: new Map(),
+      problems: [],
+    };
+    const problem = (unit: string, message: string, code: string, line?: number) =>
+      t.problems.push({ unit, file: `${t.dir}/${unit}`, message, code, ...(line ? { line } : {}) });
+    const LAYER_DIRS = new Set(['documents', 'endings', 'illustrations']);
+    for (const entry of await listDir(ldir)) {
+      const isJson =
+        entry.endsWith('.json') && (CASE_FILES as readonly string[]).includes(entry.slice(0, -5));
+      if (!isJson && !LAYER_DIRS.has(entry))
+        problem(entry, 'fichier ou dossier inattendu', 'extra');
+    }
+    const schemas = {
+      case: CaseMetaTranslationSchema,
+      family: FamilyTranslationSchema,
+      tree: TreeTranslationSchema,
+      progression: ProgressionTranslationSchema,
+      hints: HintsTranslationSchema,
+      achievements: AchievementsTranslationSchema,
+    } as const;
+    for (const kind of CASE_FILES) {
+      const unit = `${kind}.json`;
+      const text = await readText(join(ldir, unit));
+      if (text === null) continue;
+      let data: unknown;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        t.invalid.add(unit);
+        problem(unit, `JSON invalide : ${(e as Error).message}`, 'schema');
+        continue;
+      }
+      const r = (schemas[kind] as z.ZodType).safeParse(data);
+      if (!r.success) {
+        t.invalid.add(unit);
+        for (const m of zodMessages(r.error)) problem(unit, m, 'schema');
+        continue;
+      }
+      (t.json as Record<string, unknown>)[kind] = r.data;
+    }
+    for (const sub of ['documents', 'endings'] as const) {
+      for (const name of await listDir(join(ldir, sub))) {
+        const unit = `${sub}/${name}`;
+        if (!name.endsWith('.md')) {
+          problem(unit, 'fichier inattendu (seuls les .md sont lus)', 'extra');
+          continue;
+        }
+        const stem = basename(name, '.md');
+        const text = (await readText(join(ldir, sub, name))) ?? '';
+        const split = splitFrontmatter(text);
+        if (split.frontmatter === null) {
+          t.invalid.add(unit);
+          problem(unit, 'frontmatter YAML manquant (--- title: … ---)', 'schema', 1);
+          continue;
+        }
+        let fm: unknown;
+        try {
+          fm = parseYaml(split.frontmatter, { uniqueKeys: true, prettyErrors: true });
+        } catch (e) {
+          const line = e instanceof YAMLParseError ? (e.linePos?.[0]?.line ?? 0) + 1 : undefined;
+          t.invalid.add(unit);
+          problem(unit, `YAML invalide : ${(e as Error).message.split('\n')[0]}`, 'schema', line);
+          continue;
+        }
+        const parsed = parseMarkdown(split.body, split.bodyLine);
+        for (const e of parsed.errors) problem(unit, `Markdown : ${e.message}`, 'markdown', e.line);
+        const schema =
+          sub === 'documents'
+            ? DocumentFrontmatterTranslationSchema
+            : EndingFrontmatterTranslationSchema;
+        const r = (schema as z.ZodType).safeParse(fm);
+        if (!r.success) {
+          t.invalid.add(unit);
+          for (const m of zodMessages(r.error)) problem(unit, `frontmatter ${m}`, 'schema');
+          continue;
+        }
+        const file = `${t.dir}/${unit}`;
+        if (sub === 'documents') {
+          t.documents.set(stem, {
+            id: stem,
+            file,
+            frontmatter: r.data as DocumentFrontmatterTranslation,
+            body: parsed.blocks,
+          });
+        } else {
+          t.endings.set(stem, {
+            id: stem,
+            file,
+            title: (r.data as { title: string }).title,
+            body: parsed.blocks,
+          });
+        }
+      }
+    }
+    for (const name of await listDir(join(ldir, 'illustrations'))) {
+      const unit = `illustrations/${name}`;
+      if (!name.endsWith('.svg')) {
+        problem(unit, 'fichier inattendu (seuls les .svg sont lus)', 'extra');
+        continue;
+      }
+      t.illustrations.set(unit, (await readText(join(ldir, 'illustrations', name))) ?? '');
+    }
+    return t;
+  }
+
   const empty = filesRead === 0;
-  return { root, empty, world, cases, filesRead };
+  return { root, empty, world, cases, filesRead, locales };
 }
 
 /** Partie d'un fichier JSON où seules les conditions monotones sont admises. */

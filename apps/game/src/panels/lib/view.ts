@@ -10,31 +10,21 @@ import type {
 } from '@arbre/contract';
 import { availableNames, claimedFields, matchName, readDocuments } from '@arbre/engine';
 import type { SlotField } from '../../lib/game/types';
+import { messages } from '../../i18n/index.svelte';
 import { KIND_LABELS, pm } from '../messages';
 import type { CarryItem } from './carry.svelte';
 
-const MONTHS = [
-  'janvier',
-  'février',
-  'mars',
-  'avril',
-  'mai',
-  'juin',
-  'juillet',
-  'août',
-  'septembre',
-  'octobre',
-  'novembre',
-  'décembre',
-];
-
-/** Date partielle du monde (« 1923 », « 1923-04 », « 1923-04-17 ») en toutes lettres. */
+/**
+ * Date partielle du monde (« 1923 », « 1923-04 », « 1923-04-17 ») en toutes lettres, dans la
+ * langue de l'interface (« 17 avril 1923 », “17 April 1923”).
+ */
 export function formatPartialDate(d: string | undefined): string {
   if (!d) return '';
+  const t = messages.dates;
   const [y, m, day] = d.split('-');
-  const month = m ? MONTHS[Number(m) - 1] : undefined;
-  if (day && month) return `${Number(day) === 1 ? '1er' : Number(day)} ${month} ${y}`;
-  if (month) return `${month} ${y}`;
+  const month = m ? t.months[Number(m) - 1] : undefined;
+  if (day && month && y) return t.day(Number(day), month, y);
+  if (month && y) return t.month(month, y);
   return y ?? d;
 }
 
