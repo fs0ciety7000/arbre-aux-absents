@@ -27,8 +27,7 @@ export interface Platform {
    * Langues préférées du système (`navigator.languages`), dans l'ordre. Sert à résoudre le
    * réglage de langue `system`.
    */
-  // TODO: required after wave A2 (apps/game/src/platform l'implémente) ; facultatif d'ici là.
-  systemLocales?(): readonly string[];
+  systemLocales(): readonly string[];
   /**
    * Ouvre une URL externe (suivi d'un signalement, forum itch.io) : `plugin-opener` sous Tauri,
    * limité aux origines autorisées ; `window.open(…, 'noopener')` sur le web. false si refusé.

@@ -10,11 +10,15 @@ import {
   STORAGE_PREFIX,
   fallbackSummarize,
   listenEscape,
+  readSystemLocales,
   tooLarge,
+  webOpenExternal,
   withTimeout,
   type FileIo,
   type GamePlatform,
+  type LanguageSource,
   type Summarizer,
+  type WindowOpener,
 } from './common';
 import { createKvSaveStore, type KvBackend } from './kv-store';
 import { MEMORY_STORAGE_WARNING, createMemoryKv } from './memory';
@@ -230,6 +234,10 @@ export interface WebPlatformDeps {
   idbTimeoutMs?: number;
   /** Intercepte « précédent » du navigateur via une entrée d'historique (défaut : true). */
   useHistory?: boolean;
+  /** Source des langues du système (défaut : `navigator`) ; `null` pour aucune. */
+  navigator?: LanguageSource | null;
+  /** Ouverture des liens externes (défaut : `window`). */
+  opener?: WindowOpener;
 }
 
 export interface WebPlatform extends GamePlatform {
@@ -319,6 +327,8 @@ export async function createWebPlatform(deps: WebPlatformDeps = {}): Promise<Web
   }
 
   const fullscreenOk = !!doc && safe(() => doc.fullscreenEnabled) === true;
+  const nav: LanguageSource | null =
+    deps.navigator !== undefined ? deps.navigator : safe(() => globalThis.navigator);
 
   const platform: WebPlatform = {
     kind: 'web',
@@ -326,6 +336,9 @@ export async function createWebPlatform(deps: WebPlatformDeps = {}): Promise<Web
     storageWarning: warning,
     saves: createKvSaveStore(kv, deps.summarize ?? (() => fallbackSummarize), io),
     onBack: (cb) => registry.add(cb),
+    // Relu à chaque appel : `languagechange` peut modifier les préférences en cours de partie.
+    systemLocales: () => readSystemLocales(nav),
+    openExternal: webOpenExternal(deps.opener ?? win),
   };
   if (fullscreenOk && doc) {
     platform.setFullscreen = async (on) => {

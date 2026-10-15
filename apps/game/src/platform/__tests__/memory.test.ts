@@ -29,7 +29,7 @@ describe('adaptateur mémoire', () => {
         elapsedMs: 5000,
         mode: 'standard',
         progress: 0.5,
-        caseId: null,
+        caseId: 'affaire-test',
       },
     ]);
     expect(await p.saves.load('slot-3')).toEqual(s);

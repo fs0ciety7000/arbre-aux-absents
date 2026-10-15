@@ -33,20 +33,26 @@ import {
   assertCaseId,
   assertSlot,
   caseIdOfRaw,
+  caseIdOfSummary,
   decodeImported,
   decodeStored,
   exportFileName,
+  allowedExternalUrl,
   fallbackSummarize,
+  globalNavigator,
   isCaseId,
   isReadableJson,
   latestBackup,
   listenEscape,
   notFound,
   readSummary,
+  readSystemLocales,
   serialize,
   summaryFromRaw,
+  summaryToStore,
   tooLarge,
   withCase,
+  withTimeout,
   type GamePlatform,
   type GameSaveStore,
   type GameSlotSummary,
@@ -82,6 +88,42 @@ function storageError(what: string, cause: unknown): PlatformError {
 
 export interface TauriStoreOptions {
   summarize?: () => Summarizer;
+}
+
+export interface TauriPlatformOptions extends TauriStoreOptions {
+  /**
+   * Ouvre une URL déjà autorisée dans le navigateur du système. Défaut : `openUrl` de
+   * `@tauri-apps/plugin-opener`, chargé par `import()` au premier lien (tests : injecté).
+   */
+  openUrl?: (url: string) => Promise<void>;
+}
+
+/** Délai maximal d'ouverture d'un lien externe (le plugin répond normalement aussitôt). */
+const OPEN_URL_TIMEOUT_MS = 5000;
+
+async function defaultOpenUrl(url: string): Promise<void> {
+  const { tauriOpenUrl } = await import('./opener');
+  await tauriOpenUrl(url);
+}
+
+/**
+ * `openExternal` sous Tauri : URL autorisée seulement (même liste que la capability
+ * `opener:allow-open-url`), plugin chargé à la demande ; false si refusée, plugin absent ou erreur.
+ */
+export function tauriOpenExternal(
+  openUrl: (url: string) => Promise<void> = defaultOpenUrl,
+): (url: string) => Promise<boolean> {
+  return async (url) => {
+    const href = allowedExternalUrl(url);
+    if (href === null) return false;
+    try {
+      await withTimeout(openUrl(href), OPEN_URL_TIMEOUT_MS, 'ouverture du lien');
+      return true;
+    } catch (err) {
+      console.warn('[platform] ouverture du lien impossible', err);
+      return false;
+    }
+  };
 }
 
 export function createTauriSaveStore(opts: TauriStoreOptions = {}): GameSaveStore {
@@ -223,13 +265,20 @@ export function createTauriSaveStore(opts: TauriStoreOptions = {}): GameSaveStor
           ? await readOpt(fileNames.summary(slot)).catch(() => null)
           : null;
         const sum = readSummary(sumText, slot);
-        if (sum) {
-          out.push(withCase(sum, null));
+        const known = sum ? caseIdOfSummary(sum) : null;
+        if (sum && known !== null) {
+          out.push(withCase(sum, known));
           continue;
         }
+        // Résumé absent, invalide ou sans affaire (écrit avant l'i18n) : partie complète lue.
         const raw = await readWithBackup(file);
-        const fallback = raw === null ? null : summaryFromRaw(raw, slot, summarize());
-        if (fallback) out.push(withCase(fallback, null));
+        if (raw === null) continue;
+        if (sum) {
+          out.push(withCase(sum, caseIdOfRaw(raw)));
+          continue;
+        }
+        const fallback = summaryFromRaw(raw, slot, summarize());
+        if (fallback) out.push(withCase(fallback, caseIdOfRaw(raw)));
       }
       out.push(...(await listBackups(names)));
       return out;
@@ -255,7 +304,7 @@ export function createTauriSaveStore(opts: TauriStoreOptions = {}): GameSaveStor
         sumFile = fileNames.backupSummary(s.caseId);
       }
       const text = serialize(s);
-      const summary = serialize(summarize()(s));
+      const summary = serialize(summaryToStore(s, summarize()));
       try {
         await atomicWrite(file, text, true);
         await atomicWrite(sumFile, summary, false);
@@ -383,7 +432,7 @@ export function detectKind(ua: string): 'android' | 'desktop' {
   return /android/i.test(ua) ? 'android' : 'desktop';
 }
 
-export async function createTauriPlatform(opts: TauriStoreOptions = {}): Promise<GamePlatform> {
+export async function createTauriPlatform(opts: TauriPlatformOptions = {}): Promise<GamePlatform> {
   const kind = detectKind(typeof navigator === 'undefined' ? '' : navigator.userAgent);
   let onCount: (count: number) => void = () => {};
   const registry = new BackRegistry((count) => onCount(count));
@@ -408,6 +457,9 @@ export async function createTauriPlatform(opts: TauriStoreOptions = {}): Promise
     saves,
     onBack: (cb) => registry.add(cb),
     quit: () => void getCurrentWindow().close(),
+    // Les WebViews (WebView2, WKWebView, WebView Android) exposent les langues du système.
+    systemLocales: () => readSystemLocales(globalNavigator()),
+    openExternal: tauriOpenExternal(opts.openUrl),
   };
   if (kind === 'desktop') {
     platform.setFullscreen = (on) => getCurrentWindow().setFullscreen(on);

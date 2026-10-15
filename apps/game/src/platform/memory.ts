@@ -5,8 +5,12 @@
  */
 import {
   BackRegistry,
+  allowedExternalUrl,
   fallbackSummarize,
+  globalNavigator,
   listenEscape,
+  readSystemLocales,
+  webOpenExternal,
   type FileIo,
   type GamePlatform,
   type GameSaveStore,
@@ -65,6 +69,13 @@ export interface MemoryPlatformOptions extends MemoryStoreOptions {
   kind?: GamePlatform['kind'];
   /** Cible des touches (Échap) ; absente en test sans DOM. */
   keyTarget?: Pick<EventTarget, 'addEventListener' | 'removeEventListener'>;
+  /** Langues du système ; défaut : `navigator.languages` s'il existe, sinon aucune. */
+  systemLocales?: readonly string[];
+  /**
+   * Ouverture d'un lien externe ; défaut : comme le web (`window.open`) si une fenêtre existe,
+   * sinon refus. Ne reçoit que des URL autorisées (`allowedExternalUrl`, filtrée ici).
+   */
+  openExternal?: (url: string) => Promise<boolean>;
 }
 
 export interface MemoryPlatform extends GamePlatform {
@@ -78,6 +89,10 @@ export function createMemoryPlatform(opts: MemoryPlatformOptions = {}): MemoryPl
   // Échap reste branché pour la durée de vie de la plateforme (singleton de l'app).
   if (opts.keyTarget) listenEscape(opts.keyTarget, registry);
   const kv = createMemoryKv();
+  const locales =
+    opts.systemLocales !== undefined
+      ? readSystemLocales({ languages: opts.systemLocales })
+      : readSystemLocales(globalNavigator());
   return {
     kind: opts.kind ?? 'web',
     kv,
@@ -86,5 +101,26 @@ export function createMemoryPlatform(opts: MemoryPlatformOptions = {}): MemoryPl
       opts.storageWarning === undefined ? MEMORY_STORAGE_WARNING : opts.storageWarning,
     onBack: (cb) => registry.add(cb),
     back: () => registry.dispatch(),
+    systemLocales: () => locales,
+    openExternal: opts.openExternal
+      ? guardedOpener(opts.openExternal)
+      : webOpenExternal(defaultWindow()),
+  };
+}
+
+function defaultWindow(): Window | undefined {
+  return typeof window === 'undefined' ? undefined : window;
+}
+
+/** N'appelle `open` qu'avec une URL autorisée ; jamais d'exception. */
+function guardedOpener(open: (url: string) => Promise<boolean>): (url: string) => Promise<boolean> {
+  return async (url) => {
+    const href = allowedExternalUrl(url);
+    if (href === null) return false;
+    try {
+      return await open(href);
+    } catch {
+      return false;
+    }
   };
 }

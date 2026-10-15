@@ -44,9 +44,11 @@ export class PlatformError extends Error {
 }
 
 /**
- * Résumé renvoyé par `list()` : le contrat + l'affaire du secours. Le secours automatique
- * (`'auto'`) existe **une fois par affaire** (AFFAIRE-2 §2.3) : `list()` peut donc renvoyer
- * plusieurs résumés `slot: 'auto'`, distingués par `caseId` (null pour les emplacements manuels).
+ * Résumé renvoyé par `list()` : le contrat, avec l'affaire toujours renseignée quand elle est
+ * lisible. Le secours automatique (`'auto'`) existe **une fois par affaire** (AFFAIRE-2 §2.3) :
+ * `list()` peut donc renvoyer plusieurs résumés `slot: 'auto'`, distingués par `caseId`. Pour
+ * les emplacements manuels, `caseId` vient du résumé stocké, sinon de la sauvegarde elle-même ;
+ * `null` seulement si ni l'un ni l'autre ne le donne (l'UI associe par id, jamais par titre).
  */
 export interface GameSlotSummary extends SaveSlotSummary {
   caseId: string | null;
@@ -88,6 +90,7 @@ export type Summarizer = (s: SaveState) => SaveSlotSummary;
 /** Résumé de repli quand l'affaire n'est pas connue de la plateforme. */
 export const fallbackSummarize: Summarizer = (s) => ({
   slot: s.slot,
+  caseId: s.caseId,
   caseTitle: s.caseId,
   updatedAt: s.updatedAt,
   elapsedMs: s.elapsedMs,
@@ -98,6 +101,8 @@ export const fallbackSummarize: Summarizer = (s) => ({
 /** Les résumés stockés sont des données externes : on les valide avant de les renvoyer. */
 export const SaveSlotSummarySchema = z.strictObject({
   slot: SaveSlotIdSchema,
+  /** Absent des résumés écrits avant l'i18n : la plateforme le relit alors dans la partie. */
+  caseId: IdSchema.max(64).nullable().optional(),
   caseTitle: z.string().max(200),
   updatedAt: MsSchema,
   elapsedMs: MsSchema,
@@ -134,6 +139,19 @@ export function caseIdOfRaw(raw: string): string | null {
     /* illisible */
   }
   return null;
+}
+
+/**
+ * Résumé à écrire à côté de la partie : celui du `Summarizer`, avec l'affaire de la partie
+ * (même si le `Summarizer` injecté ne la renseigne pas).
+ */
+export function summaryToStore(s: SaveState, summarize: Summarizer): SaveSlotSummary {
+  return { ...summarize(s), caseId: s.caseId };
+}
+
+/** Affaire d'un résumé stocké, si elle y figure et est sûre. */
+export function caseIdOfSummary(sum: SaveSlotSummary): string | null {
+  return isCaseId(sum.caseId) ? sum.caseId : null;
 }
 
 /** Résumé contrat → résumé du jeu (emplacement manuel, ou secours de `caseId`). */
@@ -318,4 +336,111 @@ export function withTimeout<T>(p: Promise<T>, ms: number, what: string): Promise
       },
     );
   });
+}
+
+// ---------------------------------------------------------------------------------------------
+// Langues du système et liens externes
+
+/** Nombre maximal d'étiquettes de langue retenues (le reste n'influence jamais le choix). */
+const MAX_SYSTEM_LOCALES = 16;
+/** Étiquette BCP 47 plausible (`fr`, `fr-BE`, `zh-Hant-TW`, `en_GB` sous certains WebViews). */
+const LANGUAGE_TAG = /^[A-Za-z]{2,8}(?:[-_][A-Za-z0-9]{1,8})*$/;
+
+/** Navigateur minimal lu pour les langues (injectable en test). */
+export interface LanguageSource {
+  readonly languages?: readonly string[] | null;
+  readonly language?: string | null;
+}
+
+/**
+ * Langues préférées, dans l'ordre (`navigator.languages`, sinon `navigator.language`), filtrées
+ * (étiquettes valides, sans doublon, 16 au plus). Jamais d'exception ; `[]` si rien n'est lisible
+ * (`resolveLanguage` retombe alors sur le français).
+ */
+export function readSystemLocales(source: LanguageSource | null | undefined): readonly string[] {
+  if (!source) return [];
+  let list: readonly unknown[] = [];
+  try {
+    const langs = source.languages;
+    if (Array.isArray(langs) && langs.length > 0) list = langs;
+    else if (typeof source.language === 'string') list = [source.language];
+  } catch {
+    return [];
+  }
+  const out: string[] = [];
+  for (const tag of list) {
+    if (typeof tag !== 'string') continue;
+    const t = tag.trim();
+    if (!LANGUAGE_TAG.test(t) || out.includes(t)) continue;
+    out.push(t);
+    if (out.length >= MAX_SYSTEM_LOCALES) break;
+  }
+  return Object.freeze(out);
+}
+
+/** `navigator` global s'il existe (absent sous Node). */
+export function globalNavigator(): LanguageSource | undefined {
+  try {
+    return typeof navigator === 'undefined' ? undefined : navigator;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Seules origines ouvrables par `openExternal` (D11) : le site (suivi des signalements) et la page
+ * itch.io (forum). Même liste que la capability `opener:allow-open-url` de Tauri.
+ */
+export const EXTERNAL_ORIGINS: readonly string[] = Object.freeze([
+  'https://arbre.cardormedia.com',
+  'https://cardorinteractive.itch.io',
+]);
+
+/** Longueur maximale d'une URL externe acceptée. */
+export const MAX_EXTERNAL_URL = 2048;
+
+/**
+ * URL normalisée si elle est autorisée (https, origine de la liste, sans identifiants ni port),
+ * sinon `null`. Pas de proxy ouvert : aucune autre URL ne quitte le jeu.
+ */
+export function allowedExternalUrl(
+  url: string,
+  origins: readonly string[] = EXTERNAL_ORIGINS,
+): string | null {
+  if (typeof url !== 'string' || url.length === 0 || url.length > MAX_EXTERNAL_URL) return null;
+  let u: URL;
+  try {
+    u = new URL(url);
+  } catch {
+    return null;
+  }
+  if (u.protocol !== 'https:' || u.username !== '' || u.password !== '' || u.port !== '') {
+    return null;
+  }
+  return origins.includes(u.origin) ? u.href : null;
+}
+
+/** Fenêtre minimale pour ouvrir un lien (injectable en test). */
+export interface WindowOpener {
+  open(url: string, target: string, features: string): unknown;
+}
+
+/**
+ * `openExternal` du web : URL autorisée seulement, nouvel onglet sans `opener` (le jeu n'est
+ * jamais accessible à la page ouverte). Avec `noopener`, `window.open` renvoie toujours `null` :
+ * un blocage par le navigateur (bloqueur de fenêtres, iframe sans `allow-popups`) n'est donc pas
+ * détectable ; on renvoie true dès que l'appel a eu lieu, false si l'URL est refusée ou s'il lève.
+ */
+export function webOpenExternal(win: WindowOpener | undefined): (url: string) => Promise<boolean> {
+  return async (url) => {
+    const href = allowedExternalUrl(url);
+    if (href === null || !win) return false;
+    try {
+      win.open(href, '_blank', 'noopener,noreferrer');
+      return true;
+    } catch (err) {
+      console.warn('[platform] ouverture du lien impossible', err);
+      return false;
+    }
+  };
 }

@@ -103,8 +103,7 @@ export type ParseSaveResult =
       ok: false;
       /** Message technique (français), pour les journaux. */
       error: string;
-      // TODO: required after wave A2 (packages/engine émet le code) ; facultatif d'ici là.
-      code?: ParseSaveErrorCode;
+      code: ParseSaveErrorCode;
     };
 
 /**
