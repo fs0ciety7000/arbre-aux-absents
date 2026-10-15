@@ -1,8 +1,56 @@
 [
   {
+    "version": "1.4.0",
+    "date": "2026-10-15",
+    "title": {
+      "fr": "Nouveautés, captures et mises à jour automatiques",
+      "en": "What's new, screenshots and automatic updates"
+    },
+    "items": [
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Mises à jour automatiques sur Windows, macOS et Linux (AppImage) : le jeu propose la nouvelle version à l’écran titre, l’installe et redémarre.",
+          "en": "Automatic updates on Windows, macOS and Linux (AppImage): the game offers the new version on the title screen, installs it and restarts."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Sur Android, le jeu prévient quand une nouvelle version est disponible et propose de la télécharger.",
+          "en": "On Android, the game tells you when a new version is available and offers to download it."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Un écran « Nouveautés », dans le jeu et sur le site, avec ce qui change à chaque version.",
+          "en": "A “What’s new” screen, in the game and on the website, listing what changes with each version."
+        }
+      },
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Signaler un problème : jusqu’à trois captures d’écran jointes, une barre de mise en forme avec aperçu, et le détail des informations envoyées.",
+          "en": "Report a problem: attach up to three screenshots, use a formatting toolbar with preview, and see exactly what is sent."
+        }
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Sur le site, le formulaire de signalement permet d’indiquer la version et la plateforme du jeu.",
+          "en": "On the website, the report form lets you give the game’s version and platform."
+        }
+      }
+    ]
+  },
+  {
     "version": "1.3.1",
     "date": "2026-10-15",
-    "title": { "fr": "Crédits et retour au titre", "en": "Credits and return to title" },
+    "title": {
+      "fr": "Crédits et retour au titre",
+      "en": "Credits and return to title"
+    },
     "items": [
       {
         "kind": "improved",
@@ -68,7 +116,10 @@
   {
     "version": "1.2.1",
     "date": "2026-10-15",
-    "title": { "fr": "Signaler pendant la partie", "en": "Reporting during play" },
+    "title": {
+      "fr": "Signaler pendant la partie",
+      "en": "Reporting during play"
+    },
     "items": [
       {
         "kind": "new",
@@ -96,7 +147,10 @@
   {
     "version": "1.2.0",
     "date": "2026-10-15",
-    "title": { "fr": "Le jeu en anglais", "en": "The game in English" },
+    "title": {
+      "fr": "Le jeu en anglais",
+      "en": "The game in English"
+    },
     "items": [
       {
         "kind": "new",
@@ -197,7 +251,10 @@
   {
     "version": "1.0.1",
     "date": "2026-10-14",
-    "title": { "fr": "Première version publique", "en": "First public release" },
+    "title": {
+      "fr": "Première version publique",
+      "en": "First public release"
+    },
     "items": [
       {
         "kind": "new",
