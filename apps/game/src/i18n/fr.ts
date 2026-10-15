@@ -366,6 +366,8 @@ export const fr = {
     timer: 'Chronomètre',
     unread: (n: number) => `${n} non ${plural(n, 'lu', 'lus')}`,
     help: 'Aide',
+    /** Accès court au formulaire de signalement (DESIGN §13.8), en-tête du Bureau. */
+    report: 'Signaler',
     pause: 'Pause',
     menu: 'Menu',
     back: 'Retour',

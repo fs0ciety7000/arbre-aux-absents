@@ -347,6 +347,7 @@ export const en = {
     unread: (n: number) => `${n} unread`,
     timer: 'Timer',
     help: 'Help',
+    report: 'Report',
     pause: 'Pause',
     menu: 'Menu',
     back: 'Back',

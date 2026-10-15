@@ -278,6 +278,41 @@ test('depuis la pause : sauvegarde jointe seulement sur case cochée, anonymisé
   await expect(desk(page)).toBeVisible();
 });
 
+test('depuis l’en-tête du Bureau : « Signaler » au clavier, focus rendu au bouton', async ({
+  page,
+}) => {
+  await mockApi(page, happyApi);
+  await startNewGame(page);
+  const header = page.getByRole('banner', { name: 'En-tête du bureau' });
+  const entry = header.getByRole('button', { name: 'Signaler un problème' });
+  await expect(entry).toHaveText('Signaler');
+  await entry.focus();
+  await page.keyboard.press('Enter');
+  const dialog = reportDialog(page);
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeHidden();
+  await expect(entry).toBeFocused();
+  await expect(desk(page)).toBeVisible();
+});
+
+test.describe('téléphone', () => {
+  test.use({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });
+
+  test('en-tête du Bureau : icône seule, nom complet, sans débordement', async ({ page }) => {
+    await mockApi(page, happyApi);
+    await startNewGame(page);
+    const header = page.getByRole('banner', { name: 'En-tête du bureau' });
+    const entry = header.getByRole('button', { name: 'Signaler un problème' });
+    await expect(entry).toBeVisible();
+    await expect(entry.locator('.label')).toHaveCount(0); // icône seule (l'infobulle reste)
+    const overflow = await header.evaluate((el) => el.scrollWidth - el.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+    await entry.click();
+    await expect(reportDialog(page)).toBeVisible();
+  });
+});
+
 test('clavier : le formulaire se remplit et s’envoie sans souris, Échap le referme', async ({
   page,
 }) => {

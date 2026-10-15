@@ -1,6 +1,7 @@
 <script lang="ts">
   import { progress } from '@arbre/engine';
   import { Button, DymoLabel, Icon, IconButton, Wordmark } from '@arbre/ui';
+  import { getApp } from '../lib/game/context';
   import { formatClock } from '../lib/game/format';
   import type { GameStoreImpl } from '../lib/game/store.svelte';
   import { viewport } from '../lib/game/viewport.svelte';
@@ -19,6 +20,7 @@
   }
   let { game, onmenu, sideToggle = false }: Props = $props();
 
+  const app = getApp();
   const m = messages.desk;
   const p = $derived(progress(game.state, game.content));
   const phone = $derived(viewport.single);
@@ -93,6 +95,24 @@
         pressed={!game.sideCollapsed}
         tooltip
         onclick={() => (game.sideCollapsed = !game.sideCollapsed)}
+      />
+    {/if}
+    <!-- Signaler un problème (DESIGN §13.8) : libellé court au bureau large, icône seule
+         (nom accessible complet + infobulle) en tablette et au téléphone. -->
+    {#if wide}
+      <Button
+        variant="ghost"
+        iconName="envelope"
+        aria-label={messages.bugReport.entry}
+        onclick={() => app.openReport()}>{m.report}</Button
+      >
+    {:else}
+      <IconButton
+        icon="envelope"
+        variant="ghost"
+        label={messages.bugReport.entry}
+        tooltip
+        onclick={() => app.openReport()}
       />
     {/if}
     <IconButton
