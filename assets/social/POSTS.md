@@ -19,16 +19,16 @@ spoiler sur la deuxième affaire au-delà de son point de départ.
 
 | Jour | Réseau | Post | Visuel |
 |---|---|---|---|
-| J0 (mar. ou mer., 18 h) | X, Bluesky | Annonce (§2.1) | `x-lancement-1600x900.jpg` + vidéo |
-| J0 | Instagram | Carrousel (§3.1) | `insta-carrousel-1..5-1080x1350.jpg` |
+| J0 (mar. ou mer., 18 h) | X, Bluesky | Annonce (§2.1) | `x-bluesky-lancement-1600x900.jpg` + vidéo |
+| J0 | Instagram | Carrousel (§3.1) | `instagram-carrousel-1…5-*-1080x1350.jpg` |
 | J0 | Instagram, Facebook | Story « C'est sorti » (§3.3) | `story-lancement-1080x1920.jpg` |
-| J0 | Facebook | Post d'annonce (§4.1) | `carre-1080x1080.jpg` |
+| J0 | Facebook | Post d'annonce (§4.1) | `carre-lancement-1080x1080.jpg` |
 | J0 | itch.io | Devlog (§7) | captures du jeu |
 | J+1 | TikTok, Reels, Shorts | Bande-annonce verticale (§5) | `assets/trailer/trailer-vertical-1080x1920.mp4` |
 | J+2 | Reddit | r/IndieGaming puis r/puzzlevideogames, un jour d'écart (§6) | GIF `apps/site/static/itch/jeu-parcours-1280.gif` |
-| J+3 | X, Bluesky | Fil « comment on joue » (§2.2) | `x-gameplay-1600x900.jpg` |
+| J+3 | X, Bluesky | Fil « comment on joue » (§2.2) | `x-bluesky-gameplay-1600x900.jpg` |
 | J+4 | Instagram | Reel coulisses : la carte (§3.4) | captation d'écran de la carte |
-| J+6 | X, Bluesky, Instagram, Facebook | Nouvelle affaire (§2.3, §3.2) | `story-affaire-2-1080x1920.jpg` |
+| J+6 | X, Bluesky, Instagram, Facebook | Nouvelle affaire (§2.3, §3.2) | `story-nouvelle-affaire-hautcorvin-1080x1920.jpg` |
 | J+8 | Reddit | r/jeuxvideo (français) (§6.3) | GIF |
 | J+10 | X, Bluesky | Accessibilité (§2.4) | capture des options |
 | J+14 | Tous | Relance + remerciements (§2.5) | carré |
@@ -53,7 +53,7 @@ Limite X : 280 caractères (liens comptés 23). Bluesky : 300. Les textes tienne
 >
 > #indiedev #indiegame #jeuvidéo
 
-Joindre `x-lancement-1600x900.jpg`, ou mieux la bande-annonce 1080p (`assets/trailer/trailer-1080p.mp4`) :
+Joindre `x-bluesky-lancement-1600x900.jpg`, ou mieux la bande-annonce 1080p (`assets/trailer/trailer-1080p.mp4`) :
 une vidéo native porte plus loin qu'un lien YouTube.
 
 **Version anglaise** (pour toucher la communauté des jeux de déduction, le jeu étant en français) :
@@ -87,7 +87,7 @@ une vidéo native porte plus loin qu'un lien YouTube.
 > Gratuit, sur ordinateur, Android et navigateur :
 > https://cardorinteractive.itch.io/arbre-aux-absents
 
-Visuels : `x-gameplay-1600x900.jpg` sur le 1/, puis `insta-carrousel-2`, `-3`, `-4` (ils passent
+Visuels : `x-bluesky-gameplay-1600x900.jpg` sur le 1/, puis `instagram-carrousel-2-arbre`, `-3-archives`, `-4-carte` (ils passent
 très bien en 4:5 sur X et Bluesky).
 
 ### 2.3 Nouvelle affaire (J+6)
@@ -101,7 +101,7 @@ très bien en 4:5 sur X et Bluesky).
 >
 > Mise à jour gratuite 🌳 https://cardorinteractive.itch.io/arbre-aux-absents
 
-Visuel : `story-affaire-2-1080x1920.jpg` (ou le recadrer en 4:5).
+Visuel : `story-nouvelle-affaire-hautcorvin-1080x1920.jpg` (ou le recadrer en 4:5).
 
 ### 2.4 Accessibilité (J+10)
 
@@ -128,7 +128,7 @@ Visuel : `story-affaire-2-1080x1920.jpg` (ou le recadrer en 4:5).
 
 ### 3.1 Carrousel d'annonce (J0)
 
-Visuels `insta-carrousel-1` à `-5` (1080×1350), dans l'ordre.
+Visuels `instagram-carrousel-1-…` à `-5-…` (1080×1350), dans l'ordre.
 
 > 🌳 L'Arbre aux absents est sorti.
 >
@@ -155,7 +155,7 @@ Mettre le lien itch.io dans la bio (ou un lien Linktree vers itch.io, le site et
 
 ### 3.2 Post et story « Nouvelle affaire » (J+6)
 
-Post (`story-affaire-2-1080x1920.jpg` recadré, ou une capture de l'affaire) :
+Post (`story-nouvelle-affaire-hautcorvin-1080x1920.jpg` recadré, ou une capture de l'affaire) :
 
 > 📂 Dossier 76-0012 : Le Revenant de Hautcorvin.
 >
@@ -170,7 +170,7 @@ Post (`story-affaire-2-1080x1920.jpg` recadré, ou une capture de l'affaire) :
 >
 > #larbreauxabsents #jeuvideo #indiegame #jeudenquete #mysterygame #jeugratuit
 
-Story : `story-affaire-2-1080x1920.jpg` avec l'autocollant « Lien » vers itch.io et un sondage
+Story : `story-nouvelle-affaire-hautcorvin-1080x1920.jpg` avec l'autocollant « Lien » vers itch.io et un sondage
 « Imposteur ou revenant ? ».
 
 ### 3.3 Stories de lancement (J0)
@@ -195,7 +195,7 @@ Filmer l'écran (15 à 25 s) : zoom de la carte, clic sur un lieu, ouverture des
 
 ### 4.1 Annonce (J0)
 
-Visuel : `carre-1080x1080.jpg`, ou la bande-annonce en vidéo native.
+Visuel : `carre-lancement-1080x1080.jpg`, ou la bande-annonce en vidéo native.
 
 > 🌳 L'Arbre aux absents est disponible, gratuitement.
 >

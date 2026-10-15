@@ -23,7 +23,7 @@ Images : captures dans `apps/site/static/itch/` (préférer les 1440 px), visuel
 
 **Titre** : L'Arbre aux absents 1.1 : une deuxième affaire, « Le Revenant de Hautcorvin »
 
-*Image d'en-tête : `story-affaire-2-1080x1920.jpg` recadrée, ou une capture de l'affaire 2.*
+*Image d'en-tête : `story-nouvelle-affaire-hautcorvin-1080x1920.jpg` recadrée, ou une capture de l'affaire 2.*
 
 L'Arbre aux absents passe en version 1.1, avec une deuxième affaire complète. Elle est gratuite, comme
 le reste du jeu.
