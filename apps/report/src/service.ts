@@ -157,8 +157,12 @@ export class ReportService {
   private async processPending(): Promise<void> {
     if (!this.github.enabled) return;
     const due = this.store.duePending(this.now(), TIMINGS.pendingBatch);
-    await mapLimit(due, TIMINGS.concurrency, async (row) => {
+    await mapLimit(due, TIMINGS.concurrency, async (selected) => {
       if (this.abort.signal.aborted) return;
+      // Relu au moment de le traiter : un DELETE arrivé pendant ce passage a pu supprimer la
+      // ligne (création jamais faite) ou la changer en `redact` (charge utile effacée).
+      const row = this.store.byId(selected.id);
+      if (!row || row.pendingOp !== selected.pendingOp) return;
       try {
         if (row.pendingOp === 'create') await this.createRemote(row);
         else if (row.pendingOp === 'redact' && row.issueNumber !== null) {
