@@ -741,6 +741,11 @@
     overflow: auto;
     cursor: grab;
     overscroll-behavior: contain;
+    /* Glisser l'arbre ne sélectionne pas le texte des fiches (sinon la mini-barre de
+       sélection d'Edge s'ouvre à chaque clic ou glissé). */
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
   }
   .sizer {
     position: relative;
@@ -1055,6 +1060,8 @@
   .gen-list {
     display: flex;
     flex-wrap: wrap;
+    -webkit-user-select: none;
+    user-select: none;
     /* le cartouche « Déclaré » déborde de 10 px au-dessus de la fiche (§6.9) */
     gap: calc(var(--space-4) + var(--claim-tag-h) / 2) var(--space-4);
     padding-block-start: calc(var(--claim-tag-h) / 2);

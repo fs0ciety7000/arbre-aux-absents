@@ -311,3 +311,21 @@ test('sans Document Picture-in-Picture : fenêtre surgissante, même partie', as
   await win.close();
   await expect(card(page).getByRole('heading', { name: 'Note du notaire' })).toBeVisible();
 });
+
+test('cliquer ou glisser l’arbre ne sélectionne aucun texte (mini-barre de sélection d’Edge)', async ({
+  page,
+}) => {
+  await startNewGame(page);
+  const wrap = page.locator('.canvas-wrap');
+  await expect(wrap).toBeVisible();
+  const box = (await wrap.boundingBox())!;
+  // Glissé sur le fond puis double-clic sur une fiche : rien ne doit être sélectionné.
+  await page.mouse.move(box.x + 20, box.y + box.height - 20);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 300, box.y + 40, { steps: 6 });
+  await page.mouse.up();
+  await slotButton(page, 's-ancel').dblclick();
+  await page.keyboard.press('Escape');
+  expect(await page.evaluate(() => window.getSelection()?.toString() ?? '')).toBe('');
+  expect(await wrap.evaluate((el) => getComputedStyle(el).userSelect)).toBe('none');
+});
