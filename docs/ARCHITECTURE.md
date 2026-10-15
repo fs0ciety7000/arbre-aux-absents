@@ -635,7 +635,18 @@ GitHub, concurrence bornée de la file `pending`.
 **Schéma SQLite**, table `tickets` : `id`, `ticket` UNIQUE, `token_hash` UNIQUE (SHA-256),
 `created_at`, `updated_at`, `source`, `category`, `locale`, `issue_number` NULL, `status`,
 `fixed_in`, `closed_reason`, `closed_at`, `replies_json`, `contact` NULL, `pending_payload` NULL
-(effacé dès la création du ticket GitHub), `etag`, `synced_at`.
+(effacé dès la création du ticket GitHub), `etag`, `synced_at`, plus la file de reprise
+(`pending_op` `create` ou `redact`, `attempts`, `next_attempt_at` ; délai doublé de 30 s à 6 h) et
+les problèmes connus (`public`, `title`). `replies_json` garde des marqueurs
+`{id, kind: reply | title-en, at, text}` pour appliquer les modifications de commentaires reçues par
+webhook sans appel à l'API. Numéros AUTOINCREMENT, jamais réutilisés.
+
+**Comportements** : `POST` répond 201 sans attendre GitHub (création en tâche de fond) ; le titre
+du ticket GitHub ne contient aucun texte du joueur (`AA-0042 · bug (jeu)`, réécrit par l'équipe
+avant l'étiquette `public`) ; erreurs hors contrat renvoyées en `{ error: 'invalid' }` avec le
+statut HTTP adapté (400, 403, 404, 405, 401 pour une signature de webhook) ; pot de miel
+(`website` rempli ou `elapsedMs < 3000`) → 201 avec un faux reçu `AA-0000`. `/healthz` dit
+`degraded` sans jeton ou après un échec GitHub.
 
 **Conservation** (D13, tâche quotidienne) : contact effacé 30 jours après la clôture ; ticket
 (empreinte du jeton, statut, réponses publiques) supprimé 12 mois après la clôture ; suppression
