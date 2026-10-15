@@ -124,12 +124,13 @@ Un bug, une coquille, un blocage ? Dans le jeu : **Signaler** (écran titre, en-
 Aide). Sinon, sur le site : https://arbre.cardormedia.com/signaler/
 
 Vous recevez un numéro de ticket et un lien de suivi personnel, sans compte. La liste des problèmes
-connus est publique : https://arbre.cardormedia.com/problemes-connus/
+connus et celle des tickets ouverts sont publiques : https://arbre.cardormedia.com/problemes-connus/
+et https://arbre.cardormedia.com/tickets/
 
 *Report a problem* : found a bug, a typo or got stuck? In the game, use **Report** (title screen,
 desk header or Help), or go to https://arbre.cardormedia.com/en/signaler/. You get a ticket number
-and a private follow-up link, no account needed. Known issues:
-https://arbre.cardormedia.com/en/problemes-connus/
+and a private follow-up link, no account needed. Known issues: https://arbre.cardormedia.com/en/problemes-connus/, open
+tickets: https://arbre.cardormedia.com/en/tickets/
 
 ### Crédits
 
