@@ -1,0 +1,893 @@
+{
+  "persons": [
+    {
+      "id": "gervais-goemard",
+      "given": ["Gervais"],
+      "family": ["Goémard", "Gouémard", "Guémard"],
+      "nicknames": ["le garnaud"],
+      "occupation": "ramasseur-d-ambre",
+      "portrait": "lg-portrait-9e0e20",
+      "born": "1819",
+      "died": "1887",
+      "unions": ["perrine-oyard"],
+      "bibleNotes": "C01. Chef de la maison Goémard en 1868."
+    },
+    {
+      "id": "perrine-oyard",
+      "given": ["Perrine"],
+      "family": ["Oyard", "Goémard", "Hoyard", "Oyart"],
+      "occupation": "fileuse",
+      "portrait": "lg-portrait-375fdd",
+      "born": "1823",
+      "died": "1891",
+      "unions": ["gervais-goemard"],
+      "bibleNotes": "C02. Talon : petit Œil."
+    },
+    {
+      "id": "clovis-oyard",
+      "given": ["Clovis"],
+      "family": ["Oyard", "Hoyard", "Oyart"],
+      "occupation": "pilote",
+      "portrait": "lg-portrait-aa93f2",
+      "born": "1821",
+      "died": "1880",
+      "unions": ["toinette-cormaud"],
+      "bibleNotes": "C03. Chef de la maison Oyard en 1868."
+    },
+    {
+      "id": "toinette-cormaud",
+      "given": ["Toinette"],
+      "family": ["Cormaud", "Oyard", "Cormault", "Cormeau"],
+      "nicknames": ["la Toinette"],
+      "occupation": "sage-femme",
+      "portrait": "lg-portrait-5bbc8d",
+      "born": "1826",
+      "died": "1899",
+      "unions": ["clovis-oyard"],
+      "bibleNotes": "C04. Marraine de Blaise (RG-01)."
+    },
+    {
+      "id": "simeon-cormaud",
+      "given": ["Siméon"],
+      "family": ["Cormaud", "Cormault", "Cormeau"],
+      "occupation": "charpentier-de-marine",
+      "portrait": "lg-portrait-5ce728",
+      "born": "1817",
+      "died": "1890-03-01",
+      "unions": ["ursule-lestaud"],
+      "bibleNotes": "C05. Testament de grève (S3)."
+    },
+    {
+      "id": "ursule-lestaud",
+      "given": ["Ursule"],
+      "family": ["Lestaud", "Cormaud", "Lestot", "Lestaut"],
+      "occupation": "ramendeuse",
+      "portrait": "lg-portrait-7f010c",
+      "born": "1820",
+      "died": "1888",
+      "unions": ["simeon-cormaud"],
+      "bibleNotes": "C06. La navette (PH-10)."
+    },
+    {
+      "id": "lubin-lestaud",
+      "given": ["Lubin"],
+      "family": ["Lestaud", "Lestot", "Lestaut"],
+      "occupation": "goemonier",
+      "portrait": "lg-portrait-8084e7",
+      "born": "1824",
+      "died": "1893",
+      "unions": ["apolline-goemard"],
+      "bibleNotes": "C07. Chef de la maison Lestaud en 1868."
+    },
+    {
+      "id": "apolline-goemard",
+      "given": ["Apolline"],
+      "family": ["Goémard", "Lestaud", "Gouémard", "Guémard"],
+      "occupation": "boulangere",
+      "portrait": "lg-portrait-6ff69c",
+      "born": "1828",
+      "died": "1902",
+      "unions": ["lubin-lestaud"],
+      "bibleNotes": "C08. Le four commun."
+    },
+    {
+      "id": "josse-goemard",
+      "given": ["Josse"],
+      "family": ["Goémard", "Gouémard", "Guémard"],
+      "nicknames": ["le vieux Josse"],
+      "occupation": "ramasseur-d-ambre",
+      "portrait": "lg-portrait-df3f6c",
+      "born": "1848",
+      "died": "1909-01-17",
+      "parents": ["gervais-goemard", "perrine-oyard"],
+      "unions": ["reine-lestaud"],
+      "bibleNotes": "C09. S4."
+    },
+    {
+      "id": "reine-lestaud",
+      "given": ["Reine"],
+      "family": ["Lestaud", "Goémard", "Lestot", "Lestaut"],
+      "occupation": "fileuse",
+      "portrait": "lg-portrait-3f8d58",
+      "altPortraits": ["lg-portrait-87e85e"],
+      "born": "1853",
+      "died": "1920",
+      "parents": ["lubin-lestaud", "apolline-goemard"],
+      "unions": ["josse-goemard"],
+      "bibleNotes": "C10. Marque de fille P-pt (RG-08)."
+    },
+    {
+      "id": "jacquette-goemard",
+      "given": ["Jacquette"],
+      "family": ["Goémard", "Oyard", "Gouémard", "Guémard"],
+      "occupation": "sage-femme",
+      "portrait": "lg-portrait-309b85",
+      "altPortraits": ["lg-portrait-804ae3"],
+      "born": "1852",
+      "died": "1919",
+      "parents": ["gervais-goemard", "perrine-oyard"],
+      "unions": ["medard-oyard"],
+      "bibleNotes": "C11. Marque de fille Y-pt (RG-07)."
+    },
+    {
+      "id": "medard-oyard",
+      "given": ["Médard"],
+      "family": ["Oyard", "Hoyard", "Oyart"],
+      "occupation": "batelier",
+      "portrait": "lg-portrait-4db872",
+      "born": "1850",
+      "died": "1908-03-02",
+      "parents": ["clovis-oyard", "toinette-cormaud"],
+      "unions": ["jacquette-goemard"],
+      "bibleNotes": "C12."
+    },
+    {
+      "id": "blaise-goemard",
+      "given": ["Blaise"],
+      "family": ["Goémard", "Garnaud", "Gouémard", "Guémard"],
+      "occupation": "negociant-en-ambre",
+      "portrait": "lg-portrait-480ba1",
+      "born": "1854-02-03",
+      "died": "1924-02-11",
+      "parents": ["gervais-goemard", "perrine-oyard"],
+      "unions": ["amelie-ferlay"],
+      "bibleNotes": "C13 (cachée). Dit Garnaud ; fondateur du Comptoir des Ambres. S1, S2, S4."
+    },
+    {
+      "id": "amelie-ferlay",
+      "given": ["Amélie"],
+      "family": ["Ferlay", "Garnaud"],
+      "occupation": "libraire",
+      "portrait": "lg-portrait-ce8a17",
+      "altPortraits": ["lg-portrait-95b651"],
+      "born": "1858",
+      "died": "1930",
+      "unions": ["blaise-goemard"],
+      "bibleNotes": "C14 (cachée)."
+    },
+    {
+      "id": "ernestine-oyard",
+      "given": ["Ernestine"],
+      "family": ["Oyard", "Lestaud", "Hoyard", "Oyart"],
+      "occupation": "boulangere",
+      "portrait": "lg-portrait-ff741e",
+      "altPortraits": ["lg-portrait-ea5469"],
+      "born": "1857",
+      "died": "1921",
+      "parents": ["clovis-oyard", "toinette-cormaud"],
+      "unions": ["fulbert-lestaud"],
+      "bibleNotes": "C15. Marque de fille O-pt (RG-09)."
+    },
+    {
+      "id": "fulbert-lestaud",
+      "given": ["Fulbert"],
+      "family": ["Lestaud", "Lestot", "Lestaut"],
+      "occupation": "goemonier",
+      "portrait": "lg-portrait-d9a1bf",
+      "born": "1851",
+      "died": "1916",
+      "parents": ["lubin-lestaud", "apolline-goemard"],
+      "unions": ["ernestine-oyard"],
+      "bibleNotes": "C16."
+    },
+    {
+      "id": "benoit-lestaud",
+      "given": ["Benoît"],
+      "family": ["Lestaud", "Lestot", "Lestaut"],
+      "occupation": "gardien-de-feu",
+      "portrait": "lg-portrait-fdaeee",
+      "born": "1860",
+      "died": "1928",
+      "parents": ["lubin-lestaud", "apolline-goemard"],
+      "unions": ["sidonie-bremoy"],
+      "bibleNotes": "C17. Gardien auxiliaire du feu (leurre : gardien de phare)."
+    },
+    {
+      "id": "sidonie-bremoy",
+      "given": ["Sidonie"],
+      "family": ["Brémoy", "Lestaud"],
+      "nicknames": ["la maîtresse"],
+      "occupation": "institutrice",
+      "portrait": "lg-portrait-fe0b68",
+      "altPortraits": ["lg-portrait-7796db", "lg-portrait-589649"],
+      "born": "1864-05-02",
+      "died": "1950-02-11",
+      "unions": ["benoit-lestaud"],
+      "bibleNotes": "C18. La copie Brémoy."
+    },
+    {
+      "id": "noel-cormaud",
+      "given": ["Noël"],
+      "family": ["Cormaud", "Cormault", "Cormeau"],
+      "nicknames": ["l'enfant de mer"],
+      "occupation": "charpentier-de-marine",
+      "portrait": "lg-portrait-84365f",
+      "born": "1860",
+      "died": "1931-09-29",
+      "parents": [null, null],
+      "unions": ["honorine-lestaud"],
+      "bibleNotes": "C19. Enfant de l'Aurore, recueilli par Siméon (R6). S3."
+    },
+    {
+      "id": "honorine-lestaud",
+      "given": ["Honorine"],
+      "family": ["Lestaud", "Cormaud", "Lestot", "Lestaut"],
+      "occupation": "ramendeuse",
+      "portrait": "lg-portrait-99db1b",
+      "altPortraits": ["lg-portrait-1b4408"],
+      "born": "1864",
+      "died": "1940",
+      "parents": ["lubin-lestaud", "apolline-goemard"],
+      "unions": ["noel-cormaud"],
+      "bibleNotes": "C20. Marque de fille P-pt-pt (RG-10)."
+    },
+    {
+      "id": "gatien-goemard",
+      "given": ["Gatien"],
+      "family": ["Goémard", "Gouémard", "Guémard"],
+      "occupation": "tailleur-d-ambre",
+      "portrait": "lg-portrait-e96e7a",
+      "altPortraits": ["lg-portrait-dbca34", "lg-portrait-b6e782"],
+      "born": "1881-09-19",
+      "died": "1944",
+      "parents": ["josse-goemard", "reine-lestaud"],
+      "unions": ["leontine-sauvat"],
+      "bibleNotes": "C21. Pouce droit coupé depuis 1910."
+    },
+    {
+      "id": "leontine-sauvat",
+      "given": ["Léontine"],
+      "family": ["Sauvat", "Goémard"],
+      "occupation": "couturiere",
+      "portrait": "lg-portrait-d4d582",
+      "altPortraits": ["lg-portrait-823a60"],
+      "born": "1889",
+      "died": "1968",
+      "unions": ["gatien-goemard"],
+      "bibleNotes": "C22."
+    },
+    {
+      "id": "elzear-oyard",
+      "given": ["Elzéar"],
+      "family": ["Oyard", "Hoyard", "Oyart"],
+      "occupation": "batelier",
+      "portrait": "lg-portrait-9cb0f2",
+      "born": "1878-06-02",
+      "died": "1951-03-19",
+      "parents": ["medard-oyard", "jacquette-goemard"],
+      "bibleNotes": "C23. Trois jours d’école."
+    },
+    {
+      "id": "victoire-oyard",
+      "given": ["Victoire"],
+      "family": ["Oyard", "Cormaud"],
+      "occupation": "trieuse-d-ambre",
+      "portrait": "lg-portrait-a95577",
+      "altPortraits": ["lg-portrait-88a379", "lg-portrait-10fa0d"],
+      "born": "1893-02-11",
+      "died": "1970-12-03",
+      "parents": ["medard-oyard", "jacquette-goemard"],
+      "unions": ["lazare-cormaud"],
+      "bibleNotes": "C24 (établie). La dernière voix de Longuegrève."
+    },
+    {
+      "id": "lazare-cormaud",
+      "given": ["Lazare"],
+      "family": ["Cormaud", "Cormault", "Cormeau"],
+      "occupation": "pecheur",
+      "portrait": "lg-portrait-491490",
+      "altPortraits": ["lg-portrait-b40d83"],
+      "born": "1886-03-05",
+      "died": "1957",
+      "parents": ["noel-cormaud", "honorine-lestaud"],
+      "unions": ["victoire-oyard"],
+      "bibleNotes": "C25."
+    },
+    {
+      "id": "clement-lestaud",
+      "given": ["Clément"],
+      "family": ["Lestaud", "Lestot", "Lestaut"],
+      "occupation": "marin",
+      "portrait": "lg-portrait-49c2e9",
+      "altPortraits": ["lg-portrait-4a21bb"],
+      "born": "1883-01-08",
+      "died": "1950",
+      "parents": ["fulbert-lestaud", "ernestine-oyard"],
+      "bibleNotes": "C26."
+    },
+    {
+      "id": "leandre-garnaud",
+      "given": ["Léandre"],
+      "family": ["Garnaud"],
+      "occupation": "directeur-comptoir",
+      "portrait": "lg-portrait-e1d3e2",
+      "altPortraits": ["lg-portrait-1e2c79"],
+      "born": "1880",
+      "died": "1949",
+      "parents": ["blaise-goemard", "amelie-ferlay"],
+      "bibleNotes": "C27 (cachée)."
+    },
+    {
+      "id": "felix-goemard",
+      "given": ["Félix"],
+      "family": ["Goémard"],
+      "occupation": "patron-pecheur",
+      "portrait": "lg-portrait-c65073",
+      "altPortraits": ["lg-portrait-259dd9"],
+      "born": "1912-05-06",
+      "parents": ["gatien-goemard", "leontine-sauvat"],
+      "bibleNotes": "C28."
+    },
+    {
+      "id": "rose-oyard",
+      "given": ["Rose"],
+      "family": ["Oyard", "Pellerin"],
+      "occupation": "marchande-de-poisson",
+      "portrait": "lg-portrait-662e9a",
+      "altPortraits": ["lg-portrait-491ae6"],
+      "born": "1910-08-14",
+      "parents": ["elzear-oyard", null],
+      "bibleNotes": "C29. Veuve Pellerin."
+    },
+    {
+      "id": "marin-cormaud",
+      "given": ["Marin"],
+      "family": ["Cormaud"],
+      "occupation": "contremaitre",
+      "portrait": "lg-portrait-78d8f1",
+      "altPortraits": ["lg-portrait-3a4965"],
+      "born": "1920-07-12",
+      "parents": ["lazare-cormaud", "victoire-oyard"],
+      "bibleNotes": "C30."
+    },
+    {
+      "id": "aline-lestaud",
+      "given": ["Aline"],
+      "family": ["Lestaud"],
+      "occupation": "ornithologue",
+      "portrait": "lg-portrait-f759a5",
+      "altPortraits": ["lg-portrait-fc8ada"],
+      "born": "1925-04-21",
+      "parents": ["clement-lestaud", null],
+      "bibleNotes": "C31."
+    },
+    {
+      "id": "edmee-garnaud",
+      "given": ["Edmée"],
+      "family": ["Garnaud"],
+      "occupation": "directeur-comptoir",
+      "portrait": "lg-portrait-85b5d9",
+      "altPortraits": ["lg-portrait-b92caf"],
+      "born": "1921",
+      "parents": ["leandre-garnaud", null],
+      "bibleNotes": "C32 (cachée)."
+    }
+  ],
+  "occupations": [
+    {
+      "id": "ramasseur-d-ambre",
+      "label": "Ramasseur·se d'ambre"
+    },
+    {
+      "id": "fileuse",
+      "label": "Fileuse"
+    },
+    {
+      "id": "pilote",
+      "label": "Pilote du golfe"
+    },
+    {
+      "id": "sage-femme",
+      "label": "Sage-femme"
+    },
+    {
+      "id": "charpentier-de-marine",
+      "label": "Charpentier de marine"
+    },
+    {
+      "id": "ramendeuse",
+      "label": "Ramendeuse (filets)"
+    },
+    {
+      "id": "goemonier",
+      "label": "Goémonier"
+    },
+    {
+      "id": "boulangere",
+      "label": "Boulangère (four commun)"
+    },
+    {
+      "id": "batelier",
+      "label": "Batelier"
+    },
+    {
+      "id": "negociant-en-ambre",
+      "label": "Négociant en ambre"
+    },
+    {
+      "id": "libraire",
+      "label": "Libraire"
+    },
+    {
+      "id": "gardien-de-feu",
+      "label": "Gardien de feu"
+    },
+    {
+      "id": "institutrice",
+      "label": "Institutrice"
+    },
+    {
+      "id": "tailleur-d-ambre",
+      "label": "Tailleur d'ambre"
+    },
+    {
+      "id": "couturiere",
+      "label": "Couturière"
+    },
+    {
+      "id": "trieuse-d-ambre",
+      "label": "Trieuse d'ambre"
+    },
+    {
+      "id": "pecheur",
+      "label": "Pêcheur"
+    },
+    {
+      "id": "marin",
+      "label": "Marin"
+    },
+    {
+      "id": "directeur-comptoir",
+      "label": "Directeur·rice du Comptoir des Ambres"
+    },
+    {
+      "id": "patron-pecheur",
+      "label": "Patron pêcheur"
+    },
+    {
+      "id": "marchande-de-poisson",
+      "label": "Marchande de poisson"
+    },
+    {
+      "id": "contremaitre",
+      "label": "Contremaître"
+    },
+    {
+      "id": "ornithologue",
+      "label": "Ornithologue"
+    },
+    {
+      "id": "matelot",
+      "label": "Matelot"
+    },
+    {
+      "id": "armateur",
+      "label": "Armateur"
+    },
+    {
+      "id": "gardien-de-phare",
+      "label": "Gardien de phare"
+    }
+  ],
+  "portraits": [
+    {
+      "id": "lg-portrait-ce8a17",
+      "file": "portraits/lg-portrait-ce8a17.svg",
+      "alt": "Femme d'une quarantaine d'années, chignon bas, lunettes en demi-lune retenues par un cordon, col de dentelle ; elle serre un livre ouvert contre sa poitrine."
+    },
+    {
+      "id": "lg-portrait-fe0b68",
+      "file": "portraits/lg-portrait-fe0b68.svg",
+      "alt": "Femme d'une quarantaine d'années au chignon haut et serré, un lorgnon à cordon noir sur le nez, un châle sombre sur les épaules."
+    },
+    {
+      "id": "lg-portrait-e96e7a",
+      "file": "portraits/lg-portrait-e96e7a.svg",
+      "alt": "Homme d'une trentaine d'années aux sourcils épais relevés en pointe, tablier de cuir, manches retroussées ; il manque une phalange au pouce droit."
+    },
+    {
+      "id": "lg-portrait-d4d582",
+      "file": "portraits/lg-portrait-d4d582.svg",
+      "alt": "Jeune femme en robe claire à col marin, les cheveux relevés ; une pelote à épingles attachée au poignet."
+    },
+    {
+      "id": "lg-portrait-a95577",
+      "file": "portraits/lg-portrait-a95577.svg",
+      "alt": "Vieille femme aux yeux gris très pâles, fichu noir noué sous le menton, des lunettes rondes rafistolées au fil de laiton."
+    },
+    {
+      "id": "lg-portrait-491490",
+      "file": "portraits/lg-portrait-491490.svg",
+      "alt": "Jeune homme aux cheveux noirs très bouclés, col cassé, costume du dimanche un peu court aux poignets."
+    },
+    {
+      "id": "lg-portrait-49c2e9",
+      "file": "portraits/lg-portrait-49c2e9.svg",
+      "alt": "Homme d'une trentaine d'années aux grandes oreilles décollées, en vareuse et foulard, un bonnet roulé dans la main."
+    },
+    {
+      "id": "lg-portrait-e1d3e2",
+      "file": "portraits/lg-portrait-e1d3e2.svg",
+      "alt": "Homme d'une trentaine d'années aux sourcils relevés en pointe, moustache, raie au milieu, col dur ; une breloque d'ambre pend à sa chaîne de montre."
+    },
+    {
+      "id": "lg-portrait-c65073",
+      "file": "portraits/lg-portrait-c65073.svg",
+      "alt": "Homme de soixante-cinq ans aux sourcils blancs relevés en pointe, une cicatrice claire au menton, casquette de patron et vareuse."
+    },
+    {
+      "id": "lg-portrait-662e9a",
+      "file": "portraits/lg-portrait-662e9a.svg",
+      "alt": "Femme d'une cinquantaine d'années aux yeux gris très pâles, en tablier ciré ; elle tient un aviron dans ses bras."
+    },
+    {
+      "id": "lg-portrait-78d8f1",
+      "file": "portraits/lg-portrait-78d8f1.svg",
+      "alt": "Homme d'une cinquantaine d'années aux cheveux gris très bouclés et aux yeux pâles, blouse d'atelier, un crayon derrière l'oreille."
+    },
+    {
+      "id": "lg-portrait-f759a5",
+      "file": "portraits/lg-portrait-f759a5.svg",
+      "alt": "Femme d'une cinquantaine d'années aux cheveux courts et aux oreilles décollées, en ciré, des jumelles autour du cou."
+    },
+    {
+      "id": "lg-portrait-85b5d9",
+      "file": "portraits/lg-portrait-85b5d9.svg",
+      "alt": "Femme d'une cinquantaine d'années aux sourcils relevés en pointe, cheveux gris en coque, tailleur sombre, une broche d'ambre ovale à l'insecte."
+    },
+    {
+      "id": "lg-portrait-95b651",
+      "file": "portraits/lg-portrait-95b651.svg",
+      "alt": "Jeune femme d'une trentaine d'années, chignon bas, col montant, sans lunettes ; un sourire en coin."
+    },
+    {
+      "id": "lg-portrait-7796db",
+      "file": "portraits/lg-portrait-7796db.svg",
+      "alt": "Jeune femme d'une trentaine d'années au chignon haut, lorgnon à cordon noir, robe sombre boutonnée jusqu'au col."
+    },
+    {
+      "id": "lg-portrait-589649",
+      "file": "portraits/lg-portrait-589649.svg",
+      "alt": "Femme âgée aux cheveux gris en chignon bas, lorgnon à cordon noir, châle sur les épaules."
+    },
+    {
+      "id": "lg-portrait-dbca34",
+      "file": "portraits/lg-portrait-dbca34.svg",
+      "alt": "Jeune homme aux sourcils épais relevés en pointe, en blouse, un panier à l'épaule ; ses mains sont intactes."
+    },
+    {
+      "id": "lg-portrait-b6e782",
+      "file": "portraits/lg-portrait-b6e782.svg",
+      "alt": "Jeune homme aux sourcils épais relevés en pointe, en blouse de toile, casquette ; ses mains sont intactes."
+    },
+    {
+      "id": "lg-portrait-823a60",
+      "file": "portraits/lg-portrait-823a60.svg",
+      "alt": "Jeune femme aux cheveux relevés, robe de cérémonie qu'elle semble avoir cousue elle-même, un enfant d'un an dans les bras."
+    },
+    {
+      "id": "lg-portrait-88a379",
+      "file": "portraits/lg-portrait-88a379.svg",
+      "alt": "Adolescente aux yeux très pâles, une natte dans le dos, col Claudine."
+    },
+    {
+      "id": "lg-portrait-10fa0d",
+      "file": "portraits/lg-portrait-10fa0d.svg",
+      "alt": "Jeune femme aux yeux très pâles, chignon haut, col montant fermé."
+    },
+    {
+      "id": "lg-portrait-b40d83",
+      "file": "portraits/lg-portrait-b40d83.svg",
+      "alt": "Jeune homme aux cheveux noirs très bouclés, en tricot de pêcheur."
+    },
+    {
+      "id": "lg-portrait-4a21bb",
+      "file": "portraits/lg-portrait-4a21bb.svg",
+      "alt": "Jeune homme aux grandes oreilles décollées, en vareuse de marin, l'air de rire."
+    },
+    {
+      "id": "lg-portrait-1e2c79",
+      "file": "portraits/lg-portrait-1e2c79.svg",
+      "alt": "Portrait peint d'un homme âgé, cheveux gris dégarnis, sourcils relevés en pointe, redingote et cravate carmin."
+    },
+    {
+      "id": "lg-portrait-259dd9",
+      "file": "portraits/lg-portrait-259dd9.svg",
+      "alt": "Homme d'une cinquantaine d'années aux sourcils relevés en pointe, cheveux bruns grisonnants aux tempes, une cicatrice au menton."
+    },
+    {
+      "id": "lg-portrait-491ae6",
+      "file": "portraits/lg-portrait-491ae6.svg",
+      "alt": "Jeune femme aux yeux gris très pâles, cheveux courts au carré, robe simple et tablier."
+    },
+    {
+      "id": "lg-portrait-3a4965",
+      "file": "portraits/lg-portrait-3a4965.svg",
+      "alt": "Homme d'une quarantaine d'années aux cheveux noirs très bouclés, grisonnants aux tempes, aux yeux pâles."
+    },
+    {
+      "id": "lg-portrait-fc8ada",
+      "file": "portraits/lg-portrait-fc8ada.svg",
+      "alt": "Femme d'une trentaine d'années aux cheveux courts et aux oreilles décollées, en ciré, penchée sur un oiseau."
+    },
+    {
+      "id": "lg-portrait-b92caf",
+      "file": "portraits/lg-portrait-b92caf.svg",
+      "alt": "Jeune femme aux sourcils relevés en pointe, chignon haut, col montant carmin, une broche d'ambre ovale."
+    },
+    {
+      "id": "lg-portrait-0f71b8",
+      "file": "portraits/lg-portrait-0f71b8.svg",
+      "alt": "Petit garçon d'environ neuf ans en costume marin, les cheveux coupés court."
+    },
+    {
+      "id": "lg-portrait-f30a8a",
+      "file": "portraits/lg-portrait-f30a8a.svg",
+      "alt": "Homme d'une cinquantaine d'années aux lunettes rondes, manteau et cravate, une serviette sous le bras."
+    },
+    {
+      "id": "lg-portrait-8ac94a",
+      "file": "portraits/lg-portrait-8ac94a.svg",
+      "alt": "Femme d'une trentaine d'années au chignon haut, un lorgnon pincé sur le nez, col montant lilas."
+    },
+    {
+      "id": "lg-portrait-fe5f0c",
+      "file": "portraits/lg-portrait-fe5f0c.svg",
+      "alt": "Homme d'une cinquantaine d'années à la barbe grise pleine, casquette de marin et gros chandail."
+    },
+    {
+      "id": "lg-portrait-340d3e",
+      "file": "portraits/lg-portrait-340d3e.svg",
+      "alt": "Homme d'environ trente-cinq ans, moustache, raie de côté, une épingle de cravate claire."
+    },
+    {
+      "id": "lg-portrait-f47e16",
+      "file": "portraits/lg-portrait-f47e16.svg",
+      "alt": "Homme d'une quarantaine d'années aux grandes oreilles décollées, casquette, vareuse à boutons."
+    },
+    {
+      "id": "lg-portrait-d75077",
+      "file": "portraits/lg-portrait-d75077.svg",
+      "alt": "Homme d'une cinquantaine d'années aux cheveux gris très bouclés, moustache."
+    },
+    {
+      "id": "lg-portrait-af7bd4",
+      "file": "portraits/lg-portrait-af7bd4.svg",
+      "alt": "Femme d'une cinquantaine d'années, cheveux tirés en chignon bas, robe sombre."
+    },
+    {
+      "id": "lg-portrait-0df611",
+      "file": "portraits/lg-portrait-0df611.svg",
+      "alt": "Femme âgée au chignon haut et gris, un col de dentelle sur une robe noire."
+    },
+    {
+      "id": "lg-portrait-03c5f6",
+      "file": "portraits/lg-portrait-03c5f6.svg",
+      "alt": "Femme âgée en coiffe nouée, un fuseau à la main."
+    },
+    {
+      "id": "lg-portrait-9e0e20",
+      "file": "portraits/lg-portrait-9e0e20.svg",
+      "alt": "Fourche ; pied lisse",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-375fdd",
+      "file": "portraits/lg-portrait-375fdd.svg",
+      "alt": "Fourche ; pied lisse ; talon : petit Œil",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-aa93f2",
+      "file": "portraits/lg-portrait-aa93f2.svg",
+      "alt": "Œil ; pied lisse",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-5bbc8d",
+      "file": "portraits/lg-portrait-5bbc8d.svg",
+      "alt": "Œil ; pied lisse ; talon : petite Flèche",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-5ce728",
+      "file": "portraits/lg-portrait-5ce728.svg",
+      "alt": "Flèche ; pied lisse",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-7f010c",
+      "file": "portraits/lg-portrait-7f010c.svg",
+      "alt": "Flèche ; pied lisse ; talon : petite Potence",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-8084e7",
+      "file": "portraits/lg-portrait-8084e7.svg",
+      "alt": "Potence ; pied lisse",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-6ff69c",
+      "file": "portraits/lg-portrait-6ff69c.svg",
+      "alt": "Potence ; pied lisse ; talon : petite Fourche",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-df3f6c",
+      "file": "portraits/lg-portrait-df3f6c.svg",
+      "alt": "Fourche ; pied : entaille à gauche",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-3f8d58",
+      "file": "portraits/lg-portrait-3f8d58.svg",
+      "alt": "Fourche ; pied : entaille à gauche ; talon : petite Potence",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-87e85e",
+      "file": "portraits/lg-portrait-87e85e.svg",
+      "alt": "Potence ; pied lisse ; un grain",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-309b85",
+      "file": "portraits/lg-portrait-309b85.svg",
+      "alt": "Œil ; pied : entaille à gauche ; talon : petite Fourche",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-804ae3",
+      "file": "portraits/lg-portrait-804ae3.svg",
+      "alt": "Fourche ; pied lisse ; un grain",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-4db872",
+      "file": "portraits/lg-portrait-4db872.svg",
+      "alt": "Œil ; pied : entaille à gauche",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-480ba1",
+      "file": "portraits/lg-portrait-480ba1.svg",
+      "alt": "Fourche ; pied : entaille à droite",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-ff741e",
+      "file": "portraits/lg-portrait-ff741e.svg",
+      "alt": "Potence ; pied : entaille à gauche ; talon : petit Œil",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-ea5469",
+      "file": "portraits/lg-portrait-ea5469.svg",
+      "alt": "Œil ; pied lisse ; un grain",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-d9a1bf",
+      "file": "portraits/lg-portrait-d9a1bf.svg",
+      "alt": "Potence ; pied : entaille à gauche",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-fdaeee",
+      "file": "portraits/lg-portrait-fdaeee.svg",
+      "alt": "Potence ; pied : entaille à droite",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-84365f",
+      "file": "portraits/lg-portrait-84365f.svg",
+      "alt": "Flèche ; pied barré",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-99db1b",
+      "file": "portraits/lg-portrait-99db1b.svg",
+      "alt": "Flèche ; pied barré ; talon : petite Potence",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-1b4408",
+      "file": "portraits/lg-portrait-1b4408.svg",
+      "alt": "Potence ; pied lisse ; deux grains",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-9cb0f2",
+      "file": "portraits/lg-portrait-9cb0f2.svg",
+      "alt": "Œil ; pied : entaille à gauche, puis entaille à gauche",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-97cb44",
+      "file": "portraits/lg-portrait-97cb44.svg",
+      "alt": "Flèche ; pied : entaille à gauche",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-c33099",
+      "file": "portraits/lg-portrait-c33099.svg",
+      "alt": "Flèche ; pied : entaille à droite",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-ab4b4b",
+      "file": "portraits/lg-portrait-ab4b4b.svg",
+      "alt": "Pied barré, sans tête (marque de mer)",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-29ab43",
+      "file": "portraits/lg-portrait-29ab43.svg",
+      "alt": "Œil ; pied : entaille à droite",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-12b71b",
+      "file": "portraits/lg-portrait-12b71b.svg",
+      "alt": "Fourche ; pied lisse ; deux grains",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-d18c08",
+      "file": "portraits/lg-portrait-d18c08.svg",
+      "alt": "Fourche ; pied : entaille à gauche, puis entaille à gauche",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-ed16c7",
+      "file": "portraits/lg-portrait-ed16c7.svg",
+      "alt": "Flèche ; pied barré, puis entaille à gauche",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-4439b6",
+      "file": "portraits/lg-portrait-4439b6.svg",
+      "alt": "Potence ; pied : entaille à gauche ; un grain",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-3f2b8f",
+      "file": "portraits/lg-portrait-3f2b8f.svg",
+      "alt": "Croix de Saint-André (deux traits obliques), sans pied",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-9b5710",
+      "file": "portraits/lg-portrait-9b5710.svg",
+      "alt": "Fourche sur pied lisse, surmontée d'une couronne à trois pointes",
+      "kind": "mark"
+    },
+    {
+      "id": "lg-portrait-e5dfe7",
+      "file": "portraits/lg-portrait-e5dfe7.svg",
+      "alt": "Un seul pied portant les quatre têtes superposées (Fourche, Œil, Flèche, Potence)",
+      "kind": "mark"
+    }
+  ]
+}

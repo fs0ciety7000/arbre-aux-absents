@@ -1,0 +1,1345 @@
+[
+  {
+    "id": "c01-1",
+    "target": {
+      "slot": "c01"
+    },
+    "level": 1,
+    "text": "Les quatre chefs de 1868 ont fait leur marque sur la même pièce.",
+    "availableWhen": {
+      "unlocked": "of-02"
+    }
+  },
+  {
+    "id": "c01-2",
+    "target": {
+      "slot": "c01"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'extrait de la matrice cadastrale et ses mutations, au cadastre.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c01-3",
+    "target": {
+      "slot": "c01"
+    },
+    "level": 3,
+    "text": "« Goémard Gervais, ramasseur d'ambre » : la Fourche seule, le pied lisse, la marque pleine d'un chef de 1868.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c02-1",
+    "target": {
+      "slot": "c02"
+    },
+    "level": 1,
+    "text": "Une épouse garde la marque de son mari, avec un talon : une petite tête de sa maison natale.",
+    "availableWhen": {
+      "unlocked": "of-05"
+    }
+  },
+  {
+    "id": "c02-2",
+    "target": {
+      "slot": "c02"
+    },
+    "level": 2,
+    "text": "Pièce utile : le mariage d'un fils Goémard, en 1879.",
+    "availableWhen": {
+      "unlocked": "rg-08"
+    }
+  },
+  {
+    "id": "c02-3",
+    "target": {
+      "slot": "c02"
+    },
+    "level": 3,
+    "text": "Au pied de l'acte, sans légende, les parents marquent dans l'ordre où ils passent. « Perrine Oyard, fileuse » : la Fourche, un petit Œil au talon.",
+    "availableWhen": {
+      "unlocked": "rg-08"
+    }
+  },
+  {
+    "id": "c03-1",
+    "target": {
+      "slot": "c03"
+    },
+    "level": 1,
+    "text": "Les quatre chefs de 1868 ont fait leur marque sur la même pièce.",
+    "availableWhen": {
+      "unlocked": "of-02"
+    }
+  },
+  {
+    "id": "c03-2",
+    "target": {
+      "slot": "c03"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'extrait de la matrice cadastrale et ses mutations, au cadastre.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c03-3",
+    "target": {
+      "slot": "c03"
+    },
+    "level": 3,
+    "text": "« Oyard Clovis, pilote du golfe » : l'Œil seul, le pied lisse.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c04-1",
+    "target": {
+      "slot": "c04"
+    },
+    "level": 1,
+    "text": "Elle était sage-femme, comme une autre femme de l'arbre : ne les confondez pas.",
+    "availableWhen": {
+      "unlocked": "bd-05"
+    }
+  },
+  {
+    "id": "c04-2",
+    "target": {
+      "slot": "c04"
+    },
+    "level": 2,
+    "text": "Pièce utile : le mariage de 1876, à Port-Sénane.",
+    "availableWhen": {
+      "unlocked": "rg-07"
+    }
+  },
+  {
+    "id": "c04-3",
+    "target": {
+      "slot": "c04"
+    },
+    "level": 3,
+    "text": "« Les mères d'abord » : l'Œil, une petite Flèche au talon.",
+    "availableWhen": {
+      "unlocked": "rg-07"
+    }
+  },
+  {
+    "id": "c05-1",
+    "target": {
+      "slot": "c05"
+    },
+    "level": 1,
+    "text": "Les quatre chefs de 1868 ont fait leur marque sur la même pièce.",
+    "availableWhen": {
+      "unlocked": "of-02"
+    }
+  },
+  {
+    "id": "c05-2",
+    "target": {
+      "slot": "c05"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'extrait de la matrice cadastrale et ses mutations, au cadastre.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c05-3",
+    "target": {
+      "slot": "c05"
+    },
+    "level": 3,
+    "text": "« Cormaud Siméon, charpentier de marine » : la Flèche seule, le pied lisse.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c06-1",
+    "target": {
+      "slot": "c06"
+    },
+    "level": 1,
+    "text": "Un objet sauvé de l'île porte sa marque ; son métier était les filets.",
+    "availableWhen": {
+      "unlocked": "bd-06"
+    }
+  },
+  {
+    "id": "c06-2",
+    "target": {
+      "slot": "c06"
+    },
+    "level": 2,
+    "text": "Pièces utiles : la photographie du hangar à bateaux (1964) ; le mariage de 1885.",
+    "availableWhen": {
+      "unlocked": "ph-10"
+    }
+  },
+  {
+    "id": "c06-3",
+    "target": {
+      "slot": "c06"
+    },
+    "level": 3,
+    "text": "La navette à ramender, sur l'établi : la Flèche, une petite Potence au talon.",
+    "availableWhen": {
+      "unlocked": "ph-10"
+    }
+  },
+  {
+    "id": "c07-1",
+    "target": {
+      "slot": "c07"
+    },
+    "level": 1,
+    "text": "Les quatre chefs de 1868 ont fait leur marque sur la même pièce.",
+    "availableWhen": {
+      "unlocked": "of-02"
+    }
+  },
+  {
+    "id": "c07-2",
+    "target": {
+      "slot": "c07"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'extrait de la matrice cadastrale et ses mutations, au cadastre.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c07-3",
+    "target": {
+      "slot": "c07"
+    },
+    "level": 3,
+    "text": "« Lestaud Lubin, goémonier » : la Potence seule, le pied lisse.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c08-1",
+    "target": {
+      "slot": "c08"
+    },
+    "level": 1,
+    "text": "On la nommait par son four.",
+    "availableWhen": {
+      "unlocked": "bd-05"
+    }
+  },
+  {
+    "id": "c08-2",
+    "target": {
+      "slot": "c08"
+    },
+    "level": 2,
+    "text": "Pièce utile : le mariage de sa fille Reine, en 1879.",
+    "availableWhen": {
+      "unlocked": "rg-08"
+    }
+  },
+  {
+    "id": "c08-3",
+    "target": {
+      "slot": "c08"
+    },
+    "level": 3,
+    "text": "« Apolline Goémard, boulangère au four commun » : la Potence, une petite Fourche au talon.",
+    "availableWhen": {
+      "unlocked": "rg-08"
+    }
+  },
+  {
+    "id": "c09-1",
+    "target": {
+      "slot": "c09"
+    },
+    "level": 1,
+    "text": "Il a succédé à son père au cadastre.",
+    "availableWhen": {
+      "unlocked": "of-02"
+    }
+  },
+  {
+    "id": "c09-2",
+    "target": {
+      "slot": "c09"
+    },
+    "level": 2,
+    "text": "Pièce utile : les mutations de la matrice cadastrale.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c09-3",
+    "target": {
+      "slot": "c09"
+    },
+    "level": 3,
+    "text": "« Goémard Josse succède à Gervais » (1887) : la Fourche, une entaille à gauche, l'aîné.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c10-1",
+    "target": {
+      "slot": "c10"
+    },
+    "level": 1,
+    "text": "Avant d'être épouse, elle était fille : sa marque a changé.",
+    "availableWhen": {
+      "unlocked": "of-05"
+    }
+  },
+  {
+    "id": "c10-2",
+    "target": {
+      "slot": "c10"
+    },
+    "level": 2,
+    "text": "Pièce utile : son mariage avec Josse, en 1879.",
+    "availableWhen": {
+      "unlocked": "rg-08"
+    }
+  },
+  {
+    "id": "c10-3",
+    "target": {
+      "slot": "c10"
+    },
+    "level": 3,
+    "text": "Un grain : la fille aînée de Lubin. Épouse, elle prend la Fourche de Josse avec une petite Potence au talon (le fuseau du hangar).",
+    "availableWhen": {
+      "unlocked": "rg-08"
+    }
+  },
+  {
+    "id": "c11-1",
+    "target": {
+      "slot": "c11"
+    },
+    "level": 1,
+    "text": "Cherchez le mariage de sa fille.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c11-2",
+    "target": {
+      "slot": "c11"
+    },
+    "level": 2,
+    "text": "Pièce utile : le mariage de Lazare Cormaud et de Victoire Oyard (1913).",
+    "availableWhen": {
+      "unlocked": "rg-18"
+    }
+  },
+  {
+    "id": "c11-3",
+    "target": {
+      "slot": "c11"
+    },
+    "level": 3,
+    "text": "« Jacquette Goémard, sage-femme, veuve » : l'Œil de Médard, entaille à gauche, et une petite Fourche au talon.",
+    "availableWhen": {
+      "unlocked": "rg-18"
+    }
+  },
+  {
+    "id": "c12-1",
+    "target": {
+      "slot": "c12"
+    },
+    "level": 1,
+    "text": "Sa fille parle de lui sur une bande de 1964.",
+    "availableWhen": {
+      "unlocked": "bd-01"
+    }
+  },
+  {
+    "id": "c12-2",
+    "target": {
+      "slot": "c12"
+    },
+    "level": 2,
+    "text": "Pièces utiles : la bande « Les marques » ; les mutations du cadastre.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c12-3",
+    "target": {
+      "slot": "c12"
+    },
+    "level": 3,
+    "text": "« L'Œil et une entaille à gauche » : l'aîné de Clovis, batelier ; il succède à son père en 1880.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c13-1",
+    "target": {
+      "slot": "c13"
+    },
+    "level": 1,
+    "text": "Un baptême de 1854, dans la copie du registre de la chapelle.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-01"
+        },
+        {
+          "read": "rg-02"
+        },
+        {
+          "read": "cn-03"
+        },
+        {
+          "read": "lt-01"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c13-2",
+    "target": {
+      "slot": "c13"
+    },
+    "level": 2,
+    "text": "Pièces utiles : le premier cahier de la copie Brémoy ; la lettre fermée de 1908.",
+    "availableWhen": {
+      "unlocked": "rg-01"
+    }
+  },
+  {
+    "id": "c13-3",
+    "target": {
+      "slot": "c13"
+    },
+    "level": 3,
+    "text": "« Fils de Gervais » : le puîné. La Fourche, entaille à droite : celle de la cheminée, et celle du « B. ».",
+    "availableWhen": {
+      "unlocked": "lt-01"
+    }
+  },
+  {
+    "id": "c14-1",
+    "target": {
+      "slot": "c14"
+    },
+    "level": 1,
+    "text": "Un mariage en ville, en 1878.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-13"
+        },
+        {
+          "read": "ph-15"
+        },
+        {
+          "read": "ex-01"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c14-2",
+    "target": {
+      "slot": "c14"
+    },
+    "level": 2,
+    "text": "Pièces utiles : le mariage de 1878 ; la devanture de la librairie Ferlay.",
+    "availableWhen": {
+      "unlocked": "ph-17"
+    }
+  },
+  {
+    "id": "c14-3",
+    "target": {
+      "slot": "c14"
+    },
+    "level": 3,
+    "text": "« Amélie Ferlay, libraire » ; sur la photographie, lunettes en demi-lune et livre contre la poitrine.",
+    "availableWhen": {
+      "unlocked": "ph-17"
+    }
+  },
+  {
+    "id": "c15-1",
+    "target": {
+      "slot": "c15"
+    },
+    "level": 1,
+    "text": "Une marque recopiée par un commis n'est pas une marque.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c15-2",
+    "target": {
+      "slot": "c15"
+    },
+    "level": 2,
+    "text": "Pièce utile : le mariage de 1877, original et double en regard.",
+    "availableWhen": {
+      "unlocked": "rg-09"
+    }
+  },
+  {
+    "id": "c15-3",
+    "target": {
+      "slot": "c15"
+    },
+    "level": 3,
+    "text": "Sur l'original, l'Œil et un grain ; la croix du double est du commis. Épouse : la Potence de Fulbert, un petit Œil au talon (le tampon à pain).",
+    "availableWhen": {
+      "unlocked": "rg-09"
+    }
+  },
+  {
+    "id": "c16-1",
+    "target": {
+      "slot": "c16"
+    },
+    "level": 1,
+    "text": "Il a succédé à son père au cadastre.",
+    "availableWhen": {
+      "unlocked": "of-02"
+    }
+  },
+  {
+    "id": "c16-2",
+    "target": {
+      "slot": "c16"
+    },
+    "level": 2,
+    "text": "Pièce utile : les mutations de la matrice cadastrale.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c16-3",
+    "target": {
+      "slot": "c16"
+    },
+    "level": 3,
+    "text": "« Lestaud Fulbert succède à Lubin » (1893) : la Potence, une entaille à gauche.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "c17-1",
+    "target": {
+      "slot": "c17"
+    },
+    "level": 1,
+    "text": "Cherchez du côté de Phares et Balises.",
+    "availableWhen": {
+      "unlocked": "of-07"
+    }
+  },
+  {
+    "id": "c17-2",
+    "target": {
+      "slot": "c17"
+    },
+    "level": 2,
+    "text": "Pièce utile : le registre du personnel des feux du golfe.",
+    "availableWhen": {
+      "unlocked": "rg-21"
+    }
+  },
+  {
+    "id": "c17-3",
+    "target": {
+      "slot": "c17"
+    },
+    "level": 3,
+    "text": "« Gardien auxiliaire du feu », pas gardien de phare : lisez la définition en tête du registre. La Potence, entaille à droite.",
+    "availableWhen": {
+      "unlocked": "rg-21"
+    }
+  },
+  {
+    "id": "c18-1",
+    "target": {
+      "slot": "c18"
+    },
+    "level": 1,
+    "text": "Sa petite-nièce a gardé ses papiers.",
+    "availableWhen": {
+      "unlocked": "of-07"
+    }
+  },
+  {
+    "id": "c18-2",
+    "target": {
+      "slot": "c18"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie de l'école (1897).",
+    "availableWhen": {
+      "unlocked": "ph-02"
+    }
+  },
+  {
+    "id": "c18-3",
+    "target": {
+      "slot": "c18"
+    },
+    "level": 3,
+    "text": "Les noms sont au dos, de sa main : « au milieu, moi ». Le lorgnon à cordon noir.",
+    "availableWhen": {
+      "unlocked": "ph-02"
+    }
+  },
+  {
+    "id": "c19-1",
+    "target": {
+      "slot": "c19"
+    },
+    "level": 1,
+    "text": "La mer l'a apporté.",
+    "availableWhen": {
+      "unlocked": "of-05"
+    }
+  },
+  {
+    "id": "c19-2",
+    "target": {
+      "slot": "c19"
+    },
+    "level": 2,
+    "text": "Pièce utile : son mariage, en 1885.",
+    "availableWhen": {
+      "unlocked": "rg-10"
+    }
+  },
+  {
+    "id": "c19-3",
+    "target": {
+      "slot": "c19"
+    },
+    "level": 3,
+    "text": "« De parents inconnus, recueilli et élevé par Siméon Cormaud » : la Flèche, barrée.",
+    "availableWhen": {
+      "unlocked": "rg-10"
+    }
+  },
+  {
+    "id": "c20-1",
+    "target": {
+      "slot": "c20"
+    },
+    "level": 1,
+    "text": "Cherchez le mariage de son fils.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c20-2",
+    "target": {
+      "slot": "c20"
+    },
+    "level": 2,
+    "text": "Pièce utile : le mariage de 1913.",
+    "availableWhen": {
+      "unlocked": "rg-18"
+    }
+  },
+  {
+    "id": "c20-3",
+    "target": {
+      "slot": "c20"
+    },
+    "level": 3,
+    "text": "« Honorine Lestaud, ramendeuse » : la Flèche barrée de Noël, une petite Potence au talon.",
+    "availableWhen": {
+      "unlocked": "rg-18"
+    }
+  },
+  {
+    "id": "c21-1",
+    "target": {
+      "slot": "c21"
+    },
+    "level": 1,
+    "text": "Son fils est patron pêcheur aux Cabanes.",
+    "availableWhen": {
+      "unlocked": "of-04"
+    }
+  },
+  {
+    "id": "c21-2",
+    "target": {
+      "slot": "c21"
+    },
+    "level": 2,
+    "text": "Pièce utile : les tables décennales de la section des Cabanes.",
+    "availableWhen": {
+      "unlocked": "rg-17"
+    }
+  },
+  {
+    "id": "c21-3",
+    "target": {
+      "slot": "c21"
+    },
+    "level": 3,
+    "text": "« Fils de Gatien Goémard, tailleur d'ambre » ; au dos de la photographie de sa noce, son nom ; les sourcils relevés en pointe.",
+    "availableWhen": {
+      "unlocked": "ph-06"
+    }
+  },
+  {
+    "id": "c22-1",
+    "target": {
+      "slot": "c22"
+    },
+    "level": 1,
+    "text": "Elle cousait.",
+    "availableWhen": {
+      "unlocked": "rg-17"
+    }
+  },
+  {
+    "id": "c22-2",
+    "target": {
+      "slot": "c22"
+    },
+    "level": 2,
+    "text": "Pièce utile : les tables décennales de la section des Cabanes.",
+    "availableWhen": {
+      "unlocked": "rg-17"
+    }
+  },
+  {
+    "id": "c22-3",
+    "target": {
+      "slot": "c22"
+    },
+    "level": 3,
+    "text": "« Léontine Sauvat, couturière », au dos de la photographie de 1911 ; la pelote à épingles au poignet.",
+    "availableWhen": {
+      "unlocked": "ph-06"
+    }
+  },
+  {
+    "id": "c23-1",
+    "target": {
+      "slot": "c23"
+    },
+    "level": 1,
+    "text": "Il n'a jamais voulu signer.",
+    "availableWhen": {
+      "unlocked": "bd-01"
+    }
+  },
+  {
+    "id": "c23-2",
+    "target": {
+      "slot": "c23"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du hangar à bateaux (1964).",
+    "availableWhen": {
+      "unlocked": "ph-10"
+    }
+  },
+  {
+    "id": "c23-3",
+    "target": {
+      "slot": "c23"
+    },
+    "level": 3,
+    "text": "Son aviron : l'Œil, deux entailles à gauche, l'aîné de l'aîné.",
+    "availableWhen": {
+      "unlocked": "ph-10"
+    }
+  },
+  {
+    "id": "c25-1",
+    "target": {
+      "slot": "c25"
+    },
+    "level": 1,
+    "text": "Son mariage, en 1913.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c25-2",
+    "target": {
+      "slot": "c25"
+    },
+    "level": 2,
+    "text": "Pièces utiles : le mariage de 1913 ; la noce, dans l'album de l'Amicale.",
+    "availableWhen": {
+      "unlocked": "ph-05"
+    }
+  },
+  {
+    "id": "c25-3",
+    "target": {
+      "slot": "c25"
+    },
+    "level": 3,
+    "text": "« Lazare Cormaud, pêcheur » ; les cheveux noirs très bouclés de son père.",
+    "availableWhen": {
+      "unlocked": "ph-05"
+    }
+  },
+  {
+    "id": "c26-1",
+    "target": {
+      "slot": "c26"
+    },
+    "level": 1,
+    "text": "Témoin d'un mariage, en 1913.",
+    "availableWhen": {
+      "unlocked": "of-01"
+    }
+  },
+  {
+    "id": "c26-2",
+    "target": {
+      "slot": "c26"
+    },
+    "level": 2,
+    "text": "Pièces utiles : le mariage de 1913 ; la photographie de la noce.",
+    "availableWhen": {
+      "unlocked": "ph-05"
+    }
+  },
+  {
+    "id": "c26-3",
+    "target": {
+      "slot": "c26"
+    },
+    "level": 3,
+    "text": "« Clément Lestaud, marin » ; les grandes oreilles décollées des Lestaud.",
+    "availableWhen": {
+      "unlocked": "ph-05"
+    }
+  },
+  {
+    "id": "c27-1",
+    "target": {
+      "slot": "c27"
+    },
+    "level": 1,
+    "text": "Un décès de 1924.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-13"
+        },
+        {
+          "read": "ph-15"
+        },
+        {
+          "read": "ex-01"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c27-2",
+    "target": {
+      "slot": "c27"
+    },
+    "level": 2,
+    "text": "Pièces utiles : le décès de 1924 ; la photographie de l'atelier des Cabanes (1912).",
+    "availableWhen": {
+      "unlocked": "ph-04"
+    }
+  },
+  {
+    "id": "c27-3",
+    "target": {
+      "slot": "c27"
+    },
+    "level": 3,
+    "text": "« Son fils Léandre, directeur » ; la breloque d'ambre et les sourcils relevés.",
+    "availableWhen": {
+      "unlocked": "ph-04"
+    }
+  },
+  {
+    "id": "c28-1",
+    "target": {
+      "slot": "c28"
+    },
+    "level": 1,
+    "text": "Le mémoire de l'Amicale.",
+    "availableWhen": {
+      "unlocked": "of-04"
+    }
+  },
+  {
+    "id": "c28-2",
+    "target": {
+      "slot": "c28"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie de la jetée, dans L'Écho du 15 octobre 1977.",
+    "availableWhen": {
+      "unlocked": "ph-14"
+    }
+  },
+  {
+    "id": "c28-3",
+    "target": {
+      "slot": "c28"
+    },
+    "level": 3,
+    "text": "« Patron du Saint-Gervais » ; la cicatrice au menton.",
+    "availableWhen": {
+      "unlocked": "ph-14"
+    }
+  },
+  {
+    "id": "c29-1",
+    "target": {
+      "slot": "c29"
+    },
+    "level": 1,
+    "text": "La halle aux poissons.",
+    "availableWhen": {
+      "unlocked": "of-04"
+    }
+  },
+  {
+    "id": "c29-2",
+    "target": {
+      "slot": "c29"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie de l'étal (vers 1935).",
+    "availableWhen": {
+      "unlocked": "ph-16"
+    }
+  },
+  {
+    "id": "c29-3",
+    "target": {
+      "slot": "c29"
+    },
+    "level": 3,
+    "text": "« Mme Pellerin, née Rose Oyard » ; les yeux très pâles des Oyard.",
+    "availableWhen": {
+      "unlocked": "ph-16"
+    }
+  },
+  {
+    "id": "c30-1",
+    "target": {
+      "slot": "c30"
+    },
+    "level": 1,
+    "text": "Le mémoire de l'Amicale.",
+    "availableWhen": {
+      "unlocked": "of-04"
+    }
+  },
+  {
+    "id": "c30-2",
+    "target": {
+      "slot": "c30"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du hangar à bateaux (1964).",
+    "availableWhen": {
+      "unlocked": "ph-10"
+    }
+  },
+  {
+    "id": "c30-3",
+    "target": {
+      "slot": "c30"
+    },
+    "level": 3,
+    "text": "« Président, contremaître » ; les cheveux bouclés de son grand-père Noël.",
+    "availableWhen": {
+      "unlocked": "ph-10"
+    }
+  },
+  {
+    "id": "c31-1",
+    "target": {
+      "slot": "c31"
+    },
+    "level": 1,
+    "text": "Une note sur les oiseaux de l'île.",
+    "availableWhen": {
+      "unlocked": "rp-09"
+    }
+  },
+  {
+    "id": "c31-2",
+    "target": {
+      "slot": "c31"
+    },
+    "level": 2,
+    "text": "Pièce utile : la photographie du baguage de sternes (1961).",
+    "availableWhen": {
+      "unlocked": "ph-11"
+    }
+  },
+  {
+    "id": "c31-3",
+    "target": {
+      "slot": "c31"
+    },
+    "level": 3,
+    "text": "« A. L., Société ornithologique du golfe » ; les oreilles décollées des Lestaud.",
+    "availableWhen": {
+      "unlocked": "ph-11"
+    }
+  },
+  {
+    "id": "c32-1",
+    "target": {
+      "slot": "c32"
+    },
+    "level": 1,
+    "text": "L'opposition du Comptoir.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-13"
+        },
+        {
+          "read": "ph-15"
+        },
+        {
+          "read": "ex-01"
+        }
+      ]
+    }
+  },
+  {
+    "id": "c32-2",
+    "target": {
+      "slot": "c32"
+    },
+    "level": 2,
+    "text": "Pièce utile : le portrait de L'Écho du 15 octobre 1977.",
+    "availableWhen": {
+      "unlocked": "ph-13"
+    }
+  },
+  {
+    "id": "c32-3",
+    "target": {
+      "slot": "c32"
+    },
+    "level": 3,
+    "text": "« Présidente du Comptoir » ; la broche d'ambre à l'insecte.",
+    "availableWhen": {
+      "unlocked": "ph-13"
+    }
+  },
+  {
+    "id": "g-matrice-1",
+    "target": {
+      "group": "g-matrice"
+    },
+    "level": 1,
+    "text": "Les quatre chefs ont fait leur marque sur la même pièce.",
+    "availableWhen": {
+      "unlocked": "of-02"
+    }
+  },
+  {
+    "id": "g-matrice-2",
+    "target": {
+      "group": "g-matrice"
+    },
+    "level": 2,
+    "text": "Pièce utile : l'extrait de la matrice de 1868.",
+    "availableWhen": {
+      "unlocked": "of-02"
+    }
+  },
+  {
+    "id": "g-matrice-3",
+    "target": {
+      "group": "g-matrice"
+    },
+    "level": 3,
+    "text": "« A fait sa marque » : la tête seule, le pied lisse.",
+    "availableWhen": {
+      "unlocked": "of-02"
+    }
+  },
+  {
+    "id": "g-oyard-1",
+    "target": {
+      "group": "g-oyard"
+    },
+    "level": 1,
+    "text": "Une maison, l'Œil : le chef de 1868, ses descendants, et une épouse venue d'ailleurs.",
+    "availableWhen": {
+      "unlocked": "bd-01"
+    }
+  },
+  {
+    "id": "g-oyard-2",
+    "target": {
+      "group": "g-oyard"
+    },
+    "level": 2,
+    "text": "Pièce utile : la bande « Les marques ».",
+    "availableWhen": {
+      "unlocked": "bd-01"
+    }
+  },
+  {
+    "id": "g-oyard-3",
+    "target": {
+      "group": "g-oyard"
+    },
+    "level": 3,
+    "text": "Une entaille à gauche pour l'aîné, deux pour l'aîné de l'aîné ; une fille se signe d'un grain.",
+    "availableWhen": {
+      "unlocked": "of-05"
+    }
+  },
+  {
+    "id": "g-talons-1",
+    "target": {
+      "group": "g-talons"
+    },
+    "level": 1,
+    "text": "Une épouse garde la marque de son mari ; regardez sous le pied.",
+    "availableWhen": {
+      "unlocked": "of-05"
+    }
+  },
+  {
+    "id": "g-talons-2",
+    "target": {
+      "group": "g-talons"
+    },
+    "level": 2,
+    "text": "Pièce utile : la grammaire des marques, planche I du carnet.",
+    "availableWhen": {
+      "unlocked": "of-05"
+    }
+  },
+  {
+    "id": "g-talons-3",
+    "target": {
+      "group": "g-talons"
+    },
+    "level": 3,
+    "text": "Le talon : une petite tête de sa maison natale.",
+    "availableWhen": {
+      "unlocked": "of-05"
+    }
+  },
+  {
+    "id": "g-ecole-1",
+    "target": {
+      "group": "g-ecole"
+    },
+    "level": 1,
+    "text": "L'école et le feu : une institutrice, un gardien, et la sœur du gardien.",
+    "availableWhen": {
+      "unlocked": "of-07"
+    }
+  },
+  {
+    "id": "g-ecole-2",
+    "target": {
+      "group": "g-ecole"
+    },
+    "level": 2,
+    "text": "Pièce utile : la lettre de Mme Sollier.",
+    "availableWhen": {
+      "unlocked": "of-07"
+    }
+  },
+  {
+    "id": "g-ecole-3",
+    "target": {
+      "group": "g-ecole"
+    },
+    "level": 3,
+    "text": "Le feu de Longuegrève n'est pas un phare.",
+    "availableWhen": {
+      "unlocked": "rg-21"
+    }
+  },
+  {
+    "id": "g-goemard-1",
+    "target": {
+      "group": "g-goemard"
+    },
+    "level": 1,
+    "text": "La Fourche après 1868 : l'aîné, sa femme, son fils, sa belle-fille, son petit-fils.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "g-goemard-2",
+    "target": {
+      "group": "g-goemard"
+    },
+    "level": 2,
+    "text": "Pièce utile : les tables décennales de la section des Cabanes.",
+    "availableWhen": {
+      "unlocked": "rg-17"
+    }
+  },
+  {
+    "id": "g-goemard-3",
+    "target": {
+      "group": "g-goemard"
+    },
+    "level": 3,
+    "text": "Le fils de Josse signe ; sa marque n'est que sur un aviron.",
+    "availableWhen": {
+      "unlocked": "ph-10"
+    }
+  },
+  {
+    "id": "g-lestaud-1",
+    "target": {
+      "group": "g-lestaud"
+    },
+    "level": 1,
+    "text": "La Potence après 1868 : l'aîné, sa femme, leur fils, leur petite-fille.",
+    "availableWhen": {
+      "unlocked": "rg-05"
+    }
+  },
+  {
+    "id": "g-lestaud-2",
+    "target": {
+      "group": "g-lestaud"
+    },
+    "level": 2,
+    "text": "Pièce utile : le mariage de 1877, original et double.",
+    "availableWhen": {
+      "unlocked": "rg-09"
+    }
+  },
+  {
+    "id": "g-lestaud-3",
+    "target": {
+      "group": "g-lestaud"
+    },
+    "level": 3,
+    "text": "Une marque recopiée par un commis ne compte pas.",
+    "availableWhen": {
+      "unlocked": "rg-09"
+    }
+  },
+  {
+    "id": "g-mer-1",
+    "target": {
+      "group": "g-mer"
+    },
+    "level": 1,
+    "text": "Une marque peut porter la tête d'une maison sans en être du sang.",
+    "availableWhen": {
+      "unlocked": "of-05"
+    }
+  },
+  {
+    "id": "g-mer-2",
+    "target": {
+      "group": "g-mer"
+    },
+    "level": 2,
+    "text": "Pièce utile : la grammaire des marques, planche I du carnet.",
+    "availableWhen": {
+      "unlocked": "of-05"
+    }
+  },
+  {
+    "id": "g-mer-3",
+    "target": {
+      "group": "g-mer"
+    },
+    "level": 3,
+    "text": "« On lui barre le pied. »",
+    "availableWhen": {
+      "unlocked": "of-05"
+    }
+  },
+  {
+    "id": "g-garnaud-1",
+    "target": {
+      "group": "g-garnaud"
+    },
+    "level": 1,
+    "text": "La tête et les entailles suffisent à désigner une seule personne.",
+    "availableWhen": {
+      "any": [
+        {
+          "read": "rg-01"
+        },
+        {
+          "read": "rg-02"
+        },
+        {
+          "read": "cn-03"
+        },
+        {
+          "read": "lt-01"
+        }
+      ]
+    }
+  },
+  {
+    "id": "g-garnaud-2",
+    "target": {
+      "group": "g-garnaud"
+    },
+    "level": 2,
+    "text": "Pièce utile : le premier cahier de la copie Brémoy.",
+    "availableWhen": {
+      "unlocked": "rg-01"
+    }
+  },
+  {
+    "id": "g-garnaud-3",
+    "target": {
+      "group": "g-garnaud"
+    },
+    "level": 3,
+    "text": "« Blaise, fils de Gervais » : le puîné, entaille à droite.",
+    "availableWhen": {
+      "unlocked": "rg-01"
+    }
+  }
+]

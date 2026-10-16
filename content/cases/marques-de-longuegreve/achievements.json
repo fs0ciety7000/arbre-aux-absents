@@ -1,0 +1,605 @@
+[
+  {
+    "id": "lg-la-matrice",
+    "title": "La matrice de 1868",
+    "description": "Établir les quatre chefs de la matrice de 1868.",
+    "hidden": false,
+    "when": {
+      "groupLocked": "g-matrice"
+    }
+  },
+  {
+    "id": "lg-les-talons",
+    "title": "Les talons",
+    "description": "Établir les épouses des quatre chefs.",
+    "hidden": false,
+    "when": {
+      "groupLocked": "g-talons"
+    }
+  },
+  {
+    "id": "lg-a-mi-greve",
+    "title": "À mi-grève",
+    "description": "Établir 16 cases.",
+    "hidden": false,
+    "when": {
+      "lockedCount": {
+        "gte": 16
+      }
+    }
+  },
+  {
+    "id": "lg-quatre-maisons",
+    "title": "Les quatre maisons",
+    "description": "Établir les 32 cases.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "groupLocked": "g-matrice"
+        },
+        {
+          "groupLocked": "g-oyard"
+        },
+        {
+          "groupLocked": "g-talons"
+        },
+        {
+          "groupLocked": "g-ecole"
+        },
+        {
+          "groupLocked": "g-goemard"
+        },
+        {
+          "groupLocked": "g-lestaud"
+        },
+        {
+          "groupLocked": "g-mer"
+        },
+        {
+          "groupLocked": "g-garnaud"
+        }
+      ]
+    }
+  },
+  {
+    "id": "lg-l-enfant-de-mer",
+    "title": "L'enfant de mer",
+    "description": "Établir le groupe de l'enfant de mer.",
+    "hidden": true,
+    "when": {
+      "groupLocked": "g-mer"
+    }
+  },
+  {
+    "id": "lg-le-fils-parti",
+    "title": "Le fils parti",
+    "description": "Établir le groupe du fils parti.",
+    "hidden": true,
+    "when": {
+      "groupLocked": "g-garnaud"
+    }
+  },
+  {
+    "id": "lg-l-ecole-et-le-feu",
+    "title": "L'école et le feu",
+    "description": "Établir le groupe de l'école et du feu.",
+    "hidden": false,
+    "when": {
+      "groupLocked": "g-ecole"
+    }
+  },
+  {
+    "id": "lg-pas-de-fievre",
+    "title": "Pas de fièvre",
+    "description": "Découvrir le secret de la fièvre de papier.",
+    "hidden": true,
+    "when": {
+      "secret": "s1-fievre-de-papier"
+    }
+  },
+  {
+    "id": "lg-le-coffre-108",
+    "title": "Le coffre 108",
+    "description": "Découvrir le secret des quatre coffrets.",
+    "hidden": true,
+    "when": {
+      "secret": "s2-quatre-coffrets"
+    }
+  },
+  {
+    "id": "lg-devant-dieu",
+    "title": "Son fils devant Dieu",
+    "description": "Découvrir le secret du testament de grève.",
+    "hidden": true,
+    "when": {
+      "secret": "s3-testament-de-greve"
+    }
+  },
+  {
+    "id": "lg-j-ai-pris-pour-j",
+    "title": "J'ai pris pour J.",
+    "description": "Découvrir le secret du fils banni.",
+    "hidden": true,
+    "when": {
+      "secret": "s4-fils-banni"
+    }
+  },
+  {
+    "id": "lg-tous-les-secrets",
+    "title": "Ce que l'ambre garde",
+    "description": "Découvrir les quatre secrets du dossier.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "secret": "s1-fievre-de-papier"
+        },
+        {
+          "secret": "s2-quatre-coffrets"
+        },
+        {
+          "secret": "s3-testament-de-greve"
+        },
+        {
+          "secret": "s4-fils-banni"
+        }
+      ]
+    }
+  },
+  {
+    "id": "lg-lire-la-greve",
+    "title": "Lire la grève",
+    "description": "Chercher au Lecteur une marque qu'aucune pièce n'écrit.",
+    "hidden": true,
+    "when": {
+      "searched": "y-d"
+    }
+  },
+  {
+    "id": "lg-toutes-les-bandes",
+    "title": "La dernière voix",
+    "description": "Lire les sept bandes de l'enquête de 1964.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "read": "bd-01"
+        },
+        {
+          "read": "bd-02"
+        },
+        {
+          "read": "bd-03"
+        },
+        {
+          "read": "bd-04"
+        },
+        {
+          "read": "bd-05"
+        },
+        {
+          "read": "bd-06"
+        },
+        {
+          "read": "bd-07"
+        }
+      ]
+    }
+  },
+  {
+    "id": "lg-trois-tampons",
+    "title": "Trois tampons",
+    "description": "Voir une fin pour chacune des trois décisions.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "endingReached": "f1-les-quatre-lanieres"
+        },
+        {
+          "endingReached": "f2-la-fievre-de-papier"
+        },
+        {
+          "any": [
+            {
+              "endingReached": "f3-l-ambre-garde"
+            },
+            {
+              "endingReached": "f4-l-indemnite"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "lg-les-quatre-lanieres",
+    "title": "Les quatre lanières",
+    "description": "Rendre l'île aux quatre maisons.",
+    "hidden": true,
+    "when": {
+      "endingReached": "f1-les-quatre-lanieres"
+    }
+  },
+  {
+    "id": "lg-epilogue",
+    "title": "Nous avons fait nos marques",
+    "description": "Atteindre l'épilogue du dossier 77-0874.",
+    "hidden": false,
+    "when": {
+      "read": "ep-01"
+    }
+  },
+  {
+    "id": "lg-tout-lu",
+    "title": "Tout le dossier",
+    "description": "Lire toutes les pièces du dossier.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "read": "an-01"
+        },
+        {
+          "read": "an-02"
+        },
+        {
+          "read": "bd-01"
+        },
+        {
+          "read": "bd-02"
+        },
+        {
+          "read": "bd-03"
+        },
+        {
+          "read": "bd-04"
+        },
+        {
+          "read": "bd-05"
+        },
+        {
+          "read": "bd-06"
+        },
+        {
+          "read": "bd-07"
+        },
+        {
+          "read": "cn-01"
+        },
+        {
+          "read": "cn-02"
+        },
+        {
+          "read": "cn-03"
+        },
+        {
+          "read": "cp-01"
+        },
+        {
+          "read": "cp-02"
+        },
+        {
+          "read": "ct-01"
+        },
+        {
+          "read": "dv-01"
+        },
+        {
+          "read": "dv-02"
+        },
+        {
+          "read": "ex-01"
+        },
+        {
+          "read": "ex-02"
+        },
+        {
+          "read": "lt-01"
+        },
+        {
+          "read": "lt-02"
+        },
+        {
+          "read": "lt-03"
+        },
+        {
+          "read": "lt-04"
+        },
+        {
+          "read": "lt-05"
+        },
+        {
+          "read": "lt-06"
+        },
+        {
+          "read": "lt-07"
+        },
+        {
+          "read": "lt-08"
+        },
+        {
+          "read": "lt-09"
+        },
+        {
+          "read": "ob-01"
+        },
+        {
+          "read": "ob-02"
+        },
+        {
+          "read": "ob-03"
+        },
+        {
+          "read": "ob-04"
+        },
+        {
+          "read": "ob-05"
+        },
+        {
+          "read": "of-01"
+        },
+        {
+          "read": "of-02"
+        },
+        {
+          "read": "of-03"
+        },
+        {
+          "read": "of-04"
+        },
+        {
+          "read": "of-05"
+        },
+        {
+          "read": "of-06"
+        },
+        {
+          "read": "of-07"
+        },
+        {
+          "read": "of-08"
+        },
+        {
+          "read": "pb-01"
+        },
+        {
+          "read": "pb-02"
+        },
+        {
+          "read": "ph-01"
+        },
+        {
+          "read": "ph-02"
+        },
+        {
+          "read": "ph-03"
+        },
+        {
+          "read": "ph-04"
+        },
+        {
+          "read": "ph-05"
+        },
+        {
+          "read": "ph-06"
+        },
+        {
+          "read": "ph-07"
+        },
+        {
+          "read": "ph-08"
+        },
+        {
+          "read": "ph-09"
+        },
+        {
+          "read": "ph-10"
+        },
+        {
+          "read": "ph-11"
+        },
+        {
+          "read": "ph-12"
+        },
+        {
+          "read": "ph-13"
+        },
+        {
+          "read": "ph-14"
+        },
+        {
+          "read": "ph-15"
+        },
+        {
+          "read": "ph-16"
+        },
+        {
+          "read": "ph-17"
+        },
+        {
+          "read": "ph-18"
+        },
+        {
+          "read": "pr-01"
+        },
+        {
+          "read": "pr-02"
+        },
+        {
+          "read": "pr-03"
+        },
+        {
+          "read": "pr-04"
+        },
+        {
+          "read": "pr-05"
+        },
+        {
+          "read": "pr-06"
+        },
+        {
+          "read": "pr-07"
+        },
+        {
+          "read": "pr-08"
+        },
+        {
+          "read": "pv-01"
+        },
+        {
+          "read": "pv-02"
+        },
+        {
+          "read": "pv-03"
+        },
+        {
+          "read": "pv-04"
+        },
+        {
+          "read": "pv-05"
+        },
+        {
+          "read": "pv-06"
+        },
+        {
+          "read": "rg-01"
+        },
+        {
+          "read": "rg-02"
+        },
+        {
+          "read": "rg-03"
+        },
+        {
+          "read": "rg-04"
+        },
+        {
+          "read": "rg-05"
+        },
+        {
+          "read": "rg-06"
+        },
+        {
+          "read": "rg-07"
+        },
+        {
+          "read": "rg-08"
+        },
+        {
+          "read": "rg-09"
+        },
+        {
+          "read": "rg-10"
+        },
+        {
+          "read": "rg-11"
+        },
+        {
+          "read": "rg-12"
+        },
+        {
+          "read": "rg-13"
+        },
+        {
+          "read": "rg-14"
+        },
+        {
+          "read": "rg-15"
+        },
+        {
+          "read": "rg-16"
+        },
+        {
+          "read": "rg-17"
+        },
+        {
+          "read": "rg-18"
+        },
+        {
+          "read": "rg-19"
+        },
+        {
+          "read": "rg-20"
+        },
+        {
+          "read": "rg-21"
+        },
+        {
+          "read": "rg-22"
+        },
+        {
+          "read": "rg-23"
+        },
+        {
+          "read": "rg-24"
+        },
+        {
+          "read": "rp-01"
+        },
+        {
+          "read": "rp-02"
+        },
+        {
+          "read": "rp-03"
+        },
+        {
+          "read": "rp-04"
+        },
+        {
+          "read": "rp-05"
+        },
+        {
+          "read": "rp-06"
+        },
+        {
+          "read": "rp-07"
+        },
+        {
+          "read": "rp-08"
+        },
+        {
+          "read": "rp-09"
+        },
+        {
+          "read": "tg-01"
+        }
+      ]
+    }
+  },
+  {
+    "id": "lg-le-golfe",
+    "title": "Le golfe d'Ambre",
+    "description": "Ouvrir Longuegrève et les Cabanes d'Ambre sur la carte.",
+    "hidden": false,
+    "when": {
+      "all": [
+        {
+          "visited": "longuegreve"
+        },
+        {
+          "visited": "cabanes-d-ambre"
+        }
+      ]
+    }
+  },
+  {
+    "id": "lg-contre-la-montre",
+    "title": "Contre la marée",
+    "description": "Remettre le rapport en moins de trois heures.",
+    "hidden": false,
+    "when": {
+      "timedUnderMs": 10800000
+    }
+  },
+  {
+    "id": "lg-archiviste-eclair",
+    "title": "Coup d'ouest",
+    "description": "Remettre le rapport en moins de 95 minutes.",
+    "hidden": false,
+    "when": {
+      "timedUnderMs": 5700000
+    }
+  }
+]

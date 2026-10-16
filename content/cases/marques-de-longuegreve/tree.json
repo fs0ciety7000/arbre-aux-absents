@@ -1,0 +1,321 @@
+{
+  "slots": [
+    {
+      "id": "c01",
+      "person": "gervais-goemard",
+      "generation": 1,
+      "column": 2,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c02",
+      "person": "perrine-oyard",
+      "generation": 1,
+      "column": 3,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c03",
+      "person": "clovis-oyard",
+      "generation": 1,
+      "column": 7,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c04",
+      "person": "toinette-cormaud",
+      "generation": 1,
+      "column": 8,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c05",
+      "person": "simeon-cormaud",
+      "generation": 1,
+      "column": 11,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c06",
+      "person": "ursule-lestaud",
+      "generation": 1,
+      "column": 12,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c07",
+      "person": "lubin-lestaud",
+      "generation": 1,
+      "column": 15,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c08",
+      "person": "apolline-goemard",
+      "generation": 1,
+      "column": 16,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c09",
+      "person": "josse-goemard",
+      "generation": 2,
+      "column": 2,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c10",
+      "person": "reine-lestaud",
+      "generation": 2,
+      "column": 3,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c11",
+      "person": "jacquette-goemard",
+      "generation": 2,
+      "column": 5,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c12",
+      "person": "medard-oyard",
+      "generation": 2,
+      "column": 6,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c13",
+      "person": "blaise-goemard",
+      "generation": 2,
+      "column": 1,
+      "portraitKind": "mark",
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-01"
+          },
+          {
+            "read": "rg-02"
+          },
+          {
+            "read": "cn-03"
+          },
+          {
+            "read": "lt-01"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c14",
+      "person": "amelie-ferlay",
+      "generation": 2,
+      "column": 0,
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-13"
+          },
+          {
+            "read": "ph-15"
+          },
+          {
+            "read": "ex-01"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c15",
+      "person": "ernestine-oyard",
+      "generation": 2,
+      "column": 8,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c16",
+      "person": "fulbert-lestaud",
+      "generation": 2,
+      "column": 9,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c17",
+      "person": "benoit-lestaud",
+      "generation": 2,
+      "column": 14,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c18",
+      "person": "sidonie-bremoy",
+      "generation": 2,
+      "column": 15
+    },
+    {
+      "id": "c19",
+      "person": "noel-cormaud",
+      "generation": 2,
+      "column": 11,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c20",
+      "person": "honorine-lestaud",
+      "generation": 2,
+      "column": 12,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c21",
+      "person": "gatien-goemard",
+      "generation": 3,
+      "column": 2
+    },
+    {
+      "id": "c22",
+      "person": "leontine-sauvat",
+      "generation": 3,
+      "column": 3
+    },
+    {
+      "id": "c23",
+      "person": "elzear-oyard",
+      "generation": 3,
+      "column": 5,
+      "portraitKind": "mark"
+    },
+    {
+      "id": "c24",
+      "person": "victoire-oyard",
+      "generation": 3,
+      "column": 6,
+      "prefilled": true
+    },
+    {
+      "id": "c25",
+      "person": "lazare-cormaud",
+      "generation": 3,
+      "column": 7
+    },
+    {
+      "id": "c26",
+      "person": "clement-lestaud",
+      "generation": 3,
+      "column": 9
+    },
+    {
+      "id": "c27",
+      "person": "leandre-garnaud",
+      "generation": 3,
+      "column": 1,
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-13"
+          },
+          {
+            "read": "ph-15"
+          },
+          {
+            "read": "ex-01"
+          }
+        ]
+      }
+    },
+    {
+      "id": "c28",
+      "person": "felix-goemard",
+      "generation": 4,
+      "column": 2
+    },
+    {
+      "id": "c29",
+      "person": "rose-oyard",
+      "generation": 4,
+      "column": 5
+    },
+    {
+      "id": "c30",
+      "person": "marin-cormaud",
+      "generation": 4,
+      "column": 6
+    },
+    {
+      "id": "c31",
+      "person": "aline-lestaud",
+      "generation": 4,
+      "column": 9
+    },
+    {
+      "id": "c32",
+      "person": "edmee-garnaud",
+      "generation": 4,
+      "column": 1,
+      "revealedBy": {
+        "any": [
+          {
+            "read": "rg-13"
+          },
+          {
+            "read": "ph-15"
+          },
+          {
+            "read": "ex-01"
+          }
+        ]
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "g-matrice",
+      "label": "Les quatre de 1868",
+      "slots": ["c01", "c03", "c05", "c07"],
+      "threshold": 3
+    },
+    {
+      "id": "g-oyard",
+      "label": "L'Œil",
+      "slots": ["c11", "c12", "c23", "c29"],
+      "threshold": 3
+    },
+    {
+      "id": "g-talons",
+      "label": "Les talons",
+      "slots": ["c02", "c04", "c06", "c08"],
+      "threshold": 3
+    },
+    {
+      "id": "g-ecole",
+      "label": "L'école et le feu",
+      "slots": ["c17", "c18", "c20"],
+      "threshold": 3
+    },
+    {
+      "id": "g-goemard",
+      "label": "La Fourche",
+      "slots": ["c09", "c10", "c21", "c22", "c28"],
+      "threshold": 3
+    },
+    {
+      "id": "g-lestaud",
+      "label": "La Potence",
+      "slots": ["c15", "c16", "c26", "c31"],
+      "threshold": 3
+    },
+    {
+      "id": "g-mer",
+      "label": "L'enfant de mer",
+      "slots": ["c19", "c25", "c30"],
+      "threshold": 3
+    },
+    {
+      "id": "g-garnaud",
+      "label": "Le fils parti",
+      "slots": ["c13", "c14", "c27", "c32"],
+      "threshold": 3
+    }
+  ]
+}
