@@ -41,7 +41,12 @@ export type Action =
   /** Borné à [0, 5000]. */
   | { type: 'tick'; deltaMs: number }
   | { type: 'answer'; question: string; option: string; at: number }
-  | { type: 'finish'; at: number };
+  | { type: 'finish'; at: number }
+  /**
+   * Après le dénouement : rouvre le rapport final pour en remettre un autre (autre fin). La fin
+   * remise reste dans `reports` ; `ending` redevient null, les réponses restent modifiables.
+   */
+  | { type: 'reopenReport'; at: number };
 
 export type ActionType = Action['type'];
 

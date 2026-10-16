@@ -5,6 +5,7 @@
   import { Button, DymoLabel, Icon, IconButton, Wordmark } from '@arbre/ui';
   import { getApp } from '../lib/game/context';
   import { formatClock } from '../lib/game/format';
+  import { formatDelta } from '../lib/game/replay';
   import type { GameStoreImpl } from '../lib/game/store.svelte';
   import { viewport } from '../lib/game/viewport.svelte';
   import { messages } from '../messages.fr';
@@ -28,6 +29,9 @@
   const phone = $derived(viewport.single);
   const wide = $derived(viewport.kind === 'desktop');
   const showTimer = $derived(game.state.mode === 'timed' || game.settings.showTimer);
+  /** Mode chronométré : meilleur temps à battre (début de partie) et écart du dernier fractionné. */
+  const best = $derived(game.state.mode === 'timed' ? game.bestAtStart?.bestTimedMs : undefined);
+  const lastDelta = $derived(game.state.mode === 'timed' ? game.lastDelta : null);
 
   /** Dispositions du Bureau (DESIGN §5.3) : Enquête, Lecture, Arbre ; Alt+1/2/3. */
   const LAYOUT_ICONS = { investigate: 'layers', read: 'reader', tree: 'tree' } as const;
@@ -73,6 +77,25 @@
       <span class="counter num timer" role="timer" aria-label={m.timer}
         ><Icon name="clock" size="1.1rem" />{formatClock(game.state.elapsedMs)}</span
       >
+      {#if lastDelta !== null}
+        {@const d = formatDelta(lastDelta, formatClock)}
+        <span
+          class="counter num delta"
+          class:ahead={lastDelta < 0}
+          title={m.timerDeltaLabel(d)}
+          data-testid="split-delta"
+          ><span aria-hidden="true">{d}</span><span class="visually-hidden"
+            >{m.timerDeltaLabel(d)}</span
+          ></span
+        >
+      {/if}
+      {#if best !== undefined && !phone}
+        <span class="counter num best" title={m.timerBestLabel(formatClock(best))}
+          ><span aria-hidden="true">{m.timerBest(formatClock(best))}</span><span
+            class="visually-hidden">{m.timerBestLabel(formatClock(best))}</span
+          ></span
+        >
+      {/if}
     {/if}
   </div>
   <div class="actions">
@@ -91,7 +114,21 @@
         {/each}
       </div>
     {/if}
-    {#if game.reportAvailable}
+    {#if game.reportRedoable}
+      <!-- Après le dénouement : remettre un autre rapport (autre fin, GAME_DESIGN §13.2). -->
+      {#if phone}
+        <IconButton
+          icon="stamp"
+          variant="ghost"
+          label={m.redoReport}
+          onclick={() => game.reopenReport()}
+        />
+      {:else}
+        <Button variant="ghost" iconName="stamp" onclick={() => game.reopenReport()}
+          >{m.redoReport}</Button
+        >
+      {/if}
+    {:else if game.reportAvailable}
       {#if phone}
         <IconButton
           icon="stamp"
@@ -212,6 +249,13 @@
   }
   .timer {
     color: var(--text);
+  }
+  /* Mode chronométré : écart au meilleur temps (en avance : vert ; le signe porte le sens). */
+  .delta.ahead {
+    color: var(--success);
+  }
+  .best {
+    font-size: var(--step--1);
   }
   .actions {
     display: flex;

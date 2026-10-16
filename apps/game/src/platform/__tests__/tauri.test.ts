@@ -281,6 +281,25 @@ describe('tauri : secours par affaire (AFFAIRE-2 §2.3)', () => {
     await expect(store.load('auto', '../../etc')).rejects.toMatchObject({ code: 'not-found' });
   });
 
+  it('partie chronométrée : un fichier par affaire, à côté du secours', async () => {
+    const store = createTauriSaveStore();
+    const timed = makeSave('timed', { caseId: 'deuxieme-affaire', mode: 'timed', updatedAt: 5000 });
+    await store.save('auto', one);
+    await store.save('timed', timed);
+    expect(fsState.files.has('saves/timed.deuxieme-affaire.json')).toBe(true);
+    expect(fsState.files.has('saves/timed.deuxieme-affaire.summary.json')).toBe(true);
+    expect(await store.load('timed', 'deuxieme-affaire')).toEqual(timed);
+    expect(await store.load('timed')).toEqual(timed);
+    expect(await store.load('timed', 'succession-varenque')).toBeNull();
+    expect((await store.list()).map((s) => [s.slot, s.caseId])).toEqual([
+      ['auto', 'succession-varenque'],
+      ['timed', 'deuxieme-affaire'],
+    ]);
+    await store.remove('timed', 'deuxieme-affaire');
+    expect(await store.load('timed', 'deuxieme-affaire')).toBeNull();
+    expect(await store.load('auto', 'succession-varenque')).toEqual(one);
+  });
+
   it('ancien auto.json migré sous son affaire, sans perte, au premier accès', async () => {
     fsState.dirs.add('saves');
     fsState.files.set('saves/auto.json', JSON.stringify(one));

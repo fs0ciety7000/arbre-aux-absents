@@ -11,7 +11,13 @@
     TUTORIAL_MODES,
     type TutorialMode,
   } from '../tutorial/tutorial.svelte';
-  import { caseStatus, defaultCaseId } from '../lib/game/case-folders';
+  import {
+    caseDuration,
+    caseStatus,
+    defaultCaseId,
+    lastEndingTitle,
+  } from '../lib/game/case-folders';
+  import { formatClock } from '../lib/game/format';
 
   /**
    * E04 : affaire (une chemise par affaire, AFFAIRE-2 §2.1), mode, préréglage d'aide, notes de
@@ -30,8 +36,9 @@
   const firstFree = SLOTS.find((s) => !app.saves.some((x) => x.slot === s)) ?? 'slot-1';
   const initialPreset = app.settings.hints.preset;
 
-  // Affaires déjà triées (`order`, content-tools) ; par défaut la dernière jouée, sinon la première.
-  let caseId = $state(defaultCaseId(app.cases, app.saves));
+  // Affaires déjà triées (`order`, content-tools) ; par défaut la plus ancienne jamais commencée,
+  // sinon la dernière jouée (AFFAIRE-2 §2.1).
+  let caseId = $state(defaultCaseId(app.cases, app.saves, app.profile));
   let mode = $state<string>('standard');
   let preset = $state(String(initialPreset === 'custom' ? 1 : initialPreset));
   let tutorialMode = $state<string>(defaultTutorialMode(app.profile));
@@ -41,7 +48,11 @@
 
   const entry = $derived(app.findCase(caseId));
   const timedOk = $derived(entry ? app.timedUnlocked(entry.content.id) : false);
-  const occupied = $derived(app.saves.find((s) => s.slot === slot));
+  const timedMode = $derived(timedOk && mode === 'timed');
+  /** Mode chronométré : emplacement dédié de l'affaire (GAME_DESIGN §13.4), pas de choix. */
+  const timedSave = $derived(timedMode ? app.timedSave(caseId) : undefined);
+  const timedBest = $derived(app.profile.completed[caseId]?.bestTimedMs);
+  const occupied = $derived(timedMode ? timedSave : app.saves.find((s) => s.slot === slot));
 
   const modeOptions = $derived([
     { value: 'standard', label: m.modeStandard },
@@ -116,8 +127,13 @@
             checked={caseId === c.content.id}
             onselect={(v) => (caseId = v)}
             title={c.fixture ? m.devFixture : c.content.meta.title}
-            cote={c.content.edition === 'demo' ? m.edition('demo') : undefined}
+            cote={c.content.edition === 'demo'
+              ? m.edition('demo')
+              : c.content.meta.cote && messages.desk.cote(c.content.meta.cote)}
+            duration={caseDuration(c.content)}
             status={caseStatus(c.content, app.saves, app.profile)}
+            decision={lastEndingTitle(c.content, app.profile)}
+            decisionLabel={m.lastEnding}
             deal={i}
           />
         {/each}
@@ -150,7 +166,14 @@
         bind:value={tutorialMode}
         hint={m.tutorialHints[tutorialMode as TutorialMode]}
       />
-      <Select label={m.slotLabel} options={slotOptions} bind:value={slot} />
+      {#if timedMode}
+        <p class="note timed" data-testid="timed-slot">
+          {timedSave ? m.timedSlotUsed(formatClock(timedSave.elapsedMs)) : m.timedSlot}
+          {#if timedBest !== undefined}{m.timedBest(formatClock(timedBest))}{/if}
+        </p>
+      {:else}
+        <Select label={m.slotLabel} options={slotOptions} bind:value={slot} />
+      {/if}
       <div class="submit">
         <Button type="submit" variant="primary" size="l" iconName="forward" loading={starting}
           >{m.start}</Button
@@ -179,6 +202,9 @@
   .muted,
   .note {
     color: var(--text-muted);
+  }
+  .note.timed {
+    margin-block-start: 0;
   }
   .note {
     display: flex;

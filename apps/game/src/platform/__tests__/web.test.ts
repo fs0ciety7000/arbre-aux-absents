@@ -106,6 +106,22 @@ describe('web : repli localStorage', () => {
     expect((await p.saves.list())[0]?.slot).toBe('slot-2');
   });
 
+  it('partie chronométrée : une clé par affaire, sans toucher au secours', async () => {
+    const ls = new FakeStorage();
+    const p = await createWebPlatform(base({ indexedDB: null, localStorage: ls }));
+    const backup = makeSave('auto');
+    const timed = makeSave('timed', { mode: 'timed' });
+    await p.saves.save('auto', backup);
+    await p.saves.save('timed', timed);
+    expect(ls.getItem(`${LS_PREFIX}save:timed:affaire-test`)).toBe(JSON.stringify(timed));
+    expect(await p.saves.load('timed', 'affaire-test')).toEqual(timed);
+    expect(await p.saves.load('auto', 'affaire-test')).toEqual(backup);
+    expect((await p.saves.list()).map((x) => x.slot)).toEqual(['auto', 'timed']);
+    await p.saves.remove('timed', 'affaire-test');
+    expect(await p.saves.load('timed', 'affaire-test')).toBeNull();
+    expect(await p.saves.load('auto', 'affaire-test')).toEqual(backup);
+  });
+
   it('quota dépassé : erreur storage et état précédent restauré', async () => {
     const ls = new FakeStorage(4000);
     const p = await createWebPlatform(base({ indexedDB: null, localStorage: ls }));

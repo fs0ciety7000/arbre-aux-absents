@@ -3,6 +3,7 @@ import type {
   CaseId,
   DocumentId,
   EndingId,
+  GroupId,
   HintId,
   KeywordId,
   OccupationId,
@@ -15,8 +16,21 @@ import { IdSchema, MsSchema } from './ids';
 import type { Locale } from './i18n';
 import { LocaleSchema } from './i18n';
 
-export const SAVE_SLOT_IDS = ['auto', 'slot-1', 'slot-2', 'slot-3'] as const;
+export const SAVE_SLOT_IDS = ['auto', 'slot-1', 'slot-2', 'slot-3', 'timed'] as const;
 export type SaveSlotId = (typeof SAVE_SLOT_IDS)[number];
+/** Emplacements manuels (communs à toutes les affaires). */
+export const MANUAL_SLOT_IDS = ['slot-1', 'slot-2', 'slot-3'] as const;
+/**
+ * Emplacements propres à chaque affaire (un exemplaire par affaire, rangé par la plateforme sous
+ * `caseId`) : le secours automatique et la partie chronométrée (GAME_DESIGN §13.4).
+ */
+export const CASE_SLOT_IDS = ['auto', 'timed'] as const;
+export type CaseSlotId = (typeof CASE_SLOT_IDS)[number];
+
+/** Vrai pour un emplacement rangé par affaire (`auto`, `timed`). */
+export function isCaseSlot(slot: SaveSlotId): slot is CaseSlotId {
+  return (CASE_SLOT_IDS as readonly string[]).includes(slot);
+}
 
 export const GAME_MODES = ['standard', 'timed'] as const;
 export type GameMode = (typeof GAME_MODES)[number];
@@ -31,6 +45,8 @@ export const SAVE_LIMITS = {
   noteText: 2000,
   /** Longueur maximale d'une requête de recherche conservée. */
   query: 200,
+  /** Rapports remis conservés (les plus récents). */
+  reports: 20,
 } as const;
 
 export interface SlotGuess {
@@ -81,6 +97,33 @@ export interface Notebook {
   notes: Note[];
 }
 
+/** Fractionné du mode chronométré : temps de jeu à l'établissement complet d'un groupe. */
+export interface TimedSplit {
+  group: GroupId;
+  elapsedMs: number;
+}
+
+/** Rapport final remis (une entrée par `finish`, dans l'ordre). */
+export interface SubmittedReport {
+  ending: EndingId;
+  /** Réponses du rapport au moment de la remise : question → option. */
+  answers: Record<string, string>;
+  at: number;
+  elapsedMs: number;
+}
+
+/** Première contestation d'une case revendiquée (AFFAIRE-2 §1.7), pour le Journal. */
+export interface ContestedClaim {
+  at: number;
+  /** Champs retirés ou remplacés à ce moment. */
+  fields: (keyof SlotGuess)[];
+}
+
+/**
+ * Partie. Les champs facultatifs (`endedMs`, `reports`, `splits`, `contested`) sont venus après la
+ * 1.5.0 : absents des sauvegardes antérieures et d'une partie neuve, ajoutés par le moteur au
+ * besoin ; `parseSave` déduit `endedMs` et `reports` d'une sauvegarde 1.5.0 déjà dénouée.
+ */
 export interface SaveState {
   schemaVersion: 1;
   caseId: CaseId;
@@ -106,6 +149,17 @@ export interface SaveState {
   /** Réponses au rapport final : question → option. */
   report: Record<string, string>;
   ending: EndingId | null;
+  /**
+   * Temps de jeu au **premier** dénouement : temps officiel du mode chronométré (le chrono s'y
+   * fige, même si le joueur remet un autre rapport ensuite).
+   */
+  endedMs?: number;
+  /** Rapports remis (≤ 20, les plus récents) : fins et décisions successives (Journal). */
+  reports?: SubmittedReport[];
+  /** Mode chronométré : fractionnés, un par groupe établi, dans l'ordre. */
+  splits?: TimedSplit[];
+  /** Cases revendiquées contestées (première contestation de la déclaration intacte). */
+  contested?: Record<SlotId, ContestedClaim>;
 }
 
 export interface SaveSlotSummary {
@@ -170,6 +224,25 @@ export const NotebookSchema = z.strictObject({
   notes: z.array(NoteSchema),
 });
 
+const GuessFieldSchema = z.enum(['given', 'family', 'portrait', 'occupation']);
+
+export const TimedSplitSchema = z.strictObject({
+  group: IdSchema,
+  elapsedMs: MsSchema,
+});
+
+export const SubmittedReportSchema = z.strictObject({
+  ending: IdSchema,
+  answers: z.record(IdSchema, IdSchema),
+  at: MsSchema,
+  elapsedMs: MsSchema,
+});
+
+export const ContestedClaimSchema = z.strictObject({
+  at: MsSchema,
+  fields: z.array(GuessFieldSchema).max(4),
+});
+
 export const SaveStateSchema = z.strictObject({
   schemaVersion: z.literal(1),
   caseId: IdSchema,
@@ -193,4 +266,8 @@ export const SaveStateSchema = z.strictObject({
   notebook: NotebookSchema,
   report: z.record(IdSchema, IdSchema),
   ending: IdSchema.nullable(),
+  endedMs: MsSchema.optional(),
+  reports: z.array(SubmittedReportSchema).max(SAVE_LIMITS.reports).optional(),
+  splits: z.array(TimedSplitSchema).max(200).optional(),
+  contested: z.record(IdSchema, ContestedClaimSchema).optional(),
 });

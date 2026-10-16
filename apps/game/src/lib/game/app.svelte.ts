@@ -23,7 +23,14 @@ import {
   ProfileSchema,
   REPORT_REF_LIMITS,
 } from '@arbre/contract';
-import { claimedFields, newGame, parseSave, summarize, visibleSlots } from '@arbre/engine';
+import {
+  claimedFields,
+  completeCase,
+  newGame,
+  parseSave,
+  summarize,
+  visibleSlots,
+} from '@arbre/engine';
 import { pushToast } from '@arbre/ui';
 import type { Component } from 'svelte';
 import { version as APP_VERSION } from '../../../package.json';
@@ -95,7 +102,7 @@ export const CONTENT_SCREENS: readonly ScreenId[] = [
 
 type DeskComponent = Component<{ game: GameStoreImpl }>;
 
-const SLOTS: readonly SaveSlotId[] = ['slot-1', 'slot-2', 'slot-3', 'auto'];
+const SLOTS: readonly SaveSlotId[] = ['slot-1', 'slot-2', 'slot-3', 'timed', 'auto'];
 
 /**
  * Contrôleur de l'application : écrans hors partie (E01–E09), profil et réglages,
@@ -624,7 +631,9 @@ export class AppController implements StoreHost {
     const content = await this.caseContent(req.caseId);
     if (!content) return false;
     if (req.mode !== 'timed') this.updateSettings({ hints: hintPreset(req.hintPreset) });
-    const state = newGame(content, { slot: req.slot, mode: req.mode, at: Date.now() });
+    // Mode chronométré : emplacement dédié, un par affaire (GAME_DESIGN §13.4).
+    const slot: SaveSlotId = req.mode === 'timed' ? 'timed' : req.slot;
+    const state = newGame(content, { slot, mode: req.mode, at: Date.now() });
     this.#openGame(content, state, { skipTutorial: req.skipTutorial, fresh: true });
     return true;
   }
@@ -717,20 +726,12 @@ export class AppController implements StoreHost {
   showEnding(id: EndingId): void {
     const g = this.game;
     if (g) {
+      // Fins vues, dernière fin (chemise E04), meilleur temps et ses fractionnés (§13.4).
       const caseId = g.content.id;
-      const prev = this.profile.completed[caseId] ?? { endings: [] };
-      const endings = prev.endings.includes(id) ? prev.endings : [...prev.endings, id];
-      const timed = g.state.mode === 'timed' ? g.state.elapsedMs : undefined;
-      const best =
-        timed !== undefined && (prev.bestTimedMs === undefined || timed < prev.bestTimedMs)
-          ? timed
-          : prev.bestTimedMs;
+      const done = completeCase(this.profile.completed[caseId], g.state, id);
       this.profile = {
         ...this.profile,
-        completed: {
-          ...this.profile.completed,
-          [caseId]: { endings, ...(best !== undefined && best > 0 ? { bestTimedMs: best } : {}) },
-        },
+        completed: { ...this.profile.completed, [caseId]: done },
       };
       void this.saveProfile();
     }
@@ -756,6 +757,11 @@ export class AppController implements StoreHost {
   resumeAfterEnding(): void {
     this.ending = null;
     this.screen = this.game ? 'desk' : 'title';
+  }
+
+  /** Partie chronométrée en cours d'une affaire (emplacement `timed`), s'il y en a une. */
+  timedSave(caseId: string): GameSlotSummary | undefined {
+    return this.saves.find((s) => s.slot === 'timed' && s.caseId === caseId);
   }
 
   /** Mode chronométré débloqué après un premier dénouement. */

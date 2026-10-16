@@ -9,6 +9,8 @@ import {
   SAVE_SLOT_IDS,
   SaveSlotIdSchema,
   SaveStateSchema,
+  isCaseSlot,
+  type CaseSlotId,
   type Platform,
   type SaveSlotId,
   type SaveSlotSummary,
@@ -87,7 +89,8 @@ export interface GameSlotSummary extends SaveSlotSummary {
 }
 
 /**
- * `SaveStore` du jeu : compatible avec le contrat, plus le secours par affaire.
+ * `SaveStore` du jeu : compatible avec le contrat, plus le secours et la partie chronométrée
+ * par affaire (`CASE_SLOT_IDS` ; ce qui suit vaut pour `'auto'` comme pour `'timed'`).
  * - `save('auto', s)` écrit le secours de `s.caseId` (jamais celui d'une autre affaire) ;
  * - `load` / `remove` / `exportFile` sur `'auto'` visent le secours de `caseId`, ou, sans
  *   `caseId`, le secours le plus récent (toutes affaires) ;
@@ -194,11 +197,17 @@ export function withCase(sum: SaveSlotSummary, caseId: string | null): GameSlotS
   return { ...sum, caseId };
 }
 
-/** Secours le plus récent parmi des résumés (load/remove/export de `'auto'` sans affaire). */
-export function latestBackup(list: readonly GameSlotSummary[]): string | null {
+/**
+ * Affaire de la partie la plus récente d'un emplacement propre aux affaires (load/remove/export
+ * de `'auto'` ou `'timed'` sans affaire). Défaut : le secours.
+ */
+export function latestBackup(
+  list: readonly GameSlotSummary[],
+  slot: CaseSlotId = 'auto',
+): string | null {
   let best: GameSlotSummary | null = null;
   for (const s of list) {
-    if (s.slot === 'auto' && s.caseId !== null && (!best || s.updatedAt > best.updatedAt)) best = s;
+    if (s.slot === slot && s.caseId !== null && (!best || s.updatedAt > best.updatedAt)) best = s;
   }
   return best?.caseId ?? null;
 }
@@ -281,7 +290,7 @@ export function byteLength(text: string): number {
 
 /**
  * `arbre-aux-absents-<slot>-<AAAA-MM-JJ>.json` (date locale) ; le secours d'une affaire donne
- * `arbre-aux-absents-auto-<affaire>-<AAAA-MM-JJ>.json`.
+ * `arbre-aux-absents-auto-<affaire>-<AAAA-MM-JJ>.json` (chronométrée : `timed-<affaire>`).
  */
 export function exportFileName(
   slot: SaveSlotId,
@@ -290,7 +299,7 @@ export function exportFileName(
 ): string {
   const pad = (n: number) => String(n).padStart(2, '0');
   const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-  const name = slot === 'auto' && caseId !== null ? `auto-${caseId}` : slot;
+  const name = isCaseSlot(slot) && caseId !== null ? `${slot}-${caseId}` : slot;
   return `${STORAGE_PREFIX}-${name}-${date}.json`;
 }
 

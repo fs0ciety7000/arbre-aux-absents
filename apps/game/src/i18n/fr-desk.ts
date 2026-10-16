@@ -293,6 +293,9 @@ export const frDesk = {
       locked: (names: string) => `Établi : ${names}`,
       secret: (t: string) => `Secret découvert : ${t}`,
       ending: (t: string) => `Dénouement : ${t}`,
+      /** Rapport remis (un par remise, AFFAIRE-2 §3.3) et décision du rapport. */
+      report: (t: string) => `Rapport remis : ${t}`,
+      decision: (label: string) => `Décision : ${label}`,
       /** Case revendiquée : premier champ retiré d'une déclaration intacte (AFFAIRE-2 §1.7). */
       claimContested: (fields: string) => `Déclaration contestée : ${fields.toLowerCase()}`,
       replay: 'Relire le dénouement',

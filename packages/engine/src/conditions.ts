@@ -63,7 +63,10 @@ export function evaluateAchievementCondition(
     return s.ending === cond.endingReached || (done?.endings.includes(cond.endingReached) ?? false);
   }
   if ('timedUnderMs' in cond) {
-    const current = s.mode === 'timed' && s.ending !== null && s.elapsedMs < cond.timedUnderMs;
+    // Temps officiel : temps de jeu au premier dénouement (`endedMs`, voir replay.ts).
+    const official =
+      s.mode !== 'timed' ? null : (s.endedMs ?? (s.ending !== null ? s.elapsedMs : null));
+    const current = official !== null && official < cond.timedUnderMs;
     const best = own(profile.completed, c.id)?.bestTimedMs;
     return current || (best !== undefined && best < cond.timedUnderMs);
   }

@@ -7,10 +7,19 @@
  *   emplacements manuels `slot-1` à `slot-3` ;
  * - `auto.<affaire>.json` (+ `.bak`, `auto.<affaire>.summary.json`) : secours, un par affaire
  *   (AFFAIRE-2 §2.3). L'ancien secours commun `auto.json` est rangé sous son affaire au premier accès ;
+ * - `timed.<affaire>.json` (même forme) : partie chronométrée, une par affaire ;
  * - `profile.json` (+ `.bak`) ;
  * - `*.tmp` : écriture en cours, renommée ensuite (atomique sur le même volume).
  */
-import { SAVE_SLOT_IDS, type Profile, type SaveSlotId, type SaveState } from '@arbre/contract';
+import {
+  CASE_SLOT_IDS,
+  isCaseSlot,
+  MANUAL_SLOT_IDS,
+  type CaseSlotId,
+  type Profile,
+  type SaveSlotId,
+  type SaveState,
+} from '@arbre/contract';
 import * as tauriApp from '@tauri-apps/api/app';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
@@ -71,8 +80,9 @@ const BASE = BaseDirectory.AppData;
 const jsonFilters = () => [{ name: platformStrings().saveFilter, extensions: ['json'] }];
 
 const path = (name: string) => `${SAVES_DIR}/${name}`;
-const BACKUP_FILE = /^auto\.([a-z0-9-]+)\.json(?:\.bak)?$/;
-const MANUAL_SLOTS = SAVE_SLOT_IDS.filter((s) => s !== 'auto');
+/** Fichier d'un emplacement propre aux affaires : `auto.<affaire>.json`, `timed.<affaire>.json`. */
+const caseFile = (slot: CaseSlotId) => new RegExp(`^${slot}\\.([a-z0-9-]+)\\.json(?:\\.bak)?$`);
+const MANUAL_SLOTS = MANUAL_SLOT_IDS;
 export const fileNames = {
   /** Emplacement manuel ; `save('auto')` est l'ancien secours commun (lu pour migration). */
   save: (slot: SaveSlotId) => `${slot}.json`,
@@ -80,6 +90,9 @@ export const fileNames = {
   /** Secours de l'affaire `caseId` (kebab-case : aucun point, aucun séparateur de chemin). */
   backup: (caseId: string) => `auto.${caseId}.json`,
   backupSummary: (caseId: string) => `auto.${caseId}.summary.json`,
+  /** Emplacement propre à l'affaire `caseId` (`auto` : secours ; `timed` : chronométrée). */
+  caseSave: (slot: CaseSlotId, caseId: string) => `${slot}.${caseId}.json`,
+  caseSummary: (slot: CaseSlotId, caseId: string) => `${slot}.${caseId}.summary.json`,
   profile: 'profile.json',
   bak: (name: string) => `${name}.bak`,
   tmp: (name: string) => `${name}.tmp`,
@@ -223,37 +236,43 @@ export function createTauriSaveStore(opts: TauriStoreOptions = {}): GameSaveStor
     }
   }
 
-  async function listBackups(names: Set<string>): Promise<GameSlotSummary[]> {
+  /** Parties d'un emplacement propre aux affaires (`auto` ou `timed`), une par affaire. */
+  async function listCaseSlots(slot: CaseSlotId, names: Set<string>): Promise<GameSlotSummary[]> {
+    const pattern = caseFile(slot);
     const ids = new Set<string>();
     for (const n of names) {
-      const id = BACKUP_FILE.exec(n)?.[1];
+      const id = pattern.exec(n)?.[1];
       if (id !== undefined && isCaseId(id)) ids.add(id);
     }
     const out: GameSlotSummary[] = [];
     for (const id of [...ids].sort()) {
-      const sumName = fileNames.backupSummary(id);
+      const sumName = fileNames.caseSummary(slot, id);
       const sumText = names.has(sumName) ? await readOpt(sumName).catch(() => null) : null;
-      const sum = readSummary(sumText, 'auto');
+      const sum = readSummary(sumText, slot);
       if (sum) {
         out.push(withCase(sum, id));
         continue;
       }
-      const raw = await readWithBackup(fileNames.backup(id)).catch(() => null);
+      const raw = await readWithBackup(fileNames.caseSave(slot, id)).catch(() => null);
       if (raw === null || caseIdOfRaw(raw) !== id) continue;
-      const fallback = summaryFromRaw(raw, 'auto', summarize());
+      const fallback = summaryFromRaw(raw, slot, summarize());
       if (fallback) out.push(withCase(fallback, id));
     }
     return out;
   }
 
-  /** Affaire du secours visé : `caseId` donné, sinon le secours le plus récent. */
-  async function backupCase(caseId: string | undefined, what: string): Promise<string | null> {
+  /** Affaire de l'emplacement visé : `caseId` donné, sinon la partie la plus récente. */
+  async function caseOf(
+    slot: CaseSlotId,
+    caseId: string | undefined,
+    what: string,
+  ): Promise<string | null> {
     await migrateLegacy(what);
     if (caseId !== undefined) {
       assertCaseId(caseId);
       return caseId;
     }
-    return latestBackup(await listBackups(await listNames()));
+    return latestBackup(await listCaseSlots(slot, await listNames()), slot);
   }
 
   return {
@@ -283,15 +302,15 @@ export function createTauriSaveStore(opts: TauriStoreOptions = {}): GameSaveStor
         const fallback = summaryFromRaw(raw, slot, summarize());
         if (fallback) out.push(withCase(fallback, caseIdOfRaw(raw)));
       }
-      out.push(...(await listBackups(names)));
+      for (const slot of CASE_SLOT_IDS) out.push(...(await listCaseSlots(slot, names)));
       return out;
     },
 
     async load(slot: SaveSlotId, caseId?: string): Promise<unknown | null> {
       assertSlot(slot);
-      if (slot !== 'auto') return decodeStored(await readWithBackup(fileNames.save(slot)));
-      const id = await backupCase(caseId, 'charger la partie');
-      return id === null ? null : decodeStored(await readWithBackup(fileNames.backup(id)));
+      if (!isCaseSlot(slot)) return decodeStored(await readWithBackup(fileNames.save(slot)));
+      const id = await caseOf(slot, caseId, 'charger la partie');
+      return id === null ? null : decodeStored(await readWithBackup(fileNames.caseSave(slot, id)));
     },
 
     async save(slot: SaveSlotId, s: SaveState): Promise<void> {
@@ -299,12 +318,12 @@ export function createTauriSaveStore(opts: TauriStoreOptions = {}): GameSaveStor
       const what = 'sauvegarder la partie';
       let file = fileNames.save(slot);
       let sumFile = fileNames.summary(slot);
-      if (slot === 'auto') {
-        // Le secours d'une partie va toujours sous SON affaire (AFFAIRE-2 §2.3).
+      if (isCaseSlot(slot)) {
+        // Secours et partie chronométrée vont toujours sous LEUR affaire (AFFAIRE-2 §2.3).
         assertCaseId(s.caseId);
         await migrateLegacy(what);
-        file = fileNames.backup(s.caseId);
-        sumFile = fileNames.backupSummary(s.caseId);
+        file = fileNames.caseSave(slot, s.caseId);
+        sumFile = fileNames.caseSummary(slot, s.caseId);
       }
       const text = serialize(s);
       const summary = serialize(summaryToStore(s, summarize()));
@@ -321,11 +340,11 @@ export function createTauriSaveStore(opts: TauriStoreOptions = {}): GameSaveStor
       const what = 'supprimer la partie';
       let file = fileNames.save(slot);
       let sumFile = fileNames.summary(slot);
-      if (slot === 'auto') {
-        const id = await backupCase(caseId, what);
+      if (isCaseSlot(slot)) {
+        const id = await caseOf(slot, caseId, what);
         if (id === null) return;
-        file = fileNames.backup(id);
-        sumFile = fileNames.backupSummary(id);
+        file = fileNames.caseSave(slot, id);
+        sumFile = fileNames.caseSummary(slot, id);
       }
       const names = await listNames();
       try {
@@ -339,10 +358,10 @@ export function createTauriSaveStore(opts: TauriStoreOptions = {}): GameSaveStor
       assertSlot(slot);
       let file = fileNames.save(slot);
       let id: string | null = null;
-      if (slot === 'auto') {
-        id = await backupCase(caseId, 'exporter la partie');
+      if (isCaseSlot(slot)) {
+        id = await caseOf(slot, caseId, 'exporter la partie');
         if (id === null) throw notFound();
-        file = fileNames.backup(id);
+        file = fileNames.caseSave(slot, id);
       }
       const text = await readWithBackup(file);
       if (text === null) throw notFound();

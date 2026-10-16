@@ -514,11 +514,12 @@ Débloqué quand arbre complet + tous les secrets : une courte séquence/documen
 
 ### 13.4 Mode chronométré
 
-- Débloqué après **un dénouement**. Nouvelle partie dédiée (emplacement séparé).
+- Débloqué après **un dénouement**. Nouvelle partie dédiée (emplacement séparé, un par affaire).
 - Chrono affiché mm:ss, **mis en pause** dans les menus, options et lorsque l'application passe en
-  arrière-plan. Fractionnés enregistrés à chaque verrouillage.
+  arrière-plan. Fractionnés enregistrés à chaque branche établie (§13.8).
 - Règles : aides limitées au niveau 1, pas d'import de sauvegarde. Classement **local** (10
-  meilleurs temps), pas de classement en ligne au MVP.
+  meilleurs temps), pas de classement en ligne au MVP. Mis en œuvre : meilleur temps par affaire et
+  ses fractionnés ; le classement des 10 meilleurs temps reste à faire.
 - Objectifs de temps (succès) : < 3 h, < 2 h, < 90 min (à recalibrer en playtest).
 
 ### 13.5 Nouvelle partie + (Archives annotées)
@@ -537,6 +538,32 @@ Débloquée après l'épilogue à 100 %. Même affaire, avec :
   termes découverts, requêtes (dont vides), lieux ouverts, cases établies, évaluations sans
   verrouillage, aides utilisées par niveau, secrets, fins vues, meilleurs temps chrono.
   Présentation neutre, jamais comparative ni culpabilisante.
+
+### 13.8 Rejouer une affaire : choix retenus (16/10, défauts à valider en playtest)
+
+- **Refaire le rapport** : après le dénouement, « Refaire le rapport » (écran de fin, en-tête du
+  Bureau) rouvre le rapport avec les réponses précédentes ; on peut en changer et remettre un autre
+  rapport, autant de fois qu'on veut. Chaque rapport remis reste au Journal (« Rapport remis : *fin* »,
+  « Décision : *tampon* », dénouement à relire avec **ses** réponses). Rien n'est perdu : quitter le
+  rapport rouvert laisse le bouton « Remettre le rapport » au Bureau, sans rappel automatique.
+  Bouton absent si le rapport ne pose aucune question (la fin ne dépend alors pas du joueur).
+- **Fins découvertes** : « Fins découvertes N / T » sur la chemise E04, l'écran de fin et Bonus.
+  Écran de fin : titres des fins vues, les autres en « Fin non découverte » (aucun titre, aucun
+  indice sur leur condition). La chemise porte en tampon le **titre de la dernière fin atteinte**
+  (déjà vue : rien n'est divulgué) ; le libellé des tampons de décision n'y figure pas, car l'index
+  léger d'E04 ne contient pas le rapport (il dévoilerait l'intrigue avant la partie).
+- **Mode chronométré** : un emplacement dédié **par affaire** (une partie chronométrée à la fois par
+  affaire, remplacée après confirmation) ; jamais de secours automatique pour elle. Temps officiel =
+  temps au **premier** dénouement : refaire le rapport ne change ni le temps ni le meilleur temps.
+- **Fractionnés** : un par **branche (groupe) établie**, sauvegardés. Comparaison au meilleur temps
+  **par rang** (1re branche établie contre 1re branche du record, etc.), comme un chronométrage de
+  course : l'ordre des branches varie d'une partie à l'autre, l'allure se compare. Écart affiché au
+  Bureau (à côté du chrono, avec le meilleur temps à battre), annoncé à chaque branche, et en tableau
+  dans les résultats. Le record de référence est celui du **début de la partie** ; le profil garde
+  les fractionnés du meilleur temps.
+- **Chemise E04** : cote du dossier et durée indicative lues dans `case.json` (`cote`,
+  `durationMinutes`) ; la même cote étiquette le Bureau (« ORC 74-0318 », « CRO » en anglais) ;
+  affaire choisie d'office : la plus ancienne jamais commencée, sinon la dernière jouée. Durée de l'affaire 1 : 6 h – 10 h (§12, non mesurée ; affaires 2 et 3 : level design).
 
 ---
 

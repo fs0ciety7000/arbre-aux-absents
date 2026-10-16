@@ -24,7 +24,15 @@
   {:else}
     <div class="stack">
       {#each entries as { c, done } (c.id)}
-        <Card variant="index" title={c.meta.title} kicker={m.endingsSeen} deal={0}>
+        <Card
+          variant="index"
+          title={c.meta.title}
+          kicker={m.endingsSeen(
+            (done?.endings ?? []).filter((e) => e in c.endings).length,
+            Object.keys(c.endings).length,
+          )}
+          deal={0}
+        >
           <ul>
             {#each done?.endings ?? [] as id (id)}
               <li>{c.endings[id]?.title ?? id}</li>

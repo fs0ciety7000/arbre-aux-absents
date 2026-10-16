@@ -8,8 +8,9 @@
   import ScreenFrame from './ScreenFrame.svelte';
 
   /**
-   * E03 : 3 emplacements (communs) + un secours par affaire (AFFAIRE-2 §2.3) ; Charger, Effacer
-   * (confirmation), Exporter, Importer.
+   * E03 : 3 emplacements (communs) + un secours par affaire (AFFAIRE-2 §2.3) + une partie
+   * chronométrée par affaire (GAME_DESIGN §13.4) ; Charger, Effacer (confirmation), Exporter,
+   * Importer.
    */
   const app = getApp();
   const m = messages.slots;
@@ -32,12 +33,21 @@
   let importError = $state<string | null>(null);
 
   const backups = $derived(app.saves.filter((s) => s.slot === 'auto' && s.caseId !== null));
+  const timed = $derived(app.saves.filter((s) => s.slot === 'timed' && s.caseId !== null));
   const rows = $derived<Row[]>([
     ...MANUAL.map((slot) => {
       const save = app.saves.find((s) => s.slot === slot);
       // Emplacement manuel : son affaire vient du résumé (association par id, jamais par titre).
       return { key: slot, slot, caseId: save?.caseId ?? null, title: m.slotName(slot), save };
     }),
+    // Parties chronométrées : une par affaire, seulement si elles existent.
+    ...timed.map((s) => ({
+      key: `timed:${s.caseId}`,
+      slot: 'timed' as const,
+      caseId: s.caseId,
+      title: m.timedName(app.caseTitleOf(s)),
+      save: s,
+    })),
     ...(backups.length > 0
       ? backups.map((s) => ({
           key: `auto:${s.caseId}`,

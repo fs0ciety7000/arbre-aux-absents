@@ -2,6 +2,7 @@ import type {
   AchievementId,
   Action,
   CardPosition,
+  CaseCompletion,
   CompiledCase,
   DeskLayout,
   EndingId,
@@ -15,7 +16,7 @@ import type {
   SlotId,
   ValidationResult,
 } from '@arbre/contract';
-import { hintPreset, SIDE_WIDTH } from '@arbre/contract';
+import { hintPreset, isCaseSlot, SIDE_WIDTH } from '@arbre/contract';
 import {
   applyAction,
   claimedFields,
@@ -25,6 +26,7 @@ import {
   groupOf,
   isComplete,
   progress,
+  recordSplits,
   settle,
   swapGuesses,
   validate,
@@ -36,7 +38,9 @@ import { messages } from '../../messages.fr';
 import { announcer } from './announcer.svelte';
 import { generationNumber } from './generations';
 import { askedQuestions } from './report';
-import { FIELD_LABELS, pm } from '../../panels/messages';
+import { completionOf, formatDelta, splitRows, type SplitRow } from './replay';
+import { formatClock } from './format';
+import { FIELD_LABELS } from '../../panels/messages';
 import { claimFields, fieldValueLabel } from '../../panels/lib/view';
 import type {
   DeskUi,
@@ -45,9 +49,8 @@ import type {
   NavTarget,
   PanelId,
   RevealRecord,
-  Split,
 } from './types';
-export type { RevealRecord, Split } from './types';
+export type { RevealRecord } from './types';
 import { clampCardPosition, clampSideWidth } from './reading';
 import { viewport } from './viewport.svelte';
 
@@ -125,9 +128,11 @@ export class GameStoreImpl implements GameStore {
   #state = $state.raw<SaveState>(null as unknown as SaveState);
   modals = $state<DeskModal[]>([]);
   reveals = $state<RevealRecord[]>([]);
-  /** Déclarations contestées de la session (AFFAIRE-2 §1.7), pour le Journal. */
-  contested = $state<RevealRecord[]>([]);
-  splits = $state<Split[]>([]);
+  /**
+   * Fiche de l'affaire au profil **au début de la partie** : meilleur temps et ses fractionnés,
+   * base de la comparaison en cours de partie (un nouveau record ne se compare pas à lui-même).
+   */
+  readonly bestAtStart: CaseCompletion | undefined;
   /** Dernier mot-clé ciblé par `navigate` (Carnet). */
   focusKeyword = $state<string | null>(null);
   /** Passage à mettre en évidence dans le Lecteur (`navigate` document + passage). */
@@ -241,6 +246,7 @@ export class GameStoreImpl implements GameStore {
     this.#state = state;
     this.#host = host;
     this.#backup = { state, at: now() };
+    this.bestAtStart = completionOf(host.profile, content.id);
     this.ui = $state<DeskUi>({
       main: 'tree',
       side: viewport.single ? null : 'reader',
@@ -298,6 +304,16 @@ export class GameStoreImpl implements GameStore {
 
   get profile(): Profile {
     return this.#host.profile;
+  }
+
+  /** Fractionnés du mode chronométré (sauvegardés), comparés au meilleur temps du début. */
+  get splits(): SplitRow[] {
+    return splitRows(this.#state, this.content, this.bestAtStart?.bestSplits);
+  }
+
+  /** Écart du dernier fractionné au meilleur temps (null : rien à comparer). */
+  get lastDelta(): number | null {
+    return this.splits.at(-1)?.deltaMs ?? null;
   }
 
   get modal(): DeskModal | null {
@@ -417,19 +433,9 @@ export class GameStoreImpl implements GameStore {
     }
     const gone = was.filter((f) => !now.includes(f));
     if (gone.length === 0) return;
-    // Agrafe ôtée (effets, coupée avec le son) ; pas de vibration (§1.7).
+    // Agrafe ôtée (effets, coupée avec le son) ; pas de vibration (§1.7). La première
+    // contestation est notée par le moteur (`SaveState.contested`) pour le Journal.
     audio.play('unstaple');
-    // Première contestation d'une déclaration intacte : constat d'action au Journal, sans verdict.
-    if (was.length === all.length) {
-      this.contested = [
-        ...this.contested,
-        {
-          at: Date.now(),
-          title: pm.journal.claimContested(gone.map((f) => FIELD_LABELS[f]).join(', ')),
-          lines: [],
-        },
-      ];
-    }
     const g = after.tree[slot];
     if (gone.length > 1) {
       announcer.say(m.claimRemoved(gone.length));
@@ -505,7 +511,8 @@ export class GameStoreImpl implements GameStore {
     for (const id of lock) locked[id] = at;
     const tree = swap?.length ? swapGuesses(s.tree, swap) : s.tree;
     const settled = settle({ ...s, tree, locked, updatedAt: at }, this.content);
-    this.#state = settled.state;
+    // Mode chronométré : un fractionné par groupe établi (sauvegardé avec la partie).
+    this.#state = recordSplits(s, settled.state, this.content);
     this.#markDirty();
     this.#handle([{ type: 'slotsLocked', ids: lock, groups }, ...settled.events], 'validate');
   }
@@ -586,9 +593,7 @@ export class GameStoreImpl implements GameStore {
         this.#vibrate([30]);
         const names = e.ids.map((id) => this.slotName(id)).join(', ');
         announcer.say(m.announce.slotsLocked(e.ids.length, names));
-        if (this.#state.mode === 'timed') {
-          this.splits = [...this.splits, { elapsedMs: this.#state.elapsedMs, count: e.ids.length }];
-        }
+        if (this.#state.mode === 'timed') this.#announceSplit(e.groups);
         this.#milestones(e.ids, e.groups);
         break;
       }
@@ -624,6 +629,18 @@ export class GameStoreImpl implements GameStore {
         }
         break;
     }
+  }
+
+  /** Mode chronométré : fractionné du groupe établi, comparé au meilleur temps (§13.4). */
+  #announceSplit(groups: GroupId[]): void {
+    const row = this.splits.at(-1);
+    if (!row || !groups.includes(row.group)) return;
+    const m = messages.timed;
+    const time = formatClock(row.elapsedMs);
+    const delta = row.deltaMs === null ? null : formatDelta(row.deltaMs, formatClock);
+    const text = delta === null ? m.splitAt(row.label, time) : m.splitVs(row.label, time, delta);
+    pushToast({ tone: 'info', title: m.splitTitle(row.rank), message: text, timeout: 5000 });
+    announcer.say(text);
   }
 
   /** Jalons : groupe complet, génération complète → carte de révélation (P13). */
@@ -718,9 +735,12 @@ export class GameStoreImpl implements GameStore {
     this.dispatch({ type: 'finish' });
   }
 
-  /** Le joueur a quitté le rapport sans confirmer : il sera reproposé au prochain verrouillage. */
+  /**
+   * Le joueur a quitté le rapport sans confirmer : il sera reproposé au prochain verrouillage.
+   * Rapport refait après un dénouement : plus de rappel automatique (bouton « Remettre le rapport »).
+   */
   reportDismissed(): void {
-    this.#reportRequested = false;
+    this.#reportRequested = (this.#state.reports?.length ?? 0) > 0;
   }
 
   /**
@@ -733,8 +753,20 @@ export class GameStoreImpl implements GameStore {
     return p.total > 0 && p.locked === p.total;
   }
 
-  /** Rouvre le rapport final (questions, puis `finish` à la confirmation). */
+  /**
+   * Après le dénouement : un autre rapport peut être remis (autre fin, GAME_DESIGN §13.2), si le
+   * rapport pose au moins une question (sinon la fin ne dépend pas du joueur).
+   */
+  get reportRedoable(): boolean {
+    return this.#state.ending !== null && askedQuestions(this.#state, this.content).length > 0;
+  }
+
+  /**
+   * Rouvre le rapport final (questions, puis `finish` à la confirmation). Après le dénouement,
+   * le moteur rouvre d'abord le rapport (`reopenReport` : la fin remise reste dans `reports`).
+   */
   reopenReport(): void {
+    if (this.reportRedoable) this.dispatch({ type: 'reopenReport' });
     if (!this.reportAvailable) return;
     this.#reportRequested = true;
     this.#pendingReport = false;
@@ -899,7 +931,9 @@ export class GameStoreImpl implements GameStore {
     const saves = this.#host.saveStore;
     try {
       await saves.save(state.slot, state);
-      if (state.slot !== 'auto' && this.#backup && now() - this.#backup.at >= BACKUP_AGE_MS) {
+      // Secours des emplacements manuels seulement : une partie chronométrée a son propre
+      // emplacement par affaire et n'écrase jamais le secours d'une partie normale.
+      if (!isCaseSlot(state.slot) && this.#backup && now() - this.#backup.at >= BACKUP_AGE_MS) {
         // Un secours par affaire : la plateforme le range sous `caseId` (AFFAIRE-2 §2.3).
         await saves.save('auto', { ...this.#backup.state, slot: 'auto' });
         this.#backup = { state, at: now() };

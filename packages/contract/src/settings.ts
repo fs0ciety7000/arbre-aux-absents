@@ -3,6 +3,8 @@ import type { AchievementId, CaseId, EndingId } from './ids';
 import { IdSchema, MsSchema, SEMVER } from './ids';
 import type { LanguageSetting } from './i18n';
 import { LanguageSettingSchema } from './i18n';
+import type { TimedSplit } from './save';
+import { TimedSplitSchema } from './save';
 import type { ReportRef } from './report-ref';
 import { REPORT_REF_LIMITS, ReportRefSchema } from './report-ref';
 
@@ -110,7 +112,12 @@ export function hintPreset(preset: 0 | 1 | 2 | 3): HintSettings {
 
 export interface CaseCompletion {
   bestTimedMs?: number;
+  /** Fins vues dans cette affaire (ordre de découverte). */
   endings: EndingId[];
+  /** Dernière fin atteinte (tampon de la chemise E04). Absent des profils antérieurs. */
+  lastEnding?: EndingId;
+  /** Fractionnés de la partie chronométrée du meilleur temps (comparaison en cours de partie). */
+  bestSplits?: TimedSplit[];
 }
 
 /** Tutoriel en bulles (GAME_DESIGN §15) : ce que le joueur a déjà vu. */
@@ -239,6 +246,8 @@ export const SettingsSchema = z.strictObject({
 export const CaseCompletionSchema = z.strictObject({
   bestTimedMs: z.number().int().positive().optional(),
   endings: z.array(IdSchema),
+  lastEnding: IdSchema.optional(),
+  bestSplits: z.array(TimedSplitSchema).max(200).optional(),
 });
 
 export const TutorialProgressSchema = z.strictObject({

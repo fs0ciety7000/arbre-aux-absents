@@ -1,4 +1,4 @@
-import { defaultProfile, type Action, type GameEvent } from '@arbre/contract';
+import { defaultProfile, type GameEvent } from '@arbre/contract';
 import { describe, expect, it } from 'vitest';
 import {
   endingFor,
@@ -9,40 +9,7 @@ import {
   whereToLook,
   type SweepGuard,
 } from '../src';
-import {
-  AINES_RESEARCH,
-  C,
-  CADETS_RESEARCH,
-  events,
-  fill,
-  find,
-  open,
-  play,
-  start,
-} from './helpers';
-
-/** Route complète de la fixture jusqu'à la meilleure fin. */
-export const FULL_ROUTE: Action[] = [
-  ...AINES_RESEARCH,
-  fill('g0-elna', 12000),
-  fill('g1-tam', 12100),
-  fill('g1-lisbe', 12200),
-  ...CADETS_RESEARCH,
-  fill('g1-oren', 27000),
-  fill('g2-cael', 27100),
-  fill('g2-mira', 27200),
-  find('Juno Marrel', 28000),
-  open('telegramme-juno', 28100),
-  fill('g2-juno', 28200),
-  open('note-juno', 29000),
-  find('Vessaut', 29100),
-  open('acte-secret', 29200),
-  open('epilogue', 29300),
-  { type: 'tick', deltaMs: 4000 },
-  { type: 'answer', question: 'q-auteur', option: 'o-tam', at: 29400 },
-  { type: 'answer', question: 'q-remise', option: 'o-remettre', at: 29500 },
-  { type: 'finish', at: 30000 },
-];
+import { C, events, find, FULL_ROUTE, open, play, start } from './helpers';
 
 describe('partie complète de la fixture', () => {
   it('de la nouvelle partie à la fin « La vérité », état gelé à chaque étape', () => {
