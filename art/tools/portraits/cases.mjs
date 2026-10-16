@@ -19,6 +19,14 @@ export const CASES = {
     ids: './ids-revenant-hautcorvin.json',
     idPrefix: 'hc-portrait-',
   },
+  // Affaire 3 : 13 visages (people-longuegreve.mjs) ; la même table d'ids porte les 34 marques
+  // (art/tools/marques/, noms de travail `lg-m-…`), conservées par --assign-ids.
+  'marques-de-longuegreve': {
+    title: 'Les Marques de Longuegrève',
+    people: './people-longuegreve.mjs',
+    ids: './ids-marques-de-longuegreve.json',
+    idPrefix: 'lg-portrait-',
+  },
 };
 
 export const DEFAULT_CASE = 'succession-varenque';

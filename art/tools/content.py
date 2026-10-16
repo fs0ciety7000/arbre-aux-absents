@@ -31,7 +31,7 @@ DESCRIPTIONS = {
     'saint-ormel': "Ville épiscopale sur l'Orvelle, en aval d'Aubrelieu : cathédrale, études de notaires, "
                    'greffe.',
     'port-senane': "Grand port de l'estuaire de l'Orvelle sur le golfe d'Ambre : bassins, chantiers navals, "
-                   'Compagnie des Paquebots de l\'Orvelle, hôpital maritime, théâtre.',
+                   'Compagnie des Paquebots de l\'Orvelle, Comptoir des Ambres, hôpital maritime, théâtre.',
     'bains-de-merande': "Ville d'eaux des collines côtières du sud-ouest : thermes, sanatorium, Savonnerie "
                         'Mérande, lycée de jeunes filles.',
     'hautcorvin': "Ville de montagne de la haute vallée de l'Orvelle : verreries, garnison, papeterie "
@@ -44,6 +44,13 @@ DESCRIPTIONS = {
                       'velmarchois.',
     'dalvezac': 'Hameau thalbère de charbonniers dans la vallée de la Dalva, à l\'écart de la route du col '
                 '(Dalvica en thalbère) : maisons de bois, meules, école, cimetière.',
+    'longuegreve': "Île longue et basse du golfe d'Ambre, orientée nord-sud, à quatre lieues et demie des "
+                   "Cabanes par la passe : à l'ouest la Longue Grève, plage de l'ambre ; à l'est des falaises "
+                   'basses, un hameau en ruine, une chapelle sans toit et un cimetière ; au nord, le feu à gaz '
+                   'de la pointe du Feu. Inhabitée depuis 1908 ; sternes et macareux.',
+    'cabanes-d-ambre': "Hameau de hangars et de cabanes de bois sur la côte du golfe, face à Longuegrève, section "
+                       "de la commune de Port-Sénane : atelier de taille du Comptoir des Ambres, jetée, hangar à "
+                       'bateaux, chapelle de planches.',
     'col-de-corvenne': 'Passage des monts Corvins vers la Thalberie : fortins de la guerre des Cols, croix des '
                        'morts.',
     'monts-corvins': "Chaîne du sud-est où naît l'Orvelle : sommets enneigés, forêts de pins.",
@@ -59,7 +66,8 @@ DESCRIPTIONS = {
     'kessaar': "Rocher de la mer Grise, au large de l'Ostrie : ancien bagne (1938-1952), infirmerie, petit "
                'phare.',
     'mer-grise': 'Mer froide du nord, brumes et phoques.',
-    'golfe-d-ambre': "Golfe de l'ouest, aux eaux plus douces ; on ramasse de l'ambre sur ses plages.",
+    'golfe-d-ambre': "Golfe de l'ouest, aux eaux plus douces ; on ramasse de l'ambre sur ses plages. Parmi "
+                     'ses îles, Longuegrève, inhabitée depuis 1908.',
     'orvelle': "Le fleuve de la Velmarche, des monts Corvins au golfe d'Ambre, et la Clairette, son affluent "
                'de rive gauche descendu des collines de Sorbe : bacs, ponts, moulins.',
 }

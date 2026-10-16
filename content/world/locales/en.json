@@ -13,6 +13,9 @@
     "brenzac": {
       "description": "Thalbère frontier town, bilingual, beyond the Col de Corvenne (Brénica in Thalbère)."
     },
+    "cabanes-d-ambre": {
+      "description": "Hamlet of sheds and wooden huts on the gulf coast, facing Longuegrève, part of the commune of Port-Sénane: the cutting workshop of the Comptoir des Ambres, a jetty, a boathouse, a plank chapel."
+    },
     "col-de-corvenne": {
       "description": "Pass through the Monts Corvins into Thalberie: blockhouses from the War of the Passes, a cross for the dead."
     },
@@ -23,7 +26,7 @@
       "description": "Beech wood between Aubrelieu and Moulinvert; an old paper mill is falling into ruin by the water."
     },
     "golfe-d-ambre": {
-      "description": "The western gulf, with milder waters; amber is gathered on its beaches."
+      "description": "The western gulf, with milder waters; amber is gathered on its beaches. Among its islands, Longuegrève, uninhabited since 1908."
     },
     "grisenoue": {
       "description": "Marsh town north of Aubrelieu: reed beds and the charred ruins of the Wards' home."
@@ -39,6 +42,9 @@
     },
     "landes-d-ostrie": {
       "description": "Heather plateau of the north: standing stones, sheepfolds, stone tracks. Beyond lies Ostrie, its language and its fjords."
+    },
+    "longuegreve": {
+      "description": "Long, low island in the Golfe d'Ambre, running north to south, four and a half leagues from the Cabanes across the channel: to the west the Longue Grève, the amber beach; to the east low cliffs, a ruined hamlet, a roofless chapel and a cemetery; to the north, the gas light on the Pointe du Feu. Uninhabited since 1908; terns and puffins."
     },
     "mer-grise": {
       "description": "Cold northern sea, mists and seals."
@@ -56,7 +62,7 @@
       "description": "A gap in the ridge of the Monts Corvins, south of the Col de Corvenne, on the border: carved boundary stone, iron cross at the hairpin bend; a mountain refuge a little below, on the Velmarche side."
     },
     "port-senane": {
-      "description": "Great port on the Orvelle estuary, on the Golfe d'Ambre: docks, shipyards, the Orvelle Packet Company, the seamen's hospital, a theatre."
+      "description": "Great port on the Orvelle estuary, on the Golfe d'Ambre: docks, shipyards, the Orvelle Packet Company, the Comptoir des Ambres, the seamen's hospital, a theatre."
     },
     "saint-ormel": {
       "description": "Cathedral city on the Orvelle, downstream from Aubrelieu: cathedral, notaries' offices, court registry."

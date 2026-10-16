@@ -69,14 +69,23 @@ def build():
         m.circle(x, y, 40 if pid not in ('mer-grise', 'golfe-d-ambre') else 70)
     n = 0
     tries = 0
+    # tirage sur le champ historique (même graine, mêmes vagues) ; on n'efface ensuite que celles qui
+    # tomberaient sur les ajouts (Longuegrève, la passe, les Cabanes)
+    old = fld.legacy()
+    over = Mask(6)
+    lx, ly = world.place_xy('longuegreve')
+    over.circle(lx, ly, 34)
+    over.rect(*world.label_box('longuegreve'))
+    over.polyline(list(world.passe()), 10)
     while n < 150 and tries < 6000:
         tries += 1
         x, y = r.uniform(16, W - 16), r.uniform(16, H - 16)
-        if fld.at(x, y) < 30 or m.hit(x, y, 6):
+        if old.at(x, y) < 30 or m.hit(x, y, 6):
             continue
         m.circle(x, y, 22)
         w = r.uniform(4, 7)
-        waves += f'M{x - w:.1f} {y:.1f}q{w / 2:.1f} {-w * 0.45:.1f} {w:.1f} 0q{w / 2:.1f} {-w * 0.45:.1f} {w:.1f} 0'
+        if not over.hit(x, y, 6):
+            waves += f'M{x - w:.1f} {y:.1f}q{w / 2:.1f} {-w * 0.45:.1f} {w:.1f} 0q{w / 2:.1f} {-w * 0.45:.1f} {w:.1f} 0'
         n += 1
     o.append(path('ink-faint', waves, stroke_width='0.55'))
 
@@ -87,6 +96,8 @@ def build():
         for piece in _cut_reserved(pts):
             sr += d_poly(simplify(piece, 0.4))
     o.append(path('ink-soft', sr, stroke_width='0.8', stroke_dasharray='.1 3.2'))
+    # la passe des Cabanes (affaire 3) : tirets courts de pilote, plus fins que les paquebots
+    o.append(path('ink-soft', d_poly(simplify(list(world.passe()), 0.3)), stroke_width='0.6', stroke_dasharray='2.2 1.6'))
 
     # ---- fleuves et ruisseaux
     rivers = []

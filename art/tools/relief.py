@@ -93,7 +93,8 @@ def peak(x, y, w, h, r, lean):
 
 def build():
     r = rng('relief')
-    fld = world.field()
+    # champ historique (sans les îles ajoutées) : le tirage reste celui de la première gravure
+    fld = world.field().legacy()
     mask = world.full_mask()
     # Les ajouts de l'affaire 2 effacent ce qui les recouvre sans changer le tirage (graine) : tout
     # est tiré comme à la première gravure, puis on ne grave pas ce qui tombe sous l'overlay.

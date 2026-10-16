@@ -36,11 +36,14 @@ PLACES = {
     'vernezac': dict(name='Vernezac', kind='village', pos=(0.842, 0.814), focus=3.4, hit=24),
     'pas-de-l-ourse': dict(name="Le Pas de l'Ourse", kind='landmark', pos=(0.902, 0.772), focus=3.6, hit=20),
     'dalvezac': dict(name='Dalvezac', kind='village', pos=(0.945, 0.722), focus=3.4, hit=22),
+    # affaire 3 (docs/scenario/affaire-3/08-lieux.md §1 ; positions ajustées, 10-illustrations.md §1)
+    'longuegreve': dict(name='Longuegrève', kind='landmark', pos=(0.054, 0.530), focus=3.4, hit=24),
+    'cabanes-d-ambre': dict(name="Les Cabanes d'Ambre", kind='village', pos=(0.110, 0.566), focus=3.4, hit=22),
 }
 # Lieux ajoutés après la première gravure : ils n'entrent pas dans les masques historiques
 # (base_mask, full_mask), pour que le relief et la végétation déjà gravés restent identiques à
 # l'octet ; ils passent par overlay_mask(), qui efface localement ce qui les recouvre.
-OVERLAY_PLACES = ('vernezac', 'pas-de-l-ourse', 'dalvezac')
+OVERLAY_PLACES = ('vernezac', 'pas-de-l-ourse', 'dalvezac', 'longuegreve', 'cabanes-d-ambre')
 
 # Toponymes sans lieu du jeu (pas de PlaceId) : gravés dans labels.svg avec une petite marque.
 # (texte, x, y, dx, dy, ancre, taille, lignes)
@@ -95,7 +98,13 @@ ISLANDS = [
     (0.810, 0.032, 5, 3),
     (0.060, 0.410, 6, 4),
     (0.075, 0.760, 7, 4.5),
+    (0.054, 0.530, 5.5, 16),  # Longuegrève (affaire 3) : longue et basse, nord-sud
 ]
+# Îles de la première gravure : le champ « historique » (Field.legacy) les seules prend en compte,
+# pour que le relief et les vagues du large restent tirés comme avant (même graine, même octet).
+LEGACY_ISLANDS = 6
+# Longuegrève : côte ouest presque droite (la grève), côte est découpée (falaises basses).
+STRAIGHT_WEST = {6}
 
 # ---------------------------------------------------------------- eaux douces
 
@@ -186,6 +195,14 @@ ROADS_MINOR_2 = [
     [(0.800, 0.785), (0.822, 0.800), (0.842, 0.814)],                    # Hautcorvin → Vernezac (route de la Vèze)
     [(0.945, 0.722), (0.941, 0.692), (0.926, 0.654)],                    # Dalvezac → route du col (vallée de la Dalva)
 ]
+# Ajout de l'affaire 3 (08-lieux.md §1) : route de la côte, des Cabanes d'Ambre à la route de
+# Bains-de-Mérande, qu'elle rejoint au sud de l'estuaire (Port-Sénane est sur l'autre rive : le bac,
+# comme pour la route de Bains ; ni pont ni rail).
+ROADS_MINOR_3 = [
+    [(0.110, 0.566), (0.128, 0.571), (0.148, 0.576), (0.166, 0.580)],  # Cabanes → route de Bains
+]
+# La passe des Cabanes (pointillé de navigation, sans libellé) : jetée des Cabanes → côte est de l'île.
+PASSE = [(0.101, 0.565), (0.088, 0.558), (0.074, 0.546), (0.061, 0.536)]
 TRAILS = [
     [(0.842, 0.814), (0.860, 0.806), (0.876, 0.792), (0.890, 0.783), (0.902, 0.772)],  # Vernezac → refuge → Pas
     [(0.902, 0.772), (0.914, 0.758), (0.925, 0.745), (0.936, 0.732), (0.945, 0.722)],  # Pas → Dalvezac
@@ -250,20 +267,26 @@ class Field:
             pts = wiggle(catmull(PP(p), 6), 4.5, f'fj{i}', step=3, freq=0.06)
             xs, ys = [q[0] for q in pts], [q[1] for q in pts]
             fjords.append((pts, w0, w1, (min(xs) - 16, min(ys) - 16, max(xs) + 16, max(ys) + 16)))
-        islands = [(P(x, y), rx, ry) for x, y, rx, ry in ISLANDS]
+        all_islands = [(P(x, y), rx, ry) for x, y, rx, ry in ISLANDS]
+        islands = all_islands[:LEGACY_ISLANDS]
+        added = [(k, isl) for k, isl in enumerate(all_islands) if k >= LEGACY_ISLANDS]
         orv = list(orvelle_line())
         estuary = [p for p in orv if p[0] < 0.20 * W]
         self.nx = int((W + 2 * PAD) / GRID) + 1
         self.ny = int((H + 2 * PAD) / GRID) + 1
         self.v = []
+        self.v_legacy = []
         for j in range(self.ny):
             y = j * GRID - PAD
             row = []
+            row_legacy = []
             for i in range(self.nx):
                 x = i * GRID - PAD
                 sd = signed_dist_poly(x, y, land)
+                near_added = [a for a in added if math.hypot(x - a[1][0][0], y - a[1][0][1]) < 60]
                 if sd > 70 and not any(math.hypot(x - c[0], y - c[1]) < 60 for c, _, _ in islands):
-                    row.append(sd)
+                    row_legacy.append(sd)
+                    row.append(self._added(x, y, sd, near_added, nz2) if near_added else sd)
                     continue
                 north = max(0.0, min(1.0, (0.36 * H - y) / (0.2 * H)))
                 amp = 22 + 12 * north
@@ -292,15 +315,41 @@ class Field:
                     di = (e - 1) * min(rx, ry)
                     if di < 45:
                         v = min(v, di + nz2.fbm(x / 6, y / 6, 2) * 2.5 * min(1.0, rx / 8))
-                row.append(v)
+                row_legacy.append(v)
+                row.append(self._added(x, y, v, near_added, nz2) if near_added else v)
             self.v.append(row)
+            self.v_legacy.append(row_legacy)
         # bordure de la grille en « mer » : tous les contours se referment hors du cadre
-        for j in range(self.ny):
-            for i in (0, self.nx - 1):
-                self.v[j][i] = max(self.v[j][i], 40.0)
-        for i in range(self.nx):
-            for j in (0, self.ny - 1):
-                self.v[j][i] = max(self.v[j][i], 40.0)
+        for g in (self.v, self.v_legacy):
+            for j in range(self.ny):
+                for i in (0, self.nx - 1):
+                    g[j][i] = max(g[j][i], 40.0)
+            for i in range(self.nx):
+                for j in (0, self.ny - 1):
+                    g[j][i] = max(g[j][i], 40.0)
+
+    @staticmethod
+    def _added(x, y, v, near, nz2):
+        """Îles ajoutées après la première gravure (Longuegrève) : ovale nord-sud, côte ouest
+        aplatie en super-ellipse (la grève), côte est rongée par un bruit plus fin (falaises)."""
+        for k, ((cx, cy), rx, ry) in near:
+            dx, dy = (x - cx) / rx, (y - cy) / ry
+            if k in STRAIGHT_WEST and dx < 0:
+                e = (dx ** 4 + dy ** 4) ** 0.25
+                n = nz2.fbm(x / 9, y / 9, 2) * 0.8
+            else:
+                e = math.hypot(dx, dy)
+                n = nz2.fbm(x / 3.5, y / 3.5, 2) * 3.2
+            di = (e - 1) * min(rx, ry)
+            if di < 45:
+                v = min(v, di + n)
+        return v
+
+    def legacy(self):
+        """Le même champ sans les îles ajoutées : pour les tirages qui doivent rester à l'octet."""
+        view = object.__new__(Field)
+        view.__dict__ = {**self.__dict__, 'v': self.v_legacy}
+        return view
 
     def at(self, x, y):
         gx = (x + PAD) / GRID
@@ -419,9 +468,21 @@ def streams(legacy=False):
 def roads(legacy=False):
     """(grandes routes, chemins) ; `legacy=True` : sans les ajouts de l'affaire 2."""
     major = [tuple(wiggle(catmull(PP(r), 6), 2.5, f'rM{i}', step=5, freq=0.03)) for i, r in enumerate(ROADS_MAJOR)]
-    minor_src = ROADS_MINOR if legacy else ROADS_MINOR + ROADS_MINOR_2
-    minor = [tuple(wiggle(catmull(PP(r), 6), 2.5, f'rm{i}', step=5, freq=0.035)) for i, r in enumerate(minor_src)]
-    return tuple(major), tuple(minor)
+    minor_src = ROADS_MINOR if legacy else ROADS_MINOR + ROADS_MINOR_2 + ROADS_MINOR_3
+    minor = [list(wiggle(catmull(PP(r), 6), 2.5, f'rm{i}', step=5, freq=0.035)) for i, r in enumerate(minor_src)]
+    if not legacy:
+        # la route des Cabanes s'arrête exactement sur la route de Bains (après ondulation)
+        bains = minor[1]
+        for k in range(len(ROADS_MINOR) + len(ROADS_MINOR_2), len(minor)):
+            end = minor[k][-1]
+            j = min(range(len(bains)), key=lambda q: math.hypot(bains[q][0] - end[0], bains[q][1] - end[1]))
+            minor[k][-1] = bains[j]
+    return tuple(major), tuple(tuple(m) for m in minor)
+
+
+@lru_cache(maxsize=None)
+def passe():
+    return tuple(wiggle(catmull(PP(PASSE), 6), 1.2, 'passe', step=4, freq=0.05))
 
 
 @lru_cache(maxsize=None)
@@ -482,6 +543,7 @@ PLACE_CLEAR = {
     'monts-corvins': 20, 'brenzac': 24, 'grisenoue': 22, 'landes-d-ostrie': 14, 'tennok': 18,
     'vellaak': 20, 'kessaar': 0, 'mer-grise': 0, 'golfe-d-ambre': 0, 'orvelle': 14,
     'vernezac': 18, 'pas-de-l-ourse': 15, 'dalvezac': 16,
+    'longuegreve': 0, 'cabanes-d-ambre': 15,
 }
 
 # Échelle de chaque vignette (le toponyme n'est pas mis à l'échelle).
@@ -490,6 +552,7 @@ VSCALE = {pid: 1.3 for pid in (
     'hautcorvin', 'col-de-corvenne', 'brenzac', 'grisenoue', 'landes-d-ostrie', 'tennok', 'vellaak',
     'kessaar', 'golfe-d-ambre', 'mer-grise', 'orvelle', 'monts-corvins')}
 VSCALE.update({'vernezac': 1.3, 'pas-de-l-ourse': 1.3, 'dalvezac': 1.3})
+VSCALE.update({'longuegreve': 1.0, 'cabanes-d-ambre': 1.2})
 VSCALE['aubrelieu'] = 1.4
 VSCALE['lac-d-aulne'] = 1.0
 VSCALE['monts-corvins'] = 1.6
@@ -518,6 +581,8 @@ PLACE_LABELS = {
     'vernezac': (14, 30, 'start', 'label', 13, 0, ['Vernezac']),
     'pas-de-l-ourse': (15, -2, 'start', 'label', 11, 0, ['Pas', 'de l’Ourse']),
     'dalvezac': (14, 33, 'middle', 'label', 12, 0, ['Dalvezac']),
+    'longuegreve': (10, 4, 'start', 'label', 10, 0, ['Longuegrève']),
+    'cabanes-d-ambre': (23, -12, 'start', 'label', 11, 0, ['Les Cabanes', 'd’Ambre']),
 }
 
 
@@ -569,6 +634,7 @@ def overlay_mask():
         m.circle(*place_xy(pid), PLACE_CLEAR[pid] * VSCALE.get(pid, 1.0))
         m.rect(*label_box(pid))
     m.circle(*P(*REFUGE), 6)
+    m.polyline(list(passe()), 2.0)
     vx, vy = P(VEZE_LABEL[0], VEZE_LABEL[1])
     m.rect(vx - 22, vy - 10, vx + 22, vy + 4)
     for t in TOPONYMS.values():

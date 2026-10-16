@@ -1,0 +1,12 @@
+{
+  "id": "longuegreve",
+  "name": "Longuegrève",
+  "kind": "landmark",
+  "position": {
+    "x": 0.054,
+    "y": 0.53
+  },
+  "description": "Île longue et basse du golfe d'Ambre, orientée nord-sud, à quatre lieues et demie des Cabanes par la passe : à l'ouest la Longue Grève, plage de l'ambre ; à l'est des falaises basses, un hameau en ruine, une chapelle sans toit et un cimetière ; au nord, le feu à gaz de la pointe du Feu. Inhabitée depuis 1908 ; sternes et macareux.",
+  "focusZoom": 3.4,
+  "hitRadius": 24
+}

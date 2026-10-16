@@ -1,0 +1,12 @@
+{
+  "id": "cabanes-d-ambre",
+  "name": "Les Cabanes d'Ambre",
+  "kind": "village",
+  "position": {
+    "x": 0.11,
+    "y": 0.566
+  },
+  "description": "Hameau de hangars et de cabanes de bois sur la côte du golfe, face à Longuegrève, section de la commune de Port-Sénane : atelier de taille du Comptoir des Ambres, jetée, hangar à bateaux, chapelle de planches.",
+  "focusZoom": 3.4,
+  "hitRadius": 22
+}

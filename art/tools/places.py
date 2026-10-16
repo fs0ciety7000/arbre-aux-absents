@@ -538,6 +538,66 @@ def v_dalvezac():
     return o
 
 
+def v_longuegreve():
+    """L'île (le trait de côte est dans base.svg) : la grève à l'ouest, quatre lanières de la
+    falaise à la grève, le hameau brûlé (quatre toits rompus) et la chapelle à l'est, une croix au
+    cimetière, le feu à gaz de la pointe du Feu au nord ; sternes au large."""
+    o = []
+    # la Longue Grève : sable pointillé le long de la côte ouest, grains d'ambre
+    o.append(path('ink-faint', 'M-3.6 -12.5Q-4.6 0 -3.8 12.5', stroke_width='0.5', stroke_dasharray='.1 1.3'))
+    o.append(wash('safran', C(-3.9, -6, 0.55) + C(-4.2, 1.5, 0.55) + C(-4, 8, 0.5), stroke_width='0.3'))
+    # les quatre lanières (bornes de 1868), de la falaise à la grève
+    o.append(path('ink-faint', 'M-3.4 -7.2h7.4M-3.6 -1.2h8M-3.4 4.8h7.6', stroke_width='0.4', stroke_dasharray='1 .9'))
+    # hameau brûlé : quatre pignons sans toit, noircis
+    ruins = ''
+    for x, y in ((1.2, -4.2), (3.3, -3.4), (1.6, 0.6), (3.5, 1.6)):
+        ruins += f'M{f(x - 0.9)} {f(y)}v-1.4l.9-1 .4.5v-.6h.3v1l.2.2v1.3z'
+    o.append(path('paper', ruins))
+    o.append(path('hatch-dense', ruins))
+    o.append(path('ink', ruins, stroke_width='0.35'))
+    # chapelle en ruine et croix du cimetière
+    o.append(path('ink', 'M.4 8.2v-2.2l1.2-1.1 1.2 1.1v2.2M1.6 4.9v-1.4', stroke_width='0.4'))
+    o.append(path('ink', 'M3.6 9.6v-2.8M2.8 7.6h1.6', stroke_width='0.55'))
+    # la pointe du Feu : tourelle et rayons
+    o.append(poly('paper', [(-0.8, -12.4), (-0.5, -15.6), (0.5, -15.6), (0.8, -12.4)]))
+    o.append(path('ink', d_poly([(-0.8, -12.4), (-0.5, -15.6), (0.5, -15.6), (0.8, -12.4)], True) + 'M-.7 -15.6h1.4l-.7-.9z', stroke_width='0.4'))
+    o.append(wash('safran', C(0, -16.9, 0.55), stroke_width='0.25'))
+    o.append(path('ink-faint', 'M-1.4 -17.6l-2.4-1.2M1.4 -17.6l2.4-1.2M-1.6 -16.6h-2.6M1.6 -16.6h2.6', stroke_width='0.35'))
+    # sternes au large, côté est
+    o.append(path('ink-soft', 'M9 -9q1-1 2 0q1-1 2 0M10.4 -4.6q.8-.8 1.6 0q.8-.8 1.6 0', stroke_width='0.4'))
+    o.append(label('longuegreve'))
+    return o
+
+
+def v_cabanes_d_ambre():
+    """Hameau du Comptoir (1908) : longue halle basse de l'atelier de taille, cabanes de bois, chapelle
+    de planches, hangar à bateaux, jetée vers la passe (la côte est vers x = -8 en local)."""
+    o = [ground(15, 10, 'cab', dy=-1)]
+    # jetée sur pilotis, de la grève vers la passe, et une barque
+    o.append(path('paper', R(-20, -0.6, 13, 1.8)))
+    o.append(path('ink', R(-20, -0.6, 13, 1.8) + ''.join(f'M{f(-19 + i * 3)} 1.2v1.6' for i in range(4)), stroke_width='0.5'))
+    o.append(wash('sienne', 'M-21 4.2h5l-1 1.4h-3z', stroke_width='0.45'))
+    # l'atelier de taille : longue halle basse, toit de planches, rangée de fenêtres
+    o.append(rect('paper', -6, -6, 18, 5))
+    o.append(wash('sienne', 'M-7 -6l2-2.4h16l2 2.4z', stroke_width='0.5'))
+    o.append(path('ink', R(-6, -6, 18, 5) + 'M-7 -6l2-2.4h16l2 2.4', stroke_width='0.6'))
+    o.append(path('ink-soft', ''.join(f'M{f(-4.4 + i * 3.2)} -4.6h1.6v1.8h-1.6z' for i in range(5)), fill='currentColor', stroke_width='0.2'))
+    # cabanes de bois (bardage) et hangar à bateaux de l'Amicale
+    for x, y, w in ((-4, 6, 4), (1.5, 7, 4), (7, 5.6, 4)):
+        o.append(rect('paper', x - w / 2, y - 2.6, w, 2.6))
+        o.append(wash('sienne', d_poly([(x - w / 2 - 0.5, y - 2.6), (x, y - 4.8), (x + w / 2 + 0.5, y - 2.6)], True), stroke_width='0.4'))
+        o.append(path('ink', R(x - w / 2, y - 2.6, w, 2.6) + d_poly([(x - w / 2 - 0.5, y - 2.6), (x, y - 4.8), (x + w / 2 + 0.5, y - 2.6)]), stroke_width='0.5'))
+        o.append(path('ink-faint', f'M{f(x - w / 2 + 0.2)} {f(y - 1.3)}h{f(w - 0.4)}', stroke_width='0.35'))
+    o.append(rect('paper', -9, 3, 5, 3.4))
+    o.append(wash('ardoise', 'M-9.6 3l3.1-2.6 3.1 2.6z', stroke_width='0.4'))
+    o.append(path('ink', R(-9, 3, 5, 3.4) + 'M-9.6 3l3.1-2.6 3.1 2.6M-7.7 6.4v-2h1.4v2', stroke_width='0.5'))
+    # chapelle de planches et sa croix
+    o.append(rect('paper', 13, -4.4, 3.2, 4.4))
+    o.append(path('ink', R(13, -4.4, 3.2, 4.4) + 'M12.6 -4.4l2-2.4 2 2.4M14.6 -6.8v-2.2M13.8 -8.2h1.6', stroke_width='0.5'))
+    o.append(label('cabanes-d-ambre'))
+    return o
+
+
 DRAW = {
     'aubrelieu': v_aubrelieu, 'moulinvert': v_moulinvert, 'foret-de-sorbe': v_foret_de_sorbe,
     'lac-d-aulne': v_lac_d_aulne, 'saint-ormel': v_saint_ormel, 'port-senane': v_port_senane,
@@ -546,13 +606,14 @@ DRAW = {
     'landes-d-ostrie': v_landes, 'tennok': v_tennok, 'vellaak': v_vellaak, 'kessaar': v_kessaar,
     'mer-grise': v_mer_grise, 'golfe-d-ambre': v_golfe_d_ambre, 'orvelle': v_orvelle,
     'vernezac': v_vernezac, 'pas-de-l-ourse': v_pas_de_l_ourse, 'dalvezac': v_dalvezac,
+    'longuegreve': v_longuegreve, 'cabanes-d-ambre': v_cabanes_d_ambre,
 }
 
 # Ordre de dessin : mers et régions d'abord (sous les villes), puis du nord au sud.
 ORDER = ['mer-grise', 'golfe-d-ambre', 'monts-corvins', 'landes-d-ostrie', 'orvelle', 'kessaar', 'tennok',
          'vellaak', 'grisenoue', 'port-senane', 'saint-ormel', 'aubrelieu', 'brenzac', 'foret-de-sorbe',
          'moulinvert', 'col-de-corvenne', 'bains-de-merande', 'hautcorvin', 'lac-d-aulne',
-         'dalvezac', 'pas-de-l-ourse', 'vernezac']
+         'dalvezac', 'pas-de-l-ourse', 'vernezac', 'longuegreve', 'cabanes-d-ambre']
 
 
 def build():
