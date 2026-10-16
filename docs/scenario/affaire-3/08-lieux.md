@@ -1,7 +1,7 @@
 # 08 — Lieux nouveaux et lieux repris (affaire 3)
 
 > Demande au `cartographe` (`content/world/places/*.json`, `art/tools/world.py`). **Provisoire** (piste
-> B non encore choisie) ; reporté dans `docs/monde/00-monde.md` §12, marqué « affaire 3, provisoire ».
+> B retenue, noms provisoires) ; reporté dans `docs/monde/00-monde.md` §12, marqué « affaire 3, provisoire ».
 > Positions en coordonnées normalisées (`x` 0 = ouest → 1 = est, `y` 0 = nord → 1 = sud), vérifiées
 > contre la géométrie existante (`LAND`, `ISLANDS`, `CARTOUCHE`, `ROSE` de `art/tools/world.py`) : côte
 > ouest vers x 0,100–0,108 entre y 0,50 et 0,55 ; estuaire de l'Orvelle vers y 0,47 ; Port-Sénane
@@ -12,27 +12,30 @@
 
 | `PlaceId` | Nom affiché | `kind` | Position proposée | `focusZoom` / `hitRadius` | Ce qu'on y trouve | Rôle |
 |---|---|---|---|---|---|---|
-| `longuegreve` | **Longuegrève** | `landmark` | **x 0,050 · y 0,520** | 3,4 / 24 | Île longue et basse, orientée nord-sud (≈ 2 lieues sur ⅓ de lieue) ; à l'ouest, la **Longue Grève** (plage de l'ambre) ; à l'est, les falaises basses, le hameau brûlé (quatorze ruines, quatre linteaux marqués), la chapelle en ruine, le **cimetière** intact ; au nord, la **pointe du Feu** et son feu à gaz (1872, automatique depuis 1908). Inhabitée depuis 1908 ; sternes et macareux. | Cœur de l'affaire : les quatre lanières, le cimetière (1964, 1978), la grève. |
-| `cabanes-d-ambre` | **Les Cabanes d'Ambre** | `village` | **x 0,112 · y 0,530** | 3,4 / 22 | Hameau de hangars et de cabanes de bois sur la côte, face à l'île, bâti par le Comptoir en 1908 ; l'**atelier de taille** du Comptoir ; la **jetée** ; le hangar à bateaux de l'Amicale ; une chapelle de planches. Section de la commune de Port-Sénane. | Les évacués et leurs descendants ; l'enquête orale de 1964 ; l'Amicale. |
+| `longuegreve` | **Longuegrève** | `landmark` | **x 0,054 · y 0,530** | 3,4 / 24 | Île longue et basse, orientée nord-sud (≈ 2 lieues sur ⅓ de lieue) ; à l'ouest, la **Longue Grève** (plage de l'ambre) ; à l'est, les falaises basses, le hameau brûlé (quatorze ruines, quatre linteaux marqués), la chapelle en ruine, le **cimetière** intact ; au nord, la **pointe du Feu** et son feu à gaz (1872, automatique depuis 1908). Inhabitée depuis 1908 ; sternes et macareux. | Cœur de l'affaire : les quatre lanières, le cimetière (1964, 1978), la grève. |
+| `cabanes-d-ambre` | **Les Cabanes d'Ambre** | `village` | **x 0,110 · y 0,566** | 3,4 / 22 | Hameau de hangars et de cabanes de bois sur la côte, face à l'île, bâti par le Comptoir en 1908 ; l'**atelier de taille** du Comptoir ; la **jetée** ; le hangar à bateaux de l'Amicale ; une chapelle de planches. Section de la commune de Port-Sénane. | Les évacués et leurs descendants ; l'enquête orale de 1964 ; l'Amicale. |
 
-**Espacements vérifiés** (unités de viewBox, carte ≈ 1350 × 1000) : Longuegrève–Cabanes ≈ 85 ;
-Cabanes–Port-Sénane ≈ 82 ; Longuegrève–libellé du golfe ≈ 83 (> 60) ; Longuegrève–îlot 0,060 · 0,410 ≈ 110 ;
-Longuegrève–bord ouest ≈ 67. Aucun cercle de clic ne se chevauche ; rien dans le cartouche (y ≥ 0,826) ni
-dans la rose des vents (0,064 · 0,262).
+**Positions définitives** (16 oct. 2026, `cartographe`, `10-illustrations.md` §1) : les positions
+proposées en v0.1 (0,050 · 0,520 et 0,112 · 0,530) ont été déplacées pour la lisibilité de la carte :
+l'île descend pour dégager le libellé de l'estuaire et celui du golfe, les Cabanes descendent pour faire
+face à l'île et dégager la vignette du trois-mâts. Les espacements et l'absence de chevauchement sont
+vérifiés par le `cartographe` sur le tirage.
 
-**Distances dans les pièces** (à respecter) : Longuegrève → Cabanes, **4 lieues et demie** par la passe
-(2 h 30 de vedette en 1908, une demi-journée à la voile) ; Cabanes → Port-Sénane, **un peu plus de 4
-lieues** par la route de la côte (une heure de voiture en 1977) ; Longuegrève → Port-Sénane, 7 lieues par
-mer (escale de la *Duchesse-d'Ambre*). Par temps clair, on voit l'île depuis la jetée des Cabanes.
+**Distances dans les pièces** (à respecter ; d'après les positions définitives) : Longuegrève →
+Cabanes, **près de 5 lieues** par la passe (4,9 ; 2 h 30 de vedette en 1908, comme le livre de bord RP-03 :
+7 h 10 – 9 h 40 ; une demi-journée à la voile) ; Cabanes → Port-Sénane, **un peu plus de 5 lieues** à vol
+d'oiseau (5,3), **six lieues** par la route de la côte, qui rejoint la route de Bains et passe l'estuaire
+au bac (une heure et quart de voiture en 1977) ; Longuegrève → Port-Sénane, 7 lieues par mer (escale de
+la *Duchesse-d'Ambre*). Par temps clair, on voit l'île depuis la jetée des Cabanes.
 
 ### Demandes au cartographe
 
 1. **Longuegrève** : nouvelle île dans `ISLANDS`, allongée nord-sud (rx ≈ 6, ry ≈ 19 unités), à
-   0,050 · 0,520 ; côte ouest presque droite (la grève), côte est découpée. Vignette : quatre toits
+   0,054 · 0,530 ; côte ouest presque droite (la grève), côte est découpée. Vignette : quatre toits
    rompus, une croix, un petit feu à la pointe nord.
 2. **Les Cabanes d'Ambre** : vignette de village côtier (une longue halle basse, une jetée, des
-   cabanes). Route côtière mineure **Cabanes → Port-Sénane** (le long de la côte, 0,112 · 0,530 →
-   0,118 · 0,490 → 0,136 · 0,455). Aucun pont, aucun rail.
+   cabanes). Route côtière mineure **Cabanes → Port-Sénane** (réalisée : raccord à la route de Bains,
+   puis la route existante et le bac de l'estuaire). Aucun pont, aucun rail.
 3. **La passe des Cabanes** : pointillés de navigation Cabanes → Longuegrève (pas de libellé
    obligatoire). La ligne des Paquebots peut faire un crochet vers Longuegrève (escale jusqu'en 1908).
 4. Les lieux des affaires 1 et 2 ne bougent pas. Les deux îlots existants restent anonymes (option :

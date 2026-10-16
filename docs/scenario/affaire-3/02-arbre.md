@@ -10,32 +10,33 @@
 ## 1. Schéma
 
 ```
-I   C01 Gervais GOÉMARD [Y] ══ C02 Perrine OYARD [Y+O]
-    ├─ II C09 Josse GOÉMARD [Y-g] ══ C10 Reine LESTAUD [Y-g+P]
+I   C01 Gervais GOÉMARD [Y] ══ C02 Perrine OYARD [Y-tO]
+    ├─ II C09 Josse GOÉMARD [Y-g] ══ C10 Reine LESTAUD [Y-g-tP]
     │     └─ III C21 Gatien GOÉMARD (v) ══ C22 Léontine SAUVAT (v)
     │           └─ IV C28 Félix GOÉMARD (v)
-    ├─ II C11 Jacquette GOÉMARD [O-g+Y] ══ C12 Médard OYARD [O-g]      (voir maison Oyard)
+    ├─ II C11 Jacquette GOÉMARD [O-g-tY] ══ C12 Médard OYARD [O-g]      (voir maison Oyard)
     └─ II C13 Blaise GOÉMARD dit GARNAUD [Y-d] ══ C14 Amélie FERLAY (v)              [CACHÉES]
           └─ III C27 Léandre GARNAUD (v)
                 └─ IV C32 Edmée GARNAUD (v)
 
-I   C03 Clovis OYARD [O] ══ C04 Toinette CORMAUD [O+A]
+I   C03 Clovis OYARD [O] ══ C04 Toinette CORMAUD [O-tA]
     ├─ II C12 Médard OYARD [O-g] ══ C11 Jacquette GOÉMARD
     │     ├─ III C23 Elzéar OYARD [O-g-g]
     │     │     └─ IV C29 Rose OYARD (v)
     │     └─ III C24 Victoire OYARD (v) ══ C25 Lazare CORMAUD (v)        [C24 ÉTABLIE]
     │           └─ IV C30 Marin CORMAUD (v)
-    └─ II C15 Ernestine OYARD [P-g+O] ══ C16 Fulbert LESTAUD [P-g]    (voir maison Lestaud)
+    └─ II C15 Ernestine OYARD [P-g-tO] ══ C16 Fulbert LESTAUD [P-g]    (voir maison Lestaud)
 
-I   C05 Siméon CORMAUD [A] ══ C06 Ursule LESTAUD [A+P]
+I   C05 Siméon CORMAUD [A] ══ C06 Ursule LESTAUD [A-tP]
           (aucun enfant de sang vivant : Jean [A-g] et Yves [A-d], noyés en 1869, hors arbre)
-    ┆
-    ┆  C19 Noël CORMAUD [A/]  — enfant de mer, recueilli par Siméon ; sans parents dans l'arbre
-          ══ C20 Honorine LESTAUD [A/+P]
+
+       C19 Noël CORMAUD [A-b]  — enfant de mer, recueilli par Siméon ; sans parents dans l'arbre,
+                                  placé dans la colonne de Siméon et Ursule, sans trait
+          ══ C20 Honorine LESTAUD [A-b-tP]
              └─ III C25 Lazare CORMAUD (v) ══ C24 Victoire OYARD
                    └─ IV C30 Marin CORMAUD (v)
 
-I   C07 Lubin LESTAUD [P] ══ C08 Apolline GOÉMARD [P+Y]
+I   C07 Lubin LESTAUD [P] ══ C08 Apolline GOÉMARD [P-tY]
     ├─ II C16 Fulbert LESTAUD [P-g] ══ C15 Ernestine OYARD
     │     └─ III C26 Clément LESTAUD (v)
     │           └─ IV C31 Aline LESTAUD (v)
@@ -44,8 +45,8 @@ I   C07 Lubin LESTAUD [P] ══ C08 Apolline GOÉMARD [P+Y]
     └─ II C20 Honorine LESTAUD ══ C19 Noël CORMAUD                     (voir maison Cormaud)
 ```
 
-Légende : `══` mariage · `│` filiation de sang · `┆` lien d'accueil (affichage facultatif, §6) ·
-`[code]` case à **marque** (notation Marest) · `(v)` case à **visage**.
+Légende : `══` mariage · `│` filiation de sang · `[code]` case à **marque** (cote LX, `09-marques.md`
+§2) · `(v)` case à **visage**. Aucun trait n'unit Noël à Siméon et Ursule (§7).
 
 **Règle de placement** : arbre **de sang** (loi de 1973, art. 15 : « reconstituer les filiations »).
 **Noël Cormaud n'a pas de parents dans l'arbre** : il entre par son mariage avec Honorine Lestaud. Le
@@ -85,25 +86,25 @@ naissance–mort · **champ** (`M` marque / `V` visage) · **métier** (`occupat
 | Case | `person` | G | Groupe | Nom (variantes) | Dates | Champ | Métier (`occupation`) | Départ |
 |---|---|---|---|---|---|---|---|---|
 | C01 | `gervais-goemard` | I | matrice | **Gervais Goémard** | 1819–1887 | M `Y` | Ramasseur·se d'ambre · `ramasseur-d-ambre` | visible |
-| C02 | `perrine-oyard` | I | talons | **Perrine Oyard** (Goémard) | 1823–1891 | M `Y+O` | Fileuse · `fileuse` | visible |
+| C02 | `perrine-oyard` | I | talons | **Perrine Oyard** (Goémard) | 1823–1891 | M `Y-tO` | Fileuse · `fileuse` | visible |
 | C03 | `clovis-oyard` | I | matrice | **Clovis Oyard** | 1821–1880 | M `O` | Pilote du golfe · `pilote` | visible |
-| C04 | `toinette-cormaud` | I | talons | **Toinette Cormaud** (Oyard) | 1826–1899 | M `O+A` | Sage-femme · `sage-femme` | visible |
+| C04 | `toinette-cormaud` | I | talons | **Toinette Cormaud** (Oyard) | 1826–1899 | M `O-tA` | Sage-femme · `sage-femme` | visible |
 | C05 | `simeon-cormaud` | I | matrice | **Siméon Cormaud** | 1817–1890 | M `A` | Charpentier de marine · `charpentier-de-marine` | visible |
-| C06 | `ursule-lestaud` | I | talons | **Ursule Lestaud** (Cormaud) | 1820–1888 | M `A+P` | Ramendeuse · `ramendeuse` | visible |
+| C06 | `ursule-lestaud` | I | talons | **Ursule Lestaud** (Cormaud) | 1820–1888 | M `A-tP` | Ramendeuse · `ramendeuse` | visible |
 | C07 | `lubin-lestaud` | I | matrice | **Lubin Lestaud** | 1824–1893 | M `P` | Goémonier · `goemonier` | visible |
-| C08 | `apolline-goemard` | I | talons | **Apolline Goémard** (Lestaud) | 1828–1902 | M `P+Y` | Boulangère (four commun) · `boulangere` | visible |
+| C08 | `apolline-goemard` | I | talons | **Apolline Goémard** (Lestaud) | 1828–1902 | M `P-tY` | Boulangère (four commun) · `boulangere` | visible |
 | C09 | `josse-goemard` | II | goémard | **Josse Goémard** | 1848–1909 | M `Y-g` | Ramasseur·se d'ambre · `ramasseur-d-ambre` | visible |
-| C10 | `reine-lestaud` | II | goémard | **Reine Lestaud** (Goémard) | 1853–1920 | M `Y-g+P` (fille : `P·`) | Fileuse · `fileuse` | visible |
-| C11 | `jacquette-goemard` | II | oyard | **Jacquette Goémard** (Oyard) | 1852–1919 | M `O-g+Y` (fille : `Y·`) | Sage-femme · `sage-femme` | visible |
+| C10 | `reine-lestaud` | II | goémard | **Reine Lestaud** (Goémard) | 1853–1920 | M `Y-g-tP` (fille : `P-pt`) | Fileuse · `fileuse` | visible |
+| C11 | `jacquette-goemard` | II | oyard | **Jacquette Goémard** (Oyard) | 1852–1919 | M `O-g-tY` (fille : `Y-pt`) | Sage-femme · `sage-femme` | visible |
 | C12 | `medard-oyard` | II | oyard | **Médard Oyard** | 1850–1908 | M `O-g` | Batelier · `batelier` | visible |
 | C13 | `blaise-goemard` | II | garnaud | **Blaise Goémard** (Garnaud) | 1854–1924 | M `Y-d` | Négociant en ambre · `negociant-en-ambre` | **cachée** |
 | C14 | `amelie-ferlay` | II | garnaud | **Amélie Ferlay** (Garnaud) | 1858–1930 | V | Libraire · `libraire` | **cachée** |
-| C15 | `ernestine-oyard` | II | lestaud | **Ernestine Oyard** (Lestaud) | 1857–1921 | M `P-g+O` (fille : `O·`) | Boulangère (four commun) · `boulangere` | visible |
+| C15 | `ernestine-oyard` | II | lestaud | **Ernestine Oyard** (Lestaud) | 1857–1921 | M `P-g-tO` (fille : `O-pt`) | Boulangère (four commun) · `boulangere` | visible |
 | C16 | `fulbert-lestaud` | II | lestaud | **Fulbert Lestaud** | 1851–1916 | M `P-g` | Goémonier · `goemonier` | visible |
 | C17 | `benoit-lestaud` | II | école | **Benoît Lestaud** | 1860–1928 | M `P-d` | Gardien de feu · `gardien-de-feu` | visible |
 | C18 | `sidonie-bremoy` | II | école | **Sidonie Brémoy** (Lestaud) | 1864–1950 | V | Institutrice · `institutrice` | visible |
-| C19 | `noel-cormaud` | II | mer | **Noël Cormaud** | v. 1860–1931 | M `A/` | Charpentier de marine · `charpentier-de-marine` | visible |
-| C20 | `honorine-lestaud` | II | école | **Honorine Lestaud** (Cormaud) | 1864–1940 | M `A/+P` (fille : `P··`) | Ramendeuse · `ramendeuse` | visible |
+| C19 | `noel-cormaud` | II | mer | **Noël Cormaud** | v. 1860–1931 | M `A-b` | Charpentier de marine · `charpentier-de-marine` | visible |
+| C20 | `honorine-lestaud` | II | école | **Honorine Lestaud** (Cormaud) | 1864–1940 | M `A-b-tP` (fille : `P-pt-pt`) | Ramendeuse · `ramendeuse` | visible |
 | C21 | `gatien-goemard` | III | goémard | **Gatien Goémard** | 1881–1944 | V | Tailleur d'ambre · `tailleur-d-ambre` | visible |
 | C22 | `leontine-sauvat` | III | goémard | **Léontine Sauvat** (Goémard) | 1889–1968 | V | Couturière · `couturiere` | visible |
 | C23 | `elzear-oyard` | III | oyard | **Elzéar Oyard** | 1878–1951 | M `O-g-g` | Batelier · `batelier` | visible |
@@ -125,8 +126,8 @@ dans sa maison natale.
 
 **Pourquoi le champ change** : la lettre de mission (OF-01) pose la règle diégétique : « pour les
 insulaires qui n'ont jamais signé, le tableau retient **la marque** au lieu du portrait » (loi de
-1973, art. 15). L'interface affiche le libellé du champ sur chaque case (« Visage » ou « Marque ») :
-le joueur n'a pas à deviner lequel. Elzéar (né en 1878) n'est allé que trois jours à l'école (RG-22) :
+1973, art. 15). L'interface affiche le libellé du champ sur chaque case (« Portrait » ou « Marque »,
+`docs/game/AFFAIRE-3.md` §1.2) : le joueur n'a pas à deviner lequel. Elzéar (né en 1878) n'est allé que trois jours à l'école (RG-22) :
 il a toujours marqué. Des visages de personnes « à marque » existent sur les photos (Blaise en 1889,
 Benoît en 1908, Noël, Honorine et Jacquette en 1913, Reine en 1911) : ils ne vont dans aucune case.
 
@@ -165,9 +166,9 @@ commun : Apolline puis Ernestine ; la sage-femme : Toinette puis Jacquette) ou d
 
 | Leurre | Piège |
 |---|---|
-| `matelot` *(« Matelot »)* | Ce que Blaise a été de 1871 à 1877 (RG-13). Le métier est celui pour lequel on est connu **dans au moins deux pièces** : négociant en ambre (RG-12, AN-01, RG-14, PR-04). |
+| `matelot` *(« Matelot »)* | Ce que Blaise a été de 1871 à 1877 : PR-04 (nécrologie, niveau 0 : « mousse à seize ans, puis matelot sur l'*Orvelle* ») et RG-13 (niveau C). Premier métier, quitté, comme `comptable` dans l'affaire 1 : Blaise est connu comme négociant en ambre (RG-12, AN-01, RG-14, PR-02, PR-04). Lisible **avant** que C13 soit remplissable. |
 | `armateur` *(« Armateur »)* | Ce que *L'Écho* dit de Blaise en 1908 (PR-03), parce qu'il possède une vedette ; aucun acte ne le dit. |
-| `gardien-de-phare` *(« Gardien de phare »)* | Benoît travaillait pour Phares et Balises, mais au **feu** de Longuegrève : « gardien auxiliaire de feu » (RG-11, RG-21, RP-04). Un feu n'est pas un phare (le Lecteur affiche la définition du *Bulletin des Phares*, RG-21). |
+| `gardien-de-phare` *(« Gardien de phare »)* | Ce que dit la famille : Ginette Sollier, « mon grand-oncle Benoît, le gardien de phare » (PV-03, niveau A, avant `g-ecole`). Benoît travaillait pour Phares et Balises, mais au **feu** de Longuegrève : « gardien auxiliaire du feu » (RG-11, RG-21, RP-04, RG-16). Un feu n'est pas un phare (définition en tête du registre du personnel, RG-21). |
 
 Rappel de la règle de l'affaire 1 : le métier est **l'activité pour laquelle la personne est connue
 dans au moins deux pièces**. Léandre et Edmée sont « directeur·rice » ; Blaise, fondateur, est
@@ -178,18 +179,19 @@ dans au moins deux pièces**. Léandre et Edmée sont « directeur·rice » ; Bl
 - **Établie** (`prefilled`, hors groupe) : **C24 Victoire Oyard** — la « dernière voix de
   Longuegrève », enregistrée en 1964 (portrait OF-08, nom et métier par OF-01 et OF-08). Sert de point
   d'appui, comme Honoré dans l'affaire 2.
-- **Cases cachées** (proposition de `revealedBy`, à arbitrer par le `level-designer`) :
-  - **C13 Blaise** : lecture de **RG-01** (baptême de 1854) **ou** de **BD-02** (« un petit Blaise,
-    parti en 70 ») **ou** de **RG-02** (1870).
+- **Cases cachées** (`revealedBy`, arrêté par le `level-designer`, `docs/level/longuegreve.md` §3) :
+  - **C13 Blaise** : lecture de **RG-01** (baptême de 1854) **ou** de **RG-02** (1870) **ou** de
+    **CN-03** (la cheminée relevée) **ou** de **LT-01** (« Ton frère. B. »). **BD-02 ne révèle plus
+    C13** : Victoire n'y nomme plus Blaise (dosage de ce qu'elle savait, `04-personnages.md` C24).
   - **C14 Amélie**, **C27 Léandre**, **C32 Edmée** : lecture de **RG-13** (« Blaise, dit Garnaud ») **ou**
-    de **PH-15** (la tombe de Blaise Garnaud porte `Y-d`) **ou** d'**EX-01**. Le joueur sait déjà
+    de **PH-15** (la tombe de Blaise Garnaud porte sa marque) **ou** d'**EX-01**. Le joueur sait déjà
     qu'Edmée existe (OF-03) : sa case n'apparaît que lorsque la branche est rattachée à l'île.
 - **Pas de case revendiquée** (mécanique de l'affaire 2) : le doute porte ici sur des **marques**.
 - Forme visible au départ : **28 cases** (1 établie, 27 vides) ; 4 cachées. Les noms des quatre chefs
   (C01, C03, C05, C07) et leurs marques sont dans une pièce de départ (OF-02) : premier groupe en
   dix minutes, qui enseigne la marque comme champ.
 
-## 5. Groupes de validation (proposition au `level-designer`)
+## 5. Groupes de validation (arrêtés par le `level-designer`, `docs/level/longuegreve.md` §3)
 
 | Groupe | Libellé | Cases | Seuil |
 |---|---|---|---|
@@ -202,39 +204,43 @@ dans au moins deux pièces**. Léandre et Edmée sont « directeur·rice » ; Bl
 | `g-mer` | L'enfant de mer | C19 Noël, C25 Lazare, C30 Marin | 3 |
 | `g-garnaud` | Le fils parti | C13 Blaise, C14 Amélie, C27 Léandre, C32 Edmée | 3 |
 
-Total 31 cases en groupes + C24 établie = 32. **Ordre attendu** : matrice (OF-02, CN-01) → talons
-(CN-01, RG-07–RG-10) → Oyard (BD-01, DV-02, RG-15) → les autres en parallèle → Garnaud en dernier
-(il exige la grammaire et un saut vers Port-Sénane).
+Total 31 cases en groupes + C24 établie = 32. **Ordre attendu** (portes du level-designer, §4) :
+`g-matrice` (tutoriel, OF-02, RG-05) et `g-oyard` (BD-01, RG-18, PH-10, PH-16) ouvrables d'emblée →
+niveau A : `g-talons` (RG-07–RG-10 : lire le talon au pied des actes ; PH-10 pour Ursule) et `g-ecole`
+→ niveau B : `g-goemard`, `g-lestaud`, `g-mer` en parallèle → niveau C : `g-garnaud` en dernier (il
+exige la grammaire, un saut vers Port-Sénane et l'Inscription maritime).
 
 ## 6. Pièges (outils de déduction, jamais contradictions)
 
 | Type | Où | Comment on le lève |
 |---|---|---|
-| **L'enfant de mer** (exception R6) | Noël `A/` porte la tête Cormaud : on le croit fils de Siméon. | OF-05 (règle et marque de mer), RG-02 (« baptisé sous condition, recueilli »), RG-10 (« de parents inconnus »), BD-03 ; les vrais fils `A-g`, `A-d` sont noyés en 1869 (CN-01). Noël n'a pas de parents dans l'arbre. |
-| **Le fils parti** | Blaise est « Garnaud, né à Port-Sénane » partout sur le continent (RG-12, PR-02, PR-04, BD-07, OF-03). | RG-12 donne la **même date de naissance** que le baptême de RG-01 (3 févr. 1854) ; la cheminée (PH-08) et la tombe (PH-15) portent `Y-d` ; RG-13 relie les deux noms ; LT-07 pose la question. |
+| **L'enfant de mer** (exception R6) | Noël `A-b` porte la tête Cormaud : on le croit fils de Siméon. | OF-05 (règle et marque de mer), RG-02 (« baptisé sous condition, recueilli »), RG-10 (« de parents inconnus »), BD-03 ; les vrais fils `A-g`, `A-d` sont noyés en 1869 (CN-01). Noël n'a pas de parents dans l'arbre. |
+| **Le fils parti** | Blaise est « Garnaud, né à Port-Sénane » partout sur le continent (RG-12, PR-02, PR-04, BD-07, OF-03). | RG-12 donne la **même date de naissance** que le baptême de RG-01 (3 févr. 1854) ; la cheminée (CN-03, PH-08) et la tombe (PH-15) portent la Fourche à entaille droite, qu'on déduit être le puîné de Gervais (`Y-d`) ; RG-13 relie les deux noms ; LT-07 pose la question. |
 | **Le trident** | La marque de commerce du Comptoir (D10), « un trident » (BD-07). | R1 et R7 : c'est une Fourche (`Y`), mais gravée, pas autographe. Indice, pas preuve. |
 | **Le puîné d'une autre maison** | Ange Oyard `O-d`, inscrit maritime le même jour que Blaise (RG-13). | La tête : Œil, pas Fourche. Leurre de recherche « puîné parti en mer ». |
-| **Marques d'avirons** | `Y-g-g` (Gatien), `A/-g` (Lazare) aux Cabanes (CN-02, PH-10). | R8 : ils signent, leurs cases sont des visages ; ces marques confirment la grammaire (une génération de plus). |
-| **Marque de fille** | Jacquette `Y·` (1876), Reine `P·` (1879), Ernestine `O·` (1877), Honorine `P··` (1885) sur leurs actes de mariage. | R4 → R5 : acceptées comme second état de la case (`altPortraits`). |
-| **Copie de commis** | La croix `X` à la place de la marque d'Ernestine (double de RG-09). | R7 ; la page originale porte `O·`. |
+| **Marques d'avirons** | `Y-g-g` (Gatien), `A-b-g` (Lazare) aux Cabanes (CN-02, PH-10). | R8 : ils signent, leurs cases sont des visages ; ces marques confirment la grammaire (une génération de plus). |
+| **Marque de fille** | Jacquette `Y-pt` (1876), Reine `P-pt` (1879), Ernestine `O-pt` (1877), Honorine `P-pt-pt` (1885) sur leurs actes de mariage. | R4 → R5 : acceptées comme second état de la case (`altPortraits`). |
+| **Talon au pied de l'acte** | Les parents des mariés (RG-07–RG-10) font leur marque au pied de l'acte, sans légende, dans l'ordre de passage. | R5 : la tête dit le mari, le talon la maison natale ; une seule épouse de chef par couple tête–talon (`Y-tO` = Perrine). |
+| **Copie de commis** | La croix `X` à la place de la marque d'Ernestine (double de RG-09). | R7 ; la page originale porte `O-pt`. |
 | **Même métier, deux générations** | Ramasseur d'ambre (Gervais, Josse), batelier (Médard, Elzéar), sage-femme (Toinette, Jacquette), boulangère (Apolline, Ernestine), fileuse (Perrine, Reine), goémonier (Lubin, Fulbert), ramendeuse (Ursule, Honorine), charpentier (Siméon, Noël), directeur·rice (Léandre, Edmée). | Les marques et les dates départagent ; jamais deux personnes du même métier dans un même groupe sans marque ou visage distinct. |
 | **Pêcheur / patron pêcheur** | Lazare et Félix. | Le patron possède son bateau (Inscription maritime, AN-02, PR-08) ; Lazare est « pêcheur » à son mariage (RG-18) et aux tables (RG-17). |
-| **Gardien de feu ≠ de phare** | Benoît (leurre `gardien-de-phare`). | RG-21 (« gardien auxiliaire du feu »), RP-04, RG-11. |
+| **Gardien de feu ≠ de phare** | Benoît (leurre `gardien-de-phare`), dit « gardien de phare » par sa petite-nièce (PV-03). | RG-21 (« gardien auxiliaire du feu », et la définition du feu), RP-04, RG-11. |
 | **« Enfant de notre ville »** | Fausse origine de Blaise (PR-02, PR-04, RG-12, BD-07). | Aucune naissance de Blaise à Port-Sénane aux tables ; l'acte de notoriété (RG-12) n'est qu'un témoignage ; RG-13. |
 | **Noms au son** | *Gouémard*, *Oyart*, *Cormault*, *Lestot* dans les registres du continent. | Variantes acceptées (§2) ; le Lecteur les indexe ensemble (OF-06). |
 | **Deux Rose ?** | Rose Oyard est « Mme Pellerin » à la halle (PH-16, AN-02). | Nom d'épouse accepté ; RG-17 (naissance, fille d'Elzéar). |
 
-## 7. Affichage de Noël (option)
+## 7. Affichage de Noël (décidé)
 
 Le contrat place les cases par le **sang** (`parents`) : Noël a `parents: [null, null]` et rejoint
-l'arbre par son union avec Honorine. **Option** (au `game-designer` et au `frontend`) : un trait
-pointillé « accueilli » de Siméon et Ursule vers Noël, affiché **après** validation de `g-mer`, comme
-le pointillé d'adoption prévu par l'affaire 1. Sans cette option, rien ne change au jeu : la case
-reste juste.
+l'arbre par son union avec Honorine. **Décision** (`docs/game/AFFAIRE-3.md` §4, D5) : **aucun trait**
+vers Siméon et Ursule ; C19 est placée dans la **colonne de Siméon et Ursule**, à la génération II : la
+proximité dit « de cette maison », l'absence de trait dit « pas du sang » (art. 15 : un arbre de sang).
+Le couple Siméon–Ursule reste sans descendant visible : c'est la question de S3. Le pointillé
+« accueilli » est au backlog 3.1, seulement si le playtest montre une confusion.
 
 ## 8. À trancher par l'humain
 
-1. Le nombre de cases (32) et le découpage en 8 groupes, dont un groupe de 5 (`g-goemard`).
+1. Le nombre de cases (32) et le découpage en 8 groupes, dont un groupe de 5 (`g-goemard`, conservé
+   par le `level-designer` : Félix est le représentant vivant de la Fourche, exigé par PV-06).
 2. Les métiers partagés de mère en belle-fille (coutume de l'île) : garder ou différencier.
-3. L'affichage pointillé de l'accueil de Noël (§7).
-4. Edmée Garnaud célibataire (pas de nom d'épouse) ; Rose « Pellerin » par mariage.
+3. Edmée Garnaud célibataire (pas de nom d'épouse) ; Rose « Pellerin » par mariage.

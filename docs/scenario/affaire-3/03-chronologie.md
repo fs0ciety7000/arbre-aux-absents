@@ -7,10 +7,11 @@
 >
 > Conventions : `→ XX-00` = pièce du corpus produite à cette date ou qui la raconte. **[officiel]** =
 > ce que disent les registres, la presse et les actes ; **[vrai]** = ce qui s'est passé. `Cnn` = case
-> de l'arbre (`02-arbre.md`). Les marques sont notées selon la **notation Marest** (`09-marques.md`) :
-> `Y` Fourche (Goémard), `O` Œil (Oyard), `A` Flèche (Cormaud), `P` Potence (Lestaud) ; `-g` / `-d`
-> entaille de l'aîné / du puîné ; `·` grain de fille ; `+X` talon d'épouse ; `/` barre de l'enfant de
-> mer. Jours de la semaine vérifiés au calendrier grégorien (identique dans le monde).
+> de l'arbre (`02-arbre.md`). Les marques sont notées en **cote LX** (`09-marques.md` §2) : `Y` Fourche
+> (Goémard), `O` Œil (Oyard), `A` Flèche (Cormaud), `P` Potence (Lestaud) ; `-g` / `-d` entaille de
+> l'aîné / du puîné ; `-pt` grain de fille ; `-tX` talon d'épouse née X ; `-b` barre de l'enfant de mer.
+> Ce sont des notes de travail : dans les pièces, une marque est **dessinée**, jamais écrite. Jours de
+> la semaine vérifiés au calendrier grégorien (identique dans le monde).
 
 ---
 
@@ -18,7 +19,7 @@
 
 | Date | Événement |
 |---|---|
-| avant 1811 | Quatre maisons habitent **Longuegrève**, île longue et basse du golfe d'Ambre, à quatre lieues et demie de la côte : **Goémard**, **Oyard**, **Cormaud**, **Lestaud**. Chacune tient une **lanière** (bande de terre de la falaise à la grève) et le droit de ramasser l'ambre sur sa part de la **Longue Grève**, la plage de l'ouest, la plus riche du golfe. Personne n'y sait écrire ; chacun **fait sa marque**. |
+| avant 1811 | Quatre maisons habitent **Longuegrève**, île longue et basse du golfe d'Ambre, à près de cinq lieues de la côte : **Goémard**, **Oyard**, **Cormaud**, **Lestaud**. Chacune tient une **lanière** (bande de terre de la falaise à la grève) et le droit de ramasser l'ambre sur sa part de la **Longue Grève**, la plage de l'ouest, la plus riche du golfe. Personne n'y sait écrire ; chacun **fait sa marque**. |
 | 1811 | Charte : état civil communal. Longuegrève devient une **section de la commune de Port-Sénane** ; les naissances doivent y être déclarées dans les trois jours, ce que la mer rend impossible l'hiver : on déclare par fournées, quand on traverse (« déclarations tardives »). Beaucoup d'enfants ne sont jamais déclarés. Le **registre de la chapelle**, tenu par le desservant de passage, est la seule trace complète. |
 | 1848 | Fondation du *Courrier d'Aubrelieu*. |
 | 7 juil. 1868 (mardi) | **Cadastre grand-ducal des îles du golfe.** Le géomètre Constant Mérel lève le plan des **quatre lanières** et dresse la **matrice** : chaque chef de maison y fait sa marque. Pour l'occasion, les quatre chefs « font leurs marques neuves » : la **tête seule** de leur maison, sans entaille (`Y`, `O`, `A`, `P`). Depuis, toutes les marques de l'île se lisent **à partir d'eux** (`09-marques.md`, R2). |
@@ -69,35 +70,35 @@
 
 | Date | Événement | Docs |
 |---|---|---|
-| 7 juil. 1868 (mardi) | Matrice cadastrale : Gervais `Y`, Clovis `O`, Siméon `A`, Lubin `P` (autographes). Plan des quatre lanières ; dans le cartouche, le géomètre dessine une « **marque de l'île** » (les quatre têtes sur un seul pied) : un dessin, pas une marque. Même année, la nouvelle **cloche** de la chapelle est gravée « LONGUEGRÈVE 1868 » avec les quatre têtes. Les enfants de douze ans et plus reçoivent leur marque selon la règle neuve : Josse `Y-g`, Blaise `Y-d` (14 ans), Médard `O-g`, Ange `O-d`, Fulbert `P-g`, Jacquette `Y·`, Reine `P·`, Ernestine `O·` (11 ans : en 1869), Jean `A-g`, Yves `A-d`. | → OF-02, RG-05, RG-06, OB-03, RG-02 |
+| 7 juil. 1868 (mardi) | Matrice cadastrale : Gervais `Y`, Clovis `O`, Siméon `A`, Lubin `P` (autographes). Plan des quatre lanières ; dans le cartouche, le géomètre dessine une « **marque de l'île** » (les quatre têtes sur un seul pied) : un dessin, pas une marque. Même année, la nouvelle **cloche** de la chapelle est gravée « LONGUEGRÈVE 1868 » avec les quatre têtes. Les enfants de douze ans et plus reçoivent leur marque selon la règle neuve : Josse `Y-g`, Blaise `Y-d` (14 ans), Médard `O-g`, Ange `O-d`, Fulbert `P-g`, Jacquette `Y-pt`, Reine `P-pt`, Ernestine `O-pt` (11 ans : en 1869), Jean `A-g`, Yves `A-d`. Les épouses des chefs prennent la marque neuve de leur mari avec leur talon : Perrine `Y-tO`, Toinette `O-tA`, Ursule `A-tP`, Apolline `P-tY` ; Ursule la taille sur sa **navette à ramender**. | → OF-02, RG-05, RG-06, OB-03, RG-02, PH-10 |
 | 30 oct. 1869 (samedi) | **Coup d'ouest.** Jean et Yves Cormaud, 25 et 23 ans, se noient en ramassant l'ambre au plus fort de la tempête. Croix `A-g` et `A-d`. Siméon n'a plus de fils de son sang. | → RG-02, CN-01, OF-05 |
-| 1870 | Mort de Marthe Goémard, 11 ans. Croix `Y··`. | → RG-02, CN-01 |
+| 1870 | Mort de Marthe Goémard, 11 ans. Croix `Y-pt-pt`. | → RG-02, CN-01 |
 | 23 oct. 1870 (dimanche) | **[vrai, secret S4]** Après un coup d'ouest, **Josse**, 22 ans, prend sur la lanière Lestaud une grosse pièce d'ambre. On la retrouve chez les Goémard. **Blaise**, 16 ans, dit que c'est lui : l'aîné doit garder la maison. | → BD-04, DV-01 |
 | 12 nov. 1870 (samedi) | **[officiel]** Le conseil des quatre maisons « ôte de la grève » Blaise Goémard, seize ans, « pour un ambre pris sur la lanière Lestaud ». Il part pour la Grand-Terre (le continent). Le desservant l'écrit au registre. | → RG-02 |
 | 8 mai 1871 (lundi) | **Inscription maritime de Port-Sénane** : « Blaise, dit Garnaud, né à Longuegrève vers 1854, fils de Gervais Goémard, ramasseur d'ambre, et de Perrine Oyard ; ne sait signer, a fait sa marque » `Y-d` ; mousse sur l'*Orvelle* (Compagnie des Paquebots). **[vrai]** Au commis qui lui demande son nom, il répond « Blaise, garnaud » (ramasseur d'ambre) : le commis écrit « dit Garnaud ». Sur la même page, **Ange Oyard**, 18 ans, puîné de Clovis, s'inscrit lui aussi (`O-d`). | → RG-13 |
 | 1871–1877 | Blaise matelot ; il apprend à lire et à écrire à bord. Ange Oyard se noie en 1880 au large de Tennok (cénotaphe `O-d` au cimetière de l'île). | → RG-13, CN-01 |
-| 13 mai 1876 (samedi) | Mariage civil à Port-Sénane de **Médard Oyard**, batelier, et de **Jacquette Goémard** : marques `O-g` et `Y·` ; présents et consentants, Gervais `Y`, Perrine `Y+O`, Clovis `O`, Toinette `O+A` ; témoins Josse `Y-g`, Fulbert `P-g`. | → RG-07 |
-| 1876 | Jacquette prend la marque d'épouse `O-g+Y`. | → RG-15, RG-18 |
-| 20 oct. 1877 (samedi) | Mariage civil de **Fulbert Lestaud**, goémonier, et d'**Ernestine Oyard** : marques `P-g` et `O·` ; présents Lubin `P`, Apolline `P+Y`, Clovis `O`, Toinette `O+A`. Le **double** du registre, envoyé au greffe, est de la main du commis : la marque d'Ernestine y devient une croix `X` (leurre D9). | → RG-09 |
+| 13 mai 1876 (samedi) | Mariage civil à Port-Sénane de **Médard Oyard**, batelier, et de **Jacquette Goémard** : marques `O-g` et `Y-pt` ; présents et consentants, Gervais `Y`, Perrine `Y-tO`, Clovis `O`, Toinette `O-tA` ; témoins Josse `Y-g`, Fulbert `P-g`. | → RG-07 |
+| 1876 | Jacquette prend la marque d'épouse `O-g-tY`. | → RG-15, RG-18 |
+| 20 oct. 1877 (samedi) | Mariage civil de **Fulbert Lestaud**, goémonier, et d'**Ernestine Oyard** : marques `P-g` et `O-pt` ; présents Lubin `P`, Apolline `P-tY`, Clovis `O`, Toinette `O-tA`. Le **double** du registre, envoyé au greffe, est de la main du commis : la marque d'Ernestine y devient une croix `X` (leurre D9). | → RG-09 |
 | 2 juin 1878 | Naissance d'**Elzéar Oyard** (C23), aîné de Médard. | → RG-03 |
 | 14 sept. 1878 (samedi) | Mariage à Port-Sénane de **Blaise Garnaud**, commis chez un négociant en ambre, et d'**Amélie Ferlay** (C14), libraire, fille de la librairie Ferlay du quai des Messageries. **[officiel]** « né à Port-Sénane le 3 février 1854 », sur **acte de notoriété** (sept témoins du port), « de parents décédés ». Il signe « B. Garnaud ». **[vrai]** La date est celle de sa naissance à Longuegrève. | → RG-12 |
-| 25 janv. 1879 (samedi) | Mariage civil de **Josse Goémard**, ramasseur d'ambre, et de **Reine Lestaud**, fileuse : marques `Y-g` et `P·` ; présents Gervais `Y`, Perrine `Y+O`, Lubin `P`, Apolline `P+Y` ; témoins Médard `O-g`, Benoît `P-d`. | → RG-08 |
-| 1879 | Naissance de **Delphine Lestaud**, fille de Fulbert (hors arbre ; marque `P-g·` sur la liste de 1908). | → RG-03, RG-15 |
+| 25 janv. 1879 (samedi) | Mariage civil de **Josse Goémard**, ramasseur d'ambre, et de **Reine Lestaud**, fileuse : marques `Y-g` et `P-pt` ; présents Gervais `Y`, Perrine `Y-tO`, Lubin `P`, Apolline `P-tY` ; témoins Médard `O-g`, Benoît `P-d`. | → RG-08 |
+| 1879 | Naissance de **Delphine Lestaud**, fille de Fulbert (hors arbre ; marque `P-g-pt` sur la liste de 1908). | → RG-03, RG-15 |
 | 1880 | Mort de **Clovis Oyard**. Médard succède à la lanière Oyard (mutation cadastrale signée `O-g`). Naissance de **Léandre Garnaud** (C27), fils de Blaise et d'Amélie, à Port-Sénane. | → RG-03, RG-05, RG-14 |
 | 19 sept. 1881 | Naissance de **Gatien Goémard** (C21), fils de Josse et de Reine. | → RG-03 |
 | 8 janv. 1883 | Naissance de **Clément Lestaud** (C26), fils de Fulbert et d'Ernestine. | → RG-03 |
 | 1885 | **Benoît Lestaud**, 25 ans, est nommé **gardien auxiliaire du feu** de Longuegrève (le feu est réduit à un feu fixe sans gardien titulaire). Il ne sait signer : marque `P-d` au registre du personnel. | → RG-21 |
-| 21 nov. 1885 (samedi) | Mariage civil de **Noël Cormaud**, charpentier de marine, « né en mer ou sur la grève de Longuegrève vers 1860, de parents inconnus, recueilli et élevé par Siméon Cormaud », et d'**Honorine Lestaud**, ramendeuse : marques `A/` et `P··` ; présents Siméon `A`, Ursule `A+P`, Lubin `P`, Apolline `P+Y`. | → RG-10 |
+| 21 nov. 1885 (samedi) | Mariage civil de **Noël Cormaud**, charpentier de marine, « né en mer ou sur la grève de Longuegrève vers 1860, de parents inconnus, recueilli et élevé par Siméon Cormaud », et d'**Honorine Lestaud**, ramendeuse : marques `A-b` et `P-pt-pt` ; présents Siméon `A`, Ursule `A-tP`, Lubin `P`, Apolline `P-tY`. | → RG-10 |
 
 ## 3. L'école, le feu et le Comptoir (1886–1907)
 
 | Date | Événement | Docs |
 |---|---|---|
-| 5 mars 1886 | Naissance de **Lazare Cormaud** (C25), fils de Noël et d'Honorine. (Lazare signe ; seul son aviron porte `A/-g`, leurre D7.) | → RG-03 |
-| 1886 | Blaise fonde à Port-Sénane le **Comptoir des Ambres B. Garnaud & Cie** (quai du Môle). Il achète l'ambre brut des îles du golfe, ouvre un atelier de taille. Sa marque de commerce : une **fourche couronnée** (« un trident », dit-on) : sa propre tête de maison, que personne ne reconnaît (leurre D10). Les reçus des insulaires portent leurs marques : Gervais `Y` puis Josse `Y-g`, Médard `O-g`, Siméon `A` puis Noël `A/`, Lubin `P` puis Fulbert `P-g`. **Jamais `Y-d`.** | → RG-24, OB-04, PB-01 |
+| 5 mars 1886 | Naissance de **Lazare Cormaud** (C25), fils de Noël et d'Honorine. (Lazare signe ; seul son aviron porte `A-b-g`, leurre D7.) | → RG-03 |
+| 1886 | Blaise fonde à Port-Sénane le **Comptoir des Ambres B. Garnaud & Cie** (quai du Môle). Il achète l'ambre brut des îles du golfe, ouvre un atelier de taille. Sa marque de commerce : une **fourche couronnée** (« un trident », dit-on) : sa propre tête de maison, que personne ne reconnaît (leurre D10). Les reçus des insulaires portent leurs marques : Gervais `Y` puis Josse `Y-g`, Médard `O-g`, Siméon `A` puis Noël `A-b`, Lubin `P` puis Fulbert `P-g`. **Jamais `Y-d`.** | → RG-24, OB-04, PB-01 |
 | 4 oct. 1886 (lundi) | Ouverture de l'école ; institutrice **Sidonie Brémoy** (C18), 22 ans, née à Bains-de-Mérande. Elzéar Oyard, huit ans, vient trois jours : « son père le prend au bateau ». Il fera toujours sa marque. | → RG-22 |
 | 1887 | Mort de **Gervais Goémard**. Josse succède (mutation signée `Y-g`). | → RG-03, RG-05 |
-| 1888 | Mort d'**Ursule Lestaud**. | → RG-03 |
+| 1888 | Mort d'**Ursule Lestaud**. Sa navette passe, avec les filets, à Honorine, sa nièce, femme de Noël (le métier va de mère à belle-fille). | → RG-03, BD-06, CN-02 |
 | juil. 1889 | Grande Exposition d'Aubrelieu : médaille d'argent au Comptoir des Ambres ; photographie du stand (Studio Lumen) : Blaise (35 ans), Amélie (31), Léandre (9). *L'Écho* : « M. Blaise Garnaud, enfant de notre ville ». | → PH-01, PR-02 |
 | 16 févr. 1890 (dimanche) | **[vrai, secret S3]** Siméon Cormaud, malade, fait recevoir par le desservant, l'abbé Fortuné Rabier, en présence de quatre témoins, son **« testament de grève »** : Noël, « l'enfant que la mer m'a donné », est « mon fils devant Dieu et l'héritier de la lanière Cormaud ». Marques : Siméon `A` ; témoins Josse `Y-g`, Médard `O-g`, Fulbert `P-g`, Benoît `P-d`. Le desservant en note la substance au registre et porte l'original à **Me Aristide Lhermet**, notaire à Port-Sénane (dépôt du 3 mars). **[officiel]** Ni enregistré, ni transcrit : personne ne s'est présenté. Au cadastre, la lanière Cormaud **reste au nom de Siméon**. | → RG-19, RG-03, BD-03 |
 | 1er mars 1890 | Mort de **Siméon Cormaud**. Noël occupe la maison Cormaud. | → RG-03 |
@@ -114,7 +115,7 @@
 | 1903 | Victoire, dix ans, écrit à l'école une rédaction : « Ma maison ». | → DV-02 |
 | 1905 env. | Carte postale de la Phototypie de l'Orvelle, « Nos côtes — Longuegrève : la grève aux ambres » : Gatien (24 ans) au premier plan, le vieux Noël derrière. Sidonie l'envoie à sa sœur en 1906. | → CP-01 |
 | 1906 | *Annuaire du commerce* : « Garnaud (B.), négociant en ambre » ; « Ferlay (Vve) et fille, librairie » ; « Pélissart (Dr C.), médecin des épidémies du district de l'Estuaire ». | → AN-01 |
-| 22 juil. 1905 (samedi) | Le Comptoir offre d'acheter la Longue Grève. **Refus des quatre maisons**, écrit par Sidonie, marqué par les quatre chefs : Josse `Y-g`, Médard `O-g`, Noël `A/`, Fulbert `P-g`. « Nous ne vendons pas la grève. » | → LT-06 |
+| 22 juil. 1905 (samedi) | Le Comptoir offre d'acheter la Longue Grève. **Refus des quatre maisons**, écrit par Sidonie, marqué par les quatre chefs : Josse `Y-g`, Médard `O-g`, Noël `A-b`, Fulbert `P-g`. « Nous ne vendons pas la grève. » | → LT-06 |
 | 20 déc. 1907 | Mort d'**Anne Oyard**, 4 ans, fille d'Elzéar, du **croup**. | → RG-04 |
 
 ## 4. La fièvre de papier (1908)
@@ -152,7 +153,7 @@
 | 14 oct. 1911 (samedi) | Mariage de **Gatien Goémard**, tailleur d'ambre, et de **Léontine Sauvat** (C22), couturière, née à Port-Sénane en 1889. Photo : Reine (58) au bras de son fils. | → RG-17, PH-06 |
 | 1912 | Photo de l'atelier des Cabanes : Léandre Garnaud (32), directeur ; Gatien (31) ; Victoire (19) au tri. Catalogue du Comptoir. | → PH-04, CT-01 |
 | 6 mai 1912 (lundi) | Naissance de **Félix Goémard** (C28), fils de Gatien et de Léontine. | → RG-17 |
-| 26 avr. 1913 (samedi) | Mariage de **Lazare Cormaud**, pêcheur, et de **Victoire Oyard**, trieuse d'ambre ; présentes et consentantes, Honorine `A/+P` et Jacquette `O-g+Y` (veuve) ; présent, Noël `A/` ; témoins Gatien Goémard, tailleur d'ambre, et Clément Lestaud, marin (Compagnie des Paquebots). Photographie Hamelot. | → RG-18, PH-05 |
+| 26 avr. 1913 (samedi) | Mariage de **Lazare Cormaud**, pêcheur, et de **Victoire Oyard**, trieuse d'ambre ; présentes et consentantes, Honorine `A-b-tP` et Jacquette `O-g-tY` (veuve) ; présent, Noël `A-b` ; témoins Gatien Goémard, tailleur d'ambre, et Clément Lestaud, marin (Compagnie des Paquebots). Photographie Hamelot. | → RG-18, PH-05 |
 | 1916 | Mort de **Fulbert Lestaud**. | → RG-16 |
 | 1919 | Mort de **Jacquette Goémard**. | → RG-16 |
 | 12 juil. 1920 | Naissance de **Marin Cormaud** (C30), fils de Lazare et de Victoire. | → RG-17 |
@@ -164,7 +165,7 @@
 | 21 avr. 1925 | Naissance d'**Aline Lestaud** (C31), fille de Clément. | → RG-17 |
 | 1928 | Mort de **Benoît Lestaud**. Sidonie se retire à Bains-de-Mérande. | → RG-16, PH-12 |
 | 1930 | Mort d'**Amélie Garnaud née Ferlay**. Photographie de Sidonie (66 ans) au jardin de sa sœur. | → RG-16, PH-12 |
-| 29 sept. 1931 (mardi) | Mort de **Noël Cormaud**. Marin, 11 ans, garde son aviron (`A/`, 1872). | → RG-16, OB-01 |
+| 29 sept. 1931 (mardi) | Mort de **Noël Cormaud**. Marin, 11 ans, garde son aviron (`A-b`, 1872). | → RG-16, OB-01 |
 | 1935 env. | Rose Oyard (25 ans), marchande de poisson à la halle de Port-Sénane. | → PH-16 |
 | 1936 | Marin, 16 ans, entre à l'atelier des Cabanes. | → RG-23 |
 | 1938 → 1953 | Florins, florins d'ordre, florins nouveaux : le loyer du coffre étant payé, personne n'y touche. | → RG-20 |
@@ -188,10 +189,10 @@
 | 17 août 1964 (lundi) | **Solange Marest** (40 ans), maître-assistante au Laboratoire des parlers et usages de l'Université d'Aubrelieu, interroge Edmée Garnaud au Comptoir (bande LG-64-07) : « mon grand-père était un enfant de Port-Sénane » ; « le trident ». | → BD-07 |
 | 22 août 1964 (samedi) | Aux Cabanes, Victoire Cormaud née Oyard, 71 ans, enregistre « Les marques » (LG-64-01) et « L'évacuation » (LG-64-02). Portrait de Victoire par Marest. | → BD-01, BD-02, OF-08 |
 | 24 août 1964 (lundi) | Victoire : « Noël » (LG-64-03) et « Josse » (LG-64-04). | → BD-03, BD-04 |
-| 29 août 1964 (samedi) | **Sur l'île**, avec le permis du Comptoir : Félix Goémard (52 ans) les y mène dans son bateau. Au cimetière, Victoire lit les croix ; Marest les relève (planche II) et les photographie. Bande LG-64-05. | → BD-05, CN-01, PH-09 |
-| 5 sept. 1964 (samedi) | Aux Cabanes : hangar à bateaux, avirons, fuseau de Reine, tampon à pain d'Ernestine, linteau de Benoît (planche III) ; Marin (44) et Rose (54) : bande LG-64-06. | → BD-06, CN-02, PH-10 |
-| sept. 1964 | À Port-Sénane, Marest relève la cheminée de l'hôtel Garnaud (« `Y-d` ? Qui ? »), l'étiquette du Comptoir, la cloche de Longuegrève (planche IV). Elle rédige la planche I, « grammaire des marques », d'après Victoire. | → CN-03, OF-05 |
-| 14 mars 1965 (dimanche) | RTV, émission « Les voix de Longuegrève » (*Antenne velmarchoise*). Victoire à Marest : « Ce que vous avez dessiné au quai, demandez-vous qui était le cadet de Gervais. » | → PR-08, LT-07 |
+| 29 août 1964 (samedi) | **Sur l'île**, avec le permis du Comptoir : Félix Goémard (52 ans) les y mène dans son bateau. Au cimetière, Victoire lit les croix, au prénom ; Marest les relève au calque (planche II) et les photographie ; elle offre plus tard à Félix un tirage de la photographie de Victoire à la croix de Clovis. Bande LG-64-05. | → BD-05, CN-01, PH-09 |
+| 5 sept. 1964 (samedi) | Aux Cabanes : hangar à bateaux, avirons, fuseau de Reine, tampon à pain d'Ernestine, navette d'Ursule, linteau de Benoît (planche III) ; Marin (44) et Rose (54) : bande LG-64-06. | → BD-06, CN-02, PH-10 |
+| sept. 1964 | À Port-Sénane, Marest relève la cheminée de l'hôtel Garnaud (« Fourche, entaille à droite. Qui ? »), l'étiquette du Comptoir, la cloche de Longuegrève (planche IV). Elle rédige ensuite la planche I, « grammaire des marques », d'après Victoire : la notation (point, barre, plus) naît là ; les relevés des planches II–IV, antérieurs, n'ont pas de code. Elle montre ses calques à Victoire. **[vrai]** Devant la cheminée relevée, Victoire lit « le puîné de Gervais » ; elle pense au « petit » de Josse (BD-04) et au quai de 1908 (BD-02) ; elle ne dit rien. Elle n'a jamais su le prénom de ce puîné : on n'en parlait pas. | → CN-03, OF-05 |
+| 14 mars 1965 (dimanche) | RTV, émission « Les voix de Longuegrève » (*Antenne velmarchoise*) ; Edmée Garnaud est venue au studio pour le Comptoir. Le soir, Victoire à Marest : « Ce que vous avez dessiné au quai, demandez-vous qui était le cadet de Gervais. Je ne l'ai pas dit devant la petite Garnaud. » (un soupçon, pas un nom). | → PR-08, LT-07 |
 | 3 déc. 1970 (jeudi) | Mort de **Victoire Cormaud née Oyard**, « la dernière qui sache lire les marques ». | → OF-01, RG-16 |
 
 ## 7. L'île aux oiseaux (1972–1977)
@@ -207,10 +208,11 @@
 | 28 sept. 1977 (mercredi) | Lettre de **Ginette Sollier**, petite-nièce de Sidonie, à l'Office : « trois ou quatre cahiers » et un registre d'école. | → OF-07 |
 | 30 sept. 1977 (vendredi) | Note de C. Sauge : versement au Fonds Central Indexé des fonds de Port-Sénane et du golfe, du Fonds Marest ; **les marques sont indexées selon la notation Marest**. | → OF-06 |
 | **3 oct. 1977 (lundi)** | **Début du jeu.** Le rapporteur titulaire reçoit le dossier **77-0874**. | → OF-01 |
-| 6 oct. 1977 (jeudi) | Audition d'Edmée Garnaud au siège du Comptoir (l'ancien hôtel Garnaud). | → PV-01 |
-| 7 oct. 1977 (vendredi) | Audition de Marin Cormaud et de Félix Goémard aux Cabanes ; Félix remet la **lettre fermée de 1908** (ouverte devant l'enquêteur). Photo de la cheminée. | → PV-02, LT-01, PH-08 |
-| 11 oct. 1977 (mardi) | Audition de Ginette Sollier à Bains-de-Mérande ; remise des **quatre cahiers**, du registre d'école, des lettres et photographies de Sidonie. | → PV-03, RG-01–RG-04, RG-22 |
+| 6 oct. 1977 (jeudi) | **Première audition** : Ginette Sollier à Bains-de-Mérande ; remise des **quatre cahiers**, du registre d'école, des lettres et photographies de Sidonie (Fonds Sollier). | → PV-03, RG-01–RG-04, RG-22, LT-02, LT-04, PH-02, PH-12, DV-02 |
+| 11 oct. 1977 (mardi) | Audition d'Edmée Garnaud au siège du Comptoir (l'ancien hôtel Garnaud) ; elle communique les archives du Comptoir. Le photographe de l'Office photographie la cheminée du salon. | → PV-01, PH-08, LT-08 |
+| 12 oct. 1977 (mercredi) | Audition de Marin Cormaud et de Félix Goémard aux Cabanes ; Félix remet la **lettre fermée de 1908**, ouverte devant l'enquêteur, et ses photographies ; Marin, l'album de l'Amicale. | → PV-02, LT-01, PH-05, PH-06, PH-09 |
 | 13 oct. 1977 (jeudi) | Audition d'Aline Lestaud. | → PV-04 |
+| 14 oct. 1977 (vendredi) | Ginette Sollier envoie une carte postale « retrouvée dans le missel » de Sidonie. | → CP-01 |
 | 15 oct. 1977 (samedi) | *L'Écho* : « Les Cabanes veulent leur île » ; photo de Marin et Félix ; photo d'Edmée. | → PR-07, PH-13, PH-14 |
 | 19 oct. 1977 (mercredi) | Audition de Solange Marest à Aubrelieu. | → PV-05 |
 | 26 oct. 1977 (mercredi) | Expertise des marques (S. Marest). | → EX-01 |

@@ -1,7 +1,7 @@
 # 04 — Personnages (affaire 3)
 
 > Une fiche par case, puis les personnages hors arbre. Pour le `cartographe` : **Champ de case** =
-> **Marque** (code Marest, dessin : `09-marques.md`) ou **Visage** (portrait à l'âge indiqué ;
+> **Marque** (code en cote LX, dessin et id neutre : `09-marques.md`) ou **Visage** (portrait à l'âge indiqué ;
 > **autres âges** = `altPortraits`). Les apparitions doivent rester **reconnaissables** grâce aux
 > **constantes** (en gras). Dates : `03-chronologie.md`.
 >
@@ -31,7 +31,7 @@ Comptoir sans savoir à qui (RG-24).
 a laissé faire, pour garder un aîné.
 **Apparitions.** OF-02, RG-01, RG-05, RG-07, RG-08, RG-13, RG-24, CN-01, PH-09, BD-05.
 
-### C02 — Perrine Oyard (1823–1891) · fileuse · `Y+O`
+### C02 — Perrine Oyard (1823–1891) · fileuse · `Y-tO`
 **Caractère.** Rieuse, rapide, dure au chagrin.
 **Background.** Née Oyard (talon : petit Œil) ; mère de Josse, Jacquette, Blaise et Marthe.
 **Secrets.** Envoyait chaque printemps, par le batelier, une paire de chaussettes « pour le continent »,
@@ -44,7 +44,7 @@ sans adresse.
 Ernestine.
 **Apparitions.** OF-02, RG-01, RG-05, RG-07, RG-09, CN-01, PH-09, DV-02, BD-01.
 
-### C04 — Toinette Cormaud (1826–1899) · sage-femme · `O+A`
+### C04 — Toinette Cormaud (1826–1899) · sage-femme · `O-tA`
 **Caractère.** Autorité naturelle ; on l'appelle « la Toinette » d'un bout à l'autre de l'île.
 **Background.** Née Cormaud, sœur de Siméon ; a mis au monde presque toute la génération II ; marraine
 de Blaise. Transmet son métier à sa belle-fille Jacquette.
@@ -58,10 +58,13 @@ recueilli Noël en 1861.
 **Secrets.** **S3** : son « testament de grève » de 1890, jamais exécuté.
 **Apparitions.** OF-02, RG-01, RG-02, RG-03, RG-05, RG-10, RG-19, RG-24, CN-01, PH-09, BD-03.
 
-### C06 — Ursule Lestaud (1820–1888) · ramendeuse · `A+P`
+### C06 — Ursule Lestaud (1820–1888) · ramendeuse · `A-tP`
 **Caractère.** Silencieuse depuis 1869 ; ne quitte plus ses filets.
-**Background.** Née Lestaud, sœur de Lubin ; mère de Jean et d'Yves ; mère d'accueil de Noël.
-**Apparitions.** RG-01, RG-02, RG-10, CN-01, PH-09, BD-03.
+**Background.** Née Lestaud, sœur de Lubin ; mère de Jean et d'Yves ; mère d'accueil de Noël. En 1868,
+elle taille sa marque d'épouse sur sa **navette à ramender** en buis ; la navette passe à sa mort, avec
+les filets, à Honorine, sa nièce et la femme de Noël.
+**Apparitions.** RG-01, RG-02, RG-03, RG-10 (au pied de l'acte), CN-01, CN-02 (navette), PH-10 (navette),
+BD-03, BD-05 (« Ursule »), BD-06 (« la vieille Ursule, la ramendeuse »).
 
 ### C07 — Lubin Lestaud (1824–1893) · goémonier · `P`
 **Caractère.** Bavard, chanteur, le seul à aimer la Grand-Terre.
@@ -70,7 +73,7 @@ recueilli Noël en 1861.
 mentait mal ».
 **Apparitions.** OF-02, RG-01, RG-05, RG-08, RG-09, RG-10, RG-24, CN-01, PH-09.
 
-### C08 — Apolline Goémard (1828–1902) · boulangère (four commun) · `P+Y`
+### C08 — Apolline Goémard (1828–1902) · boulangère (four commun) · `P-tY`
 **Caractère.** Généreuse, autoritaire au four ; chaque pain de l'île porte un tampon de maison.
 **Background.** Née Goémard, sœur de Gervais ; épouse Lubin Lestaud ; transmet le four à sa
 belle-fille Ernestine.
@@ -85,20 +88,20 @@ témoin ; refuse de quitter l'île le 2 avril 1908 ; meurt aux Cabanes neuf mois
 **Secrets.** **S4** : c'est lui qui a pris l'ambre en 1870 ; il l'avoue la veille de sa mort.
 **Apparitions.** RG-01, RG-05, RG-07, RG-08, RG-15, RG-19, RG-24, LT-06, RP-06, BD-02, BD-04, LT-01, TG-01.
 
-### C10 — Reine Lestaud (1853–1920) · fileuse · `Y-g+P` (fille : `P·`)
+### C10 — Reine Lestaud (1853–1920) · fileuse · `Y-g-tP` (fille : `P-pt`)
 **Caractère.** Fidèle, butée, fine.
 **Background.** Aînée des filles de Lubin ; épouse Josse en 1879 ; mère de Gatien.
 **Secrets.** Garde la lettre de 1908 **fermée** : « ce qui est fermé ne fait de mal à personne ».
 **Visage (hors case).** PH-06, à 58 ans : fichu clair, **fuseau** à la ceinture.
 **Apparitions.** RG-01, RG-08, RG-15, CN-02, PH-06, PH-10, BD-04, PV-02.
 
-### C11 — Jacquette Goémard (1852–1919) · sage-femme · `O-g+Y` (fille : `Y·`)
+### C11 — Jacquette Goémard (1852–1919) · sage-femme · `O-g-tY` (fille : `Y-pt`)
 **Caractère.** Franche, drôle, infatigable.
 **Background.** Aînée des filles de Gervais, sœur de Josse et de Blaise ; épouse Médard Oyard ;
 sage-femme de l'île après Toinette ; mère d'Elzéar et de Victoire.
-**Secrets.** Savait qui était M. Garnaud. Ne l'a dit qu'à Victoire, en 1913, le jour de ses noces :
-« Si un jour il te parle, réponds-lui poliment, c'est ton oncle. » Victoire ne l'a dit à personne
-(LT-07 en est la trace).
+**Secrets.** A reconnu son frère Blaise sur le quai des Cabanes en 1908 ; ne l'a dit à personne, pas
+même à Victoire. Le jour des noces de sa fille (1913), une seule phrase : « Si M. Garnaud te parle un
+jour, réponds-lui poliment. » Victoire ne l'a comprise qu'en 1964 (C24).
 **Visage (hors case).** PH-03, PH-05.
 **Apparitions.** RG-01, RG-03, RG-07, RG-15, RG-18, RP-04, BD-01, DV-02, PH-03, PH-05.
 
@@ -117,8 +120,9 @@ de « Garnaud » (1871), négociant, fondateur du **Comptoir des Ambres** (1886)
 maison dans un coffre « pour les quatre marques ».
 **Secrets.** **S1** (l'auteur), **S2** (les coffrets), **S4** (le bannissement accepté).
 **Visage (hors case).** PH-01 (35 ans) : **sourcils Goémard**, moustache tombante, épingle d'ambre.
-**Apparitions.** RG-01, RG-02, RG-12, RG-13, RG-14, RG-20, RG-24 (absent), RP-02, RP-07, LT-01, LT-05,
-LT-09, TG-01, DV-01, PH-01, PH-08, PH-15, CN-03, PR-02, PR-03, PR-04, AN-01, BD-02, BD-07, EX-01.
+**Apparitions.** RG-01, RG-02, RG-12, RG-13, RG-14, RG-20, RG-24 (absent), RP-02, RP-06, RP-07, LT-01,
+LT-05, LT-09, TG-01, DV-01, PH-01, PH-08, PH-15, CN-03, PR-02, PR-03, PR-04 (« matelot »), AN-01, BD-02
+(« M. Garnaud », jamais « Blaise »), BD-07, EX-01. Révélée par RG-01, RG-02, CN-03 ou LT-01.
 
 ### C14 — Amélie Ferlay (1858–1930) · libraire · Visage · **cachée**
 **Caractère.** Lettrée, ironique, loyale ; a appris à Blaise à écrire sans fautes.
@@ -129,7 +133,7 @@ librairie toute sa vie.
 dentelle, **livre ouvert contre la poitrine**. Autre âge : 31 ans (PH-01), sans lunettes.
 **Apparitions.** RG-12, RG-14, RG-16, AN-01, PH-01, PH-17, PR-04, LT-05.
 
-### C15 — Ernestine Oyard (1857–1921) · boulangère · `P-g+O` (fille : `O·`)
+### C15 — Ernestine Oyard (1857–1921) · boulangère · `P-g-tO` (fille : `O-pt`)
 **Caractère.** Ronde, moqueuse, la voix de l'île au lavoir.
 **Background.** Seule fille de Clovis ; épouse Fulbert Lestaud ; reprend le four commun d'Apolline ;
 son **tampon à pain** est aux Cabanes.
@@ -146,7 +150,8 @@ père de Clément et de Delphine.
 **Background.** Puîné de Lubin ; gardien auxiliaire du feu de Longuegrève (1885–1908) ; épouse
 l'institutrice en 1890 ; sans enfant.
 **Visage (hors case).** PH-03 : **oreilles Lestaud**, casquette de Phares et Balises.
-**Apparitions.** RG-02, RG-08, RG-11, RG-15, RG-19, RG-21, RP-04, OB-05, CN-02, OF-07, LT-02.
+**Apparitions.** RG-02, RG-08, RG-11, RG-15, RG-16, RG-19, RG-21, RP-04, OB-05, CN-02, OF-07, LT-02,
+PV-03 (« le gardien de phare », dit sa petite-nièce : leurre).
 
 ### C18 — Sidonie Brémoy (1864–1950) · institutrice · Visage
 **Caractère.** Rigoureuse, tendre, têtue ; « la maîtresse ».
@@ -159,7 +164,7 @@ feu ; **copie de nuit le registre de la chapelle** avant l'incendie ; offre sa c
 **Apparitions.** RG-03, RG-04, RG-11, RG-21, RG-22, RP-04, LT-02, LT-04, LT-06, PH-02, PH-03, PH-12,
 OF-07, PV-03, OB-05, CP-01.
 
-### C19 — Noël Cormaud (v. 1860–1931) · charpentier de marine · `A/`
+### C19 — Noël Cormaud (v. 1860–1931) · charpentier de marine · `A-b`
 **Caractère.** Rêveur, habile, jamais tout à fait d'ici.
 **Background.** Enfant de l'*Aurore* (1861), recueilli par Siméon ; marque barrée ; charpentier comme
 Siméon ; épouse Honorine Lestaud ; chef de fait de la maison Cormaud de 1890 à 1931.
@@ -169,10 +174,11 @@ ne savais pas qu'il fallait »).
 **Apparitions.** RG-02, RG-03, RG-10, RG-15, RG-18, RG-19, RG-24, LT-06, OB-01, CN-02, PH-10, BD-03,
 BD-06, PR-01, CP-01, PH-05.
 
-### C20 — Honorine Lestaud (1864–1940) · ramendeuse · `A/+P` (fille : `P··`)
+### C20 — Honorine Lestaud (1864–1940) · ramendeuse · `A-b-tP` (fille : `P-pt-pt`)
 **Caractère.** Patiente ; raccommode les filets et les gens.
-**Background.** Cadette des filles de Lubin ; épouse Noël ; mère de Lazare.
-**Apparitions.** RG-02, RG-03, RG-10, RG-15, RG-18, BD-03, PH-05.
+**Background.** Cadette des filles de Lubin ; épouse Noël ; mère de Lazare ; reçoit en 1888, avec les
+filets, la navette de sa tante Ursule.
+**Apparitions.** RG-02, RG-03, RG-10, RG-15, RG-18, BD-03, BD-06, PH-05.
 
 ## Génération III
 
@@ -202,7 +208,13 @@ fille Anne du croup en décembre 1907 ; père de Rose.
 **Caractère.** Malicieuse, exacte, mémoire de l'île.
 **Background.** Fille de Médard et de Jacquette ; élève de Sidonie ; évacuée à quinze ans ; trieuse au
 Comptoir de 1908 à 1955 ; épouse Lazare Cormaud ; mère de Marin ; enregistrée par Marest en 1964.
-**Secrets.** Savait, par sa mère, que M. Garnaud était son oncle ; ne l'a dit qu'à moitié (LT-07).
+**Secrets / ce qu'elle sait** (règle de dosage, `docs/level/longuegreve.md` §12.3) : (a) ce que Josse a
+dit en 1909, « le petit a dit que c'était lui », sans savoir qui était « le petit » (BD-04) ; (b) ce
+qu'elle a vu sur le quai en 1908, M. Garnaud parlant à Josse « comme à un chien, ou comme à un frère »
+(BD-02) ; (c) ce que la cheminée relevée par Marest, en septembre 1964, lui fait **soupçonner** : la
+Fourche à entaille droite est « le cadet de Gervais » (LT-07, mars 1965). Elle ne nomme **jamais**
+Blaise et ne dit jamais que M. Garnaud est un Goémard : elle n'a jamais su le prénom du cadet, on n'en
+parlait pas.
 **Portrait de case : 71 ans** (OF-08) : **yeux Oyard**, fichu noir noué sous le menton, **lunettes
 rafistolées au fil de laiton**. Autres âges : 15 ans (PH-03), 19 (PH-04), 20 (PH-05).
 **Apparitions.** OF-01, OF-08, RG-03, RG-15, RG-18, RG-22, RG-23, DV-02, LT-07, CP-02, PH-02–PH-05,
@@ -237,7 +249,8 @@ d'ambre**. Autre âge : 68 ans (portrait peint, PH-07).
 **Caractère.** Rude, généreux, colère rapide et brève.
 **Background.** Fils de Gatien et de Léontine ; patron du *Saint-Gervais* ; a mené Marest sur l'île en
 1964 ; au bureau de l'Amicale.
-**Secrets.** Garde depuis 1944 la lettre fermée de sa grand-mère.
+**Secrets.** Garde depuis 1944 la lettre fermée de sa grand-mère ; garde aussi le tirage que Marest lui
+a offert en 1964 (PH-09).
 **Portrait de case : 65 ans** (PH-14) : **sourcils Goémard** blanchis, **cicatrice blanche au menton**,
 casquette de patron, vareuse. Autre âge : 52 ans (PH-09).
 **Apparitions.** OF-04, RG-17, PH-05 (bébé), PH-09, PH-14, PR-07, PR-08, AN-02, BD-05, PV-02, PV-06.
@@ -286,7 +299,7 @@ insecte**. Autre âge : 29 ans (PH-07).
 | **Bernard Fontanet** | Inspecteur des Domaines, auteur de la requête. | OF-02, PH-18 |
 | **Me Valère Joubaud** | Avocat du Comptoir. | OF-03 |
 | **Solange Marest** (née en 1924) | Ethnologue, Laboratoire des parlers et usages de l'Université d'Aubrelieu ; enquête de 1964 ; experte en 1977. | OF-05, BD-*, CN-*, LT-07, PR-08, PV-05, EX-01 |
-| **Ginette Sollier** (née en 1931) | Petite-nièce de Sidonie, à Bains-de-Mérande. | OF-07, PV-03 |
+| **Ginette Sollier** (née en 1931) | Petite-nièce de Sidonie, à Bains-de-Mérande ; dit « le gardien de phare » pour Benoît (leurre). | OF-07, PV-03, CP-01 (envoi du 14 oct.) |
 | **Berthe Brémoy** | Sœur de Sidonie (destinataire de LT-02 et de CP-01). | LT-02, CP-01 |
 | **Dr Cyprien Pélissart** | Médecin des épidémies du district de l'Estuaire en 1908. | RP-01, RP-05, RP-07, LT-03, AN-01 |
 | **Edgar Pontcarré** | Commissaire du district de l'Estuaire en 1908. | RP-02, RP-07, LT-09, TG-01 |
@@ -295,10 +308,10 @@ insecte**. Autre âge : 29 ans (PH-07).
 | **Constant Mérel** | Géomètre du cadastre de 1868. | RG-06 |
 | **A. Ténier** | Patron de la vedette *Trident* en 1908. | RP-03 |
 | **brigadier Massé** | Gendarmerie de Port-Sénane, 1908. | RP-06 |
-| **Jean et Yves Cormaud** | Fils de Siméon, noyés le 30 oct. 1869 (`A-g`, `A-d`). | OF-05, RG-02, CN-01 |
-| **Marthe Goémard** | Fille de Gervais, morte en 1870 (`Y··`). | OF-05, RG-02, CN-01 |
+| **Jean et Yves Cormaud** | Fils de Siméon, noyés le 30 oct. 1869 (`A-g`, `A-d`). | OF-05, OF-06 (Yves, exemple de recherche), RG-02, CN-01 |
+| **Marthe Goémard** | Fille de Gervais, morte en 1870 (`Y-pt-pt`). | OF-05, RG-02, CN-01 |
 | **Ange Oyard** | Puîné de Clovis, marin, noyé en 1880 (`O-d`). | RG-13, CN-01, BD-05 |
-| **Delphine Lestaud** | Fille de Fulbert, née en 1879 (`P-g·`). | RG-03, RG-15, RG-22 |
+| **Delphine Lestaud** | Fille de Fulbert, née en 1879 (`P-g-pt`). | RG-03, RG-15, RG-22 |
 | **Anne Oyard** | Fille d'Elzéar, morte du croup à 4 ans (déc. 1907). | RG-04, BD-02, RP-05 |
 
 ## Leurres de visage

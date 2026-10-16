@@ -1,7 +1,7 @@
 # 01 — Synopsis (affaire 3, « Les Marques de Longuegrève »)
 
-> Affaire n° 3, identifiant proposé `marques-de-longuegreve`. **Provisoire** : piste B de
-> [PISTES.md](PISTES.md), écrite avant validation (hypothèses en tête du [README](README.md)).
+> Affaire n° 3, identifiant proposé `marques-de-longuegreve`. Piste B de [PISTES.md](PISTES.md),
+> retenue ; noms provisoires (hypothèses en tête du [README](README.md)). v0.2 du 16 oct. 2026.
 > Jouable seule : rien n'y suppose les affaires 1 et 2, rien n'en dévoile la solution. Source de
 > vérité : `03-chronologie.md`. Grammaire des marques : `09-marques.md`.
 
@@ -65,13 +65,16 @@ Port-Sénane (sections de Longuegrève et des Cabanes, originaux et doubles), de
 du district de l'Estuaire, de l'Hôpital maritime, de Phares et Balises, du cadastre des îles et du
 **Fonds Marest** (Laboratoire des parlers et usages, Université d'Aubrelieu). Ce qui change :
 
-- **Les marques sont indexées** selon la notation du carnet de Solange Marest : chercher `Y-d` rend
-  toutes les pièces où cette marque est relevée. Les codes sont des mots-clés cachés : on ne les
-  trouve qu'en les **déduisant** de la grammaire (OF-05, planche I).
+- **Les marques sont indexées** d'après le carnet de Solange Marest, mais le clavier du LX-2 n'a ni
+  point, ni barre, ni signe plus : on tape la **cote LX** (barre `b`, grain `pt`, talon `t` suivi de sa
+  tête). L'exemple de la note est une croix de noyé : `A-d`. Les codes qui comptent (celui de Blaise,
+  de Josse, de Médard, de Jacquette) ne sont écrits nulle part : on ne les trouve qu'en les
+  **déduisant** de la grammaire (OF-05, planche I). Grammaire et notation : `09-marques.md` §2.
 - **Les graphies au son** des commis du continent (*Gouémard*, *Oyart*, *Cormault*, *Lestot*) sont
   regroupées sous le nom canonique : des alias, jamais des contradictions.
-- **Les bandes d'enquête orale** de 1964 (type `recording` proposé) sont des pièces comme les autres :
-  transcription minutée, didascalies, glose des mots du parler insulaire.
+- **Les bandes d'enquête orale** de 1964 (type `recording`) sont des pièces comme les autres :
+  transcription minutée, didascalies, glose des mots du parler insulaire ; aucun son. Une marque **dite**
+  sur une bande ne se pose jamais dans une case.
 - **Les doubles** du greffe, recopiés par les commis, sont indexés à côté des originaux : la marque d'un
   double n'est jamais autographe (leurre D9).
 
@@ -80,7 +83,7 @@ du district de l'Estuaire, de l'Hôpital maritime, de Phares et Balises, du cada
 1. **Avant 1868**, quatre maisons tiennent chacune une **lanière** de l'île, de la falaise à la grève,
    et le droit de ramasser l'ambre sur sa part de la Longue Grève. En 1861, le naufrage de l'*Aurore*
    donne à **Siméon Cormaud** un enfant d'un an, baptisé **Noël** : « enfant de mer », on lui barre le
-   pied de sa marque, `A/` : « il est de la maison, pas du sang ». Au cadastre de 1868, les quatre
+   pied de sa marque, `A-b` : « il est de la maison, pas du sang ». Au cadastre de 1868, les quatre
    chefs font leurs **marques neuves** ; toutes les autres en descendent.
 2. En **1869**, un coup d'ouest noie les deux fils de Siméon. En **1870**, **Josse Goémard**, l'aîné de
    Gervais, prend un gros ambre sur la lanière Lestaud ; son frère **Blaise**, seize ans, dit que c'est
@@ -139,5 +142,6 @@ Au tableau : vingt-huit cases. Une seule est établie (**Victoire Cormaud née O
 « trieuse d'ambre ») ; vingt-sept sont vides, dont les quatre des chefs de 1868, en haut, où le cadre
 du portrait porte le libellé « Marque » ; quatre autres n'apparaîtront qu'en chemin. Les noms et les
 marques des quatre chefs sont déjà sur la table (OF-02) : le premier groupe se valide en dix minutes
-et enseigne la marque comme champ. La bulle `lg-mark` désigne la première case Marque : « Cette
-personne ne signait pas. Sa case attend sa marque, pas son visage. »
+et enseigne la marque comme champ. La note de service `mark` (générique,
+`docs/game/AFFAIRE-3.md` §5) désigne la première case Marque : « Cette personne ne signait pas. Sa case
+attend sa marque, pas son portrait. »

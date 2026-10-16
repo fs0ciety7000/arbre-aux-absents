@@ -107,8 +107,8 @@ Détail, espacements vérifiés contre `art/tools/world.py` et demandes au `cart
 
 | `PlaceId` | Lieu | Type | Position | Ce qu'on y trouve | Rôle dans l'affaire 3 |
 |---|---|---|---|---|---|
-| `longuegreve` | **Longuegrève** | île (`landmark`) | x 0,050 · y 0,520 (golfe d'Ambre, 4 lieues et demie au large des Cabanes) | Île longue et basse, nord-sud ; la **Longue Grève** (plage de l'ambre) à l'ouest ; hameau brûlé (quatorze ruines), chapelle en ruine, cimetière intact ; **pointe du Feu** et son feu (1872). Inhabitée depuis 1908 ; sternes, macareux. | Les quatre maisons et leurs lanières ; le cimetière et ses croix marquées. |
-| `cabanes-d-ambre` | **Les Cabanes d'Ambre** | hameau côtier (`village`) | x 0,112 · y 0,530 (côte ouest, un peu plus de 4 lieues au sud de Port-Sénane) | Hangars et cabanes de bois bâtis par le Comptoir en 1908, atelier de taille, jetée, hangar à bateaux, chapelle de planches. Section de la commune de Port-Sénane. | Les évacués et leurs descendants ; l'Amicale ; l'enquête orale de 1964. |
+| `longuegreve` | **Longuegrève** | île (`landmark`) | x 0,054 · y 0,530 (golfe d'Ambre, près de 5 lieues au large des Cabanes) | Île longue et basse, nord-sud ; la **Longue Grève** (plage de l'ambre) à l'ouest ; hameau brûlé (quatorze ruines), chapelle en ruine, cimetière intact ; **pointe du Feu** et son feu (1872). Inhabitée depuis 1908 ; sternes, macareux. | Les quatre maisons et leurs lanières ; le cimetière et ses croix marquées. |
+| `cabanes-d-ambre` | **Les Cabanes d'Ambre** | hameau côtier (`village`) | x 0,110 · y 0,566 (côte ouest, un peu plus de 5 lieues au sud de Port-Sénane à vol d'oiseau, six par la route et le bac de l'estuaire) | Hangars et cabanes de bois bâtis par le Comptoir en 1908, atelier de taille, jetée, hangar à bateaux, chapelle de planches. Section de la commune de Port-Sénane. | Les évacués et leurs descendants ; l'Amicale ; l'enquête orale de 1964. |
 
 Rôles nouveaux de lieux existants : **Port-Sénane** (Comptoir des Ambres et hôtel Garnaud, quai du
 Môle ; librairie Ferlay et Photographie Hamelot, quai des Messageries ; Caisse d'épargne ; Inscription
@@ -416,7 +416,7 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
 | 1890–1915 | Électricité urbaine, téléphone à Aubrelieu (1885), similigravure dans la presse (1902), cartes postales, premières automobiles, canots à moteur ; affaire 3, provisoire : vedettes à moteur des îles du golfe, machines à écrire dans les comptoirs du port (1908). |
 | 1916–1936 | Radio (1925), aviation postale (1928), machines à écrire, phonographes 78 tours. |
 | 1937–1952 | Fiches anthropométriques, ronéo, papier à cigarette pour les messages, émetteurs clandestins. |
-| 1953–1974 | Télévision (1950, couleur 1971), télex, microfilm (Archives, années 1950), calculateurs à transistors, **Lecteur LX-2** (écran vert, bande magnétique, imprimante), **magnétophones portatifs** à bande pour les enquêtes orales (Université d'Aubrelieu, 1964 ; affaire 3, provisoire). Pas d'ordinateur personnel, pas de réseau. |
+| 1953–1974 | Télévision (1950, couleur 1971), télex, microfilm (Archives, années 1950), calculateurs à transistors, **Lecteur LX-2** (écran vert, bande magnétique, imprimante ; clavier de lettres et de chiffres seulement : affaire 3, provisoire, les marques y sont cotées en « cote LX », barre `b`, grain `pt`, talon `t`), **magnétophones portatifs** à bande pour les enquêtes orales (Université d'Aubrelieu, 1964 ; affaire 3, provisoire). Pas d'ordinateur personnel, pas de réseau. |
 
 Aucun train dans les pièces ni sur la carte : on voyage par la route, le fleuve, la mer et, après
 1928, l'avion postal.
@@ -435,7 +435,7 @@ précision « (affaire 1) » sur la ligne « Temps du jeu ». Référence de tra
 
 ## 12. Ajouts de l'affaire 3 (récapitulatif, provisoire)
 
-L'affaire 3 (`docs/scenario/affaire-3/`, piste B, **non encore validée**) a ajouté au monde, dans les
+L'affaire 3 (`docs/scenario/affaire-3/`, piste B, retenue ; noms encore provisoires) a ajouté au monde, dans les
 sections ci-dessus, en marquant chaque ajout « affaire 3, provisoire » : le cadastre des îles (1868),
 le feu de Longuegrève (1872), l'école et le Comptoir des Ambres (1886), l'évacuation de 1908, l'enquête
 orale de 1964, le Service des Réserves naturelles (1972), l'**article 15** de la loi de 1973 et le
