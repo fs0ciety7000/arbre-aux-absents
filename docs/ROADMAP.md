@@ -189,6 +189,14 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 - [ ] À valider par le propriétaire : points narratifs ouverts (`docs/scenario/affaire-3/`,
       cohérence §7), puis version 1.5.0 (changelog, version, `[tauri] [itch]`).
 
+## Session 4 — 16 oct. 2026
+
+- [x] Visibilité de l'affaire 3 (`claude/visibilite`) : section « Les affaires » (trois chemises,
+      `CaseShelf`) sur l'accueil et la presse, FR et EN ; artbook : l'île sur la carte, planche des
+      quatre marques de maison, quatre pièces (dessin `/art/lg-*`, inscriptions inline) ; textes presse,
+      fiche (durée) et `docs/ITCH.md` §2 à trois affaires ; chiffres vérifiés par `cases.test.ts`.
+      Kit presse (fiche PDF) à régénérer (`npm run presskit`) ; devlog 1.5.0 et captures dans le dossier partagé.
+
 ## Backlog
 
 - Perf : le démarrage du jeu web monte l'app à ≈ 3,9 s en Slow 4G (2,5 s avant `b6c8311`) : 17 fichiers
@@ -202,6 +210,7 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
   tirage photo interactif, `Toast` trop lourd en étroit, hauteur propre de `KeyArt fit="cover"`.
 - Toasts sur bureau (1440 px) : titre en capitales Courier sur trois lignes, posé sur le panneau latéral ;
   plafonner à deux toasts sur téléphone.
+- Site à 360 px : l'en-tête (`.tools`, sélecteur de langue) déborde de 3 px (défilement horizontal).
 - Zones de clic : couvertures des Archives (`button.cover`, ≈ 28 px) ; barre du lecteur à 360 px.
 - Rapport : tampons « Établi / Contredit » (le contenu ne porte pas la justesse par réponse).
 - e2e : tuer les serveurs restés ouverts avant de relancer (`reuseExistingServer` reprend un build périmé).

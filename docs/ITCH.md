@@ -44,6 +44,14 @@ flambant neuf qui interroge le fonds des Archives nationales. Une vieille instit
 mourir ; son testament exige que l'État retrouve tous les descendants de sa famille. À vous de les
 nommer.
 
+Deux autres dossiers attendent sur le bureau, à jouer dans l'ordre que vous voulez. **Le Revenant
+de Hautcorvin** (1976) : un vieil homme affirme être le fils du maître verrier, déclaré mort au bagne
+il y a plus de trente ans, et sa case de l'arbre est déjà remplie d'après sa propre déclaration. **Les Marques de
+Longuegrève** (1977, nouveau en 1.5) : une île de pêcheurs évacuée en 1908, ses maisons brûlées avec
+le registre ; personne n'y savait signer, chacun taillait sa marque au couteau. Ici, l'arbre retient
+la **marque** au lieu du visage, et une marque se déduit de sa grammaire avant de se trouver dans
+une pièce.
+
 ### Le jeu
 
 - **Lire** des lettres, actes, photographies, annuaires, cartes postales et coupures de presse,
@@ -57,10 +65,13 @@ nommer.
 
 ### En chiffres
 
-- Une affaire complète : **30 personnes** sur quatre générations, **118 documents**, **19 lieux**.
-- **Six à dix heures** pour l'affaire principale.
-- Des secrets en marge de l'arbre qui changent le dénouement : **plusieurs fins**.
-- **30 succès**, un mode chronométré et des statistiques pour rejouer.
+- **Trois affaires** indépendantes : **90 personnes** à nommer sur quatre générations,
+  **327 documents**, **24 lieux** sur la carte.
+- Succession Varenque : 30 cases, 118 documents, six à dix heures. Le Revenant de Hautcorvin :
+  28 cases, 98 documents, cinq à sept heures et demie. Les Marques de Longuegrève : 32 cases dont
+  19 à marque, 111 documents, quatre à sept heures.
+- Des secrets en marge de l'arbre qui changent le dénouement : **14 fins** en tout.
+- **75 succès**, un mode chronométré et des statistiques pour rejouer.
 - Aucune impasse : tout reste atteignable, quel que soit l'ordre dans lequel vous tirez les fils.
 
 ### Contrôles
