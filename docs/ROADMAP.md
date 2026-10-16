@@ -177,6 +177,18 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       boot +0,4 Ko gz (écran Succès). Avec l'index seul sans préchargement : 1,9 s (deux allers-retours
       de 562 ms), d'où le préchargement au titre. Une affaire de plus : ≈ +0,6 Ko gz d'index.
 
+- [x] Affaire 3 « Les Marques de Longuegrève » (`marques-de-longuegreve`, ordre 3), FR et EN : 111 pièces,
+      32 cases dont 19 à **marque** (signes de propriété des pêcheurs, codes LX `A-b-tP`), 8 groupes,
+      4 secrets, 4 fins (F3 selon la réponse Q4). Contrat : `Portrait.kind` `face|mark`,
+      `TreeSlot.portraitKind`, pièce `recording`, marque en ligne `::mark[id]`, réglage `describeMarks`.
+      Moteur : `availablePortraits(s, c, kind)`, sélecteur filtré par nature. UI : `MarkFrame`, tokens
+      `--mark-*`, icônes `unknown-mark` et `reel`, `PaperSheet tone="onion"`. Solveur vert (4 h 15 à
+      6 h 40), relecture QA sans bloquant (aide de case à marque, galerie à 2 colonnes à 360 px corrigées).
+- [x] Branche `claude/project-thread-kdwfab` fusionnée (compteur sur les fiches visibles, « Affaire
+      close », correctif LCP de l'écran de lancement). Rien de poussé : attente du feu vert du propriétaire.
+- [ ] À valider par le propriétaire : points narratifs ouverts (`docs/scenario/affaire-3/`,
+      cohérence §7), puis version 1.5.0 (changelog, version, `[tauri] [itch]`).
+
 ## Backlog
 
 - Perf : le démarrage du jeu web monte l'app à ≈ 3,9 s en Slow 4G (2,5 s avant `b6c8311`) : 17 fichiers
@@ -207,9 +219,7 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       « audition » ; démo des tampons sur `/design` ; fiche d'aide « Cases revendiquées ».
 - Emplacements manuels 1 à 3 par affaire (aujourd'hui partagés, E04 prévient) ; vue « comparer » et action
       « Déplacer vers… ».
-- Perf : LCP mobile du jeu web ≈ 5,0 s (Slow 4G CPU ×4, `perf.spec.ts` rouge, élément `main.launch`,
-      titre interactif 5,2 s) déjà avant la session 3 (mesuré sur 1.4.6) ; 0,7 s au 13/10. À bisecter.
-- Test fragile sous charge : `content.test.ts` « budgets : portrait trop lourd » (délai 5 s).
+- Tests fragiles sous charge : `content.test.ts` « budgets : portrait trop lourd » (délai 5 s) ; `reader-zoom.spec.ts` « la poignée élargit le volet » en 1440×900 (520 px au lieu de > 520,9, vert 3 fois sur 3 seul).
 - Retour Android : fermer le tiroir tablette avant de revenir à l'Arbre ou d'ouvrir Pause. Mettre à jour `docs/game/GAME_DESIGN.md` §15 et `ECRANS.md` §5 (tutoriel) ; montrer `Coachmark` sur `/design`.
 - `Dialog` : prop `initialFocus` (design-lead) pour retirer l'action `initial-focus.ts` du jeu.
 - Contrat : remappage des touches dans `Settings`, emplacement dédié au mode chronométré, fractionnés sauvegardés.
@@ -277,4 +287,5 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 | 15/10 | D16 · Textes des panneaux du jeu chargés avec le bureau ; paquets `@arbre/*` sans effets de bord pour le découpage | Tenir le budget du premier affichage (+1,4 Ko gz contre +4 Ko permis). |
 | 15/10 | D18 · Mise à jour automatique : `tauri-plugin-updater` (desktop) sur les **releases GitHub** du dépôt public (`latest.json`, signature minisign), APK signé de la release ouvert dans le navigateur sur Android, deb/rpm/MSI renvoyés vers itch.io, rien sur le web | Demande de l'auteur (ne plus tout retélécharger sur itch.io) ; hébergement gratuit et déjà en place ; pas de mise à jour silencieuse hors Play Store ; les paquets système demandent des droits d'administrateur. |
 | 15/10 | D17 · Notes de version : **une entrée par version publiée** (`[tauri] [itch]`), condensée pour les joueurs, jamais une par commit ; `content:check` lie la dernière entrée à la version du jeu | Demande de l'auteur : ne pas polluer, regrouper aux « grosses » mises à jour ; l'oubli devient impossible. |
+| 16/10 | Affaire 3 : les marques sont des `PortraitId` de nature `mark` (pas un nouveau type d'emplacement) ; notation LX du level-designer ; sélecteur strictement filtré par nature ; pas d'audio | Moteur et sauvegardes inchangés ; une seule notation dans les pièces et les aides. |
 | 16/10 | Perf L9 : index d'affaires sans succès, succès par affaire, index préchargé à l'écran titre, Bureau préchargé depuis E04 | E04 1,9 s → 0,48 s en Slow 4G CPU ×4 ; le coût d'une affaire de plus sur ce chemin devient ≈ 0,6 Ko gz. |

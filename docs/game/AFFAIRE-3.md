@@ -87,7 +87,7 @@ carnet Marest, pièce de départ) et la lit sur les registres, les avirons et le
 - Numérotation **par onglet** : « Visage n° 4 », « Marque n° 4 » ; ordre de collecte.
 - Onglet ouvert par défaut : le dernier utilisé ; au premier passage, celui qui contient le plus
   récent élément collecté.
-- Chaque vignette de marque : le dessin (≥ 96 px de haut ; 3 colonnes à 360 px), son numéro, sa
+- Chaque vignette de marque : le dessin (≥ 96 px de haut ; 2 colonnes à 360 px), son numéro, sa
   **description verbale** en clair, « Vu dans : … » (liens vers les pièces), « Utilisée dans N
   case(s) ». Pas de code.
 - Filtre texte de la galerie et du sélecteur : il porte aussi sur la description (« entaille à
