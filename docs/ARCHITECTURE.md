@@ -103,6 +103,8 @@ export interface CaseMeta {
   id: CaseId; title: string; subtitle?: string; version: string; // semver
   intro: DocumentId; epilogue?: DocumentId; timedTargetsMs?: number[]; credits?: string[];
   order?: number; // rang d'affichage (menu, succès) ; tri (order ?? ∞, id)
+  cote?: string; // numéro du dossier, sans langue (« 76-0012 ») : chemise E04 et étiquette du Bureau (« ORC 76-0012 » / « CRO 76-0012 »)
+  durationMinutes?: [number, number]; // chemise E04 : durée indicative d'une première partie
 }
 // family.json (scenariste : vérité de la bible)
 export interface Person {
@@ -263,7 +265,8 @@ retirés à la vague C1, et `content:build` supprime leurs restes éventuels.
 ### 3.4 Partie, profil, réglages
 
 ```ts
-export type SaveSlotId = 'auto' | 'slot-1' | 'slot-2' | 'slot-3';
+export type SaveSlotId = 'auto' | 'slot-1' | 'slot-2' | 'slot-3' | 'timed';
+// MANUAL_SLOT_IDS = slot-1..3 (communs) ; CASE_SLOT_IDS = auto, timed (un par affaire, isCaseSlot)
 export interface SlotGuess { given: string; family: string; portrait: PortraitId | null; occupation: OccupationId | null }
 export interface Pin { kind: 'document' | 'keyword' | 'slot'; id: string }
 export interface SaveState {
@@ -283,7 +286,15 @@ export interface SaveState {
   };
   report: Record<string /* question */, string /* option */>;
   ending: EndingId | null;
+  // Rejouabilité (après 1.5.0, facultatifs : absents d'une partie neuve et des sauvegardes 1.5.0)
+  endedMs?: number;  // temps de jeu au PREMIER dénouement = temps officiel du chronométré
+  reports?: { ending: EndingId; answers: Record<string, string>; at: number; elapsedMs: number }[]; // ≤ 20
+  splits?: { group: GroupId; elapsedMs: number }[]; // chronométré : un par groupe établi
+  contested?: Record<SlotId, { at: number; fields: (keyof SlotGuess)[] }>; // 1re contestation
 }
+// Migration douce, sans changer `schemaVersion` : parseSave → dropUnknown → upgradeSave, qui déduit
+// `endedMs = elapsedMs` et `reports = [{ ending, answers: report, at: updatedAt }]` d'une partie
+// 1.5.0 déjà dénouée (chrono déjà figé) ; une partie non dénouée est rendue telle quelle.
 export interface SaveSlotSummary { slot: SaveSlotId; caseId?: CaseId | null /* association par id, jamais par titre */;
   caseTitle: string; updatedAt: number; elapsedMs: number; mode: SaveState['mode']; progress: number }
 export interface HintSettings { preset: 0 | 1 | 2 | 3 | 'custom'; unreadBadges: boolean; exhaustedTerms: boolean;
@@ -312,7 +323,9 @@ export interface Settings {
 // 1040, large 640 → 720) garde valides tous les profils existants (anciennes valeurs dans les bornes).
 // Plein écran de l'arbre et fenêtre détachée des documents : états d'interface du Bureau
 // (GameStore.treeFull, GameStore.docsPopped), non mémorisés.
-export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>; completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] }>;
+export interface Profile { schemaVersion: 1; settings: Settings; achievements: Record<AchievementId, number>;
+  completed: Record<CaseId, { bestTimedMs?: number; endings: EndingId[] /* fins découvertes */;
+    lastEnding?: EndingId /* tampon de la chemise E04 */; bestSplits?: { group: GroupId; elapsedMs: number }[] }>;
   tutorial?: { done: boolean; seen: string[] }; // tutoriel en bulles : optionnel (anciens profils valides), seen ≤ 32 ids kebab-case
   reports?: ReportRef[]; // « Mes signalements », ≤ 20 (§8)
   changelogSeen?: string } // dernière version des Nouveautés ouverte (§3.8)
@@ -350,8 +363,9 @@ export type Action =
   | { type: 'deleteNote'; id: string; at: number }
   | { type: 'useHint'; id: HintId; at: number }
   | { type: 'answer'; question: string; option: string; at: number } // rapport final, avant `finish`
-  | { type: 'tick'; deltaMs: number }   // borné à [0, 5000]
-  | { type: 'finish'; at: number };
+  | { type: 'tick'; deltaMs: number }   // borné à [0, 5000] ; figé en chronométré dès endedMs
+  | { type: 'finish'; at: number }      // note le rapport remis (reports), endedMs au premier
+  | { type: 'reopenReport'; at: number }; // après le dénouement : ending → null, réponses gardées
 export type GameEvent =
   | { type: 'documentsUnlocked'; ids: DocumentId[] } | { type: 'searchResult'; outcome: SearchOutcome }
   | { type: 'slotsRevealed'; ids: SlotId[] } | { type: 'slotsLocked'; ids: SlotId[]; groups: GroupId[] }
@@ -380,7 +394,20 @@ portraitKindOf(portrait, c): PortraitKind, slotPortraitKind(slot, c): PortraitKi
 reportQuestions /* questions posées + options disponibles + réponse */, endingSections /* sections visibles d'une fin */,
 slotStatus(slot, s, c): 'locked' | 'claimed' | 'filled' | 'empty',
 claimedFields(slot, s, c): (keyof SlotGuess)[]            // champs encore égaux à la déclaration
+// rejouabilité (replay.ts)
+officialTime(s): number | null   // chronométré : endedMs (ou elapsedMs si dénoué), sinon null
+recordSplits(before, after, c)   // + un fractionné par groupe établi (chronométré) ; setSlot/validate
+recordContest(slot, before, after, c, at) // 1re contestation d'une déclaration intacte
+splitDeltas(splits, best)        // écart par RANG (n-ième groupe établi) au meilleur temps
+completeCase(prev, s, ending): CaseCompletion // fins vues, lastEnding, meilleur temps + fractionnés
+upgradeSave(s)                   // sauvegarde 1.5.0 dénouée → endedMs, reports
 ```
+
+**Rapport refait** (GAME_DESIGN §13.2) : après `finish`, `reopenReport` remet `ending` à `null`
+sans rien effacer ; les réponses redeviennent modifiables (`answer`), un nouveau `finish` ajoute
+un rapport à `reports` (les 20 derniers). `endedMs` ne bouge plus : le temps officiel du mode
+chronométré reste celui du premier dénouement, et le chrono reste figé (succès `timedUnderMs`
+compris). `finish` reste permis après un dénouement (rejouer le dénouement après un secret).
 
 **Case revendiquée** (détail : `docs/game/AFFAIRE-2.md` §1) : `newGame` pose
 `tree[id] = claimedGuess` **sans verrou** ; la case se joue ensuite comme une autre (`setSlot`,
@@ -597,6 +624,10 @@ interface Platform { kind: 'web' | 'desktop' | 'android'; saves: SaveStore;
 
 - **Tauri** : `$APPDATA/saves/<slot>.json`, écriture atomique (`.tmp` + renommage) et `.bak` ; capability
   limitée à `$APPDATA/saves/**` ; `plugin-dialog` pour export/import.
+- **Partie chronométrée par affaire** (GAME_DESIGN §13.4) : l'emplacement `timed` se range comme
+  le secours (`CASE_SLOT_IDS`) : web `save:timed:<affaire>` / `summary:timed:<affaire>`, Tauri
+  `timed.<affaire>.json` / `timed.<affaire>.summary.json`. Une nouvelle partie chronométrée y va
+  toujours ; elle n'écrit jamais le secours `auto` (réservé aux emplacements manuels).
 - **Secours par affaire** (AFFAIRE-2 §2.3) : les emplacements `slot-1` à `slot-3` restent communs ; le
   secours `auto` existe une fois par affaire. Le jeu étend le contrat (`GameSaveStore`,
   `apps/game/src/platform/common.ts`) : `save('auto', s)` écrit le secours de `s.caseId` ;

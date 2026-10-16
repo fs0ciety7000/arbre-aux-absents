@@ -27,7 +27,8 @@
         "auto",
         "slot-1",
         "slot-2",
-        "slot-3"
+        "slot-3",
+        "timed"
       ]
     },
     "mode": {
@@ -381,6 +382,110 @@
           "type": "null"
         }
       ]
+    },
+    "endedMs": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "reports": {
+      "maxItems": 20,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ending": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "answers": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            },
+            "additionalProperties": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          },
+          "at": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "elapsedMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "ending",
+          "answers",
+          "at",
+          "elapsedMs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "splits": {
+      "maxItems": 200,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "group": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "elapsedMs": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "group",
+          "elapsedMs"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "contested": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "fields": {
+            "maxItems": 4,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "given",
+                "family",
+                "portrait",
+                "occupation"
+              ]
+            }
+          }
+        },
+        "required": [
+          "at",
+          "fields"
+        ],
+        "additionalProperties": false
+      }
     }
   },
   "required": [

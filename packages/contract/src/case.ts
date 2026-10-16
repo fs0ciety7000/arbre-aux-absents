@@ -15,6 +15,10 @@ export interface CaseMeta {
   credits?: string[];
   /** Rang d'affichage (menu, succès) ; tri (order ?? ∞, id). */
   order?: number;
+  /** Cote du dossier sur la chemise E04 (numéro, sans langue) : « 76-0012 ». */
+  cote?: string;
+  /** Durée indicative d'une première partie, en minutes : [basse, haute] (chemise E04). */
+  durationMinutes?: [number, number];
 }
 
 export const CaseMetaSchema = z.strictObject({
@@ -27,4 +31,12 @@ export const CaseMetaSchema = z.strictObject({
   timedTargetsMs: z.array(z.number().int().positive()).min(1).optional(),
   credits: z.array(TextSchema).optional(),
   order: z.number().int().positive().optional(),
+  cote: z
+    .string()
+    .regex(/^[0-9A-Z][0-9A-Z-]{0,15}$/, { error: 'Cote : chiffres, capitales et tirets (≤ 16)' })
+    .optional(),
+  durationMinutes: z
+    .tuple([z.number().int().positive(), z.number().int().positive()])
+    .refine(([a, b]) => a <= b, { error: 'Durée : basse ≤ haute' })
+    .optional(),
 });

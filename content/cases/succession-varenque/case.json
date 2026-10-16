@@ -7,5 +7,7 @@
   "epilogue": "ep-01",
   "timedTargetsMs": [14400000, 21600000, 36000000],
   "credits": ["CM Creative Lab (écriture)", "CM Interactive"],
+  "cote": "74-0318",
+  "durationMinutes": [360, 600],
   "order": 1
 }
