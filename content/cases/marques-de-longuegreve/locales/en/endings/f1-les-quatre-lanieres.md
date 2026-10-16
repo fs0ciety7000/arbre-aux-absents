@@ -21,7 +21,7 @@ object; his client touched his arm, and he sat down again.
 
 Mr Marin Cormaud, for the Cabanes Friendly Society, said only one sentence: “We never asked for the
 money.” Mrs Rose Pellerin, beside him, added that she was sixty-seven and would like to know before
-the winter where she would be buried. Mrs Aline Lestaud said nothing; she had brought her note of
+the winter where she would be buried. Miss Aline Lestaud said nothing; she had brought her note of
 1976, and did not take it out of her bag.
 
 ## [s1] The paper fever

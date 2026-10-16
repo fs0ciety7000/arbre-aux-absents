@@ -277,8 +277,8 @@ les marques celles de `marques/marks.mjs` (`taillee` sur bois et pierre, `releve
 | PH-10 | `illustrations/ph-10.svg` | Hangar des Cabanes (5.9.1964) : quatre avirons pelle en l'air, établi | Marin 44, Rose 54 | avirons, de gauche à droite : `A-b` (Noël), `A-b-g` (Lazare), `O-g-g` (Elzéar), `Y-g-g` (Gatien) ; établi : fuseau `Y-g-tP` (Reine), tampon à pain `P-g-tO` (Ernestine), **navette `A-tP` (Ursule)** |
 | PH-11 | `illustrations/ph-11.svg` | Baguage de sternes sur la Longue Grève (1961) | Aline 36 (buste) | aucune |
 | PH-12 | `illustrations/ph-12.svg` | Jardin à treillage, Bains-de-Mérande (1930) | Sidonie 66 assise, leurre Berthe-Marie 33 | aucune |
-| PH-13 | `illustrations/ph-13.svg` | Coupure de *L'Écho* (15.10.1977) : portrait devant une vitrine ; titre et texte en faux-texte | Edmée 56 (buste) | aucune |
-| PH-14 | `illustrations/ph-14.svg` | Coupure de *L'Écho* (15.10.1977) : deux hommes sur la jetée, vedette | Marin 57, Félix 65 | aucune |
+| PH-13 | `illustrations/ph-13.svg` | Coupure de *L'Écho* (15.10.1977) : portrait au bureau, devant une vitrine ; titre et texte en faux-texte | Edmée 56 (buste) | aucune |
+| PH-14 | `illustrations/ph-14.svg` | Coupure de *L'Écho* (15.10.1977) : deux hommes sur la jetée, bateau de pêche au mouillage (nom illisible) | Marin 57, Félix 65 | aucune |
 | PH-15 | `illustrations/ph-15.svg` | Stèle « Blaise Garnaud, 1854 – 1924 », devise ; « ORC 77-0874 — cimetière de Port-Sénane » | — | `Y-d` taillée |
 | PH-16 | `illustrations/ph-16.svg` | Étal de la halle (vers 1935), poissons, balances, ardoise | Rose 25 (buste) | aucune |
 | PH-17 | `illustrations/ph-17.svg` | Devanture « Librairie Ferlay » (vers 1900) | Amélie 42 | aucune |

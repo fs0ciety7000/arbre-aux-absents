@@ -671,7 +671,8 @@ Mots-clés : Edmée Garnaud, Comptoir des Ambres.
 Prouve : C32 V.
 
 **PH-14** · `photo` · sam. 15 oct. 1977 · `cabanes-d-ambre` · *L'Écho* — **Marin Cormaud (57 ans) et Félix
-Goémard (65) sur la jetée**, le *Saint-Gervais* au mouillage.
+Goémard (65) sur la jetée**, un bateau de pêche au mouillage (nom illisible) ; la légende fait de Félix le
+« patron du *Saint-Gervais* ».
 Mots-clés : Marin Cormaud, Félix Goémard, jetée des Cabanes, *Saint-Gervais*.
 Prouve : C30 V ; C28 V, M (son bateau).
 

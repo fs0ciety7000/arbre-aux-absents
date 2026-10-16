@@ -357,6 +357,10 @@ Garnaud, mais pas l'un de l'autre : S4 peut se faire par LT-01, S2 sans BD-04.
 - **CN-01** : quatorze croix relevées, cénotaphe d'Ange compris, « Aurore » deux fois (comme le
   dessin) ; les croix de sapin de Médard et d'Anne, illisibles, ne sont pas relevées (BD-05, CN-01).
 - **CN-03 et PV-05** : « Mlle Garnaud » (Edmée n'est pas mariée).
+- **Aline Lestaud** : célibataire (elle porte son nom de naissance, RG-17) ; « Mlle Lestaud » / « Miss
+  Lestaud » partout (OF-04, PH-18, PV-04, PV-06, OB-02, fins f1 à f4). « Mme Lestaud » reste réservé à
+  Ernestine née Brémoy (RG-21, OF-07, EP-01).
+- **C. Sauge** (EP-01) : « Mlle Sauge », comme à l'inauguration du Lecteur (affaire 1, 1973).
 - **Ténier** : patron de la vedette *Trident* (RP-03), visage-leurre sur PH-03 ; aucun abbé Ténier.
 - **Visages hors case** (Blaise 35, Benoît 47, Noël 52, Honorine 48, Jacquette 56, Reine 58) : versés à
   la galerie comme leurres, révélés par PH-01, PH-03, PH-05, PH-06 et CP-01.

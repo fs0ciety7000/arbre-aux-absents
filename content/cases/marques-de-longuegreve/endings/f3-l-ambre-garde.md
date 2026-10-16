@@ -21,7 +21,7 @@ toucha le bras, et il se rassit.
 
 M. Marin Cormaud, pour l'Amicale des Cabanes, ne dit qu'une phrase : « On n'a jamais demandé l'argent. »
 Mme Rose Pellerin, à côté de lui, ajouta qu'elle avait soixante-sept ans et qu'elle aimerait savoir
-avant l'hiver où on l'enterrerait. Mme Aline Lestaud se tut ; elle avait apporté sa note de 1976, et ne
+avant l'hiver où on l'enterrerait. Mlle Aline Lestaud se tut ; elle avait apporté sa note de 1976, et ne
 la sortit pas de son sac.
 
 ## [s1] La fièvre de papier
@@ -67,7 +67,8 @@ Siméon.
 
 ## [s3-non] La part Cormaud
 
-Faute d'ayant droit établi pour la maison Cormaud, la part de la lanière Cormaud est dévolue à l'État.
+Faute d'ayant droit établi pour la maison Cormaud, la part de la lanière Cormaud est dévolue à l'État,
+qui entre dans l'indivision.
 
 ## [s4] Le fils banni
 

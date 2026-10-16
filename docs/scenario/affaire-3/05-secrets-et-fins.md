@@ -123,8 +123,8 @@ Paragraphes modulaires (sections ajoutées dans toutes les fins selon la **répo
   (« Le reste à l'ambre ») sont citées. Absent de **F4** par construction.
 - **S3** (Q3 = « les descendants de Noël ») : la lanière Cormaud est inscrite au nom des descendants de Noël ; le notaire Lhermet (le
   petit-fils) enregistre enfin la minute de 1890 ; Marin pose l'aviron de Noël contre la croix de
-  Siméon. Sinon (`s3-non`), une ligne sèche : « La part Cormaud est dévolue à l'État. » ; dans **F1**,
-  « … à l'État, qui entre dans l'indivision. »
+  Siméon. Sinon (`s3-non`), une ligne sèche, la même dans F1 à F4 : « La part Cormaud est dévolue à
+  l'État, qui entre dans l'indivision. » (Dans F2 à F4, l'État est indivisaire avant l'expropriation.)
 - **S4** (Q2 = « à la place de son frère ») : le rapport dit en une phrase pourquoi Blaise est parti. Félix lit la lettre de 1908 à voix
   haute, au cimetière de l'île, devant Edmée. On taille pour Blaise, sur une croix neuve à
   Longuegrève, sa marque, la Fourche à entaille droite — « il l'avait gardée ». (Aucun code écrit
