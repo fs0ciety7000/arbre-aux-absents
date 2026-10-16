@@ -158,6 +158,57 @@ test('sélecteur et galerie : marques seules, onglets Visages / Marques', async 
   );
 });
 
+/**
+ * Lignes occupées par le texte d'un élément (sommets distincts des caractères) : un libellé de
+ * trois mots ne doit jamais tenir sur plus de trois lignes (coupure au milieu d'un mot).
+ */
+async function textLines(el: Locator): Promise<number> {
+  return el.evaluate((node) => {
+    const tops = new Set<number>();
+    const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+    for (let t = walker.nextNode(); t; t = walker.nextNode()) {
+      const text = t.textContent ?? '';
+      for (let i = 0; i < text.length; i++) {
+        if (!text[i]!.trim()) continue;
+        const r = document.createRange();
+        r.setStart(t, i);
+        r.setEnd(t, i + 1);
+        const box = r.getBoundingClientRect();
+        if (box.height > 0) tops.add(Math.round(box.top));
+      }
+    }
+    return tops.size;
+  });
+}
+
+test('case à marque vide : l’aide « Déposer une pièce » reste dans la fiche', async ({ page }) => {
+  // QA affaire 3 : `.occ.hint { display: block }` annule le `line-clamp` de `.slot.mark-slot .occ` ;
+  // sous la marque (72 px + bande), la deuxième ligne de l'aide déborde sous la fiche de 168 px.
+  test.fail(true, 'bogue connu : aide de la case à marque vide hors de la fiche');
+  await startCase(page, MARKS);
+  await showPanel(page, 'Arbre');
+  const ancel = slotButton(page, 's-ancel');
+  await expect(ancel).toBeVisible();
+  const slot = (await ancel.boundingBox())!;
+  const hint = (await ancel.locator('.hint').boundingBox())!;
+  expect(hint.y + hint.height).toBeLessThanOrEqual(slot.y + slot.height + 1);
+});
+
+test('galerie, onglet Marques : « Utiliser dans l’arbre » sans coupure dans les mots', async ({
+  page,
+}) => {
+  // QA affaire 3 : `.gallery.marks` (minmax(min(6.5rem, 30%), 1fr)) donne des colonnes de
+  // ~104 px ; le bouton (Oswald capitales) s'y coupe lettre à lettre (« UTI / LISE / R … »).
+  test.fail(true, 'bogue connu : colonnes de la galerie des marques trop étroites');
+  await startCase(page, MARKS);
+  await readIntro(page);
+  await showPanel(page, 'Galerie');
+  const panel = page.getByRole('tabpanel', { name: 'Marques (2)' });
+  const use = panel.getByRole('button', { name: 'Utiliser dans l’arbre' }).first();
+  await expect(use).toBeVisible();
+  expect(await textLines(use)).toBeLessThanOrEqual(3);
+});
+
 test('pièce recording : libellé « Enregistrement », feuille pelure', async ({ page }) => {
   await startCase(page, MARKS);
   await showPanel(page, /^Archives/);
