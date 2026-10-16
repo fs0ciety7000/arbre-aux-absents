@@ -1,0 +1,7 @@
+{
+  "aspect": 1.5,
+  "layers": ["base"],
+  "minZoom": 1,
+  "maxZoom": 4,
+  "title": "Carte des Marches d'Ysel"
+}

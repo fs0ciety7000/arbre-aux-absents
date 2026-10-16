@@ -1,0 +1,33 @@
+{
+  "keywords": {
+    "ancel-morvan": { "label": "Ancel Morvan", "terms": ["Ancel Morvan"] },
+    "ida-brask": { "label": "Ida Brask", "terms": ["Ida Brask"] },
+    "edda-brask": { "label": "Edda Brask", "terms": ["Edda Brask"] },
+    "val-dormant": { "label": "Val-Dormant", "terms": ["Val-Dormant"] },
+    "ecole-du-bac": { "label": "Ferry School", "terms": ["Ferry School"] },
+    "moulin-solvig": { "label": "Solvig Mill", "terms": ["Solvig mill"] }
+  },
+  "secrets": {
+    "lettres-edda": "Edda's letters"
+  },
+  "report": {
+    "heritier": {
+      "prompt": "Who should have the trunk?",
+      "options": {
+        "maren": { "label": "Maren Morvan" },
+        "oskar": { "label": "Oskar Morvan" }
+      }
+    },
+    "lettres": {
+      "prompt": "What should be done with Edda's letters?",
+      "options": {
+        "bruler": { "label": "Burn them" },
+        "garder": { "label": "Keep them" },
+        "remettre": {
+          "label": "Hand them over to the Val-Dormant register",
+          "unavailableReason": "The Val-Dormant register has not been consulted."
+        }
+      }
+    }
+  }
+}

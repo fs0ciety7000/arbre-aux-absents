@@ -1,5 +1,5 @@
 /**
- * Deux affaires (fixtures `mini` et `claim`, projet `game-cases`) : chemises d'affaire (E04),
+ * Plusieurs affaires (fixtures `mini`, `claim` et `marks`, projet `game-cases`) : chemises d'affaire (E04),
  * case revendiquée (AFFAIRE-2 §1 : tirets, cartouche, valeurs déclarées, retirer / rétablir la
  * déclaration, souris et clavier), succès et crédits par affaire.
  * Dans `claim`, la case de Tomas (`s-tomas`) arrive remplie par une déclaration fausse sur le
@@ -19,6 +19,7 @@ import {
 
 const CLAIM = 'La requête du passeur';
 const MINI = 'La malle du grenier';
+const MARKS = 'Les marques du gué';
 const SLOT = 's-tomas';
 
 const folders = (page: Page): Locator => page.getByRole('group', { name: 'Choisir une affaire' });
@@ -39,10 +40,11 @@ test('E04 : une chemise par affaire, triées, la première choisie d’office', 
   await gotoTitle(page);
   await page.getByRole('button', { name: 'Nouvelle partie' }).click();
   const radios = folders(page).getByRole('radio');
-  await expect(radios).toHaveCount(2);
-  // `claim` porte order: 2, `mini` aucun : `claim` d'abord.
+  await expect(radios).toHaveCount(3);
+  // `claim` porte order: 2, `marks` order: 3, `mini` aucun : `claim` d'abord, `mini` en dernier.
   await expect(radios.nth(0)).toHaveAccessibleName(CLAIM);
-  await expect(radios.nth(1)).toHaveAccessibleName(MINI);
+  await expect(radios.nth(1)).toHaveAccessibleName(MARKS);
+  await expect(radios.nth(2)).toHaveAccessibleName(MINI);
   await expect(radios.nth(0)).toBeChecked();
   await expect(radios.nth(0)).toHaveAccessibleDescription(/Non ouvert/);
   // Groupe radio natif : flèche = autre affaire.

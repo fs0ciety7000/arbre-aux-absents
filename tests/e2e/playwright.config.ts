@@ -1,8 +1,9 @@
 /**
  * Tests e2e (hors `npm run check`) : `npm run test:e2e`.
  * - `game` : le jeu construit contre la fixture `mini` (servers/game.mjs, port 4319) ;
- * - `game-cases` : le jeu avec deux affaires, `mini` et `claim` (case revendiquée), port 4321 :
- *   choix d'affaire (E04), succès et crédits par affaire, case revendiquée (`game/cases/`) ;
+ * - `game-cases` : le jeu avec trois affaires, `mini`, `claim` (case revendiquée) et `marks`
+ *   (cases Marque, pièce `recording`, fixture de tests/e2e/fixtures), port 4321 : choix d'affaire
+ *   (E04), succès et crédits par affaire, case revendiquée, champ Marque (`game/cases/`) ;
  * - `site` : le site prérendu (servers/static.mjs, port 4320), axe compris ;
  * - `en-GB` : navigateur en anglais britannique (`en/`) : détection et bascule de langue, jeu et
  *   signalement en anglais, pages `/en/` du site, canaris de la démo anglaise réelle (édition
@@ -21,6 +22,12 @@ const CASES_PORT = process.env.E2E_CASES_PORT ?? '4321';
 const CASES = `http://localhost:${CASES_PORT}`;
 const DEMO_PORT = process.env.E2E_DEMO_PORT ?? '4322';
 const DEMO = `http://localhost:${DEMO_PORT}`;
+/**
+ * Builds à part par copie de travail (le cache `node_modules/.cache` peut être partagé entre
+ * plusieurs copies) : E2E_BUILD=<préfixe> donne `<préfixe>-cases` et `<préfixe>-real-demo`.
+ */
+const PREFIX = process.env.E2E_BUILD;
+const build = (name: string) => (PREFIX ? `${PREFIX}-${name}` : name);
 
 export default defineConfig({
   testDir: here,
@@ -74,7 +81,11 @@ export default defineConfig({
       url: CASES,
       timeout: 240_000,
       reuseExistingServer: !process.env.CI,
-      env: { E2E_FIXTURES: 'mini,claim', E2E_BUILD: 'cases', E2E_GAME_PORT: CASES_PORT },
+      env: {
+        E2E_FIXTURES: 'mini,claim,marks',
+        E2E_BUILD: build('cases'),
+        E2E_GAME_PORT: CASES_PORT,
+      },
     },
     {
       // Démo réelle (contenu du dépôt, édition démo) : canaris de la démo anglaise (en/demo.spec.ts).
@@ -83,7 +94,7 @@ export default defineConfig({
       url: DEMO,
       timeout: 300_000,
       reuseExistingServer: !process.env.CI,
-      env: { E2E_REAL_CONTENT: 'demo', E2E_BUILD: 'real-demo', E2E_GAME_PORT: DEMO_PORT },
+      env: { E2E_REAL_CONTENT: 'demo', E2E_BUILD: build('real-demo'), E2E_GAME_PORT: DEMO_PORT },
     },
     {
       command: 'node tests/e2e/servers/static.mjs',

@@ -1,6 +1,7 @@
 // Serveur e2e du jeu : compile la fixture `mini`, construit le jeu contre elle, puis le sert
 // (vite preview). Lancé par Playwright (`webServer`). E2E_SKIP_BUILD=1 réutilise le dernier build.
-// Plusieurs affaires : E2E_FIXTURES=mini,claim (fixtures de packages/content-tools/fixtures,
+// Plusieurs affaires : E2E_FIXTURES=mini,claim,marks (fixtures de packages/content-tools/fixtures
+// ou de tests/e2e/fixtures,
 // compilées à part puis réunies, monde de la première) et E2E_BUILD=<nom> (dossiers de contenu et de
 // build à part : `<nom>/game`, `<nom>-dist`), sur le port E2E_GAME_PORT.
 // Contenu réel du dépôt : E2E_REAL_CONTENT=demo|full (avec E2E_BUILD), compilé dans le cache
@@ -30,7 +31,14 @@ const outDir = resolve(cache, single ? 'game-dist' : `${name}-dist`);
 const content = resolve(cache, name);
 const env = { E2E_GENERATED: resolve(content, 'game'), E2E_OUT_DIR: outDir };
 
-const fixtureRoot = (id) => resolve(repo, 'packages/content-tools/fixtures', id);
+/**
+ * Racine d'une fixture : celles propres aux e2e (`tests/e2e/fixtures/<id>`, ex. `marks` : cases
+ * Marque et pièce `recording` de l'affaire 3), sinon celles des outils de contenu.
+ */
+const fixtureRoot = (id) => {
+  const own = resolve(repo, 'tests/e2e/fixtures', id);
+  return existsSync(own) ? own : resolve(repo, 'packages/content-tools/fixtures', id);
+};
 const readJson = (file) => JSON.parse(readFileSync(file, 'utf8'));
 const rank = (c) => [c.meta?.order ?? Number.POSITIVE_INFINITY, c.id];
 const byOrder = (a, b) => {
