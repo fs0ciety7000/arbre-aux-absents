@@ -75,8 +75,13 @@ export const en = {
     title: 'Saves',
     kicker: 'Load a game',
     slotName: (slot: string) =>
-      slot === 'auto' ? 'Autosave' : `Save ${slot.replace('slot-', '')}`,
+      slot === 'auto'
+        ? 'Autosave'
+        : slot === 'timed'
+          ? 'Timed game'
+          : `Save ${slot.replace('slot-', '')}`,
     backupName: (caseTitle: string) => `Autosave · ${caseTitle}`,
+    timedName: (caseTitle: string) => `Timed · ${caseTitle}`,
     empty: 'Empty save',
     progress: (pct: number) => `${pct}% of the tree`,
     playTime: (t: string) => `Play time: ${t}`,
@@ -138,7 +143,14 @@ export const en = {
     edition: (e: string) => (e === 'demo' ? 'Demo' : 'Full version'),
     statusNew: 'Not opened',
     statusOngoing: (pct: number) => `In progress, ${pct}%`,
-    statusDone: (n: number, t: number) => `Report submitted · endings seen ${n} / ${t}`,
+    statusDone: (n: number, t: number) => `Report submitted · endings found ${n} / ${t}`,
+    statusBest: (status: string, time: string) => `${status} · best time ${time}`,
+    duration: (low: string, high: string) => `${low} – ${high}`,
+    lastEnding: 'Last ending: ',
+    timedSlot: 'Save: this case’s timed game.',
+    timedSlotUsed: (t: string) =>
+      `Save: this case’s timed game (in progress, ${t}). It will be replaced.`,
+    timedBest: (t: string) => `Best time: ${t}.`,
   },
 
   hintPresets: {
@@ -288,7 +300,7 @@ export const en = {
   bonus: {
     title: 'Extras',
     locked: 'Finish the case to unlock the extras.',
-    endingsSeen: 'Endings seen',
+    endingsSeen: (n: number, t: number) => `Endings found ${n} / ${t}`,
     portraits: 'Gallery of established portraits',
     map: 'Full map',
     mapLocked: 'Unlocked by the epilogue at 100%.',
@@ -420,10 +432,15 @@ export const en = {
     drawerClose: 'Close the drawer',
     validateBranch: 'Submit the branch',
     reopenReport: 'Submit the report',
+    redoReport: 'Redo the report',
+    timerBest: (t: string) => `Best ${t}`,
+    timerBestLabel: (t: string) => `Best time: ${t}`,
+    timerDeltaLabel: (d: string) => `Gap to the best time at the last split: ${d}`,
     saved: 'Game saved.',
     gamepadLost: 'Controller disconnected.',
     noDocument: 'No document open.',
     folder: (caseTitle: string) => `File: ${caseTitle}`,
+    cote: (cote: string) => `CRO ${cote}`,
   },
 
   panels: {
@@ -476,6 +493,12 @@ export const en = {
     toTitle: 'Back to the title screen',
     timedResults: 'See the time',
     filed: 'Filed',
+    endingsSeen: (n: number, t: number) => `Endings found: ${n} / ${t}`,
+    endingsListLabel: 'Endings of this case',
+    endingUnseen: 'Ending not yet found',
+    redoReport: 'Redo the report',
+    redoHint: 'Submit another report to find another ending.',
+    allSeen: 'You have found every ending of this case.',
   },
 
   report: {
@@ -493,7 +516,8 @@ export const en = {
     summary: 'Your answers',
     change: 'Change',
     confirmTitle: 'Submit the report?',
-    confirmText: 'Your answers can no longer be changed and the ending will be shown.',
+    confirmText:
+      'Your answers will be filed and the ending will be shown. You can submit another report afterwards.',
     confirm: 'Submit',
     cancel: 'Reread',
     noOption: 'No answer available',
@@ -502,17 +526,27 @@ export const en = {
     backToFile: 'Back to the file',
     confirmDecisionTitle: 'Apply this stamp?',
     confirmDecisionText:
-      'Your decision and your answers will be filed, then the ending will be shown.',
+      'Your decision and your answers will be filed, then the ending will be shown. You can submit another report after the ending.',
   },
 
   timed: {
     title: 'Timed results',
     total: 'Total time',
-    splits: 'Splits (locks)',
-    noSplits: 'No splits recorded during this session.',
+    splits: 'Splits (branches established)',
+    noSplits: 'No splits recorded.',
     best: 'Best time',
+    previousBest: 'Previous best time',
     newBest: 'New best time!',
-    split: (i: number, n: number) => `Lock ${i}: ${n} ${plural(n, 'slot', 'slots')}`,
+    split: (i: number, label: string) => `${i}. ${label}`,
+    splitTime: 'Time',
+    splitDelta: 'Gap',
+    splitTitle: (n: number) => `Split ${n}`,
+    splitAt: (label: string, t: string) => `Branch established: ${label}, at ${t}.`,
+    splitVs: (label: string, t: string, d: string) =>
+      `Branch established: ${label}, at ${t} (${d} on the best time).`,
+    noDelta: '—',
+    deltaAhead: (d: string) => `${d}, ahead of the best time`,
+    deltaBehind: (d: string) => `${d}, behind the best time`,
     toTitle: 'Back to the title screen',
   },
 
@@ -775,6 +809,7 @@ export const en = {
     lessThanMinute: 'less than a minute',
     minutes: (m: number) => `${m} min`,
     hoursMinutes: (h: number, m: number) => `${h} hr ${pad2(m)} min`,
+    hoursShort: (h: number, m: number) => (m === 0 ? `${h} hr` : `${h} hr ${pad2(m)}`),
   },
 
   dates: {

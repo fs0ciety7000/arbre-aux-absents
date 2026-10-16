@@ -20,6 +20,8 @@
   import Blocks from './ending/Blocks.svelte';
   import Report from './ending/Report.svelte';
   import { askedQuestions, visibleSections } from '../lib/game/report';
+  import { endingsSeen, formatDelta } from '../lib/game/replay';
+  import { officialTime } from '@arbre/engine';
 
   /** P15 Dénouement (et P16 Résultats chrono en mode chronométré). */
   const app = getApp();
@@ -27,7 +29,28 @@
   const game = $derived(app.game);
   const ending = $derived(game && app.ending ? game.content.endings[app.ending] : null);
   const timed = $derived(game?.state.mode === 'timed');
-  const best = $derived(game ? app.profile.completed[game.content.id]?.bestTimedMs : undefined);
+  /** Temps officiel (premier dénouement) et meilleur temps d'avant cette partie. */
+  const total = $derived(game ? (officialTime(game.state) ?? game.state.elapsedMs) : 0);
+  const previousBest = $derived(game?.bestAtStart?.bestTimedMs);
+  const newBest = $derived(previousBest === undefined || total < previousBest);
+  /** Fins découvertes (profil, déjà à jour) : le compte et les titres vus seulement. */
+  const seen = $derived(game ? endingsSeen(app.profile, game.content) : { seen: 0, total: 0 });
+  const endingList = $derived.by(() => {
+    if (!game) return [];
+    const ids = app.profile.completed[game.content.id]?.endings ?? [];
+    const titles = ids.flatMap((id) => {
+      const e = game.content.endings[id];
+      return e ? [{ key: id, title: e.title, seen: true }] : [];
+    });
+    const unseen = Array.from({ length: seen.total - titles.length }, (_, i) => ({
+      key: `unseen-${i}`,
+      title: m.endingUnseen,
+      seen: false,
+    }));
+    return [...titles, ...unseen];
+  });
+  const redoable = $derived(game?.reportRedoable ?? false);
+  const delta = (ms: number | null) => (ms === null ? null : formatDelta(ms, formatClock));
   const sections = $derived(
     game && app.ending ? visibleSections(app.ending, game.state, game.content) : [],
   );
@@ -61,6 +84,12 @@
   async function toTitle() {
     resultsOpen = false;
     await app.saveAndQuit();
+  }
+
+  /** Refaire le rapport : la fin remise reste au Journal, une autre peut être choisie. */
+  function redo() {
+    resultsOpen = false;
+    game?.reopenReport();
   }
 </script>
 
@@ -121,7 +150,25 @@
         </Folder>
       </div>
     {/if}
+    {#if seen.total > 0}
+      <section class="seen" aria-labelledby="ending-seen">
+        <h2 id="ending-seen" class="seen-title num">{m.endingsSeen(seen.seen, seen.total)}</h2>
+        <ul class="seen-list" aria-label={m.endingsListLabel}>
+          {#each endingList as e (e.key)}
+            <li class:unseen={!e.seen}>
+              <span class="seen-mark" aria-hidden="true">{e.seen ? '✓' : '?'}</span>{e.title}
+            </li>
+          {/each}
+        </ul>
+        {#if redoable}
+          <p class="muted">{seen.seen < seen.total ? m.redoHint : m.allSeen}</p>
+        {/if}
+      </section>
+    {/if}
     <div class="actions">
+      {#if redoable}
+        <Button iconName="stamp" onclick={redo}>{m.redoReport}</Button>
+      {/if}
       {#if timed}
         <Button variant="primary" iconName="clock" onclick={() => (resultsOpen = true)}
           >{m.timedResults}</Button
@@ -142,30 +189,52 @@
     <dl class="results">
       <div>
         <dt>{messages.timed.total}</dt>
-        <dd class="num">{formatClock(game.state.elapsedMs)}</dd>
+        <dd class="num">{formatClock(total)}</dd>
       </div>
-      {#if best !== undefined}
+      {#if previousBest !== undefined}
         <div>
-          <dt>{messages.timed.best}</dt>
-          <dd class="num">{formatClock(best)}</dd>
+          <dt>{messages.timed.previousBest}</dt>
+          <dd class="num">{formatClock(previousBest)}</dd>
         </div>
       {/if}
     </dl>
-    {#if best !== undefined && best === game.state.elapsedMs}
+    {#if newBest}
       <p class="new">{messages.timed.newBest}</p>
     {/if}
     <h3>{messages.timed.splits}</h3>
     {#if game.splits.length === 0}
       <p class="muted">{messages.timed.noSplits}</p>
     {:else}
-      <ol class="splits">
-        {#each game.splits as s, i (i)}
-          <li>
-            <span>{messages.timed.split(i + 1, s.count)}</span>
-            <span class="num">{formatClock(s.elapsedMs)}</span>
-          </li>
-        {/each}
-      </ol>
+      <table class="splits">
+        <thead>
+          <tr>
+            <th scope="col"><span class="visually-hidden">{messages.timed.splits}</span></th>
+            <th scope="col">{messages.timed.splitTime}</th>
+            {#if previousBest !== undefined}<th scope="col">{messages.timed.splitDelta}</th>{/if}
+          </tr>
+        </thead>
+        <tbody>
+          {#each game.splits as s (s.rank)}
+            {@const d = delta(s.deltaMs)}
+            <tr>
+              <th scope="row">{messages.timed.split(s.rank, s.label)}</th>
+              <td class="num">{formatClock(s.elapsedMs)}</td>
+              {#if previousBest !== undefined}
+                <td
+                  class="num delta"
+                  class:ahead={(s.deltaMs ?? 0) < 0}
+                  class:behind={(s.deltaMs ?? 0) > 0}
+                  >{d ?? messages.timed.noDelta}{#if d !== null}<span class="visually-hidden"
+                      >{(s.deltaMs ?? 0) < 0
+                        ? messages.timed.deltaAhead('')
+                        : messages.timed.deltaBehind('')}</span
+                    >{/if}</td
+                >
+              {/if}
+            </tr>
+          {/each}
+        </tbody>
+      </table>
     {/if}
     {#snippet actions()}
       <Button variant="primary" onclick={toTitle}>{messages.timed.toTitle}</Button>
@@ -260,13 +329,69 @@
     justify-content: center;
     gap: var(--space-3);
   }
-  .results > div,
-  .splits li {
+  .results > div {
     display: flex;
     justify-content: space-between;
     gap: var(--space-4);
     min-height: var(--hit);
     align-items: center;
+  }
+  .splits {
+    inline-size: 100%;
+    border-collapse: collapse;
+  }
+  .splits th,
+  .splits td {
+    padding-block: var(--space-2);
+    text-align: end;
+    border-block-end: var(--border) solid var(--line);
+  }
+  .splits th[scope='row'],
+  .splits th:first-child {
+    text-align: start;
+    font-weight: var(--weight-regular);
+  }
+  .delta.ahead {
+    color: var(--success);
+  }
+  .delta.behind {
+    color: var(--text-muted);
+  }
+  .seen {
+    position: relative;
+    inline-size: 100%;
+    max-inline-size: var(--container-narrow);
+    display: grid;
+    gap: var(--space-2);
+  }
+  .seen-title {
+    margin: 0;
+    font-family: var(--font-type);
+    font-size: var(--step-0);
+    font-weight: var(--weight-bold);
+  }
+  .seen-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+  }
+  .seen-list li {
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: baseline;
+  }
+  .seen-list .unseen {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  .seen-mark {
+    font-family: var(--font-type);
+  }
+  .seen .muted {
+    margin: 0;
   }
   .section + .section {
     margin-block-start: var(--space-6);
@@ -286,10 +411,6 @@
   }
   .muted {
     color: var(--text-muted);
-  }
-  .splits {
-    padding: 0;
-    list-style: none;
   }
   @media (forced-colors: active) {
     .ending-art {

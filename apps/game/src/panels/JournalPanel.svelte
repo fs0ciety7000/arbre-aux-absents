@@ -1,7 +1,9 @@
 <!--
   P08 — Journal : ce qui est établi, dans l'ordre où ça l'a été (cases confirmées par groupe,
-  secrets découverts, cartes de révélation de la session), et le dénouement à relire.
-  Ne contient que des faits déjà acquis : rien qui aide à remplir l'arbre.
+  secrets découverts, branches et générations complètes, déclarations contestées), et chaque
+  rapport remis avec sa décision et son dénouement à relire. Tout est retrouvé dans la partie
+  sauvegardée (rien de propre à la session). Ne contient que des faits déjà acquis : rien qui
+  aide à remplir l'arbre.
 -->
 <script lang="ts">
   import { endingSections } from '@arbre/engine';
@@ -12,8 +14,10 @@
   import { slotName } from './lib/view';
   import DocumentBody from './doc/DocumentBody.svelte';
   import type { BodyOptions } from './doc/context';
-  import { pm } from './messages';
+  import { FIELD_LABELS, pm } from './messages';
   import { formatDateTime } from '../lib/game/format';
+  import { milestones } from '../lib/game/replay';
+  import { messages } from '../messages.fr';
 
   interface Entry {
     key: string;
@@ -22,12 +26,11 @@
     title: string;
     lines: string[];
     tone: 'start' | 'locked' | 'secret' | 'reveal' | 'claim' | 'ending';
+    /** Rapport remis (index dans `SaveState.reports`) : dénouement à relire. */
+    report?: number;
   }
 
   const game = getGame();
-
-  /** Cartes de révélation de la session (`GameStore.reveals`). */
-  const reveals = $derived(game.reveals);
 
   const entries = $derived.by((): Entry[] => {
     const s = game.state;
@@ -63,44 +66,74 @@
         tone: 'secret',
       });
     }
-    for (const [i, r] of reveals.entries()) {
+    // Branches et générations complètes, retrouvées dans les verrous (cartes de révélation).
+    for (const ms of milestones(s, c)) {
+      const names = ms.slots.map((id) => slotName(s, c, id) ?? pm.tree.unknownPerson).join(', ');
       out.push({
-        key: `r${i}`,
-        at: r.at,
+        key: ms.key,
+        at: ms.at,
         icon: 'info',
-        title: r.title,
-        lines: r.lines,
+        title:
+          ms.kind === 'group'
+            ? messages.reveal.groupDone(String(ms.label))
+            : messages.reveal.generationDone(Number(ms.label)),
+        lines: [messages.reveal.established(names)],
         tone: 'reveal',
       });
     }
-    for (const [i, r] of game.contested.entries()) {
+    // Déclarations contestées (case revendiquée, AFFAIRE-2 §1.7) : constat, sans verdict.
+    for (const [slot, claim] of Object.entries(s.contested ?? {})) {
       out.push({
-        key: `c${i}`,
-        at: r.at,
+        key: `c${slot}`,
+        at: claim.at,
         icon: 'staple',
-        title: r.title,
-        lines: r.lines,
+        title: pm.journal.claimContested(claim.fields.map((f) => FIELD_LABELS[f]).join(', ')),
+        lines: [],
         tone: 'claim',
       });
     }
-    const ending = s.ending ? c.endings[s.ending] : undefined;
-    if (ending) {
+    // Rapports remis : dénouement et décision de chacun (AFFAIRE-2 §3.3).
+    for (const [i, r] of (s.reports ?? []).entries()) {
+      const ending = c.endings[r.ending];
+      if (!ending) continue;
+      const lines: string[] = [];
+      for (const q of c.report ?? []) {
+        if (q.kind !== 'choice') continue;
+        const label = q.options.find((o) => o.id === r.answers[q.id])?.label;
+        if (label) lines.push(pm.journal.decision(label));
+      }
+      lines.push(pm.journal.ending(ending.title));
       out.push({
-        key: 'ending',
-        at: s.updatedAt,
+        key: `e${i}`,
+        at: r.at,
         icon: 'quill',
-        title: pm.journal.ending(ending.title),
-        lines: [],
+        title: pm.journal.report(ending.title),
+        lines,
         tone: 'ending',
+        report: i,
       });
     }
     return out.sort((a, b) => a.at - b.at || a.key.localeCompare(b.key));
   });
 
+  /** Rapport dont le dénouement est relu (index dans `reports`), ou null. */
+  let replayIndex = $state<number | null>(null);
   let replay = $state(false);
+  const replayed = $derived(replayIndex === null ? undefined : game.state.reports?.[replayIndex]);
+  // Les sections d'une fin dépendent des réponses : celles du rapport relu, pas les actuelles.
   const sections = $derived(
-    game.state.ending ? endingSections(game.state.ending, game.state, game.content) : [],
+    replayed
+      ? endingSections(
+          replayed.ending,
+          { ...game.state, report: replayed.answers, ending: replayed.ending },
+          game.content,
+        )
+      : [],
   );
+  function openReplay(i: number) {
+    replayIndex = i;
+    replay = true;
+  }
   const opts: BodyOptions = {
     mode: 'original',
     decorative: false,
@@ -143,8 +176,10 @@
             <p class="at num">
               <time datetime={new Date(e.at).toISOString()}>{formatDateTime(e.at)}</time>
             </p>
-            {#if e.tone === 'ending' && sections.length > 0}
-              <Button iconName="reader" onclick={() => (replay = true)}>{pm.journal.replay}</Button>
+            {#if e.report !== undefined}
+              <Button iconName="reader" onclick={() => openReplay(e.report!)}
+                >{pm.journal.replay}</Button
+              >
             {/if}
           </div>
         </li>
@@ -153,10 +188,10 @@
   {/if}
 </Panel>
 
-{#if game.state.ending}
+{#if replayed}
   <Dialog
     bind:open={replay}
-    title={game.content.endings[game.state.ending]?.title ?? pm.journal.title}
+    title={game.content.endings[replayed.ending]?.title ?? pm.journal.title}
     kicker={pm.journal.replay}
     size="l"
     surface="paper"

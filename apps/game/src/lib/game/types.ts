@@ -17,6 +17,7 @@ import type {
   Settings,
   SlotId,
 } from '@arbre/contract';
+import type { SplitRow } from './replay';
 
 /** Panneaux principaux du Bureau (onglets sur téléphone). */
 export type PanelId =
@@ -106,24 +107,17 @@ export interface GameStore {
   readonly focusKeyword: KeywordId | null;
   /** Passage à surligner dans le Lecteur (chemin de bloc) après `navigate`. */
   readonly focusPassage: number[] | null;
-  /** Cartes de révélation de la session, pour le Journal. */
+  /** Cartes de révélation de la session (le Journal retrouve les jalons dans la partie). */
   readonly reveals: RevealRecord[];
-  /** Déclarations contestées de la session (case revendiquée), pour le Journal. */
-  readonly contested: RevealRecord[];
-  /** Fractionnés du mode chronométré (cases verrouillées à chaque étape). */
-  readonly splits: Split[];
+  /** Fractionnés du mode chronométré (un par groupe établi), comparés au meilleur temps. */
+  readonly splits: SplitRow[];
 }
 
-/** Carte de révélation archivée (session), lue par le Journal. */
+/** Carte de révélation de la session. */
 export interface RevealRecord {
   at: number;
   title: string;
   lines: string[];
-}
-
-export interface Split {
-  elapsedMs: number;
-  count: number;
 }
 
 export type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;

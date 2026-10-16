@@ -86,9 +86,15 @@ export const fr = {
     title: 'Emplacements',
     kicker: 'Charger une partie',
     slotName: (slot: string) =>
-      slot === 'auto' ? 'Secours automatique' : `Emplacement ${slot.replace('slot-', '')}`,
+      slot === 'auto'
+        ? 'Secours automatique'
+        : slot === 'timed'
+          ? 'Partie chronométrée'
+          : `Emplacement ${slot.replace('slot-', '')}`,
     /** Secours d'une affaire (un par affaire, AFFAIRE-2 §2.3). */
     backupName: (caseTitle: string) => `Secours · ${caseTitle}`,
+    /** Partie chronométrée d'une affaire (une par affaire, GAME_DESIGN §13.4). */
+    timedName: (caseTitle: string) => `Chronométrée · ${caseTitle}`,
     empty: 'Emplacement libre',
     progress: (pct: number) => `${pct} % de l'arbre`,
     playTime: (t: string) => `Temps de jeu : ${t}`,
@@ -151,7 +157,17 @@ export const fr = {
     edition: (e: string): string => (e === 'demo' ? 'Démo' : 'Version complète'),
     statusNew: 'Non ouvert',
     statusOngoing: (pct: number) => `En cours, ${pct} %`,
-    statusDone: (n: number, t: number) => `Rapport remis · fins vues ${n} / ${t}`,
+    statusDone: (n: number, t: number) => `Rapport remis · fins découvertes ${n} / ${t}`,
+    /** Ajouté à l'état de la chemise quand un temps chronométré existe. */
+    statusBest: (status: string, time: string) => `${status} · meilleur temps ${time}`,
+    /** Durée indicative d'une première partie (chemise). */
+    duration: (low: string, high: string) => `${low} – ${high}`,
+    /** Préfixe lu avant le tampon de la chemise (dernière fin atteinte). */
+    lastEnding: 'Dernier dénouement : ',
+    timedSlot: 'Emplacement : partie chronométrée de cette affaire.',
+    timedSlotUsed: (t: string) =>
+      `Emplacement : partie chronométrée de cette affaire (en cours, ${t}). Elle sera remplacée.`,
+    timedBest: (t: string) => `Meilleur temps : ${t}.`,
   },
 
   hintPresets: {
@@ -303,7 +319,7 @@ export const fr = {
   bonus: {
     title: 'Bonus',
     locked: 'Terminez l’affaire pour débloquer les bonus.',
-    endingsSeen: 'Fins vues',
+    endingsSeen: (n: number, t: number) => `Fins découvertes ${n} / ${t}`,
     portraits: 'Galerie des portraits établis',
     map: 'Carte complète',
     mapLocked: 'Débloquée par l’épilogue à 100 %.',
@@ -446,10 +462,17 @@ export const fr = {
     drawerClose: 'Fermer le tiroir',
     validateBranch: 'Soumettre la branche',
     reopenReport: 'Remettre le rapport',
+    redoReport: 'Refaire le rapport',
+    /** Mode chronométré : meilleur temps à battre et écart du dernier fractionné. */
+    timerBest: (t: string) => `Meilleur ${t}`,
+    timerBestLabel: (t: string) => `Meilleur temps : ${t}`,
+    timerDeltaLabel: (d: string) => `Écart au meilleur temps au dernier fractionné : ${d}`,
     saved: 'Partie sauvegardée.',
     gamepadLost: 'Manette déconnectée.',
     noDocument: 'Aucun document ouvert.',
     folder: (caseTitle: string) => `Dossier : ${caseTitle}`,
+    /** Cote du dossier à l'étiqueteuse (Office de Réinscription civile), `meta.cote` de l'affaire. */
+    cote: (cote: string) => `ORC ${cote}`,
   },
 
   panels: {
@@ -503,6 +526,12 @@ export const fr = {
     toTitle: 'Revenir au titre',
     timedResults: 'Voir le temps',
     filed: 'Classé',
+    endingsSeen: (n: number, t: number) => `Fins découvertes : ${n} / ${t}`,
+    endingsListLabel: 'Fins de cette affaire',
+    endingUnseen: 'Fin non découverte',
+    redoReport: 'Refaire le rapport',
+    redoHint: 'Remettez un autre rapport pour découvrir une autre fin.',
+    allSeen: 'Toutes les fins de cette affaire sont découvertes.',
   },
 
   report: {
@@ -520,7 +549,8 @@ export const fr = {
     summary: 'Vos réponses',
     change: 'Modifier',
     confirmTitle: 'Remettre le rapport ?',
-    confirmText: 'Vos réponses ne pourront plus être modifiées et le dénouement s’affichera.',
+    confirmText:
+      'Vos réponses seront classées et le dénouement s’affichera. Vous pourrez remettre un autre rapport ensuite.',
     confirm: 'Remettre',
     cancel: 'Relire',
     noOption: 'Aucune réponse disponible',
@@ -529,20 +559,28 @@ export const fr = {
     unavailable: 'Indisponible : ',
     backToFile: 'Revenir au dossier',
     confirmDecisionTitle: 'Apposer ce tampon ?',
-    // AFFAIRE-2 §3.2 prévoit « Vous pourrez remettre un autre rapport après le dénouement. » :
-    // à reprendre quand le moteur permettra un nouveau rapport après `finish` (pas encore le cas).
     confirmDecisionText:
-      'Votre décision et vos réponses seront classées, puis le dénouement s’affichera.',
+      'Votre décision et vos réponses seront classées, puis le dénouement s’affichera. Vous pourrez remettre un autre rapport après le dénouement.',
   },
 
   timed: {
     title: 'Résultats chronométrés',
     total: 'Temps total',
-    splits: 'Fractionnés (verrouillages)',
-    noSplits: 'Aucun fractionné enregistré pendant cette session.',
+    splits: 'Fractionnés (branches établies)',
+    noSplits: 'Aucun fractionné enregistré.',
     best: 'Meilleur temps',
+    previousBest: 'Meilleur temps précédent',
     newBest: 'Nouveau meilleur temps !',
-    split: (i: number, n: number) => `Verrouillage ${i} : ${n} ${plural(n, 'case', 'cases')}`,
+    split: (i: number, label: string) => `${i}. ${label}`,
+    splitTime: 'Temps',
+    splitDelta: 'Écart',
+    splitTitle: (n: number) => `Fractionné ${n}`,
+    splitAt: (label: string, t: string) => `Branche établie : ${label}, à ${t}.`,
+    splitVs: (label: string, t: string, d: string) =>
+      `Branche établie : ${label}, à ${t} (${d} sur le meilleur temps).`,
+    noDelta: '—',
+    deltaAhead: (d: string) => `${d}, en avance sur le meilleur temps`,
+    deltaBehind: (d: string) => `${d}, en retard sur le meilleur temps`,
     toTitle: 'Revenir au titre',
   },
 
@@ -816,6 +854,8 @@ export const fr = {
     lessThanMinute: 'moins d’une minute',
     minutes: (m: number) => `${m} min`,
     hoursMinutes: (h: number, m: number) => `${h} h ${pad2(m)} min`,
+    /** Durée indicative courte : « 4 h », « 6 h 40 ». */
+    hoursShort: (h: number, m: number) => (m === 0 ? `${h} h` : `${h} h ${pad2(m)}`),
   },
 
   /** Dates partielles du monde (« 1923 », « avril 1923 », « 17 avril 1923 »). */

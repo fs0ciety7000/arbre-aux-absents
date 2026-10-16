@@ -292,6 +292,8 @@ export const enDesk = {
       locked: (names: string) => `Established: ${names}`,
       secret: (t: string) => `Secret uncovered: ${t}`,
       ending: (t: string) => `Ending: ${t}`,
+      report: (t: string) => `Report submitted: ${t}`,
+      decision: (label: string) => `Decision: ${label}`,
       claimContested: (fields: string) => `Statement contested: ${fields.toLowerCase()}`,
       replay: 'Read the ending again',
       started: 'The investigation begins',

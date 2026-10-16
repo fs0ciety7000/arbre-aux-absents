@@ -302,9 +302,15 @@
   });
   const fullBack = $derived(layout === 'tree' ? m.fullscreenToCard : m.fullscreenExit);
 
-  /** Cote du dossier à l'étiqueteuse (décor stable, tirée de l'empreinte de l'affaire). */
+  /**
+   * Cote du dossier à l'étiqueteuse : celle de l'affaire (`meta.cote`), sinon un décor stable tiré
+   * de l'empreinte du contenu (fixtures, affaires sans cote).
+   */
   const cote = $derived(
-    `ORC 74-${(parseInt(game.content.contentHash.slice(0, 4), 16) % 900) + 100}`,
+    m.cote(
+      game.content.meta.cote ??
+        `74-${(parseInt(game.content.contentHash.slice(0, 4), 16) % 900) + 100}`,
+    ),
   );
   const folderTitle = $derived(m.folder(game.content.meta.title));
   /** Les panneaux principaux sont des chemises ; les autres, des feuilles sur le sous-main. */

@@ -212,3 +212,61 @@ describe('secours automatique (AFFAIRE-2 §2.3)', () => {
     expect((await h.saveStore.list()).filter((s) => s.slot === 'auto')).toHaveLength(2);
   });
 });
+
+describe('rejouabilité', () => {
+  function complete(mode: SaveState['mode'] = 'standard'): SaveState {
+    const s = { ...base(), mode };
+    const tree = Object.fromEntries(Object.keys(c.slots).map((id) => [id, { ...SOLUTION[id]! }]));
+    const locked = Object.fromEntries(Object.keys(c.slots).map((id) => [id, 2_000]));
+    return { ...s, tree, locked };
+  }
+
+  it('après le dénouement : « Refaire le rapport » rouvre le rapport, la fin remise reste', () => {
+    const h = host();
+    const g = new GameStoreImpl(c, complete(), h);
+    g.dispatch({ type: 'answer', question: 'q-auteur', option: 'o-tam' });
+    g.dispatch({ type: 'finish' });
+    const first = g.state.ending;
+    expect(first).not.toBeNull();
+    expect(g.reportRedoable).toBe(true);
+    g.reopenReport();
+    expect(g.state.ending).toBeNull();
+    expect(g.state.reports?.map((r) => r.ending)).toEqual([first]);
+    expect(h.showReport).toHaveBeenCalledTimes(1);
+    // Quitter le rapport refait : plus de rappel automatique, le bouton reste.
+    g.reportDismissed();
+    expect(g.reportAvailable).toBe(true);
+    g.destroy();
+  });
+
+  it('partie chronométrée : jamais de secours `auto` (emplacement dédié par affaire)', async () => {
+    const h = host();
+    let t = 1_000_000;
+    const spy = vi.spyOn(Date, 'now').mockImplementation(() => t);
+    onTestFinished(() => spy.mockRestore());
+    const g = new GameStoreImpl(c, { ...base(), slot: 'timed', mode: 'timed' }, h);
+    t += BACKUP_AGE_MS;
+    expect(await g.flush(true)).toBe(true);
+    g.destroy();
+    expect(await h.saveStore.load('auto', c.id)).toBeNull();
+    expect(await h.saveStore.load('timed', c.id)).toMatchObject({ slot: 'timed', mode: 'timed' });
+    expect((await h.saveStore.list()).map((s) => [s.slot, s.caseId])).toEqual([['timed', c.id]]);
+  });
+
+  it('fractionnés sauvegardés et comparés au meilleur temps du début de partie', () => {
+    const h = host('manual');
+    h.profile.completed[c.id] = {
+      endings: [],
+      bestTimedMs: 99_000,
+      bestSplits: [{ group: 'grp-cadets', elapsedMs: 10_000 }],
+    };
+    const g = new GameStoreImpl(c, { ...withElders(base()), mode: 'timed', elapsedMs: 7_000 }, h);
+    g.dispatch({ type: 'validate' });
+    expect(g.state.splits).toEqual([{ group: 'grp-aines', elapsedMs: 7_000 }]);
+    expect(g.splits).toEqual([
+      { rank: 1, group: 'grp-aines', label: 'Les aînés', elapsedMs: 7_000, deltaMs: -3_000 },
+    ]);
+    expect(g.lastDelta).toBe(-3_000);
+    g.destroy();
+  });
+});
