@@ -37,4 +37,36 @@ describe('tree-layout', () => {
     expect(neighbourSlot(nodes, 'juno', 'down')).toBeNull();
     expect(neighbourSlot(nodes, 'nope', 'down')).toBeNull();
   });
+
+  it('case sans parents (affaire 3, Noël) : placée à sa colonne, aucun trait orphelin', () => {
+    // Forme de l'affaire 3 (AFFAIRE-3 §4) : Siméon et Ursule (génération I) sans enfant visible ;
+    // Noël (génération II, parents [null, null]) dans leur colonne, uni à Honorine.
+    const shape: TreeNodeInput[] = [
+      { id: 'gervais', generation: 0, column: 0, parents: [], unions: ['jeanne'] },
+      { id: 'jeanne', generation: 0, column: 1, parents: [], unions: ['gervais'] },
+      { id: 'simeon', generation: 0, column: 3, parents: [], unions: ['ursule'] },
+      { id: 'ursule', generation: 0, column: 4, parents: [], unions: ['simeon'] },
+      {
+        id: 'honorine',
+        generation: 1,
+        column: 1,
+        parents: ['gervais', 'jeanne'],
+        unions: ['noel'],
+      },
+      { id: 'noel', generation: 1, column: 3, parents: [], unions: ['honorine'] },
+    ];
+    const l = layoutTree(shape);
+    const { slotW, slotH, gapX, gapY, pad } = DEFAULT_DIMS;
+    // Même colonne que Siméon, une génération plus bas : ni décalée, ni tassée.
+    expect(l.slots.noel).toMatchObject({ x: l.slots.simeon!.x, y: pad + slotH + gapY });
+    expect(l.slots.noel!.x).toBe(pad + 3 * (slotW + gapX));
+    // Aucune descente vers Noël, aucune depuis Siméon ou Ursule : seulement celle d'Honorine.
+    const desc = l.links.filter((k) => k.kind === 'descent');
+    expect(desc.map((k) => k.to)).toEqual(['honorine']);
+    expect(desc.flatMap((k) => k.from)).not.toContain('simeon');
+    // Son union avec Honorine reste tracée.
+    expect(l.links.filter((k) => k.kind === 'union').map((k) => k.to)).toContain('noel');
+    // Clavier : depuis Noël, « haut » mène à la case la plus proche de la génération I.
+    expect(neighbourSlot(shape, 'noel', 'up')).toBe('simeon');
+  });
 });

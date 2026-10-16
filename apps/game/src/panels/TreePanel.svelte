@@ -15,7 +15,9 @@
     ClaimTag,
     Icon,
     IconButton,
+    MarkFrame,
     Panel,
+    pushToast,
     Stamp,
     Tabs,
     unclaim,
@@ -36,6 +38,9 @@
     type TreeNodeInput,
   } from './lib/tree-layout';
   import { claimView, fieldValueLabel, guessOf, slotName } from './lib/view';
+  import { isMarkSlot, refusalText, refusedKind, slotFieldLabel } from './lib/marks';
+  import type { SlotField } from '../lib/game/types';
+  import type { PortraitKind } from '@arbre/contract';
   import { FIELD_LABELS, pm } from './messages';
   import { treeUi, type TreeView } from './lib/tree-ui.svelte';
   import SlotSheet from './tree/SlotSheet.svelte';
@@ -92,6 +97,8 @@
         : (visible[0] ?? null),
   );
   const isLocked = (id: SlotId) => game.state.locked[id] !== undefined;
+  /** Option d'accessibilité « Décrire les marques sur l'arbre » (AFFAIRE-3 §1.6). */
+  const describeMarks = $derived(game.settings.describeMarks ?? false);
 
   onMount(() => {
     const off = game.onEvents((events) => {
@@ -169,9 +176,20 @@
     game.ui.selectedSlot = id;
   }
 
+  /** Dépôt du mauvais type (AFFAIRE-3 §1.5) : rien ne change, annonce neutre (4 s). */
+  function refuse(expected: PortraitKind) {
+    pushToast({ tone: 'info', title: refusalText(expected), timeout: 4000 });
+  }
+
+  /** Type attendu si l'objet en main ne convient pas au champ de la case, sinon `null`. */
+  const carryRefused = (id: SlotId): PortraitKind | null =>
+    carry.item && !isLocked(id) ? refusedKind(game.content, id, carry.item.patch) : null;
+
   function activate(id: SlotId) {
     select(id);
     if (carry.item && !isLocked(id)) {
+      const refused = carryRefused(id);
+      if (refused) return refuse(refused);
       drop(id, carry.item.patch);
       carry.drop();
       return;
@@ -300,27 +318,43 @@
     if (!item || isLocked(id)) return;
     e.preventDefault();
     select(id);
+    const refused = refusedKind(game.content, id, item.patch);
+    if (refused) return refuse(refused);
     drop(id, item.patch);
     carry.drop();
   }
+
+  const FIELDS = ['given', 'family', 'portrait', 'occupation'] as const;
+  const fieldLabel = (id: SlotId, f: SlotField) => slotFieldLabel(game.content, id, f);
 
   function summary(id: SlotId): string {
     const name = slotName(game.state, game.content, id) ?? pm.tree.unknownPerson;
     const g = guessOf(game.state, game.content, id);
     const claim = claimView(game.state, game.content, id);
+    const gen = genLabel(game.content.slots[id]?.generation ?? 0);
     if (claim.claimed) {
       // AFFAIRE-2 §1.8 : « Génération 3, case revendiquée, non établie. Prénom : Bastien,
       // déclaré. … Métier : graveur, posé par vous. »
-      const fields = (['given', 'family', 'portrait', 'occupation'] as const)
-        .map((f) => {
-          const v = fieldValueLabel(game.content, f, g);
-          if (!v) return pm.tree.fieldBlank(FIELD_LABELS[f]);
-          return claim.declared.has(f)
-            ? pm.tree.fieldDeclared(FIELD_LABELS[f], v)
-            : pm.tree.fieldPosed(FIELD_LABELS[f], v);
-        })
-        .join(' ');
-      return pm.tree.claimedSummary(genLabel(game.content.slots[id]?.generation ?? 0), fields);
+      const fields = FIELDS.map((f) => {
+        const v = fieldValueLabel(game.content, f, g);
+        if (!v) return pm.tree.fieldBlank(fieldLabel(id, f));
+        return claim.declared.has(f)
+          ? pm.tree.fieldDeclared(fieldLabel(id, f), v)
+          : pm.tree.fieldPosed(fieldLabel(id, f), v);
+      }).join(' ');
+      return pm.tree.claimedSummary(gen, fields);
+    }
+    if (isMarkSlot(game.content, id)) {
+      // AFFAIRE-3 §1.6 : « Génération 2, case non établie. Prénom : Blaise. Nom : Goémard.
+      // Marque : Fourche ; pied : entaille à droite. Métier : vide. »
+      const fields = FIELDS.map((f) => {
+        const v = fieldValueLabel(game.content, f, g);
+        return v
+          ? pm.marks.fieldValue(fieldLabel(id, f), v)
+          : pm.marks.fieldVoid(fieldLabel(id, f));
+      }).join(' ');
+      const state = isLocked(id) ? pm.marks.established : pm.marks.notEstablished;
+      return pm.marks.slotSummary(gen, state, fields);
     }
     const occ = fieldValueLabel(game.content, 'occupation', g);
     const state = isLocked(id) ? pm.tree.lockedLabel : g ? pm.tree.open : pm.tree.empty;
@@ -348,7 +382,9 @@
   {@const portraitId = g?.portrait ?? null}
   {@const portrait = portraitId ? game.content.portraits[portraitId] : undefined}
   {@const occ = fieldValueLabel(game.content, 'occupation', g)}
-  {@const droppable = carry.item !== null && !locked}
+  {@const refused = carryRefused(id)}
+  {@const droppable = carry.item !== null && !locked && !refused}
+  {@const markSlot = isMarkSlot(game.content, id)}
   {@const fresh = justLocked.has(id)}
   {@const rank = [...justLocked].indexOf(id)}
   {@const claim = claimView(game.state, game.content, id)}
@@ -362,14 +398,19 @@
     class:droppable
     class:claimed={claim.claimed}
     class:claim-frame={claim.claimed}
+    class:mark-slot={markSlot}
+    class:refused={refused !== null}
     class:mv-thud={fresh}
     data-surface="paper"
     data-slot={id}
+    data-field-kind={markSlot ? 'mark' : undefined}
     data-verb={locked ? 'look' : droppable ? 'use' : 'write'}
     style:--tilt="{restTilt(id)}deg"
     style:--i={Math.max(0, rank)}
     tabindex={id === current ? 0 : -1}
     aria-label={summary(id)}
+    aria-disabled={refused ? 'true' : undefined}
+    aria-describedby={refused ? `tree-refuse-${refused}` : undefined}
     aria-haspopup="dialog"
     onclick={() => activate(id)}
     onfocus={() => (focusId = id)}
@@ -400,21 +441,37 @@
     <span class="body" class:blank={!g && !droppable} aria-hidden="true">
       {#if droppable}
         <span class="drop"><Icon name="use" size="1.25rem" /> {pm.tree.carryDrop}</span>
+      {:else if !g && markSlot}
+        <!-- Case à marque vide : cadre à coins coupés, pied seul, bande « Marque » (§1.2). -->
+        <MarkFrame size="slot" tilt={-2} label={pm.marks.field} empty />
+        <span class="occ hint"><Icon name="unknown-mark" size="1.25rem" /> {pm.tree.dropHint}</span>
       {:else if !g}
         <span class="occ hint"
           ><Icon name="unknown-person" size="1.25rem" /> {pm.tree.dropHint}</span
         >
       {:else}
-        <span class="portrait">
-          {#if portrait}
+        {#if markSlot}
+          <MarkFrame size="slot" tilt={-2} label={pm.marks.field} empty={!portrait}>
             <span
-              class="svg"
+              class="mark-svg"
               use:svgContent={portraitId ? portraitSvg(game.content, portraitId) : null}
             ></span>
-          {:else}
-            <Icon name="unknown-person" size="1.75rem" />
+          </MarkFrame>
+          {#if portrait && describeMarks}
+            <span class="mark-desc">{portrait.alt}</span>
           {/if}
-        </span>
+        {:else}
+          <span class="portrait">
+            {#if portrait}
+              <span
+                class="svg"
+                use:svgContent={portraitId ? portraitSvg(game.content, portraitId) : null}
+              ></span>
+            {:else}
+              <Icon name="unknown-person" size="1.75rem" />
+            {/if}
+          </span>
+        {/if}
         {@const occText = occ ?? FIELD_LABELS.occupation + ' ?'}
         {#if claim.declared.has('occupation')}
           <!-- guillemets « » : 4 caractères de plus sur la ligne (réduction du corps) -->
@@ -458,6 +515,9 @@
   {/snippet}
 
   <div class="tree-root" bind:this={root}>
+    <!-- Raison d'une case non ciblable (objet en main du mauvais type, AFFAIRE-3 §1.5). -->
+    <span id="tree-refuse-mark" class="visually-hidden">{pm.marks.expectsMark}</span>
+    <span id="tree-refuse-face" class="visually-hidden">{pm.marks.expectsFace}</span>
     <div class="toolbar">
       <Tabs
         label={pm.tree.views}
@@ -612,6 +672,10 @@
                         class="list-open"
                         data-slot={n.id}
                         data-verb="write"
+                        aria-disabled={carryRefused(n.id) ? 'true' : undefined}
+                        aria-describedby={carryRefused(n.id)
+                          ? `tree-refuse-${carryRefused(n.id)}`
+                          : undefined}
                         tabindex={n.id === current ? 0 : -1}
                         onclick={() => activate(n.id)}
                         onfocus={() => (focusId = n.id)}
@@ -625,7 +689,7 @@
                       <dl>
                         {#each ['given', 'family', 'portrait', 'occupation'] as const as f (f)}
                           <div>
-                            <dt>{FIELD_LABELS[f]}</dt>
+                            <dt>{fieldLabel(n.id, f)}</dt>
                             <dd>
                               {#if listClaim.declared.has(f) && f === 'portrait'}{fieldValueLabel(
                                   game.content,
@@ -887,6 +951,26 @@
     inline-size: 100%;
     block-size: 100%;
     background: var(--art-paper);
+  }
+  /* Case à marque (AFFAIRE-3 §1.2, DESIGN §6.12, §13.3) : MarkFrame de 72 px et sa bande
+     « Marque » à la place du portrait. Plus haute que le portrait (64 px), elle laisse une ligne au
+     métier dans la fiche de 168 px : le métier tient sur une ligne (corps réduit au besoin, comme
+     ailleurs), le nom accessible et la fiche ouverte le donnent en entier. */
+  .slot.mark-slot .occ {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+  /* « Décrire les marques sur l'arbre » : dans la colonne libre à droite de la marque (la ligne
+     du métier sous la marque n'a pas la place de deux lignes de description) ; colonne étroite,
+     donc cinq lignes au lieu de deux ; la fiche de la case la donne en entier. */
+  .slot .mark-desc {
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    align-self: center;
+  }
+  /* Objet en main du mauvais type : la case n'est pas une cible (aria-disabled, même raison). */
+  .slot.refused {
+    cursor: not-allowed;
   }
   .portrait .svg :global(svg) {
     inline-size: 100%;

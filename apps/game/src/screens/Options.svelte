@@ -234,6 +234,13 @@
             checked={s.replaceHandwriting}
             onchange={(v) => set({ replaceHandwriting: v })}
           />
+          <!-- Affaire 3 (AFFAIRE-3 §1.6) : réglage facultatif du profil, absent = non. -->
+          <Toggle
+            label={m.describeMarks}
+            description={m.describeMarksHint}
+            checked={s.describeMarks ?? false}
+            onchange={(v) => set({ describeMarks: v })}
+          />
           <Select
             label={m.colorVision}
             options={[

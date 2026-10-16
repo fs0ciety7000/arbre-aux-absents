@@ -13,6 +13,7 @@
   import { restartTutorial } from '../tutorial/tutorial.svelte';
   import type { NavTarget } from '../lib/game/types';
   import { slotName } from './lib/view';
+  import { caseHasMarkSlots } from './lib/marks';
   import { pm } from './messages';
 
   const game = getGame();
@@ -151,6 +152,16 @@
     </ol>
     <Button iconName="quill" onclick={replayTutorial}>{pm.help.replayTutorial}</Button>
   </section>
+
+  {#if caseHasMarkSlots(game.content)}
+    <!-- Fiche « Marques » (AFFAIRE-3 §5) : seulement dans une affaire à champ Marque. -->
+    <section aria-labelledby="help-marks" data-help="marks">
+      <h3 id="help-marks"><Icon name="quill" size="1.25rem" /> {pm.help.marksTitle}</h3>
+      <ul class="howto">
+        {#each pm.help.marksItems as item, i (i)}<li>{item}</li>{/each}
+      </ul>
+    </section>
+  {/if}
 
   <section aria-labelledby="help-report">
     <h3 id="help-report"><Icon name="envelope" size="1.25rem" /> {messages.bugReport.entry}</h3>

@@ -16,6 +16,7 @@
   import { MAIN_PANELS, PHONE_TABS, type GameStoreImpl } from '../lib/game/store.svelte';
   import type { PanelId } from '../lib/game/types';
   import { viewport } from '../lib/game/viewport.svelte';
+  import { panelLabel } from '../lib/game/panel-label';
   import { messages } from '../messages.fr';
   import DeskHeader from './DeskHeader.svelte';
   import MiniReader from './MiniReader.svelte';
@@ -68,7 +69,7 @@
     const badge = id === 'archives' && unread > 0 ? unread : undefined;
     return {
       id,
-      label: messages.panels[id],
+      label: panelLabel(id, game.content),
       icon: PANEL_ICONS[id],
       ...(badge ? { badge, badgeLabel: messages.desk.unread(badge) } : {}),
     };
@@ -341,7 +342,7 @@
       {#if drawerOpen}
         <span class="cote single-cote mat-label red" aria-hidden="true">{cote}</span>
         <Folder title={folderTitle} class="main-folder">
-          <div class="panel-host" aria-label={messages.panels[lastMain]} role="region">
+          <div class="panel-host" aria-label={panelLabel(lastMain, game.content)} role="region">
             {#key lastMain}
               <div class="panel-in"><MainPanel /></div>
             {/key}
@@ -381,7 +382,7 @@
             class="panel-host drawer-host"
             role="tabpanel"
             id="desk-bar-panel"
-            aria-label={messages.panels[game.ui.main]}
+            aria-label={panelLabel(game.ui.main, game.content)}
           >
             {#key game.ui.main}
               <div class="panel-in"><DrawerPanel /></div>
@@ -397,7 +398,7 @@
             class="panel-host"
             role="tabpanel"
             id="desk-bar-panel"
-            aria-label={messages.panels[game.ui.main]}
+            aria-label={panelLabel(game.ui.main, game.content)}
           >
             {#key game.ui.main}
               <div class="panel-in"><MainPanel /></div>
@@ -409,7 +410,7 @@
           class="panel-host sheet-host"
           role="tabpanel"
           id="desk-bar-panel"
-          aria-label={messages.panels[game.ui.main]}
+          aria-label={panelLabel(game.ui.main, game.content)}
         >
           {#key game.ui.main}
             <div class="panel-in"><MainPanel /></div>
@@ -460,7 +461,7 @@
         </div>
       </Folder>
       {#if layout === 'tree'}
-        <FloatingCard {game} title={messages.panels[game.ui.side ?? 'reader']}>
+        <FloatingCard {game} title={panelLabel(game.ui.side ?? 'reader', game.content)}>
           <SideTabs {game} />
         </FloatingCard>
       {:else if !game.sideCollapsed}
@@ -553,7 +554,7 @@
   <div class="more">
     {#each MORE as id (id)}
       <Button block iconName={PANEL_ICONS[id]} onclick={() => openMore(id)}
-        >{messages.panels[id]}</Button
+        >{panelLabel(id, game.content)}</Button
       >
     {/each}
     <Button

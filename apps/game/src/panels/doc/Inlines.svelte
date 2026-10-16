@@ -3,7 +3,10 @@
   Uniquement des nœuds texte : aucun HTML du contenu n'est interprété.
 -->
 <script lang="ts">
+  import { MarkFrame } from '@arbre/ui';
+  import { svgContent } from '@arbre/map/svelte';
   import type { RNode } from '../lib/doc-layout';
+  import { pm } from '../messages';
   import { BODY_LABELS, type BodyOptions } from './context';
   import Self from './Inlines.svelte';
 
@@ -22,6 +25,13 @@
     ) {
       e.preventDefault();
       opts.onkeyword?.(kw, label, e.currentTarget as HTMLElement);
+    }
+  }
+
+  function markKey(e: KeyboardEvent, portrait: string) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      opts.onmark?.(portrait, e.currentTarget as HTMLElement);
     }
   }
 </script>
@@ -48,6 +58,35 @@
     {:else}
       <span class="redacted" role="img" aria-label={BODY_LABELS.redacted}
         ><span aria-hidden="true">{'█'.repeat(n.length)}</span></span
+      >
+    {/if}
+  {:else if n.t === 'mark'}
+    {@const alt = opts.markAlt?.(n.portrait) ?? ''}
+    {#if opts.mode === 'transcript'}
+      <!-- Transcription : la marque devient sa description, entre crochets (AFFAIRE-3 §1.6). -->
+      <span class="mark-t" data-mark={n.portrait}>{pm.marks.transcript(alt)}</span>
+    {:else if opts.decorative || !opts.onmark}
+      <span class="mark-i" aria-hidden={opts.decorative ? 'true' : undefined}
+        ><MarkFrame size="inline" alt={opts.decorative ? undefined : alt}
+          ><span use:svgContent={opts.markSvg?.(n.portrait) ?? null}></span></MarkFrame
+        ></span
+      >
+    {:else}
+      <!-- Original : le dessin, nommé par sa description ; cible ≥ 44 px, ouvre l'agrandissement. -->
+      <span
+        class="mark-i mark-hit"
+        role="button"
+        tabindex="0"
+        data-mark={n.portrait}
+        data-verb="look"
+        aria-label={pm.marks.inlineLabel(alt)}
+        aria-haspopup="dialog"
+        title={alt}
+        onclick={(e) => opts.onmark?.(n.portrait, e.currentTarget)}
+        onkeydown={(e) => markKey(e, n.portrait)}
+        ><MarkFrame size="inline"
+          ><span use:svgContent={opts.markSvg?.(n.portrait) ?? null}></span></MarkFrame
+        ></span
       >
     {/if}
   {:else if n.t === 'ref'}
@@ -95,5 +134,25 @@
   }
   s {
     text-decoration-thickness: 2px;
+  }
+  /* Marque dans le texte (DESIGN §6.12) : 2,5 em de haut, posée sur la ligne, jamais sélectionnée
+     (aucun caractère : les surlignages l'ignorent). */
+  .mark-i {
+    display: inline-grid;
+    place-items: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .mark-hit {
+    min-inline-size: var(--hit);
+    min-block-size: var(--hit);
+    border-radius: var(--radius-xs);
+    cursor: inherit;
+  }
+  .mark-t {
+    font-family: var(--font-type);
+    -webkit-user-select: none;
+    user-select: none;
   }
 </style>

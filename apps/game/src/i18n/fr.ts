@@ -207,6 +207,8 @@ export const fr = {
     letterSpacing: 'Espacement des lettres augmenté',
     transcriptByDefault: 'Ouvrir les documents en transcription',
     replaceHandwriting: 'Remplacer l’écriture manuscrite',
+    describeMarks: 'Décrire les marques sur l’arbre',
+    describeMarksHint: 'Affiche la description de chaque marque sous son dessin, sur les cases.',
     highContrast: 'Contraste élevé',
     reducePaperTexture: 'Réduire la texture du papier',
     colorVision: 'Palette des couleurs',
@@ -371,6 +373,12 @@ export const fr = {
         'Un procès-verbal d’audition : ce qu’on déclare devant l’Office est une pièce comme une autre. Recoupez-la avec le dossier.',
       decision: () =>
         'Ce rapport se conclut par une décision de l’Office. Un tampon grisé signale une piste encore ouverte au dossier.',
+      // Affaire 3 (AFFAIRE-3 §5) : champ Marque, lecture d'une marque, bandes transcrites.
+      mark: () => 'Cette personne ne signait pas. Sa case attend sa marque, pas son portrait.',
+      markRead: () =>
+        'Lisez une marque dans l’ordre : la tête, la barre, les entailles, les grains, le talon.',
+      recording: () =>
+        'Une bande d’enquête orale, transcrite. Ce qui y est dit se recoupe comme un écrit ; une marque dite n’est pas une marque montrée.',
     },
   },
 
@@ -458,6 +466,8 @@ export const fr = {
   } satisfies Record<PanelId, string>,
   placeholder: (name: string) => `Le panneau « ${name} » arrive bientôt.`,
   candidatePicker: 'Choisir un candidat',
+  /** Titre du panneau Galerie quand l'affaire a des marques (onglets Visages / Marques). */
+  galleryWithMarks: 'Galerie',
 
   pause: {
     title: 'Pause',

@@ -9,6 +9,7 @@
   import type { Component } from 'svelte';
   import { SIDE_PANELS, type GameStoreImpl } from '../lib/game/store.svelte';
   import type { PanelId } from '../lib/game/types';
+  import { panelLabel } from '../lib/game/panel-label';
   import { messages } from '../messages.fr';
   import { PANEL_ICONS } from './panel-icons';
   import { PANELS } from './panels';
@@ -30,7 +31,7 @@
       const badge = id === 'archives' && unread > 0 ? unread : undefined;
       return {
         id,
-        label: messages.panels[id],
+        label: panelLabel(id, game.content),
         icon: PANEL_ICONS[id],
         ...(badge ? { badge, badgeLabel: m.unread(badge) } : {}),
       };

@@ -212,4 +212,20 @@ describe('Figure (illustration d’en-tête)', () => {
     expect(out).toMatch(/class="figure-alt".*Illustration.*Un couple devant un bac/s);
     expect(out).not.toContain('figure-error');
   });
+
+  it('marque dessinée (::mark) : original nommé et cliquable, transcription entre crochets', () => {
+    const blocks: Block[] = [{ t: 'signature', c: [t('Blaise '), { t: 'mark', portrait: 'm-1' }] }];
+    const marks = { markAlt: () => 'Fourche ; pied lisse', markSvg: () => null, onmark: () => {} };
+    const original = html(blocks, marks);
+    expect(original).toMatch(/role="button"[^>]*data-mark="m-1"/);
+    expect(original).toContain('aria-label="Marque : Fourche ; pied lisse"');
+    expect(original).toContain('title="Fourche ; pied lisse"');
+    const transcript = html(blocks, { ...marks, mode: 'transcript' });
+    expect(transcript).toContain('[marque : Fourche ; pied lisse]');
+    expect(transcript).not.toContain('role="button"');
+    // Loupe (copie décorative) : rien de focalisable, rien d'annoncé.
+    const lens = html(blocks, { ...marks, decorative: true });
+    expect(lens).not.toContain('tabindex');
+    expect(lens).toMatch(/class="mark-i" aria-hidden="true"/);
+  });
 });

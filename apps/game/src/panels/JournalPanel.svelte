@@ -8,7 +8,7 @@
   import { Button, Dialog, Icon, Panel, Stamp, type IconName } from '@arbre/ui';
   import { getGame } from '../lib/game/context';
   import Spot from '../shell/Spot.svelte';
-  import { illustration } from './lib/assets.svelte';
+  import { illustration, portraitSvg } from './lib/assets.svelte';
   import { slotName } from './lib/view';
   import DocumentBody from './doc/DocumentBody.svelte';
   import type { BodyOptions } from './doc/context';
@@ -101,7 +101,14 @@
   const sections = $derived(
     game.state.ending ? endingSections(game.state.ending, game.state, game.content) : [],
   );
-  const opts: BodyOptions = { mode: 'original', decorative: false, kwState: () => 'known' };
+  const opts: BodyOptions = {
+    mode: 'original',
+    decorative: false,
+    kwState: () => 'known',
+    // Marque dans un texte de fin (affaire 3) : dessin nommé par sa description, sans action.
+    markAlt: (p) => game.content.portraits[p]?.alt ?? '',
+    markSvg: (p) => portraitSvg(game.content, p),
+  };
   const figure = (asset: string) => illustration(game.content, asset);
 </script>
 

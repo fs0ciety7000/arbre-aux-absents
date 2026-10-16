@@ -10,7 +10,7 @@
  *   visible gagne ; aucun : note posée en bas de l'écran).
  */
 import type { CompiledCase, SaveState, SlotGuess, SlotId } from '@arbre/contract';
-import { isComplete, reportQuestions } from '@arbre/engine';
+import { isComplete, reportQuestions, slotPortraitKind, visibleSlots } from '@arbre/engine';
 import type { Device } from '@arbre/ui';
 import type { DeskUi, PanelId } from '../lib/game/types';
 import { messages } from '../messages.fr';
@@ -32,9 +32,17 @@ export const BASE_STEPS = [
  * Nouveautés (AFFAIRE-2 §2.4) : montrées seulement quand l'affaire a la mécanique, déduite des
  * données (case revendiquée, pièce d'audition, décision au rapport), jamais d'un id d'affaire.
  */
-export const NEWS_STEPS = ['claim', 'hearing', 'decision'] as const;
+export const NEWS_STEPS = [
+  'claim',
+  'hearing',
+  'decision',
+  // Affaire 3 (AFFAIRE-3 §5) : champ Marque, lecture d'une marque, bande transcrite.
+  'mark',
+  'mark-read',
+  'recording',
+] as const;
 /** Nouveautés qui se montrent au Bureau (la décision attend le rapport final). */
-const DESK_NEWS: readonly NewsStepId[] = ['claim', 'hearing'];
+const DESK_NEWS: readonly NewsStepId[] = ['claim', 'hearing', 'mark', 'mark-read', 'recording'];
 /** Accueil « titulaire » du cran « Nouveautés seulement » (remplace `welcome`). */
 export const RETURNING_STEP = 'returning';
 export const TUTORIAL_STEPS = [RETURNING_STEP, ...BASE_STEPS, ...NEWS_STEPS] as const;
@@ -53,7 +61,7 @@ export interface TutorialBaseline {
 export interface TutorialContext {
   state: SaveState;
   content: CompiledCase;
-  ui: Pick<DeskUi, 'main' | 'side' | 'openDocument'>;
+  ui: Pick<DeskUi, 'main' | 'side' | 'openDocument'> & Partial<Pick<DeskUi, 'picking'>>;
   /** Un modal du Bureau (révélation, secret, pause) est ouvert. */
   modalOpen: boolean;
   base: TutorialBaseline;
@@ -127,6 +135,16 @@ export function isHearing(doc: { hearing?: boolean } | undefined): boolean {
   return doc?.hearing === true;
 }
 
+/** Cases à champ Marque visibles, dans l'ordre du contenu. */
+function markSlots(c: TutorialContext): SlotId[] {
+  return visibleSlots(c.state, c.content).filter(
+    (id) => slotPortraitKind(id, c.content) === 'mark',
+  );
+}
+
+/** Pièce d'enquête orale (`kind: 'recording'`), déclencheur générique. */
+const isRecording = (doc: { kind?: string } | undefined) => doc?.kind === 'recording';
+
 /** Une nouveauté s'applique-t-elle à cette affaire (mécanique présente dans les données) ? */
 export function newsApplies(id: NewsStepId, content: CompiledCase): boolean {
   switch (id) {
@@ -136,6 +154,11 @@ export function newsApplies(id: NewsStepId, content: CompiledCase): boolean {
       return Object.values(content.documents).some(isHearing);
     case 'decision':
       return (content.report ?? []).some((q) => q.kind === 'choice');
+    case 'mark':
+    case 'mark-read':
+      return Object.values(content.slots).some((x) => x.portraitKind === 'mark');
+    case 'recording':
+      return Object.values(content.documents).some(isRecording);
   }
 }
 
@@ -206,7 +229,11 @@ export const STEPS: readonly TutorialStep[] = [
       Object.entries(c.state.tree).some(
         ([id, g]) => g.portrait !== null && g.portrait !== c.base.tree[id]?.portrait,
       ),
-    anchors: () => ['[data-tour="reader-faces"] li:first-child', '[data-tour="reader-faces"]'],
+    anchors: () => [
+      '[data-tour="reader-faces"] li:first-child',
+      '[data-tour="reader-faces"]',
+      '[data-tour="reader-marks"] li:first-child',
+    ],
     text: (_c, d) => t().faces(d),
   },
   {
@@ -275,6 +302,52 @@ export const STEPS: readonly TutorialStep[] = [
     done: () => false,
     anchors: () => ['#reader-title'],
     text: () => t().hearing(),
+  },
+  {
+    // Premier affichage de l'arbre qui contient une case à marque : cible, la première.
+    id: 'mark',
+    when: (c) => c.seen('tree') && shown(c, 'tree') && markSlots(c).length > 0,
+    done: (c) =>
+      markSlots(c).some((id) => {
+        const p = c.state.tree[id]?.portrait ?? null;
+        return p !== null && p !== (c.base.tree[id]?.portrait ?? null);
+      }),
+    anchors: (c) => {
+      const id = markSlots(c)[0];
+      return [...(id ? [slotSel(id)] : []), ...tabSel('tree')];
+    },
+    text: () => t().mark(),
+  },
+  {
+    // Première ouverture du sélecteur d'un champ Marque. Le sélecteur est une boîte modale :
+    // la note se pose sur la case dès qu'il se referme (une note n'est jamais sous une modale).
+    id: 'mark-read',
+    when: (c) => {
+      const p = c.ui.picking;
+      return (
+        p !== null &&
+        p !== undefined &&
+        p.field === 'portrait' &&
+        slotPortraitKind(p.slot, c.content) === 'mark'
+      );
+    },
+    done: () => false,
+    anchors: (c) => {
+      const p = c.ui.picking;
+      const id = p && slotPortraitKind(p.slot, c.content) === 'mark' ? p.slot : markSlots(c)[0];
+      return [...(id ? [slotSel(id)] : []), ...tabSel('tree')];
+    },
+    text: () => t().markRead(),
+  },
+  {
+    id: 'recording',
+    when: (c) => {
+      const id = c.ui.openDocument;
+      return id !== null && shown(c, 'reader') && isRecording(c.content.documents[id]);
+    },
+    done: () => false,
+    anchors: () => ['#reader-title'],
+    text: () => t().recording(),
   },
   {
     id: 'decision',

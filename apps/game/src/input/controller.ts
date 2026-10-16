@@ -4,6 +4,7 @@ import { tick } from 'svelte';
 import type { AppController } from '../lib/game/app.svelte';
 import { announcer } from '../lib/game/announcer.svelte';
 import type { PanelId } from '../lib/game/types';
+import { panelLabel } from '../lib/game/panel-label';
 import { viewport } from '../lib/game/viewport.svelte';
 import { messages } from '../messages.fr';
 import { relayCommand } from './commands';
@@ -91,7 +92,7 @@ export function runCommand(
   if (panel) {
     if (g.readerFull) g.setReaderFull(false);
     g.showPanel(panel);
-    announcer.say(messages.panels[panel]);
+    announcer.say(panelLabel(panel, g.content));
     return true;
   }
   switch (cmd) {
@@ -134,7 +135,7 @@ function cycleTab(app: AppController, delta: -1 | 1): void {
   const next = TAB_CYCLE[(i + delta + TAB_CYCLE.length) % TAB_CYCLE.length]!;
   lastTab = next;
   g.showPanel(next);
-  announcer.say(messages.panels[next]);
+  announcer.say(panelLabel(next, g.content));
 }
 
 let lastTab: PanelId = 'tree';

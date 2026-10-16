@@ -3,17 +3,20 @@
   zoom ×1–×4 (+ / − / 0), taille du texte A− / A+ (Alt+= / Alt+-, mémorisée), loupe (Maj maintenue sur le document), surlignage 5 couleurs doublées
   d'un motif (H puis 1–5), épingle (P), note (N), mots-clés soulignés cliquables (bulle
   d'action : Rechercher, Voir au carnet, Épingler, Utiliser dans l'arbre), visages du document.
+  Affaire 3 (AFFAIRE-3 §1.6, §3.2) : marques dessinées dans le texte (agrandissement 320 px et
+  « Utiliser dans l'arbre »), section « Marques de ce document », pièces `recording` (pelure).
   Rendu de l'AST sans `{@html}` (DocumentBody).
 -->
 <script lang="ts">
-  import type { KeywordId } from '@arbre/contract';
-  import { keywordMentions } from '@arbre/engine';
+  import type { KeywordId, PortraitId } from '@arbre/contract';
+  import { keywordMentions, portraitKindOf } from '@arbre/engine';
   import {
     Badge,
     Button,
     Dialog,
     Icon,
     IconButton,
+    MarkFrame,
     Ornament,
     Tape,
     TextField,
@@ -168,13 +171,32 @@
       e.dataTransfer.effectAllowed = 'copy';
       carry.take(item);
     },
+    markAlt: (p) =>
+      Object.hasOwn(game.content.portraits, p) ? game.content.portraits[p]!.alt : '',
+    markSvg: (p) => portraitSvg(game.content, p),
+    onmark: (p) => (markOpen = p),
   });
   const lensOpts: BodyOptions = $derived({
     ...opts,
     decorative: true,
     onkeyword: undefined,
     onkeyworddrag: undefined,
+    onmark: undefined,
   });
+
+  /** Marque agrandie (320 px, description, « Utiliser dans l'arbre »), AFFAIRE-3 §1.7. */
+  let markOpen = $state<PortraitId | null>(null);
+  const markShown = $derived(
+    markOpen && Object.hasOwn(game.content.portraits, markOpen)
+      ? game.content.portraits[markOpen]!
+      : null,
+  );
+  function useMark() {
+    const p = markOpen;
+    if (!p) return;
+    markOpen = null;
+    take(carryFromPortrait(game.content, p));
+  }
 
   const figure = (asset: string) => illustration(game.content, asset);
 
@@ -462,6 +484,8 @@
     postcard: { edge: 'straight', fastener: 'tape', tone: 'new' },
     letter: { edge: 'straight', fastener: 'clip', tone: 'new' },
     telegram: { edge: 'torn', fastener: 'clip', tone: 'new' },
+    // Bande transcrite (AFFAIRE-3 §3.2) : papier pelure tapé, bord droit, trombone.
+    recording: { edge: 'straight', fastener: 'clip', tone: 'onion' },
   };
   const look = $derived(
     (doc && SHEET[doc.kind]) ?? {
@@ -472,7 +496,10 @@
   );
 
   const place = $derived(doc?.place ? game.content.places[doc.place] : undefined);
-  const facesOf = $derived(doc?.reveals?.portraits ?? []);
+  /** Portraits montrés par la pièce : visages et marques en deux sections (AFFAIRE-3 §1.4). */
+  const shownOf = $derived(doc?.reveals?.portraits ?? []);
+  const facesOf = $derived(shownOf.filter((p) => portraitKindOf(p, game.content) === 'face'));
+  const marksOf = $derived(shownOf.filter((p) => portraitKindOf(p, game.content) === 'mark'));
   const occupations = $derived(doc?.reveals?.occupations ?? []);
 </script>
 
@@ -661,6 +688,7 @@
 
         {#snippet sheetHead()}
           <p class="doc-kicker">
+            {#if doc.kind === 'recording'}<Icon name="reel" size="1em" />{/if}
             {KIND_LABELS[doc.kind]}{#if doc.date}&nbsp;· <span class="num"
                 >{formatPartialDate(doc.date)}</span
               >{/if}
@@ -777,6 +805,45 @@
             </ul>
           </section>
         {/if}
+        {#if marksOf.length > 0}
+          <section class="extra" aria-labelledby="reader-marks" data-tour="reader-marks">
+            <h3 id="reader-marks">{pm.marks.readerSection}</h3>
+            <ul class="faces marks">
+              {#each marksOf as p, i (p)}
+                {@const pr = game.content.portraits[p]}
+                {#if pr}
+                  <li class="mv-deal" style:--i={Math.min(i, 8)}>
+                    <button
+                      type="button"
+                      class="face mark mv-liftable"
+                      data-surface="paper"
+                      data-verb="take"
+                      data-portrait={p}
+                      draggable="true"
+                      ondragstart={(e) => {
+                        const item = carryFromPortrait(game.content, p);
+                        e.dataTransfer?.setData(DRAG_MIME, encodeCarry(item));
+                        carry.take(item);
+                      }}
+                      onclick={() => take(carryFromPortrait(game.content, p))}
+                      onkeydown={(e) => {
+                        if (e.key.toLowerCase() === 'u' && !isActivation(e))
+                          take(carryFromPortrait(game.content, p));
+                      }}
+                    >
+                      <MarkFrame size="tile">
+                        <span use:svgContent={portraitSvg(game.content, p)}></span>
+                      </MarkFrame>
+                      <span>{pr.alt}</span>
+                      <span class="verb"><Icon name="use" size="1rem" /> {pm.common.useInTree}</span
+                      >
+                    </button>
+                  </li>
+                {/if}
+              {/each}
+            </ul>
+          </section>
+        {/if}
         {#if occupations.length > 0}
           <section class="extra" aria-labelledby="reader-occ">
             <h3 id="reader-occ">{pm.reader.occupations}</h3>
@@ -813,6 +880,28 @@
     </div>
   {/if}
 </section>
+
+<Dialog
+  open={markShown !== null}
+  title={pm.marks.enlargeTitle}
+  size="s"
+  onclose={() => (markOpen = null)}
+>
+  {#if markOpen && markShown}
+    <figure class="mark-big">
+      <MarkFrame size="sheet">
+        <span use:svgContent={portraitSvg(game.content, markOpen)}></span>
+      </MarkFrame>
+      <figcaption>{markShown.alt}</figcaption>
+    </figure>
+  {/if}
+  {#snippet actions()}
+    <Button variant="primary" iconName="use" verb="use" onclick={useMark}
+      >{pm.common.useInTree}</Button
+    >
+    <Button variant="ghost" onclick={() => (markOpen = null)}>{pm.common.close}</Button>
+  {/snippet}
+</Dialog>
 
 <Dialog bind:open={noteOpen} title={pm.reader.noteTitle} size="s">
   <TextField
@@ -1012,6 +1101,9 @@
   .tone-aged {
     background: var(--paper-aged);
   }
+  .tone-onion {
+    background: var(--paper-onion);
+  }
   .doc-fonds {
     margin: var(--space-6) 0 0;
     padding-block-start: var(--space-2);
@@ -1053,13 +1145,15 @@
   }
   .kind-telegram:not(.transcript),
   .kind-report:not(.transcript),
-  .kind-note:not(.transcript) {
+  .kind-note:not(.transcript),
+  .kind-recording:not(.transcript) {
     font-family: var(--font-type);
     color: var(--ink-type);
   }
   .kind-telegram:not(.transcript) .reading,
   .kind-report:not(.transcript) .reading,
-  .kind-note:not(.transcript) .reading {
+  .kind-note:not(.transcript) .reading,
+  .kind-recording:not(.transcript) .reading {
     font-family: var(--font-type);
   }
   .kind-letter:not(.transcript) .reading,
@@ -1145,6 +1239,19 @@
     text-align: start;
     transform: rotate(var(--tilt, 0deg));
     cursor: inherit;
+  }
+  .face.mark {
+    justify-items: center;
+    transform: none;
+  }
+  .mark-big {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: center;
+    margin: 0;
+  }
+  .mark-big figcaption {
+    text-align: center;
   }
   .face-art {
     display: block;

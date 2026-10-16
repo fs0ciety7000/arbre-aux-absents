@@ -194,6 +194,8 @@ export const en = {
     letterSpacing: 'Increased letter spacing',
     transcriptByDefault: 'Open documents as transcripts',
     replaceHandwriting: 'Replace handwriting',
+    describeMarks: 'Describe marks on the tree',
+    describeMarksHint: 'Shows the description of each mark under its drawing, on the slots.',
     highContrast: 'High contrast',
     reducePaperTexture: 'Reduce paper texture',
     colorVision: 'Colour palette',
@@ -350,6 +352,10 @@ export const en = {
         'A record of hearing: what is declared before the Office is a document like any other. Cross-check it against the file.',
       decision: () =>
         'This report ends with a decision of the Office. A greyed-out stamp means a lead is still open in the file.',
+      mark: () => 'This person did not sign. Their slot takes their mark, not their portrait.',
+      markRead: () => 'Read a mark in order: the head, the bar, the notches, the dots, the heel.',
+      recording: () =>
+        'An oral history tape, transcribed. What is said in it is cross-checked like any writing; a mark described is not a mark shown.',
     },
   },
 
@@ -434,6 +440,7 @@ export const en = {
   },
   placeholder: (name: string) => `The “${name}” panel is coming soon.`,
   candidatePicker: 'Choose a candidate',
+  galleryWithMarks: 'Gallery',
 
   pause: {
     title: 'Pause',

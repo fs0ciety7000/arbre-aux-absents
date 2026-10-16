@@ -9,8 +9,9 @@
   Page préc./suiv. ; manette par la navigation spatiale.
 -->
 <script lang="ts">
+  import type { PortraitKind } from '@arbre/contract';
   import { availablePortraits } from '@arbre/engine';
-  import { Button, Icon, TextField, Toggle } from '@arbre/ui';
+  import { Button, Icon, MarkFrame, TextField, Toggle } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
   import { portraitSvg } from './lib/assets.svelte';
   import { getApp, getGame } from '../lib/game/context';
@@ -22,16 +23,22 @@
     type PortraitEntry,
   } from './lib/portrait-picker';
   import { documentTitle, portraitOrigins, seenIn, usageCount } from './lib/view';
+  import { portraitNumberLabel } from './lib/marks';
   import { pm } from './messages';
 
   interface Props {
     slot: string;
+    /** Type du champ : seuls les portraits de ce type sont proposés (AFFAIRE-3 §1.5). */
+    kind?: PortraitKind;
     currentValue: string | null;
     /** Case revendiquée : valeur déclarée, rappelée au-dessus de la grille. */
     declared?: string | null;
     onchoose: (portrait: string) => void;
   }
-  let { slot, currentValue, declared = null, onchoose }: Props = $props();
+  let { slot, kind = 'face', currentValue, declared = null, onchoose }: Props = $props();
+  const marks = $derived(kind === 'mark');
+  /** « Visage n° 3 » / « Marque n° 3 » : numérotation de l'onglet de la Galerie. */
+  const numberLabel = (n: number) => portraitNumberLabel(kind, n);
 
   const game = getGame();
   const app = getApp();
@@ -45,7 +52,7 @@
   const entries: PortraitEntry[] = $derived.by(() => {
     const s = game.state;
     const c = game.content;
-    return availablePortraits(s, c)
+    return availablePortraits(s, c, kind)
       .filter((p) => Object.hasOwn(c.portraits, p))
       .map((p, i) => {
         const docs = portraitOrigins(s, c, p);
@@ -129,8 +136,8 @@
   <div class="tools">
     <div class="search">
       <TextField
-        label={pm.picker.portraitSearch}
-        hint={pm.picker.portraitSearchHint}
+        label={marks ? pm.marks.pickerSearch : pm.picker.portraitSearch}
+        hint={marks ? pm.marks.pickerSearchHint : pm.picker.portraitSearchHint}
         iconName="search"
         type="search"
         autocomplete="off"
@@ -150,13 +157,15 @@
         />
       {/if}
     </div>
-    <p class="count" role="status">{pm.picker.count(filtered.length, total)}</p>
+    <p class="count" role="status">
+      {marks ? pm.marks.count(filtered.length, total) : pm.picker.count(filtered.length, total)}
+    </p>
   </div>
 
   <div class="layout">
     {#if filtered.length === 0}
       <div class="none">
-        <p>{pm.picker.noPortraitMatch}</p>
+        <p>{marks ? pm.marks.noMatch : pm.picker.noPortraitMatch}</p>
         <Button variant="secondary" iconName="close" onclick={clearFilters}>
           {pm.picker.clearFilters}
         </Button>
@@ -166,7 +175,8 @@
         <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
         <ul
           class="grid"
-          aria-label={pm.picker.gallery}
+          aria-label={marks ? pm.marks.pickerGallery : pm.picker.gallery}
+          data-field-kind={kind}
           bind:this={grid}
           onkeydown={onGridKey}
           onmouseleave={() => (hoverId = null)}
@@ -189,13 +199,21 @@
                 onblur={() => (focusId = null)}
                 onmouseenter={() => (hoverId = e.id)}
               >
-                <span
-                  class="art"
-                  aria-hidden="true"
-                  use:svgContent={portraitSvg(game.content, e.id)}
-                ></span>
+                {#if marks}
+                  <span class="mark-art">
+                    <MarkFrame size="tile">
+                      <span use:svgContent={portraitSvg(game.content, e.id)}></span>
+                    </MarkFrame>
+                  </span>
+                {:else}
+                  <span
+                    class="art"
+                    aria-hidden="true"
+                    use:svgContent={portraitSvg(game.content, e.id)}
+                  ></span>
+                {/if}
                 <span class="head">
-                  <span class="num">{pm.faces.face(e.n)}</span>
+                  <span class="num">{numberLabel(e.n)}</span>
                   {#if isCurrent}
                     <span class="current"
                       ><Icon name="check" size="1rem" /><span class="visually-hidden"
@@ -221,9 +239,17 @@
         <!-- Aperçu visuel : tout son texte est déjà dans le nom et la description de la tuile. -->
         <aside class="preview" aria-hidden="true">
           <div class="preview-card">
-            <span class="art" use:svgContent={portraitSvg(game.content, preview.id)}></span>
+            {#if marks}
+              <span class="mark-art">
+                <MarkFrame size="tile">
+                  <span use:svgContent={portraitSvg(game.content, preview.id)}></span>
+                </MarkFrame>
+              </span>
+            {:else}
+              <span class="art" use:svgContent={portraitSvg(game.content, preview.id)}></span>
+            {/if}
             <p class="num">
-              {pm.faces.face(preview.n)}
+              {numberLabel(preview.n)}
               {#if currentValue === preview.id}
                 <span class="current"><Icon name="check" size="1rem" /> {pm.picker.current}</span>
               {/if}
@@ -342,6 +368,12 @@
     display: block;
     inline-size: 100%;
     block-size: 100%;
+  }
+  /* Marque : cadre à coins coupés centré dans la tuile (96 px de haut, DESIGN §6.12). */
+  .mark-art {
+    display: grid;
+    place-items: center;
+    padding-block: var(--space-1);
   }
   .head {
     display: flex;

@@ -6,7 +6,12 @@
 -->
 <script lang="ts">
   import type { SlotGuess } from '@arbre/contract';
-  import { availableNames, availableOccupations, availablePortraits } from '@arbre/engine';
+  import {
+    availableNames,
+    availableOccupations,
+    availablePortraits,
+    slotPortraitKind,
+  } from '@arbre/engine';
   import { Button, Combobox, Dialog, type Candidate } from '@arbre/ui';
   import PortraitPicker from './PortraitPicker.svelte';
   import { getGame } from '../lib/game/context';
@@ -19,7 +24,8 @@
     seenIn,
     usageCount,
   } from './lib/view';
-  import { FIELD_ARTICLES, FIELD_LABELS, pm } from './messages';
+  import { slotFieldArticle, slotFieldLabel } from './lib/marks';
+  import { pm } from './messages';
 
   const game = getGame();
   const picking = $derived(game.ui.picking);
@@ -63,8 +69,10 @@
     return [];
   });
 
+  /** Type du champ (AFFAIRE-3 §1.5) : le sélecteur ne propose que ce type, sans basculement. */
+  const kind = $derived(slot ? slotPortraitKind(slot, game.content) : 'face');
   const portraits = $derived(
-    field === 'portrait' ? availablePortraits(game.state, game.content) : [],
+    field === 'portrait' ? availablePortraits(game.state, game.content, kind) : [],
   );
   const isEmpty = $derived(field === 'portrait' ? portraits.length === 0 : options.length === 0);
 
@@ -95,7 +103,7 @@
 {#if picking}
   <Dialog
     bind:open
-    title={pm.picker.title(FIELD_LABELS[field])}
+    title={pm.picker.title(slotFieldLabel(game.content, slot || null, field))}
     size={field === 'portrait' && !isEmpty ? 'xl' : 's'}
     mobile="fullscreen"
     onclose={close}
@@ -108,11 +116,11 @@
     {/if}
     {#if isEmpty}
       <div class="empty" use:initialFocus={'button'}>
-        <p>{pm.picker.empty(FIELD_ARTICLES[field])}</p>
+        <p>{pm.picker.empty(slotFieldArticle(game.content, slot || null, field))}</p>
         <Button iconName="help" onclick={whereToLook}>{pm.common.whereToLook}</Button>
       </div>
     {:else if field === 'portrait'}
-      <PortraitPicker {slot} {currentValue} declared={declaredLabel} onchoose={choose} />
+      <PortraitPicker {slot} {kind} {currentValue} declared={declaredLabel} onchoose={choose} />
     {:else}
       <div class="filter" use:initialFocus={'input'}>
         <Combobox

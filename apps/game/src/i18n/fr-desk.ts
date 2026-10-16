@@ -328,6 +328,49 @@ export const frDesk = {
         'Les cases ne sont confirmées que par trois, dans un même groupe.',
         'Ouvrez les lieux de la carte pour consulter leurs fonds d’archives.',
       ],
+      /** Fiche « Marques » (affaires à champ Marque seulement, AFFAIRE-3 §5). */
+      marksTitle: 'Marques',
+      marksItems: [
+        'Certaines cases attendent une marque, pas un portrait : leur champ s’appelle « Marque ».',
+        'La Galerie range ce que vous collectez en deux onglets : Visages et Marques.',
+        'Chaque marque est décrite en toutes lettres : tête, pied, grains, talon.',
+        'Un code de marque se cherche au Catalogue tel qu’il est écrit dans les pièces.',
+        'Options › Accessibilité : « Décrire les marques sur l’arbre » affiche ces descriptions sur les cases.',
+      ],
+    },
+    /** Champ Marque, galerie à onglets, marques dans les pièces (affaire 3, AFFAIRE-3 §1). */
+    marks: {
+      field: 'Marque',
+      fieldArticle: 'aucune marque',
+      expectsMark: 'Ce champ attend une marque.',
+      expectsFace: 'Ce champ attend un portrait.',
+      mark: (n: number) => `Marque n° ${n}`,
+      galleryTitle: 'Galerie',
+      galleryTabs: 'Visages ou marques',
+      tabFaces: (n: number) => `Visages (${n})`,
+      tabMarks: (n: number) => `Marques (${n})`,
+      emptyMarks: 'Touchez une marque dans une pièce pour la collecter.',
+      usedIn: (n: number) => `Utilisée dans ${n} case${n > 1 ? 's' : ''}`,
+      readerSection: 'Marques de ce document',
+      transcript: (description: string) => `[marque : ${description}]`,
+      inlineLabel: (description: string) => `Marque : ${description}`,
+      enlarge: 'Voir la marque en grand',
+      enlargeTitle: 'Marque',
+      pickerGallery: 'Marques collectées',
+      pickerSearch: 'Chercher une marque',
+      pickerSearchHint: 'Description ou titre d’un document',
+      count: (shown: number, total: number) =>
+        shown === total
+          ? `${total} marque${total > 1 ? 's' : ''}`
+          : `${shown} marque${shown > 1 ? 's' : ''} sur ${total}`,
+      noMatch: 'Aucune marque ne correspond.',
+      // Nom accessible d'une case à marque (AFFAIRE-3 §1.6).
+      slotSummary: (gen: string, state: string, fields: string) =>
+        `${gen}, case ${state}. ${fields}`,
+      fieldValue: (label: string, value: string) => `${label} : ${withoutFinalPeriod(value)}.`,
+      fieldVoid: (label: string) => `${label} : vide.`,
+      established: 'établie',
+      notEstablished: 'non établie',
     },
     faces: {
       title: 'Galerie des visages',

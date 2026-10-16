@@ -6,7 +6,16 @@
 -->
 <script lang="ts">
   import type { SlotGuess, SlotId } from '@arbre/contract';
-  import { Button, ClaimTag, Dialog, Icon, IconButton, Stamp } from '@arbre/ui';
+  import {
+    Button,
+    ClaimTag,
+    Dialog,
+    Icon,
+    IconButton,
+    MarkFrame,
+    pushToast,
+    Stamp,
+  } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
   import { portraitSvg } from '../lib/assets.svelte';
   import { getGame } from '../../lib/game/context';
@@ -22,7 +31,8 @@
   } from '../lib/view';
   import { tick } from 'svelte';
   import type { Attachment } from 'svelte/attachments';
-  import { FIELD_LABELS, pm, withoutFinalPeriod } from '../messages';
+  import { isMarkSlot, refusalText, refusedKind, slotFieldLabel } from '../lib/marks';
+  import { pm, withoutFinalPeriod } from '../messages';
 
   interface Props {
     slot: SlotId | null;
@@ -45,6 +55,9 @@
   );
 
   let confirming = $state<SlotField | null>(null);
+  /** Case à champ Marque (AFFAIRE-3 §1) : libellé, cadre, description en entier. */
+  const markSlot = $derived(slot !== null && isMarkSlot(game.content, slot));
+  const label = (field: SlotField) => slotFieldLabel(game.content, slot, field);
 
   // ── Case revendiquée (AFFAIRE-2 §1.4) ──
   const claim = $derived(
@@ -144,6 +157,12 @@
   function pick(field: SlotField) {
     if (!slot || locked) return;
     if (carry.accepts(field)) {
+      // Mauvais type (visage dans un champ Marque, ou l'inverse) : refus neutre, rien ne change.
+      const refused = refusedKind(game.content, slot, { [field]: carry.item!.patch[field] });
+      if (refused) {
+        pushToast({ tone: 'info', title: refusalText(refused), timeout: 4000 });
+        return;
+      }
       const value = carry.item!.patch[field];
       game.dispatch({ type: 'setSlot', slot, patch: { [field]: value } as Partial<SlotGuess> });
       carry.drop();
@@ -200,7 +219,10 @@
     <ul class="fields" bind:this={fieldsList}>
       {#each FIELDS as field (field)}
         {@const value = fieldValueLabel(game.content, field, guess)}
-        {@const accepts = carry.accepts(field)}
+        {@const accepts =
+          carry.accepts(field) &&
+          slot !== null &&
+          refusedKind(game.content, slot, { [field]: carry.item?.patch[field] }) === null}
         <li class="row" class:accepts>
           <button
             type="button"
@@ -211,13 +233,26 @@
             onclick={() => pick(field)}
             onkeydown={(e) => onRowKey(e, field)}
           >
-            <span class="label caps">{FIELD_LABELS[field]}</span>
-            <span class="value">
-              {#if field === 'portrait' && guess?.portrait && game.content.portraits[guess.portrait]}
+            <span class="label caps">{label(field)}</span>
+            <span class="value" class:mark-value={field === 'portrait' && markSlot}>
+              {#if field === 'portrait' && markSlot}
+                <MarkFrame size="tile" empty={!value}>
+                  {#if guess?.portrait && game.content.portraits[guess.portrait]}
+                    <span use:svgContent={portraitSvg(game.content, guess.portrait)}></span>
+                  {/if}
+                </MarkFrame>
+              {:else if field === 'portrait' && guess?.portrait && game.content.portraits[guess.portrait]}
                 <span class="thumb" use:svgContent={portraitSvg(game.content, guess.portrait)}
                 ></span>
               {/if}
-              {#if value && field === 'portrait'}
+              {#if value && field === 'portrait' && markSlot}
+                <!-- Marque (AFFAIRE-3 §1.2) : la description verbale en entier, sous le dessin. -->
+                <span class="mark-alt"
+                  >{claim.declared.has(field)
+                    ? `${withoutFinalPeriod(value)}, ${pm.tree.declaredMark}`
+                    : value}</span
+                >
+              {:else if value && field === 'portrait'}
                 <!-- Portrait (§6.9) : le texte de remplacement fait ~200 signes. Deux lignes à
                      l'écran, le texte entier au lecteur d'écran ; déclaré, il garde son cadre
                      (pas de .claim-value) : sa marque est le cartouche et le nom accessible. -->
@@ -239,7 +274,7 @@
           {#if !locked && value}
             <IconButton
               icon="close"
-              label={pm.tree.clearField(FIELD_LABELS[field])}
+              label={pm.tree.clearField(label(field))}
               onclick={() => askClear(field)}
             />
           {/if}
@@ -282,7 +317,7 @@
         aria-describedby="slot-confirm-clear"
         {@attach focusFirstButton}
       >
-        <p id="slot-confirm-clear">{pm.tree.confirmClear} ({FIELD_LABELS[confirming]})</p>
+        <p id="slot-confirm-clear">{pm.tree.confirmClear} ({label(confirming)})</p>
         <Button variant="danger" onclick={() => confirming && clear(confirming)}
           >{pm.common.confirm}</Button
         >
@@ -388,6 +423,14 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     line-clamp: 2;
+  }
+  /* Case à marque : dessin au-dessus, description entière dessous (pas de coupure). */
+  .value.mark-value {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .mark-alt {
+    overflow-wrap: break-word;
   }
   .empty {
     color: var(--text-muted);
