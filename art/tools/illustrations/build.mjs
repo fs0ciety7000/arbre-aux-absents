@@ -9,7 +9,7 @@
  *
  * Déterministe : chaque scène tire sa graine de son identifiant (Scene → rng(hash(id))).
  * Briefs : docs/scenario/illustrations*.md (affaire 1), docs/scenario/hautcorvin/09-illustrations.md
- * (affaire 2). Classes : DESIGN.md §10 (ART_CLASSES seulement).
+ * (affaire 2), docs/scenario/affaire-3/06-corpus.md et 10-illustrations.md (affaire 3). Classes : DESIGN.md §10 (ART_CLASSES seulement).
  *
  * Une affaire peut exporter des textes alternatifs (`ALTS`, id → alt) : la table { id: { file, alt } }
  * (`file` relatif au dossier de l'affaire) est alors réécrite à chaque build complet, hors de
@@ -29,10 +29,11 @@ const BUDGET = 60 * 1024;
 const CASES = {
   'succession-varenque': ['./scenes-photo.mjs', './scenes-print.mjs'],
   'revenant-hautcorvin': ['./hautcorvin/photos.mjs', './hautcorvin/press.mjs', './hautcorvin/papers.mjs', './hautcorvin/alts.mjs'],
+  'marques-de-longuegreve': ['./longuegreve/photos.mjs', './longuegreve/objects.mjs', './longuegreve/papers.mjs', './longuegreve/alts.mjs'],
 };
 const DEFAULT_CASE = 'succession-varenque';
 /** Table des textes alternatifs par affaire (chemin relatif à ce dossier). */
-const TABLES = { 'revenant-hautcorvin': 'hautcorvin/illustrations.json' };
+const TABLES = { 'revenant-hautcorvin': 'hautcorvin/illustrations.json', 'marques-de-longuegreve': 'longuegreve/illustrations.json' };
 
 const args = process.argv.slice(2);
 const caseIds = args.includes('--all') ? Object.keys(CASES) : [args.includes('--case') ? args[args.indexOf('--case') + 1] : DEFAULT_CASE];

@@ -2900,6 +2900,15 @@ Object.assign(EXTRAS, {
     emit(path('ink-soft', `M${f(x - 0.6)} ${f(y)}q-0.6 -2.6 1.6 -2.4M${f(x + 0.2)} ${f(y - 0.2)}q1.6 -2 2.6 -0.6M${f(x - 1.4)} ${f(y + 0.4)}l-0.6 1.4M${f(x)} ${f(y + 0.2)}l0.2 1.6M${f(x + 1.2)} ${f(y - 0.2)}l1 1.4`, { 'stroke-width': 0.35 }));
     emit(path('rehaut', ell(x - 2.2, y - 1.8, 1.6, 0.8)));
   },
+  /** Épingle de cravate à tête d'ambre (Blaise Garnaud, PH-01). */
+  amberPin(b, o) {
+    const { emit, path, solid, yN, nx0, nx1 } = b;
+    const x = o.x ?? (nx0 + nx1) / 2 + (o.dx ?? 0);
+    const y = o.y ?? yN + (o.dy ?? 14);
+    emit(path('ink', `M${f(x)} ${f(y + 2)}l0.6 5`, { 'stroke-width': 0.5 }));
+    solid(ell(x, y, 2.4, 2.9), 'wash-safran', 'ink');
+    emit(path('rehaut', ell(x - 0.7, y - 0.9, 0.7, 1)));
+  },
   /** Breloque d'ambre au bout d'une chaîne de montre (gilet). */
   amberCharm(b, o) {
     const { emit, path, solid, yN, nx1, cm } = b;

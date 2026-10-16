@@ -7,9 +7,9 @@
 > pièces n'emploient que les ids neutres (`lg-portrait-xxxxxx`) de
 > `art/tools/portraits/ids-marques-de-longuegreve.json`, qui **fait foi** (09 §4).
 >
-> Total : **66 dessins** dans `content/cases/marques-de-longuegreve/portraits/` : 34 marques
-> (23 justes + 11 leurres) et 32 visages (13 de case + 16 autres âges + 3 leurres). Les illustrations
-> de pièces (photos, relevés, objets) restent à faire (§7).
+> Total : **73 dessins** dans `content/cases/marques-de-longuegreve/portraits/` : 34 marques
+> (23 justes + 11 leurres) et 39 visages (13 de case + 16 autres âges + 4 leurres + 6 hors case), et
+> **30 illustrations de pièces** dans `content/cases/marques-de-longuegreve/illustrations/` (§7).
 
 ## 1. La carte
 
@@ -121,7 +121,7 @@ celle de 09 §4–§5 (identique).
 | `lg-m-fourche-couronnee` | `lg-portrait-9b5710` | — | D10 | marque de commerce du Comptoir (gravure) |
 | `lg-m-ile` | `lg-portrait-e5dfe7` | — | D11 | cartouche du plan de 1868, cloche (gravure) |
 
-## 4. Les visages (32)
+## 4. Les visages (39)
 
 Générateur : `art/tools/portraits/` (même figure paramétrique que les affaires 1 et 2,
 `people-longuegreve.mjs`, entrée `marques-de-longuegreve` de `cases.mjs`). Ajouts à `figure.mjs`, tous
@@ -183,13 +183,30 @@ menton de Félix, lorgnon de Sidonie, broche d'ambre à insecte d'Edmée, breloq
 | `lg-aline-36` | `lg-portrait-fc8ada` | C31 | 36 (PH-11) |
 | `lg-edmee-29` | `lg-portrait-b92caf` | C32 | 29 (PH-07) |
 
-### Leurres de visage (3)
+### Leurres de visage (4)
 
 | Travail | Id neutre | Qui | Pourquoi |
 |---|---|---|---|
 | `lg-leurre-leandre-9` | `lg-portrait-0f71b8` | Léandre enfant (PH-01, 9 ans) | Pas un âge accepté ; costume marin, pourrait passer pour un frère de Blaise. |
 | `lg-leurre-fontanet` | `lg-portrait-f30a8a` | l'inspecteur Fontanet (PH-18, 1977) | Homme de l'époque d'Aline, sans trait de famille. |
-| `lg-leurre-berthe-marie` | `lg-portrait-8ac94a` | Berthe-Marie (PH-12, 1930) | Même lorgnon que Sidonie âgée, à côté d'elle. |
+| `lg-leurre-berthe-marie` | `lg-portrait-8ac94a` | Berthe-Marie (PH-12, 1930), **33 ans**, cheveux bruns | Même lorgnon que Sidonie ; à 33 ans, se confond avec `lg-sidonie-33`. (Était dessinée à 64 ans : incompatible avec une fille née en 1931.) |
+| `lg-leurre-tenier` | `lg-portrait-fe5f0c` | Ténier, patron de la vedette *Trident* (PH-03, 1908), 48 ans | Barbe grise pleine, casquette de marin, chandail : un homme d'âge et de mer plausibles, sans trait de famille. |
+
+### Visages hors case (6)
+
+Personnes à marque qui paraissent sur les photos. Aucune n'a de case de visage : ces portraits existent
+pour que les photos de groupe soient cohérentes, et peuvent servir de leurres dans la galerie (proposition
+au `game-designer` : « personne à marque », non branché). Groupe `hors-case` dans
+`people-longuegreve.mjs`.
+
+| Travail | Id neutre | Qui | Âge (pièce) | Constantes |
+|---|---|---|---|---|
+| `lg-blaise-35` | `lg-portrait-340d3e` | Blaise Garnaud | 35 (PH-01) | moustache, raie de côté, épingle de cravate d'ambre |
+| `lg-benoit-47` | `lg-portrait-f47e16` | Benoît Lestaud | 47 (PH-03) | oreilles Lestaud, casquette, vareuse à boutons |
+| `lg-noel-52` | `lg-portrait-d75077` | Noël Cormaud | 52 (PH-05) ; 45 en CP-01 (moustache courte) | cheveux de Noël (gris), moustache |
+| `lg-honorine-48` | `lg-portrait-af7bd4` | Honorine Lestaud | 48 (PH-05) | chignon bas |
+| `lg-jacquette-56` | `lg-portrait-0df611` | Jacquette Goémard | 56 (PH-03) ; 61 en PH-05 | chignon haut gris, col de dentelle |
+| `lg-reine-58` | `lg-portrait-03c5f6` | Reine Lestaud | 58 (PH-06) | coiffe nouée, fuseau en main sur la photo |
 
 ## 5. Choix et écarts
 
@@ -207,8 +224,15 @@ menton de Félix, lorgnon de Sidonie, broche d'ambre à insecte d'Edmée, breloq
 6. **Elzéar** : pas de visage (04 : « il fuyait les photographes »). Les personnes à marque n'ont pas de
    visage de case ; leurs visages éventuels sur les photos de groupe sont à dessiner avec les pièces
    (§7).
-7. **Teintes de maison** (pour les photos de groupe à venir) : Goémard sienne, Oyard indigo, Cormaud
+7. **Teintes de maison** (photos de groupe, plan RG-06) : Goémard sienne, Oyard indigo, Cormaud
    ardoise, Lestaud indigo et safran, Garnaud carmin et indigo.
+8. **« L'abbé Ténier »** (commande) : la bible n'a pas d'abbé Ténier. Ténier est le patron de la vedette
+   *Trident* (RP-03) ; le prêtre est l'abbé Fortuné Rabier. Dessiné : Ténier, en leurre, à la barre de la
+   vedette dans PH-03. Aucun visage d'abbé.
+9. **Enfants et âges hors portraits** : les âges sans portrait (Victoire 4 et 15, Lazare 11, Clément 14,
+   Gatien 15, Léandre 9) sont tirés du portrait le plus proche, rajeuni (`longuegreve/cast.mjs`, table
+   `AGES` : coupe au bol et robe blanche pour Victoire petite, blouses d'écolier, pas de moustache avant
+   18 ans).
 
 ## 6. Générer, contrôler, budgets
 
@@ -216,23 +240,79 @@ menton de Félix, lorgnon de Sidonie, broche d'ambre à insecte d'Edmée, breloq
 python3 art/tools/build.py                        # carte (sous flock /tmp/arbre-build.lock)
 node art/tools/portraits/build.mjs --case marques-de-longuegreve   # 32 visages (+ --assign-ids pour un nouveau)
 node art/tools/marques/build.mjs                  # 34 marques (+ --assign-ids, --sheet <dir> : planches)
+node art/tools/illustrations/build.mjs --case marques-de-longuegreve   # 30 illustrations + table des alt
+node art/tools/illustrations/sheet.mjs <out.png> <cols> <largeur> <fichiers.svg…>   # planche-contact
 npm run content:check                             # règles 8 (SVG) et 9 (budgets)
 ```
 
-Tout est déterministe (graines tirées des noms de travail ; carte `SEED = 1974`). Budgets (règle 9,
-25 Ko gzip après svgo par portrait) : marques 0,5–0,6 Ko, visages 7–10,8 Ko ; carte dans les budgets
+Tout est déterministe (graines tirées des noms de travail et des ids de pièce ; carte `SEED = 1974`).
+Budgets (règle 9, 25 Ko gzip par portrait, 60 Ko par illustration) : marques 0,5–0,6 Ko, visages
+7–10,9 Ko, illustrations 0,8–33,7 Ko (les plus lourdes : PH-02 33,7, PH-03 31,9, PH-05 31,6, CP-01 29,5) ; carte dans les budgets
 de couche. Classes d'art seulement : aucun `fill="#…"`, `style=`, script, `foreignObject` ni lien
 externe (66 fichiers, 0 problème au contrôle du projet). `content:check` : OK ; l'affaire est en
 brouillon (pas de `case.json`), ses SVG sont contrôlés mais elle n'est pas compilée.
 
-## 7. Ce qui manque
+## 7. Les illustrations des pièces (30)
 
-- **Illustrations des pièces** : photographies (PH-01 à PH-18, CP-01, CP-02), relevés de Marest
-  (CN-01 croix, CN-02 objets, CN-03 cheminée), objets (OB-01 aviron, OB-03 cloche, OB-04, OB-05 linteau,
-  PB-01, CT-01), plan de 1868 (RG-06). Elles composeront `renderFigure` (visages) et
-  `renderMarkBody(code, { style: 'taillee' | 'tracee' | 'gravure' })` (marques sur leur support), dont la
-  navette d'Ursule (`A-tP`) et les avirons de Gatien, Lazare et Elzéar dans PH-10.
-- **Visages hors case** des personnes à marque qui paraissent sur les photos (Blaise à 35 ans, Benoît,
-  Noël, Honorine, Jacquette, Reine…), et l'abbé Ténier : à dessiner avec les photos de groupe.
+Générateur : `art/tools/illustrations/longuegreve/` (`cast.mjs` distribution, âges, marques taillées,
+avirons, croix ; `photos.mjs`, `objects.mjs`, `papers.mjs` scènes ; `alts.mjs` textes alternatifs),
+branché dans `art/tools/illustrations/build.mjs`. Les visages sont ceux des portraits (`figure.mjs`),
+les marques celles de `marques/marks.mjs` (`taillee` sur bois et pierre, `releve` dans les carnets,
+`gravure` pour D10 et D11). La table `art/tools/illustrations/longuegreve/illustrations.json`
+(`{ id: { file, alt } }`) fournit l'alt à reprendre dans le frontmatter.
+
+À référencer dans la pièce : `illustration: { file: illustrations/<id>.svg, alt: … }`.
+
+| Pièce | Fichier | Ce que montre l'image | Visages (âge) | Marques lisibles |
+|---|---|---|---|---|
+| PH-01 | `illustrations/ph-01.svg` | Stand du Comptoir à la Grande Exposition (1889), vitrines d'ambre ; légende du carton « M. et Mme B. Garnaud et leur fils » | Blaise 35, Amélie 31, leurre Léandre 9 | D10 au fronton |
+| PH-02 | `illustrations/ph-02.svg` | École de Longuegrève (1897), groupe devant le mur de briques | Sidonie 33 (Victoire 4 sur ses genoux), Clément 14, Lazare 11, Gatien 15, figurants | aucune |
+| PH-03 | `illustrations/ph-03.svg` | Tirage bordé de noir : évacués sur la jetée des Cabanes (1908), vedette *Trident* | Ténier (leurre) à bord ; Benoît 47, Sidonie 43 (cahier), Jacquette 56, Victoire 15, Gatien 26, Lazare 22, Clément 25 | aucune |
+| PH-04 | `illustrations/ph-04.svg` | Atelier des Cabanes (1912), établis, ambre sur les plateaux | Léandre 32 debout, Gatien 31 et Victoire 19 assis, ouvriers | aucune |
+| PH-05 | `illustrations/ph-05.svg` | Noce de Lazare et Victoire (26.4.1913), en plein air ; légende illisible | Noël 52, Honorine 48, Jacquette 61, Victoire 20, Lazare 27, Clément 30, Gatien 31, Léontine 24 (Félix nourrisson) | aucune |
+| PH-06 | `illustrations/ph-06.svg` | Noce de Gatien et Léontine, devant une maison de planches ; verso « 14.X.1911 » | Reine 58 (fuseau), Gatien 30 (pouce intact visible de face), Léontine 22 | aucune (fuseau trop petit) |
+| PH-07 | `illustrations/ph-07.svg` | Salle d'exposition (1950), portrait peint entre deux vitrines | Léandre 68 (peint), Edmée 29 | aucune |
+| PH-08 | `illustrations/ph-08.svg` | Manteau de cheminée de l'hôtel Garnaud ; « ORC 77-0874 — 11.10.77 » | — | `Y-d` taillée, « 1898 » |
+| PH-09 | `illustrations/ph-09.svg` | Cimetière de l'île (1964) ; verso « 29 août 64 » | Victoire 71 (penchée), Félix 52 (chapeau sur la poitrine) | **seule la croix de Clovis** (`O`) ; les autres croix illisibles |
+| PH-10 | `illustrations/ph-10.svg` | Hangar des Cabanes (5.9.1964) : quatre avirons pelle en l'air, établi | Marin 44, Rose 54 | avirons, de gauche à droite : `A-b` (Noël), `A-b-g` (Lazare), `O-g-g` (Elzéar), `Y-g-g` (Gatien) ; établi : fuseau `Y-g-tP` (Reine), tampon à pain `P-g-tO` (Ernestine), **navette `A-tP` (Ursule)** |
+| PH-11 | `illustrations/ph-11.svg` | Baguage de sternes sur la Longue Grève (1961) | Aline 36 (buste) | aucune |
+| PH-12 | `illustrations/ph-12.svg` | Jardin à treillage, Bains-de-Mérande (1930) | Sidonie 66 assise, leurre Berthe-Marie 33 | aucune |
+| PH-13 | `illustrations/ph-13.svg` | Coupure de *L'Écho* (15.10.1977) : portrait devant une vitrine ; titre et texte en faux-texte | Edmée 56 (buste) | aucune |
+| PH-14 | `illustrations/ph-14.svg` | Coupure de *L'Écho* (15.10.1977) : deux hommes sur la jetée, vedette | Marin 57, Félix 65 | aucune |
+| PH-15 | `illustrations/ph-15.svg` | Stèle « Blaise Garnaud, 1854 – 1924 », devise ; « ORC 77-0874 — cimetière de Port-Sénane » | — | `Y-d` taillée |
+| PH-16 | `illustrations/ph-16.svg` | Étal de la halle (vers 1935), poissons, balances, ardoise | Rose 25 (buste) | aucune |
+| PH-17 | `illustrations/ph-17.svg` | Devanture « Librairie Ferlay » (vers 1900) | Amélie 42 | aucune |
+| PH-18 | `illustrations/ph-18.svg` | Ruine de l'île (1976), linteau | Aline 51, leurre Fontanet | `Y` taillée (petite) au linteau |
+| CP-01 | `illustrations/cp-01.svg` | Carte « Nos côtes — Longuegrève : la grève aux ambres », « Phototypie de l'Orvelle » ; verso en vignette | Gatien 24 au premier plan, Noël 45 derrière, ramasseurs au loin | aucune |
+| CP-02 | `illustrations/cp-02.svg` | Carte « Port-Sénane — Les Cabanes d'Ambre » ; verso en vignette | — | aucune |
+| OB-01 | `illustrations/ob-01.svg` | Aviron en diagonale, loupe sur le manche | — | `A-b` taillée, « 1872 » |
+| OB-03 | `illustrations/ob-03.svg` | Cloche « LONGUEGRÈVE 1868 » | — | les quatre têtes en relief, D11 en cartouche |
+| OB-04 | `illustrations/ob-04.svg` | Étiquette de caisse « Comptoir des ambres, B. Garnaud & Cie — Port-Sénane », « qualité Grève », devise | — | D10 |
+| OB-05 | `illustrations/ob-05.svg` | Linteau de la « maison du feu » : « 1890 », « S.B. » | — | `P-d` taillée |
+| CT-01 | `illustrations/ct-01.svg` | Catalogue 1912 : photo « G. Goémard, tailleur » ; Colliers 12 fl., Broches 4 fl., Vernis à l'ambre | Gatien 31 (buste à l'établi) | D10 |
+| PB-01 | `illustrations/pb-01.svg` | Affiche « L'Ambre de Longuegrève », « depuis 1886 », « Imp. lith. Dumesnil-Corre » | — | D10 |
+| CN-01 | `illustrations/cn-01.svg` | Carnet n° 3, planche II, 29.8.64 : croix relevées au calque, noms de Victoire | — | 14 relevés (`releve`) ; **cotes au crayon** `A-g` (Jean), `A-d` (Yves) |
+| CN-02 | `illustrations/cn-02.svg` | Carnet n° 3, planche III, 5.9.64 : avirons, caisses, linteaux ; note « Flèche barrée » | — | 8 relevés + linteau `P-d` « 1890 S.B. » ; **cotes au crayon** `A-b` (Noël), `A-b-g` (Lazare) seulement (pas d'`O-g-g`) |
+| CN-03 | `illustrations/cn-03.svg` | Carnet n° 3, planche IV, sept. 64 : étiquette, cloche du Môle, cheminée de l'hôtel Garnaud | — | D10, D11, `Y-d` « 1898 » ; aucune cote écrite |
+| RG-06 | `illustrations/rg-06.svg` | Plan « Cadastre des îles, feuille 4 — Longuegrève » : quatre lanières, hameau de 14 maisons, chapelle, cimetière, « La Longue Grève », crayon « feu (1872) », nord, échelle « 1 000 toises » ; cartouche « levé le 7 juillet 1868 », « C. Mérel, géomètre » | — | D11 au cartouche |
+
+**Codes écrits** : seulement les cotes au crayon de CN-01 et CN-02 (bible v0.2 ; OF-05 et OF-06 sont
+des pièces de texte du `scenariste`). Aucune image ne porte de code en clair ailleurs ; les alt n'en
+écrivent aucun.
+
+## 8. Signalements et ce qui reste
+
+- **CN-01, nombre de croix** : le corpus dit « treize croix » mais sa liste en donne 14 (« Aurore »
+  deux fois). Dessiné : **14** relevés. À trancher par le `scenariste` (texte ou liste).
+- **CN-02 et `O-g-g`** : 06-corpus (l. 17 et vers l. 1048) et 09-marques disent encore que CN-02 note
+  `O-g-g`. Dessiné selon la v0.2 : pas d'`O-g-g` au crayon. Bible à aligner.
+- **RG-06, ordre des lanières** du nord au sud : Lestaud (safran), Goémard (sienne), Oyard (indigo),
+  Cormaud (ardoise). Choix du `cartographe`, à reporter dans `08-lieux.md`.
+- **`P-d`** (OB-05, CN-02) ressemble à un « F » : propriété de la grammaire (Potence + entaille à
+  droite). À garder en tête pour la lisibilité ; pas de changement proposé sans le `level-designer`.
+- **Aviron du portrait de Rose** (`lg-portrait-662e9a`) : porte déjà une petite marque `O-g-g` taillée
+  (livraison précédente) ; cohérent avec PH-10.
 - **Bible** : reporter les positions ajustées et les distances (§1) dans `docs/monde/00-monde.md` et
   `08-lieux.md` (périmètre du `scenariste`).
+- **Frontmatter des pièces** : `illustration.file` et `alt` à reprendre de la table §7 et de
+  `illustrations.json` (périmètre du `scenariste`).

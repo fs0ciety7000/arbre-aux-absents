@@ -15,7 +15,8 @@
  * cicatrice au menton de Félix, lorgnon à cordon noir de Sidonie, broche d'ambre à insecte d'Edmée.
  * Teintes : Goémard sienne · Oyard indigo · Cormaud ardoise · Lestaud indigo/safran · Garnaud carmin/indigo.
  *
- * `group` : 'case', 'alt', 'leurre'. `slot` : case de l'arbre.
+ * `group` : 'case', 'alt', 'leurre', 'hors-case' (personnes à marque vues sur les photos, `who`).
+ * `slot` : case de l'arbre.
  */
 import { atAge } from './figure.mjs';
 
@@ -332,6 +333,146 @@ const EDMEE = {
   extras: [{ type: 'amberBrooch' }],
 };
 
+/* Personnes à marque (hors case) : traits héréditaires de leur maison quand 04 les leur donne. */
+
+const BLAISE = {
+  id: 'lg-blaise-35',
+  group: 'hors-case',
+  who: 'C13 Blaise Goémard, dit Garnaud (PH-01)',
+  sex: 'm',
+  age: 35,
+  skin: 2,
+  hair: 'brun',
+  W: 24,
+  H: 37.5,
+  cheek: 0.35,
+  jaw: 0.6,
+  chin: 0.55,
+  brows: { ...GOEMARD_BROWS, thick: 1.6 },
+  eyes: { gaze: -0.08, deep: true },
+  nose: { proj: 1.08, width: 1.0, len: 1.04 },
+  mouth: { full: 0.35, smile: 0.05, w: 0.98 },
+  marks: { noLipColor: true },
+  moustache: { style: 'droop' },
+  hairStyle: 'sidePart',
+  clothes: { type: 'coat', wash: 'wash-indigo', vest: 'wash-ardoise', collar: 'wing', tie: 'cravat' },
+  extras: [{ type: 'amberPin', dy: 15 }],
+};
+
+const BENOIT = {
+  id: 'lg-benoit-47',
+  group: 'hors-case',
+  who: 'C17 Benoît Lestaud (PH-03)',
+  sex: 'm',
+  age: 47,
+  skin: 2,
+  hair: 'chatain',
+  W: 23.5,
+  H: 36.5,
+  cheek: 0.45,
+  jaw: 0.5,
+  chin: 0.45,
+  brows: { thick: 0.9, arch: 0.5, lift: 0.2 },
+  eyes: { gaze: -0.1 },
+  nose: { proj: 0.95, width: 1.0, len: 1.0 },
+  mouth: { full: 0.4, smile: 0.45, w: 1.0 },
+  marks: { bigEars: true, earsOut: 1, lobe: 'free', noLipColor: true },
+  moustache: { style: 'short' },
+  hairStyle: 'short',
+  hairOpt: { grayTemples: true },
+  hat: { type: 'officer', cls: 'wash-indigo', badge: true },
+  clothes: { type: 'uniform', wash: 'wash-indigo' },
+};
+
+const NOEL = {
+  id: 'lg-noel-52',
+  group: 'hors-case',
+  who: 'C19 Noël Cormaud (CP-01, PH-05)',
+  sex: 'm',
+  age: 52,
+  skin: 3,
+  hair: 'gris',
+  W: 24,
+  H: 37,
+  cheek: 0.35,
+  jaw: 0.55,
+  chin: 0.5,
+  brows: { thick: 1.0, arch: 0.55, lift: 0.2 },
+  eyes: { gaze: -0.18, lid: 0.3 },
+  nose: { proj: 1.02, width: 1.06, len: 0.98 },
+  mouth: { full: 0.5, smile: 0.25, w: 1.0 },
+  marks: { noLipColor: true },
+  moustache: { style: 'short', cls: 'hair-gris' },
+  hairStyle: 'curly',
+  hairOpt: { vol: 0.16, n: 70, size: 2.6, scallop: 2.6, curlLight: 18 },
+  clothes: { type: 'coat', wash: 'wash-ardoise', dark: true, collar: 'turn', tie: 'cravat' },
+};
+
+const HONORINE = {
+  id: 'lg-honorine-48',
+  group: 'hors-case',
+  who: 'C20 Honorine Lestaud (PH-05)',
+  sex: 'f',
+  age: 48,
+  skin: 2,
+  hair: 'chatain',
+  W: 22.5,
+  H: 35.5,
+  cheek: 0.55,
+  jaw: 0.4,
+  chin: 0.4,
+  brows: { thick: 0.8, arch: 0.5 },
+  eyes: { gaze: -0.06, lid: 0.25 },
+  nose: { proj: 0.95, width: 1.0, len: 0.98 },
+  mouth: { full: 0.45, smile: 0.35, w: 0.98 },
+  hairStyle: 'lowBun',
+  hairOpt: { grayTemples: true },
+  clothes: { type: 'dress', wash: 'wash-ardoise', dark: 'hatch', neck: 'round' },
+};
+
+const JACQUETTE = {
+  id: 'lg-jacquette-56',
+  group: 'hors-case',
+  who: 'C11 Jacquette Goémard (PH-03, PH-05)',
+  sex: 'f',
+  age: 56,
+  skin: 2,
+  hair: 'gris',
+  W: 23,
+  H: 36,
+  cheek: 0.6,
+  jaw: 0.45,
+  chin: 0.45,
+  brows: { thick: 0.9, arch: 0.6, lift: 0.3 },
+  eyes: { gaze: -0.1 },
+  nose: { proj: 1.0, width: 1.04, len: 1.0 },
+  mouth: { full: 0.4, smile: 0.7, teeth: true, w: 1.04 },
+  hairStyle: 'topBun',
+  clothes: { type: 'shawl', wash: 'hair-noir', dress: 'wash-ardoise', embroidery: 'wash-ardoise' },
+};
+
+const REINE = {
+  id: 'lg-reine-58',
+  group: 'hors-case',
+  who: 'C10 Reine Lestaud (PH-06)',
+  sex: 'f',
+  age: 58,
+  skin: 1,
+  hair: 'gris',
+  W: 22,
+  H: 36,
+  cheek: 0.3,
+  jaw: 0.5,
+  chin: 0.55,
+  brows: { thick: 0.8, arch: 0.3 },
+  eyes: { gaze: -0.04 },
+  nose: { proj: 1.02, width: 0.95, len: 1.04 },
+  mouth: { full: 0.3, smile: 0.05, w: 0.92 },
+  hairStyle: 'short',
+  hat: { type: 'fichuChin', cls: 'paper-shade' },
+  clothes: { type: 'dress', wash: 'wash-ardoise', dark: 'hatch' },
+};
+
 /** Autre âge : même personne (atAge), retouches de la bible, groupe 'alt'. */
 const alt = (base, age, patch = {}) => {
   const s = atAge(base, age);
@@ -398,14 +539,15 @@ export const PEOPLE = [
     glasses: { type: 'round', shell: 'hair-noir' },
     clothes: { type: 'coat', wash: 'wash-ardoise', dark: true, collar: 'turn', tie: 'tie', tieCls: 'wash-indigo' },
   },
-  // Berthe-Marie (PH-12, 1930), à côté de Sidonie âgée : même lorgnon.
+  // Berthe-Marie (PH-12, 1930), nièce de Sidonie et mère de Ginette (née en 1931) : 33 ans, le même
+  // lorgnon que sa tante ; confondable avec Sidonie à 33 ans (PH-02), pas avec Sidonie âgée.
   {
     id: 'lg-leurre-berthe-marie',
     group: 'leurre',
     sex: 'f',
-    age: 64,
+    age: 33,
     skin: 1,
-    hair: 'gris',
+    hair: 'brun',
     W: 23.5,
     H: 35,
     cheek: 0.6,
@@ -419,4 +561,39 @@ export const PEOPLE = [
     glasses: { type: 'pinceNez' },
     clothes: { type: 'highCollar', wash: 'wash-lilas', collarTop: 1.0 },
   },
+  // Le patron Ténier (vedette *Trident*, RP-03), à la barre sur PH-03 (1908) : homme de mer sans trait
+  // de famille ; leurre possible pour Lazare, Clément ou Gatien au même âge de photo.
+  {
+    id: 'lg-leurre-tenier',
+    group: 'leurre',
+    sex: 'm',
+    age: 48,
+    skin: 3,
+    hair: 'gris',
+    W: 25,
+    H: 37,
+    cheek: 0.45,
+    jaw: 0.75,
+    chin: 0.55,
+    browRidge: 0.3,
+    brows: { thick: 1.2, arch: 0.25 },
+    eyes: { gaze: 0.08, deep: true },
+    nose: { proj: 1.1, width: 1.1, len: 1.0 },
+    mouth: { full: 0.3, smile: 0.1, w: 1.0 },
+    marks: { noLipColor: true },
+    hairStyle: 'cropped',
+    beard: { style: 'full', cls: 'hair-gris' },
+    hat: { type: 'sailor', cls: 'hair-noir' },
+    clothes: { type: 'sweater', wash: 'wash-indigo', band: 'wash-ardoise' },
+  },
+
+  /* ── Visages hors case (04 « Visage (hors case) ») : personnes à marque vues sur les photos.
+   *    Aucun ne va dans une case (leur case est une marque) ; ils servent aux photos de groupe et,
+   *    si le `game-designer` retient la mention « personne à marque », à la galerie. ── */
+  BLAISE,
+  BENOIT,
+  NOEL,
+  HONORINE,
+  JACQUETTE,
+  REINE,
 ];

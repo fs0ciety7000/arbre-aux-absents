@@ -11,11 +11,12 @@
 import { atAge, renderFigure } from '../portraits/figure.mjs';
 import { PEOPLE } from '../portraits/people.mjs';
 import { PEOPLE as PEOPLE_HC } from '../portraits/people-hautcorvin.mjs';
+import { PEOPLE as PEOPLE_LG } from '../portraits/people-longuegreve.mjs';
 import { ell, f, lerp, smooth, tube } from './lib.mjs';
 import { hand } from './people.mjs';
 
-/** Visages de toutes les affaires (ids de travail distincts : `hc-…` pour l'affaire 2). */
-export const BY_ID = Object.fromEntries([...PEOPLE, ...PEOPLE_HC].map((p) => [p.id, p]));
+/** Visages de toutes les affaires (ids de travail distincts : `hc-…` affaire 2, `lg-…` affaire 3). */
+export const BY_ID = Object.fromEntries([...PEOPLE, ...PEOPLE_HC, ...PEOPLE_LG].map((p) => [p.id, p]));
 
 function deepMerge(a, b) {
   const out = { ...a };
