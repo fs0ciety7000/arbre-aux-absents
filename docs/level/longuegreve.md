@@ -9,6 +9,8 @@
 > `docs/game/GAME_DESIGN.md` §4, §7–§10, contrat `docs/ARCHITECTURE.md` §3 (dont §3.7 bis, règle 13 :
 > marques et `recording`), moteur `packages/engine/src/{normalize,search}.ts`.
 > Preuve de solvabilité : §10 (modèle du graphe et solveur « en couches », contre-épreuves).
+> **v0.2 (16 oct. 2026)** : relecture du contenu rédigé v1.0 (111 pièces, JSON complets) au §19,
+> qui fait foi là où il contredit les §2–§17 (écarts, contre-épreuves, aides, durée, corrections).
 
 ## 1. Principes retenus
 
@@ -540,3 +542,204 @@ scripts de couches et de contre-épreuve restent hors dépôt (comme pour les af
 retouche : `npx prettier --write content`, `npm run content:check`, `npm run content:solve -- --report`,
 puis le script de couches. Toute retouche garde : partition des groupes, conditions monotones hors fins
 et succès, portes à deux clés, résultats décisifs de `y-d` derrière la porte C, codes en `autolink: false`.
+
+## 19. Relecture du contenu v1.0
+
+> `level-designer` · 16 oct. 2026. Objet : la progression **réelle** (`progression.json`, `tree.json`,
+> `hints.json`, les 111 pièces de `content/cases/marques-de-longuegreve/`) relue contre ce document.
+> Déclencheur : sur la racine de test du scénariste (contenu identique, JSON comparés après `jq -S`,
+> plus un `case.json`), le rapport `content:solve -- --report` établit `g-oyard` à l'étape 196, après la
+> porte A, et non au départ comme prévu (§3, §10.2).
+
+### 19.1 `g-oyard` « après la porte A » : artefact d'ordre du solveur, pas un défaut du contenu
+
+Le solveur de `content-tools` n'applique **qu'une action par étape** et choisit la première de
+`candidateActions()` : d'abord les lectures, puis les visites, puis les recherches, et seulement
+ensuite les verrouillages, groupe par groupe **dans l'ordre de `tree.json`**. À l'étape 169, `g-matrice`
+et `g-oyard` sont **tous deux** verrouillables ; `g-matrice`, premier de la liste, passe, ouvre la porte
+A (16 pièces), et le solveur lit ces 16 pièces et fait 9 recherches avant de revenir aux
+verrouillages : `g-oyard` tombe à l'étape 196. Son parcours est un ordre possible, pas une mesure de
+profondeur.
+
+Preuve (script « en couches » hors dépôt, §10.1, rejoué sur le modèle exporté par `solverModelFor()` :
+une couche = tout lire, tout visiter, tout chercher jusqu'au point fixe, puis verrouiller **tous** les
+groupes verrouillables) : à la fin de la couche 0, avant tout verrouillage, les quatre cases de
+`g-oyard` sont établissables, avec des pièces de départ ou de niveau 0 seulement.
+
+| Case | Marque ou visage (niveau 0) | Remarque |
+|---|---|---|
+| C11 Jacquette | RG-18 (`O-g+Y` autographe) | RG-18 par « Victoire Oyard », « Jacquette Goémard », « Lazare Cormaud »… |
+| C12 Médard | RG-05 (`O-g`) | au cadastre (lieu Longuegrève) |
+| C23 Elzéar | PH-10 (aviron) | CN-02 (relevé) non compté en mode strict, inutile |
+| C29 Rose | PH-16, PH-10 (visages) | |
+
+Contre-épreuve d'indépendance des deux entrées : `g-matrice` interdit, `g-oyard` seul ouvre la porte A
+(C24 + 3 = 4 cases, `lockedCount` compte bien C24 : le moteur la verrouille à `newGame`) et les 28 autres
+cases suivent aux mêmes couches ; `g-oyard` interdit, `g-matrice` seul fait de même. **Aucune
+correction de contenu.** Pour lire un rapport du solveur, se fier aux couches ci-dessous, pas aux
+numéros d'étape (demande éventuelle au `backend` : verrouiller avant de lire, ou publier les couches
+dans le rapport).
+
+### 19.2 Couches mesurées sur le contenu v1.0
+
+Trois modes : « solveur » (termes cachés connus d'emblée, toute marque révélée compte), « déduit »
+(termes cachés connus quand la pièce qui permet la déduction est lue : `y-d` ← OF-05 + RG-01 ou RG-02 ;
+`code-o-g-ty` ← OF-05 + DV-02 ; `code-y-g` ← OF-05 + RG-05 ; `code-o-g` ← OF-05 + BD-01 ;
+`code-o-g-g` ← OF-05 + BD-01 + (BD-06 ou PH-10)), « déduit + strict » (en plus, les relevés CN-01 à
+CN-03 ne comptent pas comme marque, R7). **Les trois modes donnent les mêmes couches :**
+
+| Couche | Pièces lues | Cases établies | Groupes établis | Secrets |
+|---|---|---|---|---|
+| 0 → 1 | 47 | 9 | `g-matrice`, `g-oyard` | S1 (couche 1) |
+| 1 → 2 | 65 | 16 | `g-talons`, `g-ecole` | S4 |
+| 2 → 3 | 98 | 28 | `g-goemard`, `g-lestaud`, `g-mer` | S3, S2 |
+| 3 → 4 | 109 (+ EP-01, EP-02 = 111) | 32 | `g-garnaud` | — |
+
+C'est exactement le §10.2 (47 / 65 / 98 / 109 ; 9 / 16 / 28 / 32), pièces par niveau d'arrivée
+0 = 47, A = 18, B = 33, C = 11, épilogue = 2. Seule différence d'affichage : S2 tombe dans la couche des
+trois groupes B (PV-06 exige C28–C31, établis là, et RG-20 suit LT-05, derrière C), avant `g-garnaud`.
+Seul écart entre modes : C13 apparaît en couche 0 en mode « solveur » (CN-03 par `y-d`), en couche 1
+sinon (voir §19.4, point 1). Le rapport réel : 0 erreur, 111 pièces, 134 mots-clés cherchés, 5 lieux,
+32 cases, 4 secrets, 4 fins atteignables (243 combinaisons de rapport).
+
+Contrôles de conformité au graphe (tous **conformes**) : portes A, B, C à deux clés (groupe ou
+compteur) sur toutes les routes ; PV-03, Fonds Sollier (RG-01–RG-04, RG-22, LT-02, LT-04, PH-02,
+PH-12, DV-02) et RG-07–RG-11 derrière A ; RP-05 derrière A + (RP-04, LT-02 ou BD-02) ; CP-01 hors de
+PV-03 (B) ; auditions PV-01, PV-02, PV-04, PR-07 derrière B ; RG-13, PH-15, LT-05, PV-05, EX-01, EX-02
+derrière C ; RG-19 derrière « C19 établie ou C » ; RG-20 après LT-05 ; PV-06 = RG-20 + C28–C31 (ou ≥ 28) ;
+C14, C27, C32 révélées par RG-13, PH-15 ou EX-01 ; C13 par RG-01, RG-02, CN-03 ou LT-01 ; secrets S1–S4
+et fins F1–F4 comme au §8 ; leurres lisibles à temps (`armateur` PR-03, `matelot` PR-04,
+`gardien-de-phare` PV-03) ; calendrier du §12.6 respecté (PV-03 le 6 oct. … PV-06 le 4 nov.) ; BD-02 ne
+nomme plus Blaise ; aucun code de l'arbre écrit en clair hors CN-01–CN-03 (OF-05 : `A-g`, `A-d`, `Y··`,
+`/` ; OF-06 : `A-d`) ; RG-08 met les marques des parents au pied de l'acte, sans légende (§12.2 a) ;
+la navette `A+P` est dans CN-02 et PH-10 (§12.1) ; mentions du §12.9 toutes présentes.
+
+### 19.3 Écarts au plan (sans effet sur la solvabilité)
+
+1. **`code-o-g-g` est caché** (`hiddenTerm`), le plan le disait lisible dans CN-02. Cohérent avec le
+   texte (CN-02 ne porte en cote que `A-b` et `A-b-g`) : la marque d'Elzéar devient une déduction de
+   plus. CN-02 reste atteint par BD-06 et « aviron ». À garder.
+2. **Les noms des chefs rendent les mariages** (« Gervais Goémard » → RG-07, RG-08 ; « Clovis Oyard »
+   → RG-07, RG-09 ; etc., porte A), contre §12.2 (b). Plus de routes, et la difficulté du talon tient au
+   pied d'acte sans légende, qui est bien écrit. À garder.
+3. **`y-d` a deux résultats de plus** : EX-01 (après PV-05, doublon de l'`unlock`) et EP-02 (après
+   EP-01, doublon aussi). Neutres.
+4. **PR-07** : B + OF-04 (le plan disait B + (PV-02 ou OF-04)) : équivalent, OF-04 est de départ.
+5. **134 mots-clés** au lieu d'environ 90 : ajouts sans porte prématurée (contre-épreuve « un mot-clé
+   retiré » : aucun ne casse rien).
+6. **Les relevés CN-01 à CN-03 révèlent des marques** (`::mark` dans le tableau, donc
+   `reveals.portraits`) : CN-01 les huit chefs et épouses, CN-02 Elzéar, Noël, Reine, Ernestine, Ursule,
+   Benoît, CN-03 la marque de Blaise. Mesuré : **aucune case n'est établissable plus tôt** (mode strict
+   identique). Mais voir le risque 19.4, point 2.
+7. **Contre-épreuve « une pièce retirée » (§10.3) : fausse sur le contenu.** Trois auditions sont des
+   **passages obligés** pour des cases :
+   - **PV-01** (Edmée) → `g-garnaud` entier : les deux visages de C14 (PH-01, PH-17) et de C27 (PH-04,
+     PH-07) ne viennent que par des résultats conditionnés à « PV-01 lu » ; C13 et C32 seules ne font pas
+     le seuil.
+   - **PV-02** (les Cabanes) → C22 Léontine : ses deux visages (PH-05, PH-06) sont remis à cette
+     audition. PH-03 ne la porte pas (contrairement à ce que laissait entendre le §17.1).
+   - **PV-04** (Aline) → C31 : PH-11 et PH-18 ne viennent qu'après PV-04, et le prénom « Aline » n'est
+     écrit que dans RG-17 et PV-04.
+   Pas d'impasse : les trois auditions sont débloquées à coup sûr (porte B + une pièce de départ ou de
+   niveau 0 ; PV-01 a deux entrées, OF-03 et BD-07). Mais le principe « aucune pièce hors départ
+   nécessaire à une case » n'est plus tenu. Les autres pièces nécessaires sont celles, voulues, des
+   secrets (BD-04 → S4, LT-05 / RG-20 / PV-06 → S2, RG-19 → S3, RP-01 → S1).
+8. **Les compteurs de porte ne sont pas des clés indépendantes** (déjà vrai dans le plan) : bloquer à la
+   fois `g-talons` et `g-ecole` laisse 9 cases (le seuil de 12 est hors d'atteinte : aucun autre groupe
+   n'est verrouillable au niveau A). Un joueur qui échoue aux deux reste au niveau A ; les aides des deux
+   groupes sont donc critiques.
+
+### 19.4 Cases et passages à risque (contenu v1.0)
+
+1. **`Y-d` devinable par force brute au niveau 0.** OF-05 et OF-06 enseignent une notation où les codes
+   à deux signes ne sont que huit (`Y-g`, `Y-d`, `O-g`… `P-d`). Un joueur méthodique les essaie tous dès
+   la première demi-heure : `Y-d` rend CN-03 sans condition, ce qui **révèle C13** et, dans le moteur,
+   rend sa marque (le dessin « de mémoire » de la cheminée) choisissable. Pas de fuite de validation (C13
+   ne se verrouille qu'avec `g-garnaud`, niveau C), mais la case cachée apparaît avant le prologue, contre
+   §7. Correction proposée (19.6, S1) : conditionner ce résultat à RG-01 ou RG-02, ce que la déduction
+   exige de toute façon ; mesuré : couches inchangées, C13 en couche 1 dans les trois modes.
+2. **Le talon court-circuité par CN-01.** CN-01 (niveau 0, par BD-05 ou « cimetière de Longuegrève »)
+   donne les croix de Perrine, Toinette, Ursule et Apolline **sous leur prénom**, marque relevée à
+   côté. La leçon de `g-talons` (attribuer une marque au pied d'un acte par sa tête et son talon) devient
+   facultative : on recopie la planche. `g-talons` reste de niveau A (les métiers des épouses ne sont
+   qu'aux registres), mais ce n'est plus la « vraie difficulté du niveau A » annoncée au §17.4. À arbitrer
+   avec le scénariste (19.6, S4).
+3. **C22 Léontine, C31 Aline, C14 Amélie, C27 Léandre** : deux visages chacun, mais derrière une même
+   audition (19.3, point 7). Risque de jeu faible (les auditions sont des pièces qu'on lit), risque de
+   graphe moyen : une retouche d'`unlocks` ou de texte sur PV-01, PV-02 ou PV-04 peut casser ces cases
+   sans que `content:check` le signale, puisque le solveur ne fait pas de contre-épreuve. À rejouer après
+   toute retouche.
+4. **C25 Lazare, C26 Clément** : deux visages (PH-03 par PR-07, PH-05 par PV-02), indépendants : sûrs.
+   **C28 Félix** : PH-09 (PV-02) et PH-14 (PR-07) : sûr.
+5. **C06 Ursule** : sûre (PH-10 navette au niveau 0, RG-10 au niveau A). **C23 Elzéar** : une seule pièce
+   autographe au niveau 0 (PH-10), puis RG-15 et RG-23 au niveau B : comme prévu (§17.3).
+6. **C13 Blaise** : marque établissable au niveau B (LT-01, PH-08), huit pièces au total ; voulu.
+7. **Niveau 0 très chargé** : 47 pièces et la moitié du texte (13 800 mots sur 27 600) sont ouvertes
+   avant toute porte. Le prologue se ferme vite (OF-02 + « cadastre » → RG-05), mais un joueur qui lit
+   tout avant d'établir quoi que ce soit passe plus d'une heure sans franchir de porte. Les aides de
+   `g-matrice` (disponibles dès OF-02) doivent suffire ; à mesurer en playtest.
+8. **Solveur optimiste sur les noms** (« Goémard », « Oyard » partout) et sur les marques de fille en
+   autre âge : inchangé (§17.6), seul le playtest le mesure.
+
+### 19.5 Aides progressives (`hints.json`, 116 indices)
+
+Tous les indices ont un palier 1, 2, 3 pour chaque case non pré-remplie et chaque groupe ; les
+`availableWhen` des cases cachées (C13, C14, C27, C32) attendent leur révélation. Deux indices citent
+une pièce d'un niveau supérieur à leur disponibilité (règle du §15, leçon de `c17-2` en affaire 2) :
+
+- **`c13-2`** (disponible à RG-01, niveau A) nomme « la lettre fermée de 1908 » (LT-01, niveau B).
+- **`c06-2`** (disponible à PH-10, niveau 0) nomme « le mariage de 1885 » (RG-10, niveau A).
+
+Le reste est conforme (les « Pièce utile » de C21–C32 attendent la photographie citée ; `g-garnaud-2`
+et `-3` au niveau A nomment le puîné : c'est le « soupçon tôt » voulu, la preuve reste au niveau C).
+
+### 19.6 Corrections à faire dans `content/`
+
+Aucune correction **bloquante** dans les champs de progression : le contenu est solvable de bout en bout,
+sans deviner, avec les couches voulues. Un seul point bloque la vérification dans le dépôt lui-même :
+
+| Bloquant | Fichier | Champ | Valeur |
+|---|---|---|---|
+| B1 | `content/cases/marques-de-longuegreve/case.json` | (fichier absent) | Le créer (périmètre scénariste / `game-designer`) : sans lui, `content:check` classe l'affaire en brouillon et ne la compile ni ne la résout. La version de la racine de test convient : `id`, `title`, `subtitle`, `version: "0.1.0"`, `intro: "of-01"`, `epilogue: "ep-01"`, `timedTargetsMs: [10800000, 16200000, 25200000]` (3 h, 4 h 30, 7 h, §8), `credits`, `order: 3`. |
+
+| Souhaitable | Fichier | Champ | Valeur |
+|---|---|---|---|
+| S1 | `progression.json` | `keywords[id="y-d"].results[0]` (CN-03) | ajouter `"requires": {"any": [{"read": "rg-01"}, {"read": "rg-02"}]}` (19.4, point 1). Mesuré : couches inchangées, C13 en couche 1. |
+| S2 | `progression.json` | `keywords[id="service-des-reserves"].results` et `keywords[id="aline-lestaud"].results` | ajouter à chacun `{"documents": ["ph-11"], "requires": <porte B>}` avec porte B = `{"any": [{"groupLocked": "g-talons"}, {"groupLocked": "g-ecole"}, {"lockedCount": {"gte": 12}}]}`. PH-11 vient de la photothèque du Service des Réserves (« versé en 1977 »), pas de l'audition : sa route sans PV-04 est diégétique. Mesuré : C31 ne dépend plus de PV-04 ; couches inchangées. |
+| S3 | `hints.json` | `c13-2.availableWhen` | `{"unlocked": "lt-01"}` (ou garder `rg-01` et réduire le texte à « Pièce utile : le premier cahier de la copie Brémoy. ») |
+| S4 | `hints.json` | `c06-2.text` | « Pièce utile : la photographie du hangar à bateaux (1964). » (la mention du mariage de 1885 reste au palier 3 de C19 et de `g-talons`) |
+| S5 | `documents/cn-01.md` (texte, scénariste) | lignes 2, 4, 6, 8 du tableau | À arbitrer : soit garder (CN-01 comme appui, la leçon du talon devient facultative, 19.4 point 2), soit grouper les quatre croix d'épouses sans nom dit (« les femmes, je ne vous dirai pas laquelle est laquelle : lisez le talon ») pour faire de la planche un exercice de talon. Aucun effet sur les couches dans les deux cas. |
+| S6 | `progression.json` (et textes, scénariste) | routes des visages de C14 / C27 (PH-01, PH-17, PH-04, PH-07) et de C22 (PH-05, PH-06) | À arbitrer : ces visages sont remis aux auditions PV-01 et PV-02 (provenance écrite dans les pièces), donc passages obligés diégétiques. Soit accepter (consigné ici, 19.3 point 7), soit donner à **un** visage par case une seconde provenance hors audition (par exemple PH-17 « communiqué par la librairie Ferlay », rendu par « librairie Ferlay » à la porte B sans PV-01). Pas d'impasse dans les deux cas. |
+| S7 | `progression.json` | `keywords[id="y-d"].results` (EX-01 et EP-02) | facultatif : retirer ces deux résultats, doublons des `unlocks` (ou les garder pour que la recherche liste ces pièces : neutre). |
+
+Hors périmètre `content/` : `achievements.json` `lg-lire-la-greve` (`searched: y-d`) s'obtient aussi par
+la force brute de 19.4 point 1, même après S1 (la recherche est enregistrée sans résultat) ; à voir avec le
+`game-designer` (`all(searched y-d, read rg-01)` par exemple, ou l'accepter).
+
+### 19.7 Durée revue
+
+Texte réel : **27 600 mots** (affaire 2 : 38 700), répartis 13 800 au niveau 0, 4 900 au niveau A, 5 400
+au niveau B (beaucoup de photographies : peu de mots, beaucoup de comparaisons), 3 100 au niveau C,
+500 pour l'épilogue. Moins à lire que prévu, mais une grammaire des marques à apprendre et sept bandes
+au niveau 0.
+
+| Phase | Joueur moyen |
+|---|---|
+| Prologue (`g-matrice`) | 15–25 min |
+| Niveau 0 : entrée Victoire (`g-oyard`), presse, bandes | 1 h – 1 h 30 |
+| Niveau A (talons, école ; S1) | 45 min – 1 h 15 |
+| Niveau B (Goémard, Lestaud, mer ; S3, S4) | 1 h 15 – 2 h |
+| Niveau C (Garnaud ; S2) | 40 min – 1 h |
+| Rapport, tampon, épilogue | 20–30 min |
+| **Total** | **4 h 15 – 6 h 40** (plan : 4 h 30 – 6 h 50) |
+
+`timedTargetsMs` (3 h, 4 h 30, 7 h) : à garder. Le succès `lg-archiviste-eclair` (1 h 35) suppose le
+chemin critique du §11 (≈ 40 lectures, ≈ 10 000 mots) sans détour : jouable en seconde partie seulement.
+
+### 19.8 Rejouer
+
+Scripts hors dépôt (comme pour les affaires 1 et 2) : export du modèle par `checkContentRoot()` +
+`solverModelFor()` de `@arbre/content-tools`, puis solveur « en couches » (trois modes ci-dessus),
+contre-épreuves « une pièce retirée », « un mot-clé retiré », « un groupe interdit », et application
+des corrections S1–S2 sur une copie du modèle. À rejouer après toute retouche des JSON ou des pièces ; les
+attendus sont ceux du tableau 19.2 et, après S2, aucune case perdue au retrait de PV-04.

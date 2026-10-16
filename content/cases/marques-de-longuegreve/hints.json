@@ -181,7 +181,7 @@
       "slot": "c06"
     },
     "level": 2,
-    "text": "Pièces utiles : la photographie du hangar à bateaux (1964) ; le mariage de 1885.",
+    "text": "Pièce utile : la photographie du hangar à bateaux (1964).",
     "availableWhen": {
       "unlocked": "ph-10"
     }
@@ -427,7 +427,7 @@
     "level": 2,
     "text": "Pièces utiles : le premier cahier de la copie Brémoy ; la lettre fermée de 1908.",
     "availableWhen": {
-      "unlocked": "rg-01"
+      "unlocked": "lt-01"
     }
   },
   {

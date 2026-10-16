@@ -2323,6 +2323,24 @@
       "results": [
         {
           "documents": ["rp-09", "an-02"]
+        },
+        {
+          "documents": ["ph-11"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-talons"
+              },
+              {
+                "groupLocked": "g-ecole"
+              },
+              {
+                "lockedCount": {
+                  "gte": 12
+                }
+              }
+            ]
+          }
         }
       ]
     },
@@ -3282,6 +3300,24 @@
       "results": [
         {
           "documents": ["rp-09", "an-02"]
+        },
+        {
+          "documents": ["ph-11"],
+          "requires": {
+            "any": [
+              {
+                "groupLocked": "g-talons"
+              },
+              {
+                "groupLocked": "g-ecole"
+              },
+              {
+                "lockedCount": {
+                  "gte": 12
+                }
+              }
+            ]
+          }
         }
       ]
     },
@@ -5009,7 +5045,17 @@
       "hiddenTerm": true,
       "results": [
         {
-          "documents": ["cn-03"]
+          "documents": ["cn-03"],
+          "requires": {
+            "any": [
+              {
+                "read": "rg-01"
+              },
+              {
+                "read": "rg-02"
+              }
+            ]
+          }
         },
         {
           "documents": ["ph-08"],
@@ -5049,18 +5095,6 @@
           "documents": ["rg-20"],
           "requires": {
             "read": "lt-05"
-          }
-        },
-        {
-          "documents": ["ex-01"],
-          "requires": {
-            "read": "pv-05"
-          }
-        },
-        {
-          "documents": ["ep-02"],
-          "requires": {
-            "read": "ep-01"
           }
         }
       ]
