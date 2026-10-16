@@ -60,7 +60,7 @@
       "slot": "c02"
     },
     "level": 3,
-    "text": "Registre des naissances : « fils de Anselme Varenque, papetier, et de Clémence Aubertot, son épouse ». Sa qualité : le palmarès de 1889 parle de « Mme Varenque, botaniste distinguée ».",
+    "text": "Registre des naissances : le père est « Anselme Varenque, vingt-cinq ans, papetier », la mère « Clémence Aubertot, vingt-et-un ans, son épouse ». Sa qualité : le palmarès de 1889 parle de « Mme Varenque, botaniste distinguée ».",
     "availableWhen": {
       "unlocked": "rg-01"
     }
@@ -126,7 +126,7 @@
       "slot": "c04"
     },
     "level": 3,
-    "text": "États de service : « Mme Maaren Varenque, née Tennok, 1883–1912 ». En 1910, la gardienne en titre est donc la femme de 58 ans au premier plan de la carte postale.",
+    "text": "États de service, 1883-1912 : « Mme Maaren Varenque, née Tennok ». En 1910, la gardienne en titre est donc la femme de 58 ans au premier plan de la carte postale.",
     "availableWhen": {
       "unlocked": "an-04"
     }
@@ -225,7 +225,7 @@
       "slot": "c07"
     },
     "level": 3,
-    "text": "Couverture du catalogue : autoportrait de 1910, barbe en pointe, l'œil gauche qui dévie. La presse de 1918 l'appelle « l'affichiste de La Lavandière » ; l'annuaire : « peintre-affichiste, 12 rue des Tanneurs ».",
+    "text": "Couverture du catalogue : autoportrait de 1910, barbe en pointe, l'œil gauche qui dévie. La presse de 1918 l'appelle « l'affichiste de “La Lavandière” » ; l'annuaire : « Varenque Lucien, peintre-affichiste », « 12, rue des Tanneurs, Aubrelieu ».",
     "availableWhen": {
       "unlocked": "ct-01"
     }
@@ -258,7 +258,7 @@
       "slot": "c08"
     },
     "level": 3,
-    "text": "Acte de 1906 : « fils de Pauline Sauge, blanchisseuse, 14 rue des Tanneurs ; père non dénommé ». Le sourire à dents écartées de l'affiche se retrouve sur la photo de l'Œuvre (1912). « Modèle » n'est pas sa qualité.",
+    "text": "Acte de 1906 : « fils de Pauline Sauge, vingt-et-un ans, blanchisseuse, demeurant à Aubrelieu, 14 rue des Tanneurs, et de père non dénommé ». Le sourire à dents écartées de l'affiche se retrouve sur la photo de l'Œuvre (1912). « Modèle » n'est pas sa qualité.",
     "availableWhen": {
       "unlocked": "rg-06"
     }
@@ -324,7 +324,7 @@
       "slot": "c11"
     },
     "level": 3,
-    "text": "Photographie de 1925 : « la receveuse Tenna Orrvik », lunettes rondes, derrière son guichet. Le registre de Tennok la dit « receveuse des postes ». « Orrvikessa » est la même personne.",
+    "text": "Photographie de 1925 : « La receveuse, Mme Tenna Orrvik », lunettes rondes, derrière son guichet. Le registre de Tennok la dit « receveuse des postes ». « Orrvikessa » est la même personne.",
     "availableWhen": {
       "unlocked": "ph-12"
     }
@@ -390,7 +390,7 @@
       "slot": "c13"
     },
     "level": 3,
-    "text": "Programme de 1928 : « Récital d'Irène Castagne, pianiste », portrait en couverture. C'est la mariée de la photographie de 1922 (n° 2).",
+    "text": "Programme de 1928 : « Récital de piano », « Irène Castagne », portrait en couverture ; la critique salue « une pianiste qui joue Vasquin comme on lit une lettre d'amour ». C'est la mariée de la photographie de 1922 (n° 2).",
     "availableWhen": {
       "unlocked": "ph-11"
     }
@@ -423,7 +423,7 @@
       "slot": "c14"
     },
     "level": 3,
-    "text": "L'article de 1929 dit la soprano « née Varenque, fille de l'ancien député » ; grain de beauté au-dessus de la lèvre. Son nom est Blanche Varenque (Daubry accepté), jamais « Aubertine ».",
+    "text": "L'article de 1929 dit la soprano « née Varenque » : « fille de l'ancien député » ; grain de beauté au-dessus de la lèvre. Son nom est Blanche Varenque (Daubry accepté), jamais « Aubertine ».",
     "availableWhen": {
       "unlocked": "pr-06"
     }
@@ -555,7 +555,7 @@
       "slot": "c18"
     },
     "level": 3,
-    "text": "1931 : « Victor Sauge et L'Hirondelle », lunettes de vol relevées, léger strabisme. Il se dit fils d'un capitaine disparu en mer : le capitaine est mort en 1902, Victor naît en 1906.",
+    "text": "1931 : « Victor Sauge devant L'Hirondelle », lunettes de vol relevées, léger strabisme. Il se dit « fils d'un capitaine disparu en mer » : le capitaine est mort en 1902, Victor naît en 1906.",
     "availableWhen": {
       "unlocked": "ph-07"
     }
@@ -675,7 +675,7 @@
       "slot": "c21"
     },
     "level": 3,
-    "text": "1936 : Hessa, sacoche de cuir, parmi « les sages-femmes de la côte ». L'acte de naissance de Tavik la nomme « Hessa Draavik, sage-femme » ; « Draavikessa » est la même personne.",
+    "text": "1936 : Hessa, sacoche de cuir, parmi « les sages-femmes de la côte ». L'acte de naissance de Tavik la nomme « Hessa Draavik, vingt-six ans, sage-femme » ; « Draavikessa » est la même personne.",
     "availableWhen": {
       "all": [
         {
@@ -722,7 +722,7 @@
       "slot": "c22"
     },
     "level": 3,
-    "text": "Liste n° 3 : « Varenque Selda, rédactrice de la feuille interdite Vel Taalik ». Visages : la photo de rédaction de 1936 et le quai de Vellaak en 1953, taches de rousseur.",
+    "text": "Liste n° 3 : Varenque Selda, « rédactrice de la feuille interdite Vel Taalik ». Visages : la photo de rédaction de 1936 et le quai de Vellaak en 1953, taches de rousseur.",
     "availableWhen": {
       "unlocked": "rg-12"
     }
@@ -854,7 +854,7 @@
       "slot": "c26"
     },
     "level": 3,
-    "text": "1956 : mariage « du Dr Hélène Varenque, fille du directeur des Papeteries, et de M. Paul Marsal ». L'annuaire de 1972 : « Marsal Hélène, docteur en médecine, pédiatre ».",
+    "text": "1956 : le mariage « du Dr Hélène Varenque, fille du directeur des Papeteries, avec M. Paul Marsal ». L'annuaire de 1972 : Marsal Hélène, « docteur en médecine, pédiatre ».",
     "availableWhen": {
       "unlocked": "ph-25"
     }
@@ -953,7 +953,7 @@
       "slot": "c29"
     },
     "level": 3,
-    "text": "1966 : « sa fille Claude, ingénieure ». C'est la « Mlle C. Sauge, ingénieure de la CVC » de l'inauguration du Lecteur LX-2 (1973), et l'autrice du mode d'emploi du Lecteur.",
+    "text": "1966 : « sa fille, Mlle Claude Sauge, ingénieure ». C'est la « Mlle C. Sauge, ingénieure de la CVC » de l'inauguration du Lecteur LX-2 (1973), et l'autrice du mode d'emploi du Lecteur.",
     "availableWhen": {
       "all": [
         {
@@ -1007,7 +1007,7 @@
       "slot": "c30"
     },
     "level": 3,
-    "text": "1972 : « Tavik Varenque, le dernier gardien de Tennok », barbe rousse et anneau d'or. Les états de service du feu : « Tavik Varenque 1950–1972 ».",
+    "text": "1972 : « Tavik Varenque, le dernier gardien de Tennok », barbe rousse et anneau d'or. Les états de service du feu, 1950-1972 : « Tavik Varenque ».",
     "availableWhen": {
       "all": [
         {
