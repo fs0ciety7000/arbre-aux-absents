@@ -333,6 +333,8 @@ export interface Progress {
   /** Cases établies (pré-remplies comprises). */
   locked: number;
   total: number;
+  /** Cases visibles (les cachées apparaissent au fil de l'enquête) : dénominateur affiché. */
+  visible: number;
   /** [0, 1] */
   ratio: number;
   secrets: number;
@@ -343,7 +345,8 @@ export function progress(s: SaveState, c: CompiledCase): Progress {
   const total = Object.keys(c.slots).length;
   const locked = Object.keys(s.locked).filter((id) => own(c.slots, id) !== undefined).length;
   const secrets = c.progression.secrets.filter((x) => own(s.secrets, x.id) !== undefined).length;
-  return { locked, total, ratio: total === 0 ? 0 : locked / total, secrets };
+  const visible = visibleSlots(s, c).length;
+  return { locked, total, visible, ratio: total === 0 ? 0 : locked / total, secrets };
 }
 
 /** Fin vraie de plus haute priorité (à égalité : id le plus petit), ou `null`. */

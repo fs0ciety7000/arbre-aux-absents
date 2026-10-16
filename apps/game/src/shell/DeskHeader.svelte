@@ -49,14 +49,16 @@
     {/if}
   {/if}
   <div class="counters">
-    <span class="counter num" title={m.identifiedLabel(p.locked, p.total)}>
+    <span class="counter num" title={m.identifiedLabel(p.locked, p.visible)}>
       <Icon name="stamp" size="1.1rem" />
       {#key p.locked}
         <span class="value mv-pop" aria-hidden="true"
-          >{phone ? m.identifiedShort(p.locked, p.total) : m.identified(p.locked, p.total)}</span
+          >{phone
+            ? m.identifiedShort(p.locked, p.visible)
+            : m.identified(p.locked, p.visible)}</span
         >
       {/key}
-      <span class="visually-hidden">{m.identifiedLabel(p.locked, p.total)}</span>
+      <span class="visually-hidden">{m.identifiedLabel(p.locked, p.visible)}</span>
     </span>
     {#if !phone}
       <span class="counter num">

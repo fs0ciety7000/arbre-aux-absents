@@ -259,7 +259,7 @@ describe('carnet et aides', () => {
     const s = start();
     expect(visibleSlots(s, C)).not.toContain('g2-juno');
     expect(visibleSlots(s, C)).toHaveLength(7);
-    expect(progress(s, C)).toEqual({ locked: 1, total: 8, ratio: 1 / 8, secrets: 0 });
+    expect(progress(s, C)).toEqual({ locked: 1, total: 8, visible: 7, ratio: 1 / 8, secrets: 0 });
     const ghost: SaveState = deepFreeze({ ...s, locked: { ...s.locked, fantome: 1 } });
     expect(progress(ghost, C).locked).toBe(1);
     expect(progress(s, { ...C, slots: {} }).ratio).toBe(0);

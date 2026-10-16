@@ -453,7 +453,7 @@
 <Panel title={pm.tree.title} scroll={false} padded={false} class="tree-panel">
   {#snippet actions()}
     <Badge tone="established" iconName="lock"
-      ><span class="num">{pm.tree.counter(prog.locked, prog.total)}</span></Badge
+      ><span class="num">{pm.tree.counter(prog.locked, prog.visible)}</span></Badge
     >
   {/snippet}
 
