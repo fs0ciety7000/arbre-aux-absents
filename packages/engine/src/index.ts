@@ -115,3 +115,15 @@ export const engine: EngineApi = {
   parseSave,
   summarize,
 };
+export {
+  claimTotal,
+  clockFrozen,
+  completeCase,
+  officialTime,
+  recordContest,
+  recordReport,
+  recordSplits,
+  splitDeltas,
+  upgradeSave,
+  type SplitDelta,
+} from './replay';

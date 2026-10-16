@@ -8,6 +8,7 @@ import type {
 } from '@arbre/contract';
 import { SAVE_LIMITS, SaveStateSchema } from '@arbre/contract';
 import { own } from './conditions';
+import { upgradeSave } from './replay';
 import { progress, pruneReport } from './selectors';
 import { settle } from './settle';
 
@@ -197,6 +198,26 @@ function dropUnknown(s: SaveState, c: CompiledCase, dropped: string[]): SaveStat
     ending = null;
   }
 
+  // Champs facultatifs (après 1.5.0) : laissés absents s'ils l'étaient.
+  const extra: Partial<SaveState> = {};
+  if (s.reports !== undefined) {
+    extra.reports = s.reports.filter((r) => {
+      const ok = own(c.endings, r.ending) !== undefined;
+      if (!ok) dropped.push(`report-ending:${r.ending}`);
+      return ok;
+    });
+  }
+  if (s.splits !== undefined) {
+    extra.splits = s.splits.filter((x) => {
+      const ok = c.groups.some((g) => g.id === x.group);
+      if (!ok) dropped.push(`split:${x.group}`);
+      return ok;
+    });
+  }
+  if (s.contested !== undefined) {
+    extra.contested = filterRecord(s.contested, slot, 'contested', dropped);
+  }
+
   return {
     ...s,
     contentHash: c.contentHash,
@@ -219,6 +240,7 @@ function dropUnknown(s: SaveState, c: CompiledCase, dropped: string[]): SaveStat
     notebook: { pins, highlights, notes },
     report,
     ending,
+    ...extra,
   };
 }
 
@@ -254,7 +276,8 @@ export function parseSave(raw: unknown, c: CompiledCase): ParseSaveResult {
   }
 
   const dropped: string[] = [];
-  const cleaned = settle(dropUnknown(state, c, dropped), c).state;
+  // Champs venus après la 1.5.0 (`endedMs`, `reports`) déduits d'une partie déjà dénouée.
+  const cleaned = settle(upgradeSave(dropUnknown(state, c, dropped)), c).state;
   // Réponses à des questions plus posées (ou options indisponibles) : retirées, rapport cohérent.
   const pruned = pruneReport(cleaned.report, cleaned, c);
   for (const qid of pruned.removed) dropped.push(`report-unasked:${qid}`);

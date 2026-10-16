@@ -27,6 +27,7 @@ import {
   placeDocuments,
   pruneReport,
 } from './selectors';
+import { clockFrozen, recordContest, recordReport, recordSplits } from './replay';
 import { settle } from './settle';
 import {
   emptyGuard,
@@ -256,9 +257,9 @@ export function applyAction(
   if (a.type === 'tick') {
     const raw = typeof a.deltaMs === 'number' && Number.isFinite(a.deltaMs) ? a.deltaMs : 0;
     const delta = Math.round(Math.min(MAX_TICK_MS, Math.max(0, raw)));
-    // Chrono figé au dénouement en mode chronométré (temps de référence des succès).
-    if (delta === 0 || (s.mode === 'timed' && s.ending !== null))
-      return { state: s, events: [], guard };
+    // Chrono figé au premier dénouement en mode chronométré (temps officiel), même si le
+    // rapport est rouvert ensuite (`endedMs`).
+    if (delta === 0 || clockFrozen(s)) return { state: s, events: [], guard };
     return { state: { ...s, elapsedMs: s.elapsedMs + delta }, events: [], guard };
   }
 
@@ -327,14 +328,14 @@ export function applyAction(
       if (g.given === '' && g.family === '' && g.portrait === null && g.occupation === null) {
         delete tree[a.slot];
       } else tree[a.slot] = g;
-      let state: SaveState = { ...touch(s, at), tree };
+      let state: SaveState = recordContest(a.slot, s, { ...touch(s, at), tree }, c, at);
       const group = groupOf(a.slot, c);
       const nextGuard = recordChanges(guard, group?.id ?? null, a.slot, res.changed, at);
 
       if ((opts.validation ?? 'auto') === 'auto' && group && isComplete(g)) {
         const result = validate(state, c, { groups: [group.id], guard: nextGuard, at });
         const locked = applyLocks(state, result, at);
-        state = locked.state;
+        state = recordSplits(s, locked.state, c);
         return finalize(state, locked.events, c, nextGuard);
       }
       return finalize(state, [], c, nextGuard);
@@ -351,13 +352,14 @@ export function applyAction(
         (f) => prev[f] !== EMPTY_GUESS[f],
       );
       const nextGuard = recordChanges(guard, groupOf(a.slot, c)?.id ?? null, a.slot, changed, at);
-      return { state: { ...touch(s, at), tree }, events: [], guard: nextGuard };
+      const state = recordContest(a.slot, s, { ...touch(s, at), tree }, c, at);
+      return { state, events: [], guard: nextGuard };
     }
 
     case 'validate': {
       const state = touch(s, at);
       const locked = applyLocks(state, validate(state, c, { guard, at }), at);
-      return finalize(locked.state, locked.events, c, guard);
+      return finalize(recordSplits(s, locked.state, c), locked.events, c, guard);
     }
 
     case 'pin':
@@ -484,13 +486,20 @@ export function applyAction(
     }
 
     case 'finish': {
+      // Permis après un dénouement (rejouer le dénouement après un secret) : nouveau rapport remis.
       const ending = endingFor(s, c);
       if (ending === null) return reject(s, 'notAvailable', guard);
       return {
-        state: { ...touch(s, at), ending },
+        state: recordReport(touch(s, at), ending, at),
         events: [{ type: 'endingReached', id: ending }],
         guard,
       };
+    }
+
+    case 'reopenReport': {
+      // Après le dénouement seulement : la fin remise reste dans `reports`, les réponses restent.
+      if (s.ending === null) return reject(s, 'notAvailable', guard);
+      return { state: { ...touch(s, at), ending: null }, events: [], guard };
     }
 
     default:
