@@ -13,7 +13,14 @@ import { DEMO, axe, expect, passLaunch, reader, showPanel, test } from './helper
 
 const repo = resolve(fileURLToPath(new URL('.', import.meta.url)), '../../..');
 const cache = resolve(repo, 'node_modules/.cache/arbre-e2e');
-const dist = resolve(cache, 'real-demo-dist');
+/**
+ * Build démo servi par `servers/game.mjs` : `<E2E_BUILD>-real-demo` quand un préfixe est donné
+ * (playwright.config.ts), sinon `real-demo`. Sans ce préfixe, les canaris liraient le build d'une
+ * autre copie de travail (cache `node_modules/.cache` partagé), pas celui qui est servi.
+ */
+const demoBuild = process.env.E2E_BUILD ? `${process.env.E2E_BUILD}-real-demo` : 'real-demo';
+const dist = resolve(cache, `${demoBuild}-dist`);
+const demoContent = resolve(cache, demoBuild, 'game');
 
 /** Contenu complet compilé (référence des canaris) : même compilation, édition complète. */
 const fullDir = resolve(repo, 'apps/game/src/generated');
@@ -56,7 +63,7 @@ test.describe('démo anglaise : canaris', () => {
     test(`aucun texte de l’édition complète (${loc}) dans les fichiers servis`, () => {
       const served = servedText();
       const demoCatalog = readJson<{ id: string; meta: { title: string } }[]>(
-        join(cache, 'real-demo/game', `catalog.demo.${loc}.json`),
+        join(demoContent, `catalog.demo.${loc}.json`),
       );
       const demoIds = new Set(demoCatalog.map((c) => c.id));
       // Non vide : la démo contient bien son affaire, dans cette langue.
@@ -65,19 +72,24 @@ test.describe('démo anglaise : canaris', () => {
 
       const demoAchievements = demoCatalog.flatMap((c) =>
         readJson<CompiledCase['achievements']>(
-          join(cache, 'real-demo/game', `achievements.demo.${loc}.${c.id}.json`),
+          join(demoContent, `achievements.demo.${loc}.${c.id}.json`),
         ),
       );
       const demoAchievementIds = new Set(demoAchievements.map((a) => a.id));
       // Titres que la démo sert à bon droit : ses succès (« Contre la montre » est commun) et
       // les noms de lieux de la carte (un succès peut porter le nom d'un lieu).
       const world = readJson<{ places: Record<string, { name: string }> }>(
-        join(cache, 'real-demo/game', 'world.json'),
+        join(demoContent, 'world.json'),
       );
       const demoAchievementTitles = new Set([
         ...demoAchievements.map((a) => a.title),
         ...Object.values(world.places).map((p) => p.name),
       ]);
+      // Texte des affaires de la démo : un titre de succès peut y figurer à bon droit (« The Golfe
+      // d'Ambre », succès de l'affaire 3, est aussi le titre d'une affiche de l'affaire 1).
+      const demoCaseText = demoCatalog
+        .map((c) => readFileSync(join(demoContent, `case.demo.${loc}.${c.id}.json`), 'utf8'))
+        .join('\n');
 
       const leaks: string[] = [];
       for (const full of fullCases(loc)) {
@@ -85,7 +97,7 @@ test.describe('démo anglaise : canaris', () => {
           // Affaire absente de la démo : ni son titre ni ses pièces.
           if (served.includes(escaped(full.meta.title))) leaks.push(`affaire ${full.id}`);
         }
-        const demoFile = join(cache, 'real-demo/game', `case.demo.${loc}.${full.id}.json`);
+        const demoFile = join(demoContent, `case.demo.${loc}.${full.id}.json`);
         const demoDocs = demoIds.has(full.id)
           ? new Set(Object.keys(readJson<CompiledCase>(demoFile).documents))
           : new Set<string>();
@@ -99,7 +111,7 @@ test.describe('démo anglaise : canaris', () => {
         // Succès (un fichier par affaire) : ceux de l'édition complète absents de la démo.
         for (const a of full.achievements) {
           if (demoAchievementIds.has(a.id) || demoAchievementTitles.has(a.title)) continue;
-          if (a.title.length < 12) continue;
+          if (a.title.length < 12 || demoCaseText.includes(escaped(a.title))) continue;
           if (served.includes(escaped(a.title)))
             leaks.push(`${full.id}/succès ${a.id} : ${a.title}`);
         }
@@ -120,7 +132,7 @@ test('la démo se joue en anglais : titre, affaire de la démo, première pièce
   await passLaunch(page, 'en');
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   const catalog = readJson<{ id: string; meta: { title: string } }[]>(
-    join(cache, 'real-demo/game', 'catalog.demo.en.json'),
+    join(demoContent, 'catalog.demo.en.json'),
   );
   await page.getByRole('button', { name: 'New game' }).click();
   await expect(page.getByText(catalog[0]!.meta.title).first()).toBeVisible();
@@ -128,9 +140,7 @@ test('la démo se joue en anglais : titre, affaire de la démo, première pièce
   await page.getByRole('button', { name: 'Start' }).click();
   await expect(page.getByRole('main', { name: 'Desk' })).toBeVisible();
   // Première pièce du dossier (intro de l'affaire), en anglais, depuis les Archives.
-  const demoCase = readJson<CompiledCase>(
-    join(cache, 'real-demo/game', `case.demo.en.${catalog[0]!.id}.json`),
-  );
+  const demoCase = readJson<CompiledCase>(join(demoContent, `case.demo.en.${catalog[0]!.id}.json`));
   const intro = demoCase.documents[demoCase.meta.intro]!.title;
   await showPanel(page, /^Archives/);
   await page.getByRole('button', { name: intro, exact: true }).first().click();
