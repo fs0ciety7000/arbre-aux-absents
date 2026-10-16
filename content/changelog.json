@@ -1,5 +1,48 @@
 [
   {
+    "version": "1.5.0",
+    "date": "2026-10-16",
+    "title": {
+      "fr": "Les Marques de Longuegrève",
+      "en": "The Marks of Longuegrève"
+    },
+    "demoTitle": {
+      "fr": "Compteur, fin d’affaire et démarrage plus rapide",
+      "en": "Counter, case ending and faster start"
+    },
+    "items": [
+      {
+        "kind": "new",
+        "text": {
+          "fr": "Nouvelle affaire : « Les Marques de Longuegrève ». Sur une île de pêcheurs, reconstituez une lignée à partir des marques gravées sur les bateaux, les filets et les outils, autant que des visages.",
+          "en": "New case: “The Marks of Longuegrève”. On a fishing island, rebuild a lineage from the marks carved on boats, nets and tools as much as from faces."
+        },
+        "edition": "full"
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Le compteur « identifiés » ne compte plus que les fiches visibles sur l’arbre.",
+          "en": "The “identified” counter now only counts the cards visible on the tree."
+        }
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "L’écran de fin annonce clairement « Affaire close ».",
+          "en": "The end screen now clearly says “Case closed”."
+        }
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Démarrage plus rapide sur téléphone : l’écran de lancement et le choix des affaires s’affichent bien plus vite.",
+          "en": "Faster start on phones: the launch screen and the case selection appear much sooner."
+        }
+      }
+    ]
+  },
+  {
     "version": "1.4.6",
     "date": "2026-10-16",
     "title": {
