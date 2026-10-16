@@ -1,0 +1,620 @@
+{
+  "keywords": {
+    "gervais-goemard": {
+      "label": "Gervais Goémard",
+      "terms": ["Gervais Goémard", "Goémard Gervais", "Gouémard Gervais"]
+    },
+    "perrine-oyard": {
+      "label": "Perrine Oyard",
+      "terms": ["Perrine Oyard", "Perrine Goémard"]
+    },
+    "clovis-oyard": {
+      "label": "Clovis Oyard",
+      "terms": ["Clovis Oyard", "Oyard Clovis", "Oyart Clovis"]
+    },
+    "toinette-cormaud": {
+      "label": "Toinette Cormaud",
+      "terms": ["Toinette Cormaud", "Toinette Oyard"]
+    },
+    "simeon-cormaud": {
+      "label": "Siméon Cormaud",
+      "terms": ["Siméon Cormaud", "Cormaud Siméon"]
+    },
+    "ursule-lestaud": {
+      "label": "Ursule Lestaud",
+      "terms": ["Ursule Lestaud", "Ursule Cormaud"]
+    },
+    "lubin-lestaud": {
+      "label": "Lubin Lestaud",
+      "terms": ["Lubin Lestaud", "Lestaud Lubin", "Lestot Lubin"]
+    },
+    "apolline-goemard": {
+      "label": "Apolline Goémard",
+      "terms": ["Apolline Goémard", "Apolline Lestaud"]
+    },
+    "josse-goemard": {
+      "label": "Josse Goémard",
+      "terms": ["Josse Goémard", "Goémard Josse", "Gouémard Josse", "Guémard Josse"]
+    },
+    "reine-lestaud": {
+      "label": "Reine Lestaud",
+      "terms": ["Reine Lestaud", "Reine Goémard"]
+    },
+    "jacquette-goemard": {
+      "label": "Jacquette Goémard",
+      "terms": ["Jacquette Goémard", "Jacquette Oyard"]
+    },
+    "medard-oyard": {
+      "label": "Médard Oyard",
+      "terms": ["Médard Oyard", "Oyard Médard", "Oyart Médard"]
+    },
+    "blaise-goemard": {
+      "label": "Blaise Goémard",
+      "terms": ["Blaise Goémard", "Goémard Blaise"]
+    },
+    "blaise-garnaud": {
+      "label": "Blaise Garnaud",
+      "terms": ["Blaise Garnaud"]
+    },
+    "amelie-ferlay": {
+      "label": "Amélie Ferlay",
+      "terms": ["Amélie Ferlay"]
+    },
+    "amelie-garnaud": {
+      "label": "Amélie Garnaud",
+      "terms": ["Amélie Garnaud"]
+    },
+    "ernestine-oyard": {
+      "label": "Ernestine Oyard",
+      "terms": ["Ernestine Oyard", "Ernestine Lestaud"]
+    },
+    "fulbert-lestaud": {
+      "label": "Fulbert Lestaud",
+      "terms": ["Fulbert Lestaud", "Lestaud Fulbert", "Lestot Fulbert"]
+    },
+    "benoit-lestaud": {
+      "label": "Benoît Lestaud",
+      "terms": ["Benoît Lestaud"]
+    },
+    "sidonie-bremoy": {
+      "label": "Sidonie Brémoy",
+      "terms": ["Sidonie Brémoy"]
+    },
+    "sidonie-lestaud": {
+      "label": "Sidonie Lestaud",
+      "terms": ["Sidonie Lestaud"]
+    },
+    "noel-cormaud": {
+      "label": "Noël Cormaud",
+      "terms": ["Noël Cormaud"]
+    },
+    "honorine-lestaud": {
+      "label": "Honorine Lestaud",
+      "terms": ["Honorine Lestaud", "Honorine Cormaud"]
+    },
+    "gatien-goemard": {
+      "label": "Gatien Goémard",
+      "terms": ["Gatien Goémard"]
+    },
+    "leontine-sauvat": {
+      "label": "Léontine Sauvat",
+      "terms": ["Léontine Sauvat", "Léontine Goémard"]
+    },
+    "elzear-oyard": {
+      "label": "Elzéar Oyard",
+      "terms": ["Elzéar Oyard", "Oyard Elzéar"]
+    },
+    "victoire-oyard": {
+      "label": "Victoire Oyard",
+      "terms": ["Victoire Oyard"]
+    },
+    "victoire-cormaud": {
+      "label": "Victoire Cormaud",
+      "terms": ["Victoire Cormaud"]
+    },
+    "lazare-cormaud": {
+      "label": "Lazare Cormaud",
+      "terms": ["Lazare Cormaud"]
+    },
+    "clement-lestaud": {
+      "label": "Clément Lestaud",
+      "terms": ["Clément Lestaud"]
+    },
+    "leandre-garnaud": {
+      "label": "Léandre Garnaud",
+      "terms": ["Léandre Garnaud"]
+    },
+    "felix-goemard": {
+      "label": "Félix Goémard",
+      "terms": ["Félix Goémard"]
+    },
+    "rose-oyard": {
+      "label": "Rose Oyard",
+      "terms": ["Rose Oyard"]
+    },
+    "rose-pellerin": {
+      "label": "Rose Pellerin",
+      "terms": ["Rose Pellerin"]
+    },
+    "marin-cormaud": {
+      "label": "Marin Cormaud",
+      "terms": ["Marin Cormaud"]
+    },
+    "aline-lestaud": {
+      "label": "Aline Lestaud",
+      "terms": ["Aline Lestaud", "A. Lestaud"]
+    },
+    "edmee-garnaud": {
+      "label": "Edmée Garnaud",
+      "terms": ["Edmée Garnaud"]
+    },
+    "ange-oyard": {
+      "label": "Ange Oyard",
+      "terms": ["Ange Oyard"]
+    },
+    "solange-marest": {
+      "label": "Solange Marest",
+      "terms": ["Solange Marest", "S. Marest"]
+    },
+    "ginette-sollier": {
+      "label": "Ginette Sollier",
+      "terms": ["Ginette Sollier"]
+    },
+    "bernard-fontanet": {
+      "label": "Bernard Fontanet",
+      "terms": ["Bernard Fontanet", "Inspector Fontanet"]
+    },
+    "pelissart": {
+      "label": "Cyprien Pélissart",
+      "terms": ["Cyprien Pélissart", "Pélissart"]
+    },
+    "pontcarre": {
+      "label": "Edgar Pontcarré",
+      "terms": ["Edgar Pontcarré", "Commissioner Pontcarré"]
+    },
+    "fortune-rabier": {
+      "label": "Fortuné Rabier",
+      "terms": ["Fortuné Rabier", "Father Rabier"]
+    },
+    "lhermet": {
+      "label": "Lhermet",
+      "terms": ["Lhermet", "Lhermet's office"]
+    },
+    "constant-merel": {
+      "label": "Constant Mérel",
+      "terms": ["Constant Mérel"]
+    },
+    "longue-greve": {
+      "label": "Longue Grève",
+      "terms": ["Longue Grève"]
+    },
+    "cabanes-d-ambre": {
+      "label": "Cabanes d'Ambre",
+      "terms": ["Cabanes d'Ambre"]
+    },
+    "atelier-des-cabanes": {
+      "label": "Cabanes workshop",
+      "terms": ["Cabanes workshop", "cutting workshop"]
+    },
+    "hotel-garnaud": {
+      "label": "Hôtel Garnaud",
+      "terms": ["Hôtel Garnaud"]
+    },
+    "quai-du-mole": {
+      "label": "quai du Môle",
+      "terms": ["quai du Môle"]
+    },
+    "eglise-du-mole": {
+      "label": "Môle church",
+      "terms": ["Môle church"]
+    },
+    "librairie-ferlay": {
+      "label": "Ferlay bookshop",
+      "terms": ["Ferlay bookshop", "quai des Messageries"]
+    },
+    "cimetiere-de-longuegreve": {
+      "label": "Longuegrève cemetery",
+      "terms": ["Longuegrève cemetery"]
+    },
+    "cimetiere-de-port-senane": {
+      "label": "Port-Sénane cemetery",
+      "terms": ["Port-Sénane cemetery"]
+    },
+    "ecole-de-longuegreve": {
+      "label": "Longuegrève school",
+      "terms": ["Longuegrève school", "school register"]
+    },
+    "feu-de-longuegreve": {
+      "label": "Longuegrève light",
+      "terms": ["Longuegrève light", "pointe du Feu"]
+    },
+    "halle-aux-poissons": {
+      "label": "fish hall",
+      "terms": ["fish hall"]
+    },
+    "comptoir-des-ambres": {
+      "label": "Amber Company",
+      "terms": ["Amber Company"]
+    },
+    "archives-du-comptoir": {
+      "label": "Company archives",
+      "terms": ["Company archives"]
+    },
+    "amicale-des-cabanes": {
+      "label": "Cabanes Friendly Society",
+      "terms": ["Cabanes Friendly Society"]
+    },
+    "domaines": {
+      "label": "State Lands Administration",
+      "terms": ["State Lands Administration", "State Lands"]
+    },
+    "phares-et-balises": {
+      "label": "Lights and Beacons",
+      "terms": ["Lights and Beacons"]
+    },
+    "inscription-maritime": {
+      "label": "Maritime Enrolment",
+      "terms": ["Maritime Enrolment"]
+    },
+    "hopital-maritime": {
+      "label": "Seamen's Hospital",
+      "terms": ["Seamen's Hospital", "rounds register"]
+    },
+    "caisse-d-epargne": {
+      "label": "Savings Bank",
+      "terms": ["Savings Bank"]
+    },
+    "service-des-reserves": {
+      "label": "Nature Reserves Service",
+      "terms": ["Nature Reserves Service", "Gulf Ornithological Society"]
+    },
+    "paquebots": {
+      "label": "Packet Company",
+      "terms": ["Packet Company", "Duchesse-d'Ambre"]
+    },
+    "grande-exposition": {
+      "label": "Grand Exhibition",
+      "terms": ["Grand Exhibition", "Studio Lumen"]
+    },
+    "rtv": {
+      "label": "The Voices of Longuegrève",
+      "terms": ["The Voices of Longuegrève", "RTV"]
+    },
+    "evacuation": {
+      "label": "1908 evacuation",
+      "terms": ["evacuation", "1908 evacuation", "evacuees"]
+    },
+    "liste-d-evacuation": {
+      "label": "evacuation list",
+      "terms": ["evacuation list", "nominal roll"]
+    },
+    "fievre": {
+      "label": "fever",
+      "terms": ["fever", "fevers", "typhoid fever"]
+    },
+    "rougeole": {
+      "label": "measles",
+      "terms": ["measles"]
+    },
+    "croup": {
+      "label": "croup",
+      "terms": ["croup"]
+    },
+    "aurore": {
+      "label": "wreck of the Aurore",
+      "terms": ["Aurore", "wreck of the Aurore"]
+    },
+    "enfant-de-mer": {
+      "label": "sea child",
+      "terms": ["sea child"]
+    },
+    "coup-d-ouest": {
+      "label": "westerly gale",
+      "terms": ["westerly gale"]
+    },
+    "conseil-des-quatre-maisons": {
+      "label": "council of the four houses",
+      "terms": ["council of the four houses"]
+    },
+    "incendie-sanitaire": {
+      "label": "sanitary burning",
+      "terms": ["sanitary burning"]
+    },
+    "telegramme": {
+      "label": "telegram",
+      "terms": ["telegram"]
+    },
+    "gendarmerie": {
+      "label": "constabulary",
+      "terms": ["constabulary", "Sergeant Massé"]
+    },
+    "grande-terre": {
+      "label": "Grand-Terre",
+      "terms": ["Grand-Terre"]
+    },
+    "matrice-de-1868": {
+      "label": "1868 roll",
+      "terms": ["1868 roll", "cadastral roll"]
+    },
+    "cadastre": {
+      "label": "cadastre",
+      "terms": ["cadastre", "cadastral plan"]
+    },
+    "laniere": {
+      "label": "strip",
+      "terms": ["strip", "four strips"]
+    },
+    "laniere-lestaud": {
+      "label": "Lestaud strip",
+      "terms": ["Lestaud strip"]
+    },
+    "laniere-cormaud": {
+      "label": "Cormaud strip",
+      "terms": ["Cormaud strip"]
+    },
+    "reserve-naturelle": {
+      "label": "nature reserve",
+      "terms": ["nature reserve"]
+    },
+    "certificat-sanitaire": {
+      "label": "health certificate",
+      "terms": ["health certificate", "certificate"]
+    },
+    "vedette": {
+      "label": "launch",
+      "terms": ["launch", "logbook"]
+    },
+    "trident": {
+      "label": "trident",
+      "terms": ["trident"]
+    },
+    "fourche-couronnee": {
+      "label": "crowned Fork",
+      "terms": ["crowned Fork"]
+    },
+    "journal-du-feu": {
+      "label": "light log",
+      "terms": ["light log"]
+    },
+    "registre-de-la-chapelle": {
+      "label": "chapel register",
+      "terms": ["chapel register", "parish register"]
+    },
+    "cahiers-de-la-chapelle": {
+      "label": "chapel notebooks",
+      "terms": ["chapel notebooks", "Brémoy copy"]
+    },
+    "croix": {
+      "label": "cross",
+      "terms": ["cross", "crosses"]
+    },
+    "aviron": {
+      "label": "oar",
+      "terms": ["oar", "oars"]
+    },
+    "navette": {
+      "label": "netting needle",
+      "terms": ["netting needle", "mending needle"]
+    },
+    "fuseau": {
+      "label": "spindle",
+      "terms": ["spindle"]
+    },
+    "tampon-a-pain": {
+      "label": "bread stamp",
+      "terms": ["bread stamp"]
+    },
+    "linteau": {
+      "label": "lintel",
+      "terms": ["lintel", "lintels"]
+    },
+    "cloche": {
+      "label": "Longuegrève bell",
+      "terms": ["Longuegrève bell", "bell"]
+    },
+    "cheminee": {
+      "label": "fireplace",
+      "terms": ["fireplace"]
+    },
+    "devise": {
+      "label": "motto",
+      "terms": ["motto", "what amber keeps"]
+    },
+    "tombe-de-blaise-garnaud": {
+      "label": "grave of Blaise Garnaud",
+      "terms": ["grave of Blaise Garnaud"]
+    },
+    "concession": {
+      "label": "concession",
+      "terms": ["concession", "shore concession"]
+    },
+    "acte-de-notoriete": {
+      "label": "act of notoriety",
+      "terms": ["act of notoriety"]
+    },
+    "tables-decennales": {
+      "label": "ten-year indexes",
+      "terms": ["ten-year indexes"]
+    },
+    "parents-inconnus": {
+      "label": "parents unknown",
+      "terms": ["parents unknown"]
+    },
+    "registre-des-achats": {
+      "label": "purchase register",
+      "terms": ["purchase register", "raw amber"]
+    },
+    "lettre-fermee": {
+      "label": "sealed letter",
+      "terms": ["sealed letter"]
+    },
+    "mousse": {
+      "label": "ship's boy",
+      "terms": ["ship's boy"]
+    },
+    "testament": {
+      "label": "testament",
+      "terms": ["testament", "shore testament"]
+    },
+    "notaire": {
+      "label": "Port-Sénane notary",
+      "terms": ["Port-Sénane notary"]
+    },
+    "coffre": {
+      "label": "safe-deposit box",
+      "terms": ["safe-deposit box"]
+    },
+    "coffre-108": {
+      "label": "safe-deposit box No. 108",
+      "terms": ["safe-deposit box No. 108", "box No. 108", "box 108"]
+    },
+    "quatre-marques": {
+      "label": "four marks",
+      "terms": ["four marks"]
+    },
+    "coffrets": {
+      "label": "caskets",
+      "terms": ["caskets"]
+    },
+    "livre-de-greve": {
+      "label": "shore book",
+      "terms": ["shore book"]
+    },
+    "nos-cotes": {
+      "label": "Our Coasts",
+      "terms": ["Our Coasts", "Orvelle Phototype Works"]
+    },
+    "saint-gervais": {
+      "label": "Saint-Gervais",
+      "terms": ["Saint-Gervais"]
+    },
+    "cadet-de-gervais": {
+      "label": "Gervais's younger son",
+      "terms": ["Gervais's younger son"]
+    },
+    "fourche": {
+      "label": "Fork",
+      "terms": ["Fork"]
+    },
+    "oeil": {
+      "label": "Eye",
+      "terms": ["Eye"]
+    },
+    "fleche": {
+      "label": "Arrow",
+      "terms": ["Arrow"]
+    },
+    "potence": {
+      "label": "Gallows",
+      "terms": ["Gallows"]
+    },
+    "code-a-d": {
+      "label": "A-d",
+      "terms": ["A-d", "Ad"]
+    },
+    "code-a-b": {
+      "label": "A-b",
+      "terms": ["A-b", "Ab", "barred Arrow"]
+    },
+    "code-o-g-g": {
+      "label": "O-g-g",
+      "terms": ["O-g-g", "Ogg"]
+    },
+    "y-d": {
+      "label": "Y-d",
+      "terms": ["Y-d", "Yd"]
+    },
+    "code-o-g-ty": {
+      "label": "O-g-tY",
+      "terms": ["O-g-tY", "OgtY", "O-g+Y"]
+    },
+    "code-y-g": {
+      "label": "Y-g",
+      "terms": ["Y-g", "Yg"]
+    },
+    "code-o-g": {
+      "label": "O-g",
+      "terms": ["O-g", "Og"]
+    }
+  },
+  "secrets": {
+    "s1-fievre-de-papier": "The Paper Fever",
+    "s2-quatre-coffrets": "The Four Caskets",
+    "s3-testament-de-greve": "The Shore Testament",
+    "s4-fils-banni": "The Banished Son"
+  },
+  "report": {
+    "q1-evacuation": {
+      "prompt": "Why was the island evacuated in 1908?",
+      "options": {
+        "fievre": {
+          "label": "An epidemic of typhoid fever (health certificate of 13 March 1908)"
+        },
+        "concession": {
+          "label": "For the amber concession: the certificate was signed before the visit"
+        },
+        "non-etabli": {
+          "label": "Not established"
+        }
+      }
+    },
+    "q2-depart-de-blaise": {
+      "prompt": "Why did Blaise Goémard leave the island in 1870?",
+      "options": {
+        "vol": {
+          "label": "Banished for stealing amber (chapel register)"
+        },
+        "a-la-place": {
+          "label": "Banished in place of his brother Josse"
+        },
+        "non-etabli": {
+          "label": "Not established"
+        }
+      }
+    },
+    "q3-maison-cormaud": {
+      "prompt": "Who inherits the Cormaud house?",
+      "options": {
+        "desherence": {
+          "label": "No one: the house has died out (escheat)"
+        },
+        "noel": {
+          "label": "The descendants of Noël Cormaud, Siméon's legatee"
+        },
+        "non-etabli": {
+          "label": "Not established"
+        }
+      }
+    },
+    "q4-legs-de-blaise": {
+      "prompt": "What did Blaise Garnaud leave the four houses?",
+      "options": {
+        "rien": {
+          "label": "Nothing: the Company went to his son (testament)"
+        },
+        "coffre": {
+          "label": "Sixteen years of shore shares, in safe-deposit box No. 108"
+        },
+        "non-etabli": {
+          "label": "Not established"
+        }
+      }
+    },
+    "decision": {
+      "prompt": "The Office's decision",
+      "options": {
+        "indemniser": {
+          "label": "Compensate: settle the list of beneficiaries of the four heads of the 1868 roll; the island passes to the State against compensation."
+        },
+        "spoliation": {
+          "label": "Recognise the despoilment: find that the 1908 evacuation had no sanitary grounds; seek the annulment of the concession and the reparation owed to the four houses.",
+          "unavailableReason": "No document contradicts the 1908 certificate."
+        },
+        "rendre-l-ile": {
+          "label": "Return the island: refuse the expropriation; the island remains undivided among the four houses, and the reserve will be made by agreement with them.",
+          "unavailableReason": "The Cormaud house has no established beneficiary."
+        }
+      }
+    }
+  }
+}

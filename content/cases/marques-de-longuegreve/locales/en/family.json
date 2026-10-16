@@ -1,0 +1,251 @@
+{
+  "occupations": {
+    "ramasseur-d-ambre": "Amber gatherer",
+    "fileuse": "Spinner",
+    "pilote": "Gulf pilot",
+    "sage-femme": "Midwife",
+    "charpentier-de-marine": "Shipwright",
+    "ramendeuse": "Net mender",
+    "goemonier": "Seaweed gatherer",
+    "boulangere": "Baker (common oven)",
+    "batelier": "Boatman",
+    "negociant-en-ambre": "Amber merchant",
+    "libraire": "Bookseller",
+    "gardien-de-feu": "Light keeper",
+    "institutrice": "Schoolmistress",
+    "tailleur-d-ambre": "Amber cutter",
+    "couturiere": "Seamstress",
+    "trieuse-d-ambre": "Amber sorter",
+    "pecheur": "Fisherman",
+    "marin": "Sailor",
+    "directeur-comptoir": "Director of the Amber Company",
+    "patron-pecheur": "Fishing skipper",
+    "marchande-de-poisson": "Fish seller",
+    "contremaitre": "Foreman",
+    "ornithologue": "Ornithologist",
+    "matelot": "Seaman",
+    "armateur": "Shipowner",
+    "gardien-de-phare": "Lighthouse keeper"
+  },
+  "portraits": {
+    "lg-portrait-ce8a17": {
+      "alt": "Woman of about forty, low bun, half-moon spectacles held by a cord, lace collar; she holds an open book against her chest."
+    },
+    "lg-portrait-fe0b68": {
+      "alt": "Woman of about forty with a high, tight bun, a pince-nez on a black cord on her nose, a dark shawl over her shoulders."
+    },
+    "lg-portrait-e96e7a": {
+      "alt": "Man of about thirty with thick eyebrows raised to a point, leather apron, sleeves rolled up; the top joint of his right thumb is missing."
+    },
+    "lg-portrait-d4d582": {
+      "alt": "Young woman in a light sailor-collar dress, hair pinned up; a pincushion tied to her wrist."
+    },
+    "lg-portrait-a95577": {
+      "alt": "Old woman with very pale grey eyes, black headscarf knotted under her chin, round spectacles mended with brass wire."
+    },
+    "lg-portrait-491490": {
+      "alt": "Young man with very curly black hair, wing collar, Sunday suit a little short at the cuffs."
+    },
+    "lg-portrait-49c2e9": {
+      "alt": "Man of about thirty with large protruding ears, in a pea jacket and neckerchief, a rolled cap in his hand."
+    },
+    "lg-portrait-e1d3e2": {
+      "alt": "Man of about thirty with eyebrows raised to a point, moustache, centre parting, stiff collar; an amber charm hangs from his watch chain."
+    },
+    "lg-portrait-c65073": {
+      "alt": "Man of sixty-five with white eyebrows raised to a point, a pale scar on his chin, skipper's cap and pea jacket."
+    },
+    "lg-portrait-662e9a": {
+      "alt": "Woman of about fifty with very pale grey eyes, in an oilcloth apron; she holds an oar in her arms."
+    },
+    "lg-portrait-78d8f1": {
+      "alt": "Man of about fifty with very curly grey hair and pale eyes, workshop smock, a pencil behind his ear."
+    },
+    "lg-portrait-f759a5": {
+      "alt": "Woman of about fifty with short hair and protruding ears, in oilskins, binoculars round her neck."
+    },
+    "lg-portrait-85b5d9": {
+      "alt": "Woman of about fifty with eyebrows raised to a point, grey hair in a roll, dark suit, an oval amber brooch with an insect."
+    },
+    "lg-portrait-95b651": {
+      "alt": "Young woman of about thirty, low bun, high collar, no spectacles; a lopsided smile."
+    },
+    "lg-portrait-7796db": {
+      "alt": "Young woman of about thirty with a high bun, pince-nez on a black cord, dark dress buttoned up to the collar."
+    },
+    "lg-portrait-589649": {
+      "alt": "Elderly woman with grey hair in a low bun, pince-nez on a black cord, shawl over her shoulders."
+    },
+    "lg-portrait-dbca34": {
+      "alt": "Young man with thick eyebrows raised to a point, in a smock, a basket on his shoulder; his hands are intact."
+    },
+    "lg-portrait-b6e782": {
+      "alt": "Young man with thick eyebrows raised to a point, in a canvas smock, cap; his hands are intact."
+    },
+    "lg-portrait-823a60": {
+      "alt": "Young woman with her hair pinned up, a formal dress she seems to have sewn herself, a one-year-old child in her arms."
+    },
+    "lg-portrait-88a379": {
+      "alt": "Teenage girl with very pale eyes, a plait down her back, Peter Pan collar."
+    },
+    "lg-portrait-10fa0d": {
+      "alt": "Young woman with very pale eyes, high bun, closed high collar."
+    },
+    "lg-portrait-b40d83": {
+      "alt": "Young man with very curly black hair, in a fisherman's jersey."
+    },
+    "lg-portrait-4a21bb": {
+      "alt": "Young man with large protruding ears, in a sailor's pea jacket, looking as if about to laugh."
+    },
+    "lg-portrait-1e2c79": {
+      "alt": "Painted portrait of an elderly man, thinning grey hair, eyebrows raised to a point, frock coat and crimson tie."
+    },
+    "lg-portrait-259dd9": {
+      "alt": "Man of about fifty with eyebrows raised to a point, brown hair greying at the temples, a scar on his chin."
+    },
+    "lg-portrait-491ae6": {
+      "alt": "Young woman with very pale grey eyes, short bobbed hair, plain dress and apron."
+    },
+    "lg-portrait-3a4965": {
+      "alt": "Man of about forty with very curly black hair, greying at the temples, and pale eyes."
+    },
+    "lg-portrait-fc8ada": {
+      "alt": "Woman of about thirty with short hair and protruding ears, in oilskins, bending over a bird."
+    },
+    "lg-portrait-b92caf": {
+      "alt": "Young woman with eyebrows raised to a point, high bun, crimson high collar, an oval amber brooch."
+    },
+    "lg-portrait-0f71b8": {
+      "alt": "Little boy of about nine in a sailor suit, hair cut short."
+    },
+    "lg-portrait-f30a8a": {
+      "alt": "Man of about fifty with round spectacles, overcoat and tie, a briefcase under his arm."
+    },
+    "lg-portrait-8ac94a": {
+      "alt": "Woman of about thirty with a high bun, a pince-nez clipped on her nose, lilac high collar."
+    },
+    "lg-portrait-fe5f0c": {
+      "alt": "Man of about fifty with a full grey beard, sailor's cap and thick jersey."
+    },
+    "lg-portrait-340d3e": {
+      "alt": "Man of about thirty-five, moustache, side parting, a pale tiepin."
+    },
+    "lg-portrait-f47e16": {
+      "alt": "Man of about forty with large protruding ears, cap, buttoned pea jacket."
+    },
+    "lg-portrait-d75077": {
+      "alt": "Man of about fifty with very curly grey hair, moustache."
+    },
+    "lg-portrait-af7bd4": {
+      "alt": "Woman of about fifty, hair drawn back in a low bun, dark dress."
+    },
+    "lg-portrait-0df611": {
+      "alt": "Elderly woman with a high grey bun, a lace collar on a black dress."
+    },
+    "lg-portrait-03c5f6": {
+      "alt": "Elderly woman in a tied coif, a spindle in her hand."
+    },
+    "lg-portrait-9e0e20": {
+      "alt": "Fork ; foot: plain"
+    },
+    "lg-portrait-375fdd": {
+      "alt": "Fork ; foot: plain ; heel: small Eye"
+    },
+    "lg-portrait-aa93f2": {
+      "alt": "Eye ; foot: plain"
+    },
+    "lg-portrait-5bbc8d": {
+      "alt": "Eye ; foot: plain ; heel: small Arrow"
+    },
+    "lg-portrait-5ce728": {
+      "alt": "Arrow ; foot: plain"
+    },
+    "lg-portrait-7f010c": {
+      "alt": "Arrow ; foot: plain ; heel: small Gallows"
+    },
+    "lg-portrait-8084e7": {
+      "alt": "Gallows ; foot: plain"
+    },
+    "lg-portrait-6ff69c": {
+      "alt": "Gallows ; foot: plain ; heel: small Fork"
+    },
+    "lg-portrait-df3f6c": {
+      "alt": "Fork ; foot: notch on the left"
+    },
+    "lg-portrait-3f8d58": {
+      "alt": "Fork ; foot: notch on the left ; heel: small Gallows"
+    },
+    "lg-portrait-87e85e": {
+      "alt": "Gallows ; foot: plain ; one grain"
+    },
+    "lg-portrait-309b85": {
+      "alt": "Eye ; foot: notch on the left ; heel: small Fork"
+    },
+    "lg-portrait-804ae3": {
+      "alt": "Fork ; foot: plain ; one grain"
+    },
+    "lg-portrait-4db872": {
+      "alt": "Eye ; foot: notch on the left"
+    },
+    "lg-portrait-480ba1": {
+      "alt": "Fork ; foot: notch on the right"
+    },
+    "lg-portrait-ff741e": {
+      "alt": "Gallows ; foot: notch on the left ; heel: small Eye"
+    },
+    "lg-portrait-ea5469": {
+      "alt": "Eye ; foot: plain ; one grain"
+    },
+    "lg-portrait-d9a1bf": {
+      "alt": "Gallows ; foot: notch on the left"
+    },
+    "lg-portrait-fdaeee": {
+      "alt": "Gallows ; foot: notch on the right"
+    },
+    "lg-portrait-84365f": {
+      "alt": "Arrow ; foot: barred"
+    },
+    "lg-portrait-99db1b": {
+      "alt": "Arrow ; foot: barred ; heel: small Gallows"
+    },
+    "lg-portrait-1b4408": {
+      "alt": "Gallows ; foot: plain ; two grains"
+    },
+    "lg-portrait-9cb0f2": {
+      "alt": "Eye ; foot: notch on the left, then notch on the left"
+    },
+    "lg-portrait-97cb44": {
+      "alt": "Arrow ; foot: notch on the left"
+    },
+    "lg-portrait-c33099": {
+      "alt": "Arrow ; foot: notch on the right"
+    },
+    "lg-portrait-ab4b4b": {
+      "alt": "Barred foot, no head (sea mark)"
+    },
+    "lg-portrait-29ab43": {
+      "alt": "Eye ; foot: notch on the right"
+    },
+    "lg-portrait-12b71b": {
+      "alt": "Fork ; foot: plain ; two grains"
+    },
+    "lg-portrait-d18c08": {
+      "alt": "Fork ; foot: notch on the left, then notch on the left"
+    },
+    "lg-portrait-ed16c7": {
+      "alt": "Arrow ; foot: barred, then notch on the left"
+    },
+    "lg-portrait-4439b6": {
+      "alt": "Gallows ; foot: notch on the left ; one grain"
+    },
+    "lg-portrait-3f2b8f": {
+      "alt": "Saltire (two crossed oblique strokes), no foot"
+    },
+    "lg-portrait-9b5710": {
+      "alt": "Fork on a plain foot, topped by a three-pointed crown"
+    },
+    "lg-portrait-e5dfe7": {
+      "alt": "A single foot bearing the four heads stacked one above another (Fork, Eye, Arrow, Gallows)"
+    }
+  }
+}
