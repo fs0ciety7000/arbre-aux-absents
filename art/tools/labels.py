@@ -125,9 +125,9 @@ def cartouche():
         o.append(path('ink-soft', leaves, stroke_width='0.7'))
     o.append(path('ink-soft', f'M{f(cx - 60)} {f(y0 + 98)}h120', stroke_width='0.6'))
     o.append(path('ink', f'M{f(cx - 3)} {f(y0 + 98)}l3-3 3 3-3 3z', fill='currentColor', stroke_width='0.3'))
-    o.append(text('label-note', cx, y0 + 115, 'pour l’Office de Réinscription civile, d’après la carte', size=10.5))
-    o.append(text('label-note', cx, y0 + 128, 'de la Grande Exposition (1889), revue en 1974', size=10.5))
-    o.append(text('label-note', cx, y0 + 146, 'dressée et gravée par CM Creative Lab', size=9.5))
+    o.append(text('label-note', cx, y0 + 112, 'pour l’Office de Réinscription civile, d’après la carte', size=10.5))
+    o.append(text('label-note', cx, y0 + 124, 'de la Grande Exposition (1889), revue en 1974', size=10.5))
+    o.append(text('label-note', cx, y0 + 138, 'dressée et gravée par CM Creative Lab', size=9.5))
     return o
 
 
