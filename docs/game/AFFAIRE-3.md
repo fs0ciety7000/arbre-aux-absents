@@ -510,8 +510,11 @@ des bandes (non prévu).
 Toutes les options par défaut sont retenues ; les alternatives restent décrites dans les sections
 citées, à reprendre seulement sur nouvelle demande.
 
-1. **Notation révisée** (`Y-i`, `A-b`, `marque Y-d`), sans changer `normalize` ni le moteur (§2.2–2.4) :
-   **décidé**.
+1. **Notation des codes** : sans changer `normalize` ni le moteur, **décidé** ; c'est la **notation
+   « LX »** de `docs/level/longuegreve.md` §5.2–5.3 qui est retenue, **pas** celle du §2.2–2.4 : barre
+   `b`, grain `pt`, talon `t` suivi de sa tête (`A-b`, `Y-pt`, `P-pt-pt`, `A-b-tP`, `O-g-tY`) ; seuls
+   les 7 codes utiles sont des mots-clés, tous en `autolink: false` (liens posés à la main), sans forme
+   « marque + code » ; têtes seules non indexées. Les §2.2–2.4 restent comme trace de l'alternative.
 2. **Inline `::mark[<portraitId>]`** au contrat (lecture visuelle nom ↔ marque, D2) : **décidé**.
 3. **Noël** : simple absence de lien ; pointillé « accueilli » au backlog 3.1 (§4) : **décidé**.
 4. Libellé du champ visage : « **Portrait** » conservé (cohérent avec les affaires 1–2) : **décidé**.
