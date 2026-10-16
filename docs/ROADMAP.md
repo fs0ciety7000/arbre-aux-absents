@@ -156,6 +156,13 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       jeu) ; écran « Nouveautés » depuis le titre (marque « Nouveau » tant que non ouvert,
       `Profile.changelogSeen`) ; page `/nouveautes/` FR/EN (pied de page, sitemap) ; procédure WORKFLOW §6
       et `/ship`.
+- [x] Perf (16/10) : LCP mobile du jeu web revenu de **5,0 s à 0,7 s** (Slow 4G, CPU ×4 ; desktop
+      0,16 s ; `perf.spec` E2E_PERF=1 vert). Régression bisectée sur `b6c8311` : le découpage plus fin du
+      démarrage monte l'app ≈ 1,4 s plus tard (2,5 → 3,9 s), si bien que les polices web arrivent pendant
+      le `screenOut` de l'écran de lancement ; ce rendu peint le grain du bureau (`--desk-grain-image`,
+      220 px, plus grand que le titre) sur une scène réduite d'échelle, plus « plein écran », que
+      Chromium compte alors comme élément LCP. Correctif : écran de lancement sans grain, comme l'écran
+      d'attente HTML (le grain revient avec le titre).
 
 ## Session 3 — 16 oct. 2026 (affaire 3, branche `claude/affaire-3`)
 
@@ -171,6 +178,11 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       de 562 ms), d'où le préchargement au titre. Une affaire de plus : ≈ +0,6 Ko gz d'index.
 
 ## Backlog
+
+- Perf : le démarrage du jeu web monte l'app à ≈ 3,9 s en Slow 4G (2,5 s avant `b6c8311`) : 17 fichiers
+  préchargés au lieu de 9 (petits morceaux partagés `Button`, `Tape`, `DymoLabel`, `PaperSheet`,
+  `save`…). Regrouper les morceaux du démarrage (`codeSplitting.groups`) sans perdre le budget D16 ;
+  titre interactif ≈ 5,3 s.
 
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
   en mode scindé et fond transparent, lecture « à la visibilité » des entrées sans hydratation,

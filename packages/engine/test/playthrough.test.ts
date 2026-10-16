@@ -66,7 +66,7 @@ describe('partie complète de la fixture', () => {
     expect(state.ending).toBe('fin-verite');
     expect(state.report).toEqual({ 'q-auteur': 'o-tam', 'q-remise': 'o-remettre' });
     expect(endingSections('fin-verite', state, C).map((x) => x.label)).toEqual(['commun', 'remis']);
-    expect(progress(state, C)).toEqual({ locked: 8, total: 8, ratio: 1, secrets: 1 });
+    expect(progress(state, C)).toEqual({ locked: 8, total: 8, visible: 8, ratio: 1, secrets: 1 });
     expect(Object.keys(state.unlocked).sort()).toEqual(Object.keys(C.documents).sort());
     // Seule piste restante : la coupure de presse facultative, jamais ouverte.
     expect(whereToLook(state, C)).toEqual({ kind: 'document', id: 'journal-crue' });

@@ -498,7 +498,7 @@ export const fr = {
   },
 
   ending: {
-    kicker: 'Dénouement',
+    kicker: 'Affaire close',
     continueInvestigation: 'Continuer l’enquête',
     toTitle: 'Revenir au titre',
     timedResults: 'Voir le temps',

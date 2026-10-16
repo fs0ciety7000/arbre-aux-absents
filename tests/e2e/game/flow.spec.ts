@@ -17,7 +17,7 @@ test.describe('parcours principal', () => {
   test('titre → nouvelle partie → Bureau', async ({ page }) => {
     await startNewGame(page);
     await expect(page.getByRole('banner', { name: 'En-tête du bureau' })).toContainText(
-      '0 personne identifiée sur 6',
+      '0 personne identifiée sur 4',
     );
     await expect(desk(page).getByRole('region', { name: 'Arbre' })).toBeVisible();
   });
@@ -106,7 +106,7 @@ test.describe('validation par groupes', () => {
       await expect(b).not.toHaveClass(/\b(locked|wrong|error|invalid)\b/);
     }
     await expect(page.getByRole('banner', { name: 'En-tête du bureau' })).toContainText(
-      '0 personne identifiée sur 6',
+      '0 personne identifiée sur 4',
     );
     // Rien qui désigne la case fausse, ni dans les notifications ni dans les annonces.
     const live = await page.locator('[aria-live], [role="status"], [role="alert"]').allInnerTexts();

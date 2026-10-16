@@ -471,7 +471,7 @@ export const en = {
   },
 
   ending: {
-    kicker: 'Ending',
+    kicker: 'Case closed',
     continueInvestigation: 'Continue the investigation',
     toTitle: 'Back to the title screen',
     timedResults: 'See the time',
