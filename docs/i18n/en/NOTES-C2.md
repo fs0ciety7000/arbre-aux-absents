@@ -73,9 +73,8 @@ tables d'affaire (Varenque §3 et §4, Hautcorvin §4 et §6).
 
 ### Reste à l'arbitrage humain
 
-- Les citations **françaises** des aides de niveau 3 de la Varenque sont souvent des paraphrases ou
-  des cellules recousues (ex. c02-3 « fils de Anselme Varenque, papetier… », c04-3, c08-3, c13-3,
-  c14-3, c18-3, c21-3, c22-3, c26-3, c29-3 « sa fille Claude, ingénieure », c30-3) : hors périmètre
-  de ce lot (`hints.json` source), à aligner de la même façon par le level-designer en FR.
-- Les liens fortuits gardés ci-dessus (surtout PR-07 *un goéland* → le Goéland) : à confirmer par le
-  scénariste.
+- ~~Les citations **françaises** des aides de niveau 3 de la Varenque~~ : alignées le 16/10 (c02, c04,
+  c07, c08, c11, c13, c14, c18, c21, c22, c26, c29, c30), contrôlées par le même script.
+- ~~Liens fortuits~~ tranchés le 16/10 (ROADMAP › Décisions) : PR-07 *goéland* → *mouette* (FR),
+  *gull* → *seagull* (EN), le lien vers le Goéland retiré ; RP-03 *parle thalbère* sans article, comme
+  l'anglais (la pièce reste liée par « dite la Thalbère ») ; les autres gardés comme voulus.
