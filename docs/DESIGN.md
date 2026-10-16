@@ -1993,6 +1993,21 @@ papier), surtitre Oswald, titre Fraunces `--step-2`, texte `--ink-muted`. `use:r
 Colonnes CSS (masonry simple), chaque planche en `PaperSheet` (photo : `fastener="tape"`) ou
 `Card variant="photo"` ; révélation `use:reveal` ; agrandissement en `Dialog size="l"`.
 
+Section d'affaire (artbook, affaire 3) : détail de carte recadré (`<use>` de la carte maîtresse),
+planche des marques en `PaperSheet tone="onion"` avec des `MarkFrame size="tile"` nommés par la
+description verbale normalisée, puis quelques pièces : dessin en SVG autonome (`/art/lg-<id>`),
+inscriptions `<text>` inline par-dessus (polices du site), comme la carte.
+
+### 14.2 bis Les affaires (accueil, presse)
+
+`CaseShelf` (site) : une `Folder` par affaire, kraft et manille en alternance, grille
+`auto-fit minmax(min(19rem, 100%), 1fr)`. Onglet court (« Affaire 1 », snippet `tabs`, même
+matière que l'onglet de `Folder`) car un titre d'affaire déborde l'onglet (70 %) ; le titre entier
+est le `hN` caché de la chemise et s'affiche en Fraunces `--step-2` en tête du contenu
+(`aria-hidden`, pas de double lecture). Cote du dossier à l'étiqueteuse, lieu et date en Courier
+Prime, accroche en Literata, chiffres et durée (`clock`) ; affaire récente : `DymoLabel tone="red"`
+« Nouveau · 1.5 ». Textes : situation de départ seulement.
+
 ### 14.5 Façade de vidéo (bande-annonce)
 
 Accueil, entre le principe et les gestes : cadre 16:9 (`--radius-m`, `--surface-3`,

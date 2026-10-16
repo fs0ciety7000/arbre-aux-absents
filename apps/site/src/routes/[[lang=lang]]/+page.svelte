@@ -7,6 +7,7 @@
 -->
 <script lang="ts">
   import { Button, DymoLabel, Folder, Icon, PaperSheet, Wordmark } from '@arbre/ui';
+  import CaseShelf from '#lib/components/CaseShelf.svelte';
   import HeroArt from '#lib/components/HeroArt.svelte';
   import MapSheet from '#lib/components/MapSheet.svelte';
   import PortraitPlate from '#lib/components/PortraitPlate.svelte';
@@ -174,6 +175,11 @@
     </div>
   </div>
 </section>
+
+<VineDivider vine={data.vine} />
+
+<!-- ── Les affaires : une chemise par dossier ──────────────────────────────────── -->
+<CaseShelf strings={t.cases} />
 
 <VineDivider vine={data.vine} />
 

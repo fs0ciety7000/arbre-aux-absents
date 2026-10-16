@@ -184,7 +184,7 @@ export const fr = {
       browser: 'Navigateur',
       playHere: 'Jouer ici',
       itchTitle: 'L’Arbre aux absents sur itch.io',
-      note: 'Jeu en français et en anglais, en solo, de six à dix heures. Gratuit.',
+      note: 'Jeu en français et en anglais, en solo : trois affaires de quatre à dix heures chacune. Gratuit.',
     },
     shots: {
       kicker: 'Captures',
@@ -192,6 +192,39 @@ export const fr = {
       soon: 'Capture à venir',
       items: ['L’arbre et le lecteur d’archives', 'La carte et ses lieux', 'Le carnet d’enquête'],
     },
+  },
+
+  /** Les affaires (accueil, presse) : situation de départ seulement, même ordre que `SITE_CASES`. */
+  cases: {
+    kicker: 'Les affaires',
+    title: ['Trois dossiers ', { em: 'sur le bureau' }] as Rich,
+    lede: 'Trois affaires indépendantes, chacune avec son arbre, ses archives et ses fins. Elles se jouent seules, dans l’ordre que vous voulez.',
+    listLabel: 'Les affaires du jeu',
+    tab: (n: number) => `Affaire ${n}`,
+    file: (n: string) => `Dossier ${n}`,
+    newLabel: (version: string) => `Nouveau · ${version}`,
+    stats: (slots: number, documents: number, endings: number) =>
+      `${slots}${NB}cases · ${documents}${NB}pièces · ${endings}${NB}fins`,
+    items: [
+      {
+        title: 'Succession Varenque',
+        when: 'Moulinvert, octobre 1974',
+        text: `Une vieille institutrice lègue tout aux descendants de son père et de son oncle, et demande à l’État de réinscrire «${NB}ceux que nous avons rendus absents${NB}». Une famille de papetiers à reconstituer sur quatre générations.`,
+        duration: 'De six à dix heures',
+      },
+      {
+        title: 'Le Revenant de Hautcorvin',
+        when: 'Hautcorvin, février 1976',
+        text: 'Un vieil homme se présente au guichet de l’Office : il dit être le fils du maître verrier, radié des registres en 1938 et déclaré mort au bagne. Sa case de l’arbre est déjà remplie, d’après sa propre déclaration. À vous de dire ce qui tient.',
+        duration: 'De cinq à sept heures et demie',
+      },
+      {
+        title: 'Les Marques de Longuegrève',
+        when: 'Golfe d’Ambre, octobre 1977',
+        text: `Une île de pêcheurs évacuée en 1908, ses maisons brûlées «${NB}par mesure sanitaire${NB}» avec le registre de la chapelle. Personne n’y savait signer : chacun taillait sa marque au couteau. Pour ces insulaires, la case de l’arbre retient la marque au lieu du visage.`,
+        duration: 'De quatre à sept heures',
+      },
+    ],
   },
 
   world: {
@@ -392,8 +425,53 @@ export const fr = {
     portraits: {
       kicker: 'Portraits',
       title: ['Galerie ', { em: 'des visages' }] as Rich,
-      lede: 'Quelques planches parmi la trentaine de portraits du jeu. Les noms restent dans les archives : à vous de les y retrouver.',
+      lede: 'Quelques planches parmi la centaine de portraits du jeu. Les noms restent dans les archives : à vous de les y retrouver.',
       empty: 'Les portraits arrivent bientôt.',
+    },
+    longuegreve: {
+      kicker: 'Affaire 3',
+      title: ['Les Marques ', { em: 'de Longuegrève' }] as Rich,
+      lede: 'Une île longue et basse du golfe d’Ambre, vide depuis 1908. Ses habitants ne savaient pas signer : sur les registres, les avirons, les linteaux et les croix, chacun taillait sa marque. Pour eux, l’arbre retient la marque au lieu du visage.',
+      island: {
+        title: 'L’île sur la carte',
+        text: 'Au large du golfe d’Ambre, à quatre lieues et demie des Cabanes : la Longue Grève, plage de l’ambre, et quelques ruines sous les sternes.',
+        label: 'Détail de la carte : l’île de Longuegrève dans le golfe d’Ambre',
+      },
+      marks: {
+        title: 'La planche des marques',
+        text: 'Les marques des quatre chefs de maison, telles que la matrice cadastrale de 1868 les a reçues, relevées au carnet comme le fait l’enquêtrice de 1964. Toutes les autres se déduisent de leur grammaire, en jeu.',
+        listLabel: 'Les quatre marques des chefs de maison',
+        /** Description verbale normalisée (AFFAIRE-3 §1.6), même gabarit que le jeu. */
+        alts: [
+          'Fourche ; pied lisse',
+          'Œil ; pied lisse',
+          'Flèche ; pied lisse',
+          'Potence ; pied lisse',
+        ],
+        cote: (n: number) => `Lanière ${n}`,
+      },
+      pieces: {
+        title: 'Quelques pièces',
+        text: 'Des illustrations des archives de l’affaire : objets, imprimés et photographies, sans rien dévoiler de l’enquête.',
+        items: {
+          'cp-01': {
+            title: 'La grève aux ambres',
+            caption: 'Carte postale, phototypie, 1906.',
+          },
+          'ob-03': {
+            title: 'La cloche de l’île',
+            caption: 'Bronze fondu en 1868, quatre signes en relief.',
+          },
+          'pb-01': {
+            title: 'L’Ambre de Longuegrève',
+            caption: 'Affiche lithographiée, 1910.',
+          },
+          'ph-11': {
+            title: 'Baguage de sternes',
+            caption: 'Photographie, été 1961.',
+          },
+        },
+      },
     },
     map: {
       kicker: 'La carte',
@@ -401,7 +479,7 @@ export const fr = {
       lede: 'Une seule grande planche, découpée en couches : fond, relief, eaux, lieux et toponymes. Dans le jeu, chaque lieu s’éclaire quand on le visite.',
       detailLabel: (title: string) => `Détail de la carte : ${title}`,
       empty: 'Les planches de la carte arrivent bientôt.',
-      note: 'Les illustrations des documents (photographies, cartes postales, coupures de presse) rejoindront l’artbook à la sortie du jeu.',
+      note: 'Les autres illustrations des documents (photographies, cartes postales, coupures de presse) restent dans les archives du jeu.',
       details: {
         cartouche: {
           title: 'Le cartouche',
@@ -634,6 +712,9 @@ export const fr = {
       ],
       [
         'Une carte gravée et aquarellée du pays ouvre les archives de chaque lieu. Des secrets annexes changent le dénouement ; succès et mode chronométré invitent à rejouer.',
+      ],
+      [
+        'Trois affaires indépendantes se jouent dans l’ordre qu’on veut : une succession de papetiers en 1974, un revenant chez les verriers en 1976 et, depuis la version 1.5, une île de pêcheurs évacuée en 1908, où personne ne savait signer et où l’arbre retient les marques taillées au couteau au lieu des visages.',
       ],
       [
         { em: 'L’Arbre aux absents' },

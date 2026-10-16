@@ -10,6 +10,7 @@ import { parseSvg, type SvgNode } from '#lib/svg/parse';
 import { MAP_LAYERS } from '#lib/content/world';
 import { keyArtFiles } from '#lib/prerender/keyart';
 import { PORTRAIT_PLATES } from '#lib/content/portraits';
+import { LONGUEGREVE_PIECES } from '#lib/content/cases';
 import {
   onlyText,
   standaloneSvg,
@@ -38,6 +39,15 @@ const portraitFiles = import.meta.glob('../../../../../content/cases/*/portraits
   import: 'default',
   eager: true,
 }) as Record<string, string>;
+
+/**
+ * Illustrations de pièces montrées par l'artbook (affaire 3, sélection de `LONGUEGREVE_PIECES`) :
+ * seules celles-ci sont lues, pas les centaines d'illustrations des affaires.
+ */
+const illustrationFiles = import.meta.glob(
+  '../../../../../content/cases/marques-de-longuegreve/illustrations/{cp-01,ob-03,pb-01,ph-11}.svg',
+  { query: '?raw', import: 'default', eager: true },
+) as Record<string, string>;
 
 /** Id de personne → id neutre du fichier de portrait (cartographe). */
 const portraitIds = import.meta.glob('../../../../../art/tools/portraits/ids.json', {
@@ -193,6 +203,49 @@ export function portraitImage(person: string): ArtImage | null {
   return f ? { src: artUrl(f), width: f.width, height: f.height } : null;
 }
 
+/** Attributs qui renvoient à des définitions restées dans le fichier externe. */
+const DEF_REFS = ['clip-path', 'mask', 'filter'];
+const withoutDefRefs = (n: SvgNode): SvgNode => ({
+  ...n,
+  a: Object.fromEntries(Object.entries(n.a).filter(([k]) => !DEF_REFS.includes(k))),
+  c: n.c.map((k) => (typeof k === 'string' ? k : withoutDefRefs(k))),
+});
+
+export interface ArtIllustration {
+  /** Dessin sans texte, SVG autonome mis en cache (`/art/lg-<id>.<hash>.svg`). */
+  image: ArtImage;
+  /** Inscriptions dessinées (`<text>`), inline par-dessus pour garder les polices du site. */
+  text: SvgNode | null;
+}
+
+const illustrationCache = new Map<string, { file: StandaloneSvg; text: SvgNode | null } | null>();
+
+function illustrationParts(id: string) {
+  if (illustrationCache.has(id)) return illustrationCache.get(id)!;
+  const src = Object.entries(illustrationFiles).find(([p]) => base(p) === id)?.[1];
+  const root = src ? parseSvg(src) : null;
+  let parts = null;
+  if (root) {
+    const viewBox = root.a.viewBox ?? '0 0 560 470';
+    const file = standaloneSvg(`lg-${id}`, viewBox, withoutText(root).c);
+    const kept = onlyText(root);
+    const text = kept ? { t: 'svg', a: { viewBox }, c: withoutDefRefs(kept).c } : null;
+    parts = { file, text };
+  }
+  illustrationCache.set(id, parts);
+  return parts;
+}
+
+/** Illustration d'une pièce de l'affaire 3 (artbook), ou `null` si le fichier manque. */
+export function longuegreveIllustration(id: string): ArtIllustration | null {
+  const p = illustrationParts(id);
+  if (!p) return null;
+  return {
+    image: { src: artUrl(p.file), width: p.file.width, height: p.file.height },
+    text: p.text,
+  };
+}
+
 /** Tous les SVG autonomes publiés sous `/art/` (entrées de la route prérendue). */
 export function artFiles(): StandaloneSvg[] {
   const out: StandaloneSvg[] = [...keyArtFiles()];
@@ -204,6 +257,10 @@ export function artFiles(): StandaloneSvg[] {
   }
   for (const { person } of PORTRAIT_PLATES) {
     const f = portraitFile(person);
+    if (f && !out.some((o) => o.file === f.file)) out.push(f);
+  }
+  for (const id of LONGUEGREVE_PIECES) {
+    const f = illustrationParts(id)?.file;
     if (f && !out.some((o) => o.file === f.file)) out.push(f);
   }
   return out;

@@ -181,7 +181,7 @@ export const en = {
       browser: 'Browser',
       playHere: 'Play here',
       itchTitle: 'L’Arbre aux absents on itch.io',
-      note: 'In English and French, single-player, six to ten hours. Free.',
+      note: 'In English and French, single-player: three cases of four to ten hours each. Free.',
     },
     shots: {
       kicker: 'Screenshots',
@@ -189,6 +189,38 @@ export const en = {
       soon: 'Screenshot to come',
       items: ['The tree and the archive reader', 'The map and its places', 'The case notebook'],
     },
+  },
+
+  cases: {
+    kicker: 'The cases',
+    title: ['Three files ', { em: 'on the desk' }] as Rich,
+    lede: 'Three standalone cases, each with its own tree, archives and endings. Play them on their own, in any order you like.',
+    listLabel: 'The cases in the game',
+    tab: (n: number) => `Case ${n}`,
+    file: (n: string) => `File ${n}`,
+    newLabel: (version: string) => `New · ${version}`,
+    stats: (slots: number, documents: number, endings: number) =>
+      `${slots} slots · ${documents} documents · ${endings} endings`,
+    items: [
+      {
+        title: 'The Varenque Succession',
+        when: 'Moulinvert, October 1974',
+        text: 'An elderly schoolteacher leaves everything to the descendants of her father and her uncle, and asks the State to re-register “those we made absent”. A family of papermakers to rebuild across four generations.',
+        duration: 'Six to ten hours',
+      },
+      {
+        title: 'The Revenant of Hautcorvin',
+        when: 'Hautcorvin, February 1976',
+        text: 'An old man comes to the Office counter: he says he is the master glassmaker’s son, struck from the registers in 1938 and declared dead in the penal colony. His slot in the tree is already filled in, from his own statement. It is up to you to say what holds.',
+        duration: 'Five to seven and a half hours',
+      },
+      {
+        title: 'The Marks of Longuegrève',
+        when: 'Golfe d’Ambre, October 1977',
+        text: 'A fishing island evacuated in 1908, its houses burnt “as a sanitary measure” along with the chapel register. Nobody there could sign: each person cut their own mark with a knife. For these islanders, the slot in the tree takes the mark instead of the face.',
+        duration: 'Four to seven hours',
+      },
+    ],
   },
 
   world: {
@@ -421,8 +453,52 @@ export const en = {
     portraits: {
       kicker: 'Portraits',
       title: ['A gallery ', { em: 'of faces' }] as Rich,
-      lede: 'A few plates from the game’s thirty or so portraits. The names stay in the archives: it’s up to you to find them there.',
+      lede: 'A few plates from the game’s hundred or so portraits. The names stay in the archives: it’s up to you to find them there.',
       empty: 'The portraits are coming soon.',
+    },
+    longuegreve: {
+      kicker: 'Case 3',
+      title: ['The Marks ', { em: 'of Longuegrève' }] as Rich,
+      lede: 'A long, low island in the Golfe d’Ambre, empty since 1908. Its people could not sign: on registers, oars, lintels and crosses, each cut their own mark. For them, the tree takes the mark instead of the face.',
+      island: {
+        title: 'The island on the map',
+        text: 'Off the Golfe d’Ambre, four and a half leagues from the Cabanes: the Longue Grève, the amber beach, and a few ruins beneath the terns.',
+        label: 'Map detail: the island of Longuegrève in the Golfe d’Ambre',
+      },
+      marks: {
+        title: 'The plate of marks',
+        text: 'The marks of the four heads of household, as the 1868 land register received them, copied into a notebook the way the 1964 field researcher did. All the others are deduced from their grammar, in the game.',
+        listLabel: 'The four marks of the heads of household',
+        alts: [
+          'Fork; foot: plain',
+          'Eye; foot: plain',
+          'Arrow; foot: plain',
+          'Gallows; foot: plain',
+        ],
+        cote: (n: number) => `Strip ${n}`,
+      },
+      pieces: {
+        title: 'A few documents',
+        text: 'Illustrations from the case’s archives: objects, prints and photographs, without giving anything of the investigation away.',
+        items: {
+          'cp-01': {
+            title: 'The amber shore',
+            caption: 'Postcard, phototype, 1906.',
+          },
+          'ob-03': {
+            title: 'The island bell',
+            caption: 'Bronze cast in 1868, four signs in relief.',
+          },
+          'pb-01': {
+            title: 'Longuegrève Amber',
+            caption: 'Lithographed poster, 1910.',
+          },
+          'ph-11': {
+            title: 'Ringing terns',
+            caption: 'Photograph, summer 1961.',
+          },
+        },
+      },
     },
     map: {
       kicker: 'The map',
@@ -430,7 +506,7 @@ export const en = {
       lede: 'A single large plate, cut into layers: ground, relief, water, places and place names. In the game, each place lights up when you visit it.',
       detailLabel: (title: string) => `Map detail: ${title}`,
       empty: 'The map plates are coming soon.',
-      note: 'The illustrations of the documents (photographs, postcards, press cuttings) will join the artbook when the game is released.',
+      note: 'The other illustrations of the documents (photographs, postcards, press cuttings) stay in the game’s archives.',
       details: {
         cartouche: {
           title: 'The cartouche',
@@ -662,7 +738,7 @@ export const en = {
       { term: 'Platforms', value: 'Windows, macOS, Linux, Android, browser' },
       { term: 'Languages', value: 'English and French (text and interface)' },
       { term: 'Players', value: 'Single-player' },
-      { term: 'Length', value: 'Six to ten hours for the main case' },
+      { term: 'Length', value: 'Three cases, four to ten hours each' },
       { term: 'Price', value: 'Free' },
       { term: 'Release', value: 'October 2026' },
       { term: 'Website', value: 'arbre.cardormedia.com' },
@@ -678,6 +754,9 @@ export const en = {
       ],
       [
         'An engraved, watercoloured map of the country opens the archives of each place. Side secrets change the ending; achievements and a timed mode invite you to play again.',
+      ],
+      [
+        'Three standalone cases can be played in any order: a papermakers’ estate in 1974, a revenant among the glassmakers in 1976 and, since version 1.5, a fishing island evacuated in 1908, where nobody could sign and the tree takes the marks they cut with a knife instead of faces.',
       ],
       [
         TITLE,

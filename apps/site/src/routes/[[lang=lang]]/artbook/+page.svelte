@@ -5,13 +5,14 @@
   grand dans son propre SVG ; révélations au défilement par data-sr (hooks.server.ts).
 -->
 <script lang="ts">
-  import { Icon, PaperSheet } from '@arbre/ui';
+  import { Icon, MarkFrame, PaperSheet } from '@arbre/ui';
   import PortraitPlate from '#lib/components/PortraitPlate.svelte';
   import Seo from '#lib/components/Seo.svelte';
   import VineDivider from '#lib/components/VineDivider.svelte';
   import { STRINGS } from '#lib/i18n/index';
   import { currentLang } from '#lib/i18n/app';
   import Rich from '#lib/i18n/Rich.svelte';
+  import ArtSvg from '#lib/svg/ArtSvg.svelte';
   import SvgTree from '#lib/svg/SvgTree.svelte';
   import type { PageProps } from './$types';
 
@@ -29,6 +30,11 @@
     { id: 'corvins', viewBox: '1000 640 350 360' },
   ] as const;
   const details = $derived(DETAILS.map((d) => ({ ...d, ...a.map.details[d.id] })));
+
+  const lg = $derived(a.longuegreve);
+  /** L'île sur la carte : recadrage autour de Longuegrève et des Cabanes d'Ambre. */
+  const ISLAND_VIEWBOX = '10 440 240 180';
+  const pieceTilts = [-0.9, 0.7, -0.4, 1.1];
 
   const spotTilts = [-1.2, 0.9, -0.5, 1.3, -0.8, 0.6, -1.4, 1, -0.4, 0.8];
 </script>
@@ -189,6 +195,93 @@
 
 <VineDivider vine={data.vine} />
 
+<!-- ── Affaire 3 : l'île, la planche des marques, quelques pièces ── -->
+<section class="band" aria-labelledby="longuegreve-title">
+  <div class="container">
+    <div class="section-head center" data-sr>
+      <p class="kicker">{lg.kicker}</p>
+      <h2 id="longuegreve-title" class="section-title"><Rich text={lg.title} /></h2>
+      <p class="lede">{lg.lede}</p>
+    </div>
+    <div class="lg-grid">
+      {#if data.map}
+        <div data-sr>
+          <PaperSheet tone="new" tilt={-0.6} fastener="tape" as="div">
+            <figure class="sheet-fig">
+              <div class="crop">
+                <svg class="art" viewBox={ISLAND_VIEWBOX} role="img" aria-label={lg.island.label}>
+                  <use href="#artbook-map" />
+                </svg>
+              </div>
+              <figcaption class="detail-cap">
+                <span class="cap-title">{lg.island.title}</span>
+                {lg.island.text}
+              </figcaption>
+            </figure>
+          </PaperSheet>
+        </div>
+      {/if}
+      <div data-sr style:--i="1">
+        <PaperSheet tone="onion" tilt={0.5} fastener="clip" as="section" class="marks-sheet">
+          <h3 class="sheet-title">{lg.marks.title}</h3>
+          <p class="sheet-text">{lg.marks.text}</p>
+          <ul class="marks" aria-label={lg.marks.listLabel}>
+            {#each data.longuegreve.marks as m, i (i)}
+              <li>
+                <MarkFrame size="tile" alt={m.alt} tilt={[-2, 1, -1, 2][i]}>
+                  {#if m.node}<ArtSvg node={m.node} />{/if}
+                </MarkFrame>
+                <span class="mark-cote num">{lg.marks.cote(i + 1)}</span>
+              </li>
+            {/each}
+          </ul>
+        </PaperSheet>
+      </div>
+    </div>
+
+    <h3 class="sub-title" data-sr>{lg.pieces.title}</h3>
+    <p class="sub-text" data-sr>{lg.pieces.text}</p>
+    <ul class="pieces">
+      {#each data.longuegreve.pieces as piece, i (piece.id)}
+        {#if piece.art}
+          <li data-sr style:--i={i % 4} style:--reveal-tilt="{pieceTilts[i]! * 3}deg">
+            <PaperSheet
+              tone={i % 2 ? 'aged' : 'paper'}
+              tilt={pieceTilts[i]}
+              fastener={i % 2 ? 'pin' : 'tape'}
+              as="div"
+            >
+              <figure class="sheet-fig">
+                <div
+                  class="piece-art"
+                  style:aspect-ratio="{piece.art.image.width} / {piece.art.image.height}"
+                >
+                  <img
+                    class="art-img"
+                    src={piece.art.image.src}
+                    width={piece.art.image.width}
+                    height={piece.art.image.height}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  {#if piece.art.text}<ArtSvg node={piece.art.text} />{/if}
+                </div>
+                <figcaption class="detail-cap">
+                  <span class="cap-title">{piece.title}</span>
+                  {piece.caption}
+                </figcaption>
+              </figure>
+            </PaperSheet>
+          </li>
+        {/if}
+      {/each}
+    </ul>
+  </div>
+</section>
+
+<VineDivider vine={data.vine} />
+
 <!-- ── Les détails de la carte, en épreuves ── -->
 <section class="band" aria-labelledby="carte-title">
   <div class="container">
@@ -342,6 +435,79 @@
     line-height: var(--leading-snug);
     color: var(--ink-muted);
   }
+  /* ── Affaire 3 ── */
+  .lg-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: var(--space-10) var(--space-8);
+    align-items: start;
+  }
+  .sheet-title,
+  .sub-title {
+    font-family: var(--font-display);
+    font-variation-settings: var(--display-settings);
+    font-weight: var(--weight-display);
+    font-size: var(--step-1);
+    color: var(--ink);
+  }
+  .sheet-text {
+    margin-block: var(--space-2) var(--space-5);
+    font-family: var(--font-read);
+    line-height: var(--leading-snug);
+    color: var(--ink-muted);
+  }
+  .marks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6) var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .marks li {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-2);
+  }
+  .mark-cote {
+    font-family: var(--font-type);
+    font-size: var(--step--1);
+    color: var(--ink-muted);
+  }
+  .sub-title {
+    margin-block-start: var(--space-12);
+    font-size: var(--step-2);
+    color: var(--text);
+    text-align: center;
+  }
+  .sub-text {
+    max-inline-size: 40rem;
+    margin: var(--space-2) auto var(--space-8);
+    color: var(--text-muted);
+    text-align: center;
+  }
+  .pieces {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr));
+    gap: var(--space-10) var(--space-6);
+    align-items: start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .piece-art {
+    position: relative;
+    background: var(--art-paper);
+  }
+  .piece-art img,
+  .piece-art :global(svg) {
+    position: absolute;
+    inset: 0;
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
   .note,
   .empty {
     display: flex;
@@ -351,6 +517,9 @@
     color: var(--text-muted);
   }
   @media (max-width: 63.9375rem) {
+    .lg-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
     .split {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-8);

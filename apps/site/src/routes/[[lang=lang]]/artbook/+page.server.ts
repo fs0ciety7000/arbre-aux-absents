@@ -1,6 +1,7 @@
+import { HOUSE_MARKS, LONGUEGREVE_PIECES } from '#lib/content/cases';
 import { PORTRAIT_PLATES, localizePlates } from '#lib/content/portraits';
 import { STRINGS, toLocale } from '#lib/i18n/index';
-import { portraitImage, worldMap } from '#lib/prerender/art';
+import { longuegreveIllustration, portrait, portraitImage, worldMap } from '#lib/prerender/art';
 import { flourishImage, keyArtFullImages, spotImage, type SpotName } from '#lib/prerender/keyart';
 import type { PageServerLoad } from './$types';
 
@@ -37,5 +38,18 @@ export const load: PageServerLoad = ({ params }) => {
       ...p,
       image: portraitImage(person),
     })),
+    // Affaire 3 : les marques des chefs de maison (inline, quelques centaines d'octets chacune) et
+    // quelques pièces (dessin externe en cache, inscriptions inline).
+    longuegreve: {
+      marks: HOUSE_MARKS.map((id, i) => ({
+        node: portrait(id),
+        alt: t.artbook.longuegreve.marks.alts[i]!,
+      })),
+      pieces: LONGUEGREVE_PIECES.map((id) => ({
+        id,
+        ...t.artbook.longuegreve.pieces.items[id],
+        art: longuegreveIllustration(id),
+      })),
+    },
   };
 };

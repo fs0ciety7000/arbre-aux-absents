@@ -6,6 +6,7 @@
 <script lang="ts">
   import { asset } from '$app/paths';
   import { Button, Folder, Icon, IndexCard, Ornament, PaperSheet, Stamp } from '@arbre/ui';
+  import CaseShelf from '#lib/components/CaseShelf.svelte';
   import Seo from '#lib/components/Seo.svelte';
   import { PRESS_FACTS } from '#lib/content/press';
   import { presskit, type KitRow } from '#lib/content/presskit';
@@ -107,6 +108,9 @@
     </div>
   </div>
 </section>
+
+<!-- ── Les affaires ── -->
+<CaseShelf strings={t.cases} />
 
 <!-- ── Kit presse ── -->
 <section class="band kit-band" aria-labelledby="kit-title">
