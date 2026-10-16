@@ -291,6 +291,7 @@ export interface Settings {
   mono: boolean; muteInBackground: boolean; haptics: boolean; longPressMs: 300 | 400 | 600;
   confirmClear: boolean; inputGlyphs: 'auto' | 'keyboard' | 'gamepad';
   language?: 'system' | Locale; // facultatif : anciens profils valides ; absent = 'system'
+  pickerDescriptions?: boolean; // choix du portrait : descriptions dépliées ; absent = repliées
 }
 // readScale et sideWidth (« Confort de lecture », PROPOSITION-INTERFACE option 1) : migration
 // douce, `SettingsSchema` les complète par défaut (1, 440) quand un profil antérieur ne les a pas.
@@ -351,7 +352,9 @@ normalize(text): string                                   // NFKD + œ/æ/ß/ø/
 newGame(c, { slot, mode, at }): SaveState
 applyAction(s, a, c): { state; events }                   // en validation auto, setSlot déclenche validate
 search(query, s, c): SearchOutcome                        // correspondance exacte du terme normalisé, sans flou
-validate(s, c): { lock: SlotId[]; groups: GroupId[] }
+validate(s, c): { lock: SlotId[]; groups: GroupId[]; swap?: [SlotId, SlotId][] }
+// swap : couple interchangeable (mêmes parents, mêmes enfants, union unique) posé inversé mais juste ;
+// les fiches sont échangées (swapGuesses) puis verrouillées dans l'ordre de la solution.
 settle(s, c): { state; events }                           // point fixe des déblocages
 evaluate(cond, s, c): boolean
 evaluateAchievements(s, profile, c): AchievementId[]

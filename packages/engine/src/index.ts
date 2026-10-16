@@ -29,6 +29,7 @@ export {
 export { MIN_QUERY_LENGTH, search } from './search';
 export { settle } from './settle';
 export {
+  areInterchangeable,
   emptyGuard,
   groupCorrectCount,
   groupOf,
@@ -42,6 +43,7 @@ export {
   SWEEP_MAX_CHANGES,
   SWEEP_SUSPEND_MS,
   SWEEP_WINDOW_MS,
+  swapGuesses,
   validate,
   type CompleteGuess,
   type SweepGuard,

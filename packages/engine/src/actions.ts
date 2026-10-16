@@ -34,6 +34,7 @@ import {
   isComplete,
   isSlotVisible,
   recordChanges,
+  swapGuesses,
   validate,
   type SweepGuard,
 } from './validation';
@@ -155,8 +156,9 @@ function applyLocks(s: SaveState, result: ValidationResult, at: number): Transit
   if (result.lock.length === 0) return { state: s, events: [{ type: 'validationFailed' }] };
   const locked = { ...s.locked };
   for (const id of result.lock) locked[id] = at;
+  const tree = result.swap?.length ? swapGuesses(s.tree, result.swap) : s.tree;
   return {
-    state: { ...s, locked },
+    state: { ...s, tree, locked },
     events: [{ type: 'slotsLocked', ids: [...result.lock], groups: [...result.groups] }],
   };
 }

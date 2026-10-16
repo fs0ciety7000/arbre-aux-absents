@@ -1,14 +1,17 @@
-import type { CompiledCase, SaveState, ValidationGroup } from '@arbre/contract';
+import type { CompiledCase, SaveState, SlotGuess, ValidationGroup } from '@arbre/contract';
 import { describe, expect, it } from 'vitest';
 import {
   applyAction,
+  areInterchangeable,
   emptyGuard,
   groupCorrectCount,
   groupThreshold,
   isSlotCorrect,
   isSuspended,
+  newGame,
   recordChanges,
   SWEEP_SUSPEND_MS,
+  swapGuesses,
   validate,
 } from '../src';
 import { SOLUTION } from './fixtures/case';
@@ -325,5 +328,104 @@ describe('cases cachées révélées', () => {
   it('AINES_RESEARCH suffit à rendre disponibles les candidats des aînés', () => {
     const s = play(start(), AINES_RESEARCH).state;
     expect(Object.keys(s.read)).toHaveLength(6);
+  });
+});
+
+describe('couple interchangeable posé inversé (swap)', () => {
+  /** Variante : Ivo n'est plus pré-rempli et rejoint le groupe des aînés avec Elna. */
+  function coupleCase(): CompiledCase {
+    const c = clone(C);
+    const ivo = c.slots['g0-ivo']!;
+    delete ivo.prefilled;
+    delete ivo.prefilledGuess;
+    c.groups = [
+      {
+        id: 'grp-aines',
+        label: 'Les aînés',
+        slots: ['g0-ivo', 'g0-elna', 'g1-tam', 'g1-lisbe'],
+        threshold: 4,
+      },
+    ];
+    return deepFreeze(c);
+  }
+
+  function withTree(c: CompiledCase, tree: SaveState['tree']): SaveState {
+    const s = newGame(c, { slot: 'slot-1', mode: 'standard', at: 1000 });
+    return deepFreeze({ ...s, tree });
+  }
+
+  const S = SOLUTION as Record<string, SlotGuess>;
+  const inverted = {
+    'g0-ivo': S['g0-elna']!,
+    'g0-elna': S['g0-ivo']!,
+    'g1-tam': S['g1-tam']!,
+    'g1-lisbe': S['g1-lisbe']!,
+  };
+
+  it('seuls les époux sans parents ni enfants propres sont interchangeables', () => {
+    const c = coupleCase();
+    expect(areInterchangeable('g0-ivo', 'g0-elna', c)).toBe(true);
+    expect(areInterchangeable('g0-elna', 'g0-ivo', c)).toBe(true);
+    // Lisbé est l'enfant de sang, Oren le conjoint par alliance : pas interchangeables.
+    expect(areInterchangeable('g1-lisbe', 'g1-oren', c)).toBe(false);
+    expect(areInterchangeable('g1-tam', 'g1-lisbe', c)).toBe(false);
+  });
+
+  it('paire inversée juste : comptée, verrouillée, fiches échangées', () => {
+    const c = coupleCase();
+    const s = withTree(c, inverted);
+    expect(isSlotCorrect('g0-ivo', s, c)).toBe(false);
+    expect(groupCorrectCount('grp-aines', s, c)).toBe(4);
+    const r = validate(s, c);
+    expect(r.swap).toEqual([['g0-ivo', 'g0-elna']]);
+    expect([...r.lock].sort()).toEqual(['g0-elna', 'g0-ivo', 'g1-lisbe', 'g1-tam']);
+
+    const t = applyAction(s, { type: 'validate', at: 5000 }, c);
+    expect(t.events[0]).toMatchObject({ type: 'slotsLocked', groups: ['grp-aines'] });
+    expect(t.state.tree['g0-ivo']).toEqual(S['g0-ivo']);
+    expect(t.state.tree['g0-elna']).toEqual(S['g0-elna']);
+    expect(t.state.locked).toMatchObject({ 'g0-ivo': 5000, 'g0-elna': 5000 });
+    expect(isSlotCorrect('g0-ivo', t.state, c)).toBe(true);
+  });
+
+  it('pas de swap quand les cases sont justes en direct (aucun champ swap)', () => {
+    const c = coupleCase();
+    const s = withTree(c, { ...inverted, 'g0-ivo': S['g0-ivo']!, 'g0-elna': S['g0-elna']! });
+    const r = validate(s, c);
+    expect(r.swap).toBeUndefined();
+    expect(r.lock).toHaveLength(4);
+  });
+
+  it('paire inversée dont une seule fiche est juste : rien', () => {
+    const c = coupleCase();
+    const s = withTree(c, {
+      ...inverted,
+      'g0-elna': { ...S['g0-ivo']!, occupation: 'marin' },
+    });
+    expect(groupCorrectCount('grp-aines', s, c)).toBe(2);
+    expect(validate(s, c)).toEqual({ lock: [], groups: [] });
+    const t = applyAction(s, { type: 'validate', at: 5000 }, c);
+    expect(t.events).toEqual([{ type: 'validationFailed' }]);
+    expect(t.state.tree['g0-ivo']).toEqual(S['g0-elna']);
+  });
+
+  it('conjoint par alliance inversé (Oren ↔ Lisbé) : pas validé', () => {
+    const c = withGroups([
+      { id: 'grp-x', label: 'X', slots: ['g1-tam', 'g1-lisbe', 'g1-oren'], threshold: 3 },
+    ]);
+    const s = withTree(c, {
+      'g1-tam': S['g1-tam']!,
+      'g1-lisbe': S['g1-oren']!,
+      'g1-oren': S['g1-lisbe']!,
+    });
+    expect(groupCorrectCount('grp-x', s, c)).toBe(1);
+    expect(validate(s, c)).toEqual({ lock: [], groups: [] });
+  });
+
+  it('swapGuesses est pur et échange les deux fiches', () => {
+    const tree = deepFreeze({ a: S['g0-ivo']!, b: S['g0-elna']!, z: S['g1-tam']! });
+    const next = swapGuesses(tree, [['a', 'b']]);
+    expect(next).toEqual({ a: S['g0-elna'], b: S['g0-ivo'], z: S['g1-tam'] });
+    expect(tree.a).toEqual(S['g0-ivo']);
   });
 });

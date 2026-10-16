@@ -82,6 +82,11 @@ export interface Transition {
 export interface ValidationResult {
   lock: SlotId[];
   groups: GroupId[];
+  /**
+   * Couples posés inversés mais justes (deux époux de même place dans l'arbre : mêmes parents,
+   * mêmes enfants, aucune autre union) : échanger leurs fiches avant de verrouiller.
+   */
+  swap?: [SlotId, SlotId][];
 }
 
 export const PARSE_SAVE_ERROR_CODES = [

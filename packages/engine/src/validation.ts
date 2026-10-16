@@ -96,16 +96,101 @@ export function isComplete(g: SlotGuess | undefined): g is CompleteGuess {
  * est juste s'il est l'un de ceux de la personne (canonique ou autre âge).
  */
 export function isSlotCorrect(slot: SlotId, s: SaveState, c: CompiledCase): boolean {
-  const def = own(c.slots, slot);
-  const g = own(s.tree, slot);
+  return guessMatches(own(s.tree, slot), slot, c);
+}
+
+/** La fiche `g` correspond-elle à la solution de la case `target` ? */
+function guessMatches(g: SlotGuess | undefined, target: SlotId, c: CompiledCase): boolean {
+  const def = own(c.slots, target);
   if (!def || !isComplete(g)) return false;
   const a = def.answer;
   return (
-    a.given.includes(hashAnswer(c.salt, slot, 'given', g.given)) &&
-    a.family.includes(hashAnswer(c.salt, slot, 'family', g.family)) &&
-    a.portrait.includes(hashAnswer(c.salt, slot, 'portrait', g.portrait)) &&
-    a.occupation === hashAnswer(c.salt, slot, 'occupation', g.occupation)
+    a.given.includes(hashAnswer(c.salt, target, 'given', g.given)) &&
+    a.family.includes(hashAnswer(c.salt, target, 'family', g.family)) &&
+    a.portrait.includes(hashAnswer(c.salt, target, 'portrait', g.portrait)) &&
+    a.occupation === hashAnswer(c.salt, target, 'occupation', g.occupation)
   );
+}
+
+const sameSet = (x: readonly SlotId[], y: readonly SlotId[]): boolean =>
+  x.length === y.length && x.every((id) => y.includes(id)) && y.every((id) => x.includes(id));
+
+/**
+ * Couple interchangeable : chacune dans les `unions` de l'autre, aucune autre union, mêmes
+ * parents (en ensemble) et mêmes enfants (toute case qui a l'une pour parent a aussi l'autre).
+ * Un conjoint entré par alliance ne l'est pas : la ligne de filiation désigne l'enfant de
+ * sang, l'inverser changerait l'arbre.
+ */
+export function areInterchangeable(a: SlotId, b: SlotId, c: CompiledCase): boolean {
+  if (a === b) return false;
+  const da = own(c.slots, a);
+  const db = own(c.slots, b);
+  if (!da || !db) return false;
+  if (da.unions.length !== 1 || da.unions[0] !== b) return false;
+  if (db.unions.length !== 1 || db.unions[0] !== a) return false;
+  if (!sameSet(da.parents, db.parents)) return false;
+  return Object.values(c.slots).every((x) => x.parents.includes(a) === x.parents.includes(b));
+}
+
+/**
+ * Couples « justes mais inversés » parmi les cases en jeu d'un groupe : les deux cases sont
+ * en jeu, aucune n'est juste en direct, et la fiche de chacune est la solution de l'autre.
+ * Les deux cases doivent être dans le même groupe évalué (choix volontairement simple : un
+ * couple réparti sur deux groupes ne bénéficie pas de la tolérance).
+ */
+function swappedPairs(
+  inPlay: readonly SlotId[],
+  s: SaveState,
+  c: CompiledCase,
+): [SlotId, SlotId][] {
+  const pairs: [SlotId, SlotId][] = [];
+  const used = new Set<SlotId>();
+  for (const a of inPlay) {
+    if (used.has(a) || isSlotCorrect(a, s, c)) continue;
+    for (const b of inPlay) {
+      if (b === a || used.has(b) || isSlotCorrect(b, s, c)) continue;
+      if (!areInterchangeable(a, b, c)) continue;
+      if (guessMatches(own(s.tree, a), b, c) && guessMatches(own(s.tree, b), a, c)) {
+        pairs.push([a, b]);
+        used.add(a);
+        used.add(b);
+        break;
+      }
+    }
+  }
+  return pairs;
+}
+
+/** Cases correctes d'un groupe (directes puis paires inversées), sans doublon. */
+function groupCorrect(
+  group: ValidationGroup,
+  s: SaveState,
+  c: CompiledCase,
+): { correct: SlotId[]; swap: [SlotId, SlotId][] } {
+  const inPlay = inPlaySlots(group, s, c);
+  const direct = inPlay.filter((id) => isSlotCorrect(id, s, c));
+  const swap = swappedPairs(inPlay, s, c);
+  return { correct: [...direct, ...swap.flat()], swap };
+}
+
+/**
+ * Échange les fiches des couples inversés (pur : nouvel arbre, nouvel objet). Une paire
+ * inconnue ou incomplète est échangée telle quelle (une fiche absente reste absente).
+ */
+export function swapGuesses(
+  tree: Readonly<Record<SlotId, SlotGuess>>,
+  swap: readonly (readonly [SlotId, SlotId])[],
+): Record<SlotId, SlotGuess> {
+  const next: Record<SlotId, SlotGuess> = { ...tree };
+  for (const [a, b] of swap) {
+    const ga = own(tree, a);
+    const gb = own(tree, b);
+    if (gb === undefined) delete next[a];
+    else next[a] = gb;
+    if (ga === undefined) delete next[b];
+    else next[b] = ga;
+  }
+  return next;
 }
 
 /** Cases en jeu d'un groupe : complètes, visibles, non verrouillées. */
@@ -120,7 +205,7 @@ export function inPlaySlots(group: ValidationGroup, s: SaveState, c: CompiledCas
 export function groupCorrectCount(group: GroupId, s: SaveState, c: CompiledCase): number {
   const g = c.groups.find((x) => x.id === group);
   if (!g) return 0;
-  return inPlaySlots(g, s, c).filter((id) => isSlotCorrect(id, s, c)).length;
+  return groupCorrect(g, s, c).correct.length;
 }
 
 /** Seuil du groupe : `min(threshold, cases non verrouillées du groupe)` (cachées comprises). */
@@ -148,16 +233,18 @@ export function validate(
 ): ValidationResult {
   const lock: SlotId[] = [];
   const groups: GroupId[] = [];
+  const swap: [SlotId, SlotId][] = [];
   for (const g of c.groups) {
     if (opts.groups && !opts.groups.includes(g.id)) continue;
     if (opts.at !== undefined && isSuspended(opts.guard, g.id, opts.at)) continue;
     const threshold = groupThreshold(g, s);
     if (threshold <= 0) continue;
-    const correct = inPlaySlots(g, s, c).filter((id) => isSlotCorrect(id, s, c));
-    if (correct.length >= threshold) {
-      lock.push(...correct);
+    const r = groupCorrect(g, s, c);
+    if (r.correct.length >= threshold) {
+      lock.push(...r.correct);
       groups.push(g.id);
+      swap.push(...r.swap);
     }
   }
-  return { lock, groups };
+  return swap.length > 0 ? { lock, groups, swap } : { lock, groups };
 }
