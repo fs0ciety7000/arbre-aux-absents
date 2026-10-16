@@ -51,12 +51,17 @@ import {
   type LocaleLevel,
 } from './locales';
 import { diffProjection, figureAssets, structuralProjection, unitOfPath } from './projection';
-import { blockTexts, inlineText } from './markdown';
+import { blockTexts, collectMarks, inlineText } from './markdown';
+import { MIN_CANDIDATE_RATIO, candidateRatios, markAltIssues, markIssues } from './marks';
 import { COMMON_SECTION, splitSections } from './sections';
 import { mentions, prepareCase, type CompleteCase, type PreparedCase } from './prepare';
 import { normalize } from './shared';
 import { solve, type SolverResult } from './solver';
+import { MIN_QUERY_LENGTH } from '@arbre/engine';
 import { checkSvg, countElements, optimizeSvg } from './svg';
+
+/** Longueur minimale d'un terme normalisé (= `MIN_QUERY_LENGTH` du moteur) : en deçà, jamais cherchable. */
+export const MIN_TERM_LENGTH = MIN_QUERY_LENGTH;
 
 /** Budgets gzip (octets) et DOM (règle 9). */
 export const BUDGETS = {
@@ -745,6 +750,12 @@ function checkCase(
     for (const id of persons.keys()) visit(id, []);
   }
 
+  // ---- Marques et enregistrements (§3.7 bis) : règles 1 (descriptions), 2 (::mark, recording), 3 (cases)
+  for (const m of markIssues(c)) {
+    if (m.severity === 'error') issues.error(m.rule, f(m.file), m.message);
+    else issues.warn(m.rule, f(m.file), m.message);
+  }
+
   // ---- Règle 4 : auto-dépendances
   const selfRef = (
     file: string,
@@ -803,6 +814,13 @@ function checkCase(
           `mot-clé « ${k.id} » : terme « ${t} » vide après normalisation`,
         );
         continue;
+      }
+      if (n.length < MIN_TERM_LENGTH) {
+        issues.error(
+          5,
+          f('progression.json'),
+          `mot-clé « ${k.id} » : terme « ${t} » (« ${n} ») de moins de ${MIN_TERM_LENGTH} caractères, jamais cherchable`,
+        );
       }
       if (local.has(n))
         issues.warn(5, f('progression.json'), `mot-clé « ${k.id} » : terme « ${t} » en double`);
@@ -914,6 +932,18 @@ function verifyCase(
     issues.error(6, f('progression.json'), 'aucune fin vraie à 100 %');
   }
   checkClaimAccess(c, prep, full.compiled, result, issues);
+  // Candidats par type (AFFAIRE-3 §1.3) : seulement pour une affaire à cases Marque.
+  const ratios = candidateRatios(full.compiled, result);
+  if (ratios.some((r) => r.kind === 'mark')) {
+    for (const r of ratios) {
+      if (r.ratio < MIN_CANDIDATE_RATIO)
+        issues.warn(
+          6,
+          f('family.json'),
+          `${r.kind === 'mark' ? 'marques' : 'visages'} collectables : ${r.candidates} pour ${r.slots} case(s) (${r.ratio.toFixed(2)} < ${MIN_CANDIDATE_RATIO})`,
+        );
+    }
+  }
 
   // ---- Règle 9 : budgets
   for (const p of Object.values(full.compiled.portraits)) {
@@ -1276,7 +1306,16 @@ function checkCaseLocale(
     );
   }
 
+  // Descriptions des marques dans la langue (gabarit, longueur, doublons).
+  // Seules les descriptions traduites (une description manquante relève de la parité).
+  const translatedAlts = loc.case.family.portraits.filter(
+    (p) => t?.json.family?.portraits[p.id]?.alt !== undefined,
+  );
+  for (const m of markAltIssues(translatedAlts, locale, 'family.json'))
+    emit(at('family.json', m.message, 'marks'), m.severity === 'warning');
+
   // 12.3 : mots-clés liés (après liens automatiques) et figures identiques au FR ; balisage.
+  const brokenMarks = new Set<string>();
   for (const id of loc.translatedDocuments) {
     const fr = cc.prep.documents.get(id);
     const tr = lprep.documents.get(id);
@@ -1294,6 +1333,18 @@ function checkCaseLocale(
           'figures',
         ),
       );
+    const fm = collectMarks(fr.body);
+    const tm = collectMarks(tr.body);
+    if (fm.join('|') !== tm.join('|')) {
+      brokenMarks.add(id);
+      emit(
+        at(
+          unit,
+          `marques différentes du FR (mêmes ids, même ordre exigés) : ${fm.join(', ') || '—'} / ${tm.join(', ') || '—'}`,
+          'marks',
+        ),
+      );
+    }
     const a = markupCounts(fr.body);
     const b = markupCounts(tr.body);
     if (a.redacted !== b.redacted)
@@ -1377,6 +1428,8 @@ function checkCaseLocale(
     for (const d of diffProjection(structuralProjection(a), structuralProjection(b))) {
       const m = /^documents\.([^.]+)\.(keywords|figures)$/.exec(d.path);
       if (m && loc.translatedDocuments.has(m[1]!)) continue; // déjà signalé (12.3)
+      const mk = /^documents\.([^.]+)\.(marks|reveals)/.exec(d.path);
+      if (mk && brokenMarks.has(mk[1]!)) continue; // déjà signalé (12.3, marques)
       const e = /^endings\.([^.]+)\.sections/.exec(d.path);
       if (e && brokenSections.has(e[1]!)) continue; // déjà signalé (12.4)
       if (seen.has(d.path)) continue;

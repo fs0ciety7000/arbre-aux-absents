@@ -5,6 +5,7 @@
  * est `contentHash` (identique entre langues, D4).
  */
 import type { Block, CompiledCase } from '@arbre/contract';
+import { collectMarks } from './markdown';
 
 /** Assets des figures d'une suite de blocs, dans l'ordre. */
 export function figureAssets(blocks: Block[]): string[] {
@@ -17,6 +18,11 @@ export function figureAssets(blocks: Block[]): string[] {
   };
   walk(blocks);
   return out;
+}
+
+function marksOf(body: Block[]): { marks?: string[] } {
+  const marks = collectMarks(body);
+  return marks.length ? { marks } : {};
 }
 
 function omit<T extends object, K extends string>(o: T, keys: readonly K[]): Omit<T, K> {
@@ -50,6 +56,8 @@ export function structuralProjection(c: CompiledCase): Record<string, unknown> {
       illustration: d.illustration ? { file: d.illustration.file } : null,
       keywords: sorted(d.keywords),
       figures: figureAssets(d.body),
+      // Marques du texte, ordre et répétitions compris (absent sans marque : empreinte inchangée).
+      ...marksOf(d.body),
     })),
     keywords: mapValues(c.keywords, (k) => omit(k, ['label'] as const)),
     searchKeywords: sorted(Object.values(c.searchIndex)),
@@ -59,6 +67,7 @@ export function structuralProjection(c: CompiledCase): Record<string, unknown> {
       id: p.id,
       file: p.file,
       hasCaption: p.caption !== undefined,
+      ...(p.kind ? { kind: p.kind } : {}),
     })),
     occupations: sorted(Object.keys(c.occupations)),
     places: mapValues(c.places, (p) => ({

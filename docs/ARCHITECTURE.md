@@ -119,7 +119,7 @@ export interface Person {
 export interface Occupation { id: OccupationId; label: string }
 export type PortraitKind = 'face' | 'mark'; // PORTRAIT_KINDS ; absent = 'face' (affaires 1 et 2 inchangées)
 export interface Portrait { id: PortraitId; file: string /* portraits/<id>.svg */; alt: string; caption?: string;
-  kind?: PortraitKind } // marque : `alt` = description verbale normalisée (gabarit, §3.7 règle 13)
+  kind?: PortraitKind } // marque : `alt` = description verbale normalisée (gabarit, §3.7 bis)
 export interface Family { persons: Person[]; occupations: Occupation[]; portraits: Portrait[] }
 
 // tree.json (level-designer)
@@ -507,21 +507,29 @@ sans rien révéler. Les calques de langue reprennent les mêmes marques dans le
 `content:build` écrit les affaires triées par `(meta.order ?? ∞, id)` ; tri des listes par
 `localeCompare(…, locale)` dans chaque langue.
 
-### 3.7 bis Règle 13 : marques et enregistrements (affaire 3)
+### 3.7 bis Marques et enregistrements (affaire 3, `packages/content-tools/src/marks.ts`)
 
-Erreurs (règle 2 ou 3 selon l'objet) :
-- `::mark[id]` vers un portrait existant de `kind: 'mark'` ;
-- réponses d'une case (`portrait` et `altPortraits` de sa personne) et `claim.portrait` du même type
-  que `portraitKind` (absent = `face`) ;
-- une pièce `recording` n'a ni `reveals.portraits` ni `::mark` (une marque dite n'est pas montrée) ;
-- `alt` d'une marque : ≤ 110 caractères ; s'il suit le gabarit (contient « ; ») : vocabulaire fermé
-  et ordre tête → pied → grains → talon (`markDescriptionProblems`, FR et EN) ; deux marques de même
-  description. Une marque sans « ; » (dessin sans code : marque de mer, croix, emblème) est une
-  description libre : avertissement.
+Erreurs :
+- **règle 2** : `::mark[id]` (pièces et fins) vers un portrait existant de `kind: 'mark'` ; une pièce
+  `recording` n'a ni `reveals.portraits` ni `::mark` (une marque dite n'est pas montrée) ;
+- **règle 3** : réponses d'une case (`portrait` et `altPortraits` de sa personne) et `claim.portrait`
+  du même type que `portraitKind` (absent = `face`) ;
+- **règle 1** : `alt` d'une marque ≤ 110 caractères ; s'il suit le gabarit (contient « ; ») :
+  vocabulaire fermé et ordre tête → pied → grains → talon (`markDescriptionProblems`) ; deux marques
+  de même description. Une marque sans « ; » (dessin sans code : marque de mer, croix, emblème) est
+  une description libre : **avertissement**. Rejoué par langue sur les descriptions traduites
+  (règle 12 ; vocabulaire anglais **provisoire** : `Fork`/`Eye`/`Arrow`/`Gallows` ou noms insulaires,
+  `foot: plain | barred | notch on the left | notch on the right`, `, then`, `one grain | two grains`,
+  `heel: small …`) ;
+- **règle 12.3** : par pièce traduite, mêmes `::mark` dans le même ordre que le FR (la projection
+  structurelle porte `marks` quand une pièce en a, et `kind` des portraits).
 
-Règle 5 (mots-clés) : un terme normalisé de **moins de 2 caractères** (jamais cherchable) est une
-erreur ; deux mots-clés au même terme normalisé l'étaient déjà. Rapport du solveur : candidats par
-type (marques / cases à marque, visages / cases à visage), avertissement sous 1,5 pour le type marque.
+Règle 5 (mots-clés) : un terme normalisé de **moins de 2 caractères** (`MIN_QUERY_LENGTH`, jamais
+cherchable) est une erreur, aussi dans les calques ; deux mots-clés au même terme normalisé l'étaient
+déjà. Codes de marque : notation « LX » (`docs/level/longuegreve.md` §5.2), aucun changement de
+`normalize`. Règle 6 : pour une affaire à cases Marque, candidats collectables par type (marques /
+cases à marque, visages / cases à visage) ; **avertissement** sous 1,5 ; détail dans le rapport du
+solveur.
 
 ### 3.8 Journal des versions (« Nouveautés »)
 

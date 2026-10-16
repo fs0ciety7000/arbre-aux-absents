@@ -2,6 +2,7 @@
 import type { Locale } from '@arbre/contract';
 import type { CaseCheck, CheckResult } from './check';
 import { formatIssue, RULE_TITLES, type RuleId } from './issues';
+import { candidateRatios, MIN_CANDIDATE_RATIO } from './marks';
 import type { SolverAction, SolverResult } from './solver';
 
 function action(a: SolverAction): string {
@@ -82,6 +83,19 @@ function caseSection(c: CaseCheck, locale: Locale): string[] {
   const l = c.locales[locale];
   if (!l?.solve) return [...out, 'Non résolue (erreurs de structure, voir plus haut).', ''];
   out.push(...solveSection('Édition complète', l.solve));
+  if (l.full) {
+    const ratios = candidateRatios(l.full.compiled, l.solve);
+    if (ratios.some((r) => r.kind === 'mark')) {
+      out.push('**Candidats par type de champ** (AFFAIRE-3 §1.3)', '');
+      for (const r of ratios) {
+        const flag = r.ratio < MIN_CANDIDATE_RATIO ? ` (< ${MIN_CANDIDATE_RATIO})` : '';
+        out.push(
+          `- ${r.kind === 'mark' ? 'Marques' : 'Visages'} : ${r.candidates} pour ${r.slots} case(s), ${r.ratio.toFixed(2)}${flag}`,
+        );
+      }
+      out.push('');
+    }
+  }
   if (l.demoSolve) out.push(...solveSection('Démo', l.demoSolve));
   return out;
 }

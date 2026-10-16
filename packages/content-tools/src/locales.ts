@@ -28,6 +28,7 @@ import type {
 import { linkTermsOf, type CompleteCase, type PrepareFallback } from './prepare';
 import { parseSvgElements } from './svg';
 import { normalize } from './shared';
+import { MIN_QUERY_LENGTH } from '@arbre/engine';
 
 /** Unité « affaire » : problème d'ensemble (solveur, projection hors fichier). */
 export const CASE_UNIT = '(affaire)';
@@ -559,6 +560,15 @@ export function termProblems(
         );
         continue;
       }
+      if (n.length < MIN_QUERY_LENGTH)
+        out.push(
+          problem(
+            dir,
+            unit,
+            `mot-clé « ${k.id} » : terme « ${term} » de moins de ${MIN_QUERY_LENGTH} caractères, jamais cherchable`,
+            'terms',
+          ),
+        );
       const o = owner.get(n);
       if (o && o !== k.id)
         out.push(problem(dir, unit, `terme « ${n} » partagé par « ${o} » et « ${k.id} »`, 'terms'));

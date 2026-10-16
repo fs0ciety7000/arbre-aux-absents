@@ -4,7 +4,8 @@
  * Admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, listes (`-`, `*`, `+`, `1.`), tableaux
  * pipe, `## titres` et `### titres`, `![alt](illustrations/x.svg "légende")` seul sur sa ligne,
  * `[[texte|keyword-id]]`, `::hand[…]`, `::stamp[…]` et `::signature[…]` seuls sur leur ligne,
- * `::redacted[6]`, `---`, échappement `\x` d'un signe de ponctuation.
+ * `::redacted[6]`, `::mark[<portraitId>]` (hors lien `[[…]]`), `---`, échappement `\x` d'un signe
+ * de ponctuation.
  * Tout le reste (HTML, entités, liens et URL, code, listes imbriquées…) est une erreur localisée.
  */
 import type { Block, Inline } from '@arbre/contract';
@@ -481,6 +482,27 @@ class InlineParser {
             out.push({ t: 'redacted', length: n });
             continue;
           }
+          if (name === 'mark') {
+            flush();
+            const r = /^::mark\[([^\]\n]*)\]/.exec(s.slice(this.pos));
+            if (!r) {
+              this.fail(start, '::mark[…] non refermé');
+              this.pos = s.length;
+              continue;
+            }
+            this.pos += r[0].length;
+            const portrait = r[1]!.trim();
+            if (!KEBAB_CASE.test(portrait)) {
+              this.fail(start, `::mark[…] attend un identifiant de portrait : « ${portrait} »`);
+              continue;
+            }
+            if (inRef) {
+              this.fail(start, '::mark[…] interdit dans un lien [[…]]');
+              continue;
+            }
+            out.push({ t: 'mark', portrait });
+            continue;
+          }
           if (name === 'stamp' || name === 'signature') {
             this.fail(start, `::${name}[…] doit occuper sa propre ligne`);
           } else {
@@ -570,6 +592,52 @@ export function inlineText(nodes: Inline[]): string {
     else s += inlineText(n.c);
   }
   return s;
+}
+
+/** Conteneurs de texte (suites en ligne) d'une suite de blocs, dans l'ordre du document. */
+export function inlineContainers(blocks: Block[]): Inline[][] {
+  const out: Inline[][] = [];
+  const walk = (bs: Block[]) => {
+    for (const b of bs) {
+      switch (b.t) {
+        case 'p':
+        case 'signature':
+        case 'h':
+          out.push(b.c);
+          break;
+        case 'quote':
+          walk(b.c);
+          break;
+        case 'list':
+          out.push(...b.items);
+          break;
+        case 'table':
+          out.push(...b.head);
+          for (const row of b.rows) out.push(...row);
+          break;
+        case 'figure':
+          if (b.caption) out.push(b.caption);
+          break;
+        default:
+          break;
+      }
+    }
+  };
+  walk(blocks);
+  return out;
+}
+
+/** Portraits des `::mark[…]` d'une suite de blocs, dans l'ordre d'apparition (répétitions comprises). */
+export function collectMarks(blocks: Block[]): string[] {
+  const out: string[] = [];
+  const inl = (ns: Inline[]) => {
+    for (const n of ns) {
+      if (n.t === 'mark') out.push(n.portrait);
+      else if (n.t !== 'text' && n.t !== 'redacted') inl(n.c);
+    }
+  };
+  for (const c of inlineContainers(blocks)) inl(c);
+  return out;
 }
 
 /** Texte brut d'un bloc (pour les recherches de noms et les canaris). */

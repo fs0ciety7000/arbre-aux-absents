@@ -5,7 +5,7 @@
 import type { Block, DocumentFrontmatter, KeywordId } from '@arbre/contract';
 import { autolinkBlocks, collectRefs, prepareTerms, type LinkTerm, type Overlap } from './autolink';
 import type { SourceCase } from './load';
-import { blockTexts } from './markdown';
+import { blockTexts, collectMarks } from './markdown';
 import { splitSections, type SourceSection } from './sections';
 import { normalize } from './shared';
 
@@ -15,7 +15,10 @@ export type CompleteCase = SourceCase &
 export interface PreparedDocument {
   id: string;
   file: string;
+  /** Frontmatter dont `reveals.portraits` inclut les marques du texte (`withMarks`). */
   frontmatter: DocumentFrontmatter;
+  /** Portraits des `::mark[…]` du corps, ordre d'apparition, sans doublon. */
+  marks: string[];
   /** Corps après liens automatiques. */
   body: Block[];
   /** Mots-clés référencés (manuels et automatiques), ordre d'apparition. */
@@ -71,10 +74,12 @@ export function prepareCase(c: CompleteCase, fallback?: PrepareFallback): Prepar
     const linked = autolinkBlocks(d.body, fallback?.documents.has(d.id) ? fallback.terms : terms);
     for (const o of linked.overlaps) overlaps.push({ file: d.file, overlap: o });
     const text = [d.frontmatter.title, ...blockTexts(linked.blocks)].join('\n');
+    const marks = [...new Set(collectMarks(d.body))];
     documents.set(d.id, {
       id: d.id,
       file: d.file,
-      frontmatter: d.frontmatter,
+      frontmatter: withMarks(d.frontmatter, marks),
+      marks,
       body: linked.blocks,
       keywords: collectRefs(linked.blocks),
       norm: ` ${normalize(text)} `,
@@ -98,6 +103,17 @@ export function prepareCase(c: CompleteCase, fallback?: PrepareFallback): Prepar
     });
   }
   return { src: c, terms, documents, endings, overlaps };
+}
+
+/**
+ * Frontmatter dont `reveals.portraits` inclut les marques du texte (ARCHITECTURE §3.6) : union,
+ * portraits du frontmatter d'abord, puis marques dans l'ordre d'apparition. Inchangé sans marque.
+ */
+export function withMarks(fm: DocumentFrontmatter, marks: readonly string[]): DocumentFrontmatter {
+  const declared = fm.reveals?.portraits ?? [];
+  const added = marks.filter((m) => !declared.includes(m));
+  if (added.length === 0) return fm;
+  return { ...fm, reveals: { ...fm.reveals, portraits: [...declared, ...added] } };
 }
 
 /** Vrai si un texte préparé (`norm`, entouré d'espaces) contient l'un des noms donnés. */

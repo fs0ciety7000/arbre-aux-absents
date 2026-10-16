@@ -311,6 +311,7 @@ export function compileCase(
       };
     }
     if (s.claim) slot.claimedGuess = claimedGuess(s.claim);
+    if (s.portraitKind === 'mark') slot.portraitKind = 'mark';
     if (revealedBy !== undefined && revealedBy !== true) slot.revealedBy = revealedBy;
     slots[s.id] = slot;
   }
