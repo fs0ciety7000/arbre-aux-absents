@@ -99,7 +99,7 @@ les affaires 1 et 2 (Rosine Ferrandot, C. Sauge, le Lecteur, la *Duchesse-d'Ambr
   procès-verbal d'incendie.
 - Rien des affaires 1 et 2 n'y est expliqué ni dévoilé.
 - **Codes en clair** : seulement OF-05 (main de Marest, codes de morts), OF-06 (`A-d`), CN-01 (`A-g`,
-  `A-d`) et CN-02 (`A-b`, `A-b-g`, `O-g-g`). Jamais ailleurs, ni dans les fins ni dans l'épilogue : un
+  `A-d`) et CN-02 (`A-b`, `A-b-g` ; `O-g-g` retiré en v1.0). Jamais ailleurs, ni dans les fins ni dans l'épilogue : un
   code écrit trop tôt ruine la déduction (`09-marques.md` §2).
 - **Ce que savait Victoire** : ce que Josse a dit en 1909, ce qu'elle a vu sur le quai en 1908, ce que
   la cheminée relevée lui a fait soupçonner en 1964 ; elle ne nomme jamais Blaise
@@ -117,6 +117,12 @@ sections de fin conditionnées par les réponses au rapport ; « Rendre l'île �
 déshérence ; positions de carte définitives (`08-lieux.md` §1) ; dix ajustements du §12 de
 `docs/level/longuegreve.md` reportés (navette d'Ursule, talons sans légende, BD-02, exemples de codes,
 CP-01, calendrier, leurres de métier, PH-09, mentions exigées, conditions).
+
+**Rédaction v1.0 (16 oct. 2026)** : 109 pièces + EP-01 et EP-02 rédigées dans
+`content/cases/marques-de-longuegreve/` (FR), 4 fins, 117 aides, 21 succès ; `O-g-g` retiré de CN-02
+(code caché) ; « Lire la grève » = recherche du code caché de Blaise ; visages hors case versés comme
+leurres. Détail : `07-coherence.md` §7. L'affaire reste **en brouillon** (sans `case.json`) tant que la
+traduction anglaise, exigée par la règle 12 (`en` au statut `ready`), n'est pas faite.
 
 **Restent ouvertes** (à l'humain) :
 

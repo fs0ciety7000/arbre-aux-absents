@@ -47,7 +47,7 @@ la *Duchesse-d'Ambre*). Par temps clair, on voit l'île depuis la jetée des Cab
 |---|---|---|---|
 | **la Longue Grève** | côte ouest de Longuegrève | plage (libellé possible) | Velmarchois transparent ; a donné son nom à l'île. |
 | **la pointe du Feu** | nord de l'île | pointe (pièces) | Le feu de 1872. |
-| **les quatre lanières** | l'île | parcellaire (pièces) | Les lots de 1868, de la falaise à la grève. |
+| **les quatre lanières** | l'île | parcellaire (pièces) | Les lots de 1868, bandes est-ouest de la falaise à la grève. **Du nord au sud** (plan RG-06, choix du `cartographe`) : Lestaud (lot 4 : pointe du Feu, four commun), Goémard (lot 1 : hameau, puits), Oyard (lot 2 : chapelle, cimetière, cale), Cormaud (lot 3 : chantier de barques, prés salés). |
 | **la passe des Cabanes** | entre l'île et la côte | chenal (pièces) | Le pilote Clovis Oyard la connaissait « à la couleur ». |
 | **quai du Môle**, **église du Môle**, **hôtel Garnaud** | Port-Sénane | rue, église, maison (pièces) | Quai du Môle déjà dans les pièces de l'affaire 1. L'hôtel Garnaud (1898) est le siège du Comptoir. |
 | **quai des Messageries**, **librairie Ferlay** | Port-Sénane | rue, boutique (pièces) | Quai déjà dans l'affaire 1. |

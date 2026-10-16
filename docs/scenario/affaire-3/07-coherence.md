@@ -28,7 +28,7 @@
       appui. Chaque marque de case a **au moins deux autographes** : la contre-épreuve « une pièce
       retirée » passe (§1, `09-marques.md` §4).
 - [x] **Codes en clair** : seulement OF-05 (codes de morts, main de Marest), OF-06 (`A-d`), CN-01
-      (`A-g`, `A-d`) et CN-02 (`A-b`, `A-b-g`, `O-g-g`). Aucune autre pièce, fin ni épilogue n'en écrit
+      (`A-g`, `A-d`) et CN-02 (`A-b`, `A-b-g` ; v1.0 : `O-g-g` retiré). Aucune autre pièce, fin ni épilogue n'en écrit
       un. Un code écrit après un nom est un `::mark` dessiné, jamais du texte.
 - [x] **Aucun code dans un id** : les ids de portrait sont neutres (`lg-portrait-xxxxxx`). La table du
       `cartographe` fait foi (`art/tools/portraits/ids-marques-de-longuegreve.json`). Les noms de
@@ -349,9 +349,31 @@ Garnaud, mais pas l'un de l'autre : S4 peut se faire par LT-01, S2 sans BD-04.
   niveau A.
 - **PH-09** : passe par PV-02 (porte B) ; seule la croix de Clovis y est lisible.
 
+### Résolus en v1.0 (rédaction, 16 oct. 2026)
+
+- **`O-g-g` retiré de CN-02** (décision de l'orchestrateur) : l'aviron d'Elzéar y est relevé (dessin),
+  sans cote ; `code-o-g-g` devient un mot-clé caché. Points ouverts 1 et 2 ci-dessous : clos.
+- **« Lire la grève »** = `searched` sur le code caché `y-d` (Blaise).
+- **CN-01** : quatorze croix relevées, cénotaphe d'Ange compris, « Aurore » deux fois (comme le
+  dessin) ; les croix de sapin de Médard et d'Anne, illisibles, ne sont pas relevées (BD-05, CN-01).
+- **CN-03 et PV-05** : « Mlle Garnaud » (Edmée n'est pas mariée).
+- **Ténier** : patron de la vedette *Trident* (RP-03), visage-leurre sur PH-03 ; aucun abbé Ténier.
+- **Visages hors case** (Blaise 35, Benoît 47, Noël 52, Honorine 48, Jacquette 56, Reine 58) : versés à
+  la galerie comme leurres, révélés par PH-01, PH-03, PH-05, PH-06 et CP-01.
+- **Pas d'illustration** pour OF-08 ni EP-02 (non commandées) : le portrait de Victoire et les visages
+  d'EP-02 passent par `reveals.portraits`.
+- **Faits ajoutés par la rédaction** (compatibles avec 03) : desservant avant Rabier, l'abbé A. Vidrac ;
+  après lui (1895), l'abbé Lucas ; Delphine Lestaud quitte l'école en 1887 (« retirée pour le four ») ;
+  Léandre Garnaud né le 12 mars 1880 ; mère de Rose : Louise Tanguy ; Clément × Germaine Rivaud
+  (3 mai 1923), mère d'Aline ; Rose × Jules Pellerin, mareyeur (11 juillet 1931) ; Me Gilbert Lhermet,
+  petit-fils d'Aristide, notaire en 1977 ; Ginette Sollier, employée des postes ; adjoint Dumesnil et
+  maire Corre (état civil de Port-Sénane) ; fonderie Lemerle (cloche) ; refus de vente de 1905 : offre de
+  8 000 fl. ; coffre n° 108 : loyer de 600 fl. jusqu'au 5 juin 2008 ; concession : redevance 400 fl.,
+  puis 1 800 Fn (1958).
+
 ### Ouverts
 
-1. **Avertissements de la règle 5** de `content:check` (un terme caché présent en sous-chaîne dans le
+1. ~~**Avertissements de la règle 5**~~ (clos en v1.0) de `content:check` (un terme caché présent en sous-chaîne dans le
    texte normalisé d'une pièce).
    - La cote `O-g-g`, écrite en clair dans CN-02, contient « o g », le code caché de Médard : la pièce
      déclenchera un avertissement.

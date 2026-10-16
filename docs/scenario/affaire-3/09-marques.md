@@ -99,8 +99,8 @@ distinctes n'ont jamais la même forme normalisée par le Lecteur (`A-b-tP` ≠ 
 des chefs et par « Fourche », « Œil », « Flèche », « Potence ».
 
 **Codes cherchables (7 mots-clés, `autolink: false`)** : `A-d` (exemple d'OF-06), `A-b` (« Flèche
-barrée »), `O-g-g`, et quatre **cachés** que le joueur doit déduire : `Y-d` (Blaise), `O-g-tY`
-(Jacquette), `Y-g` (Josse), `O-g` (Médard). Détail, résultats et conditions :
+barrée »), et cinq **cachés** que le joueur doit déduire : `O-g-g` (Elzéar, caché depuis la v1.0), `Y-d`
+(Blaise), `O-g-tY` (Jacquette), `Y-g` (Josse), `O-g` (Médard). Détail, résultats et conditions :
 `docs/level/longuegreve.md` §5.3.
 
 **Règle d'écriture des pièces** (la déduction en dépend) :
@@ -108,7 +108,7 @@ barrée »), `O-g-g`, et quatre **cachés** que le joueur doit déduire : `Y-d` 
   à côté du nom qu'elle signe, par l'inline `::mark[<id de portrait>]`, avec l'id **neutre** (§4) ;
 - un code n'est écrit en clair que dans quatre pièces : **OF-05** (main de Marest, morts seulement),
   **OF-06** (l'exemple `A-d` et la règle de transcription), **CN-01** (cotes LX `A-g`, `A-d` au
-  crayon) et **CN-02** (cotes `A-b`, `A-b-g`, `O-g-g`). Aucun autre, jamais un code caché ni un code
+  crayon) et **CN-02** (cotes `A-b`, `A-b-g` ; v1.0 : plus d'`O-g-g`). Aucun autre, jamais un code caché ni un code
   qui le contient (`Y-g-g`, `Y-g-tP` contiennent `Y-g` ; voir 07 §7) ;
 - une bande (`recording`) ne contient ni code ni `::mark` : les marques y sont **dites** (« l'Œil et une
   entaille à gauche »).
@@ -176,7 +176,7 @@ elle fait foi sur la colonne « id neutre ».
 | `lg-m-a-b` | `lg-portrait-84365f` | `A-b` | Flèche ; pied barré | C19 Noël Cormaud | **R6** | RG-10, RG-15, RG-18, RG-24, LT-06, OB-01 (aviron), PH-10 (aviron) | CN-02 (cote `A-b`) |
 | `lg-m-a-b-t-p` | `lg-portrait-99db1b` | `A-b-tP` | Flèche ; pied barré ; talon : petite Potence | C20 Honorine Lestaud | R5 + R6 | RG-15, RG-18 | — |
 | `lg-m-p-pt2` | `lg-portrait-1b4408` | `P-pt-pt` | Potence ; pied lisse ; deux grains | C20 Honorine Lestaud (fille, 1876–1885) | R4 | RG-10 | — |
-| `lg-m-o-g-g` | `lg-portrait-9cb0f2` | `O-g-g` | Œil ; pied : entaille à gauche, puis entaille à gauche | C23 Elzéar Oyard | R3 | RG-15, RG-23, PH-10 (aviron) | CN-02 (cote `O-g-g`), BD-01, BD-06 (dites) |
+| `lg-m-o-g-g` | `lg-portrait-9cb0f2` | `O-g-g` | Œil ; pied : entaille à gauche, puis entaille à gauche | C23 Elzéar Oyard | R3 | RG-15, RG-23, PH-10 (aviron) | CN-02 (relevé sans cote), BD-01, BD-06 (dites) |
 
 Ernestine (née en 1857) a reçu sa marque en 1869, à douze ans. Les marques de fille des épouses de
 la génération I (avant 1868) ne sont pas documentées (R2) : leurs cases n'ont qu'une marque.

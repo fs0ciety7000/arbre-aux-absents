@@ -14,7 +14,7 @@
 > Codes de marque : **cote LX** (`09-marques.md` §2). Un code écrit après un nom (« Josse `Y-g` ») veut
 > dire que la marque est **dessinée** à cet endroit de la pièce (`::mark[<id neutre>]`) : **jamais écrite**.
 > Un code entre crochets dans « Débloque » (`[Y-d]`) est un mot-clé de code à déduire ; seuls `A-d`,
-> `A-b`, `O-g-g` s'écrivent en clair, dans OF-06, CN-01 et CN-02. « Porte A / B / C » : condition
+> `A-b` (et la cote non indexée `A-b-g`) s'écrivent en clair, dans OF-06, CN-01 et CN-02 (v1.0 : `O-g-g` n'est plus écrit). « Porte A / B / C » : condition
 > ajoutée à toutes les routes de la pièce (`docs/level/longuegreve.md` §4).
 > Identifiants de fichier en minuscules (`bd-03.md`).
 
@@ -230,7 +230,7 @@ Débloque : CN-02, PH-10 (déblocage direct).
 
 **BD-07** · `recording` · lun. 17 août 1964 · `port-senane` · bande LG-64-07, 15'15 — **« Au Comptoir »**,
 Edmée Garnaud (43 ans). L'histoire du Comptoir ; « mon grand-père était un enfant de Port-Sénane, un
-orphelin, il a commencé mousse » ; la marque de commerce, « un trident, Neptune, mon grand-père aimait
+orphelin, il a commencé mousse » ; la marque de commerce, « un trident, la fourche des pêcheurs de l'ancien temps, mon grand-père aimait
 la mer » ; « les gens de l'île ont été très bien traités » ; elle refuse que Marest relève la
 cheminée du salon. **Fausses pistes.**
 Mots-clés : Edmée Garnaud, Blaise Garnaud, Léandre Garnaud, Comptoir des Ambres, trident, mousse,
@@ -241,7 +241,7 @@ Débloque : « hôtel Garnaud », « trident ».
 ## CN — Carnet de relevés de Solange Marest (`note`, Fonds Marest)
 
 **CN-01** · `note` · 29 août 1964 · `longuegreve` · carnet n° 3, planche II — **« Cimetière de
-Longuegrève »** : treize croix relevées au calque (rendu « relevé », `::mark` comme **appui**), chacune
+Longuegrève »** : quatorze croix relevées au calque, cénotaphe compris (rendu « relevé », `::mark` comme **appui**), chacune
 avec le nom **tel que Victoire l'a dit**, au prénom ou au surnom : « Gervais, le garnaud », « Perrine »,
 « Clovis », « la vieille Toinette », « Siméon », « Ursule », « Lubin », « Apolline », « Jean », « Yves »,
 « la petite Marthe », « Ange (vide : cénotaphe) », « Aurore » ×2 (barre seule). **Aucun code de la main
@@ -259,20 +259,20 @@ avirons, caisses, linteaux »** (relevés au calque, `::mark` comme appui) : avi
 (« Reine, la fileuse ») ; tampon à pain (« Ernestine, le four ») ; couvercle de caisse (« Fulbert,
 goémon ») ; **navette à ramender** (« Ursule, les filets ; passée à Honorine ») ; linteau « `P-d` 1890
 S.B. » (« la maison du feu » : l'inscription est taillée dans la pierre). Au crayon, **cotes LX** du
-contrôle de 1977, sur trois avirons seulement : [[A-b]] (Noël), `A-b-g` (Lazare), [[O-g-g]] (Elzéar).
+contrôle de 1977, sur deux avirons seulement : [[A-b]] (Noël), `A-b-g` (Lazare). **v1.0 : l'aviron d'Elzéar est relevé (dessin) mais n'a pas de cote** ; `O-g-g` devient un code caché (`hiddenTerm`), à déduire.
 Les autres objets n'ont pas encore de cote (**jamais** `Y-g-g` ni `Y-g-tP` : ils contiennent le code
 caché de Josse).
 Mots-clés : aviron, fuseau, tampon à pain, navette, linteau, Cabanes d'Ambre, Gatien Goémard, Elzéar
 Oyard, Noël Cormaud, Lazare Cormaud, Reine Lestaud, Ernestine Oyard, Fulbert Lestaud, Benoît Lestaud,
-Flèche barrée ; `A-b`, `O-g-g` (liens posés à la main).
+Flèche barrée ; `A-b` (lien posé à la main).
 Prouve : C06, C10, C15, C16, C17, C19, C23 K (**relevé**, appui) ; leurres D6, D7.
-Rendu par : BD-06, « aviron », `A-b`, `O-g-g`.
+Rendu par : BD-06, « aviron », `A-b`, `O-g-g` (caché).
 
 **CN-03** · `note` · sept. 1964 · `port-senane` · carnet n° 3, planche IV — **« Port-Sénane : marques
 hors de l'île »** : l'étiquette du Comptoir (Fourche couronnée, « pas une marque d'île : gravure ») ; la
 cloche de Longuegrève à l'église du Môle (les quatre têtes, « gravure du fondeur ») ; **« Hôtel
 Garnaud, quai du Môle, manteau de la cheminée du salon, vu de la porte : [dessin] 1898. Fourche,
-entaille à droite. Qui ? Mme Garnaud : *un caprice de l'architecte*. »** Le code **n'est pas écrit** :
+entaille à droite. Qui ? Mlle Garnaud : *un caprice de l'architecte*. »** Le code **n'est pas écrit** :
 seul le dessin (`::mark`, appui) et sa description.
 Mots-clés : hôtel Garnaud, cheminée, cloche de Longuegrève, Comptoir des Ambres, quai du Môle.
 Prouve : C13 K (relevé, appui) ; D10, D11 ; **révèle C13** (`docs/level/longuegreve.md` §3).
@@ -959,7 +959,7 @@ Débloque : PH-11, PH-18.
 **PV-05** · `report` · mer. 19 oct. 1977 · `aubrelieu` · ORC, 77-0874 — **Audition de Solange Marest** :
 la campagne de 1964 ; la notation (« j'ai noté au point et à la barre ; vos machines veulent des
 lettres ») ; l'exception de la barre (« Victoire a insisté : *pas du sang, mais de la maison* ») ; la
-cheminée (« Mme Garnaud m'a fait raccompagner ») ; elle accepte l'expertise (EX-01). Accès : porte C,
+cheminée (« Mlle Garnaud m'a fait raccompagner ») ; elle accepte l'expertise (EX-01). Accès : porte C,
 et OF-05 lu.
 Mots-clés : Solange Marest, notation Marest, barre, enfant de mer, cheminée.
 Prouve : R6 (troisième annonce), R7.
@@ -1045,6 +1045,6 @@ Prouve : règles R2–R5 et R8 ; C03, C11, C12 (dites).
   Goémard » (RG-01, RG-02, en marge) ; « cahiers de la chapelle » (OF-07) ; « coffre » (LT-08, PV-01) ;
   « lanière Lestaud » (RG-02, BD-04) ; « Pélissart » (AN-01).
 - **Codes en clair** : seulement OF-05 (main de Marest, morts), OF-06 (`A-d`), CN-01 (`A-g`, `A-d`),
-  CN-02 (`A-b`, `A-b-g`, `O-g-g`). Aucun autre, dans aucune pièce, épilogue ni fin compris.
+  CN-02 (`A-b`, `A-b-g`). Aucun autre, dans aucune pièce, épilogue ni fin compris.
 - **Leurres de métier lisibles avant la case** : `armateur` (PR-03, niveau 0), `matelot` (PR-04,
   niveau 0 ; RG-13), `gardien-de-phare` (PV-03, niveau A).

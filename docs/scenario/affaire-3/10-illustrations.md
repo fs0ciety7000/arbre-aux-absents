@@ -303,11 +303,11 @@ des pièces de texte du `scenariste`). Aucune image ne porte de code en clair ai
 ## 8. Signalements et ce qui reste
 
 - **CN-01, nombre de croix** : le corpus dit « treize croix » mais sa liste en donne 14 (« Aurore »
-  deux fois). Dessiné : **14** relevés. À trancher par le `scenariste` (texte ou liste).
+  deux fois). Dessiné : **14** relevés. *Réglé (v1.0) : le texte dit « quatorze croix, dont un cénotaphe ».*
 - **CN-02 et `O-g-g`** : 06-corpus (l. 17 et vers l. 1048) et 09-marques disent encore que CN-02 note
-  `O-g-g`. Dessiné selon la v0.2 : pas d'`O-g-g` au crayon. Bible à aligner.
+  `O-g-g`. Dessiné selon la v0.2 : pas d'`O-g-g` au crayon. *Réglé (v1.0) : bible alignée.*
 - **RG-06, ordre des lanières** du nord au sud : Lestaud (safran), Goémard (sienne), Oyard (indigo),
-  Cormaud (ardoise). Choix du `cartographe`, à reporter dans `08-lieux.md`.
+  Cormaud (ardoise). Choix du `cartographe`. *Reporté dans `08-lieux.md` §2 et dans RG-06 (v1.0).*
 - **`P-d`** (OB-05, CN-02) ressemble à un « F » : propriété de la grammaire (Potence + entaille à
   droite). À garder en tête pour la lisibilité ; pas de changement proposé sans le `level-designer`.
 - **Aviron du portrait de Rose** (`lg-portrait-662e9a`) : porte déjà une petite marque `O-g-g` taillée

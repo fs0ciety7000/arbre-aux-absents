@@ -159,8 +159,8 @@ s'est appliquée. En haut, de la main de Marin : « Nous avons fait nos marques.
   se relisent autrement quand on sait.
 - Succès : `docs/game/AFFAIRE-3.md` §7 et `docs/level/longuegreve.md` §8 (« Lire la grève » sur un code
   **jamais écrit** : `O-g-tY`, `Y-g`, `O-g` ; « L'enfant de mer », « Le coffre 108 », « Pas de fièvre »).
-  Attention : `O-g-g` est écrit en clair dans CN-02 (cote LX) ; il ne peut plus servir seul à « Lire la
-  grève » sans la condition `not read` de ses pièces.
+  **Décidé (v1.0)** : « Lire la grève » = chercher le code caché de Blaise (`searched` sur le mot-clé `y-d`).
+  `O-g-g` n'est plus écrit dans CN-02 (relevé sans cote) et devient lui aussi un code caché.
 
 ## 6. Notes de service (décidé : `docs/game/AFFAIRE-3.md` §5)
 
