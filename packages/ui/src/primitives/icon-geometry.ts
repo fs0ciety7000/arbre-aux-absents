@@ -113,6 +113,11 @@ export const ICON_GEOMETRY = {
     'M12 11h.01',
     'M4.5 21.5a7.5 7.5 0 0 1 15 0',
   ],
+  /**
+   * Marque inconnue (v2.8, affaire 3) : le pied seul d'une marque, sans tête ; la crosse d'un
+   * point d'interrogation tient lieu de tête, le pied lui sert de point. Case à marque vide.
+   */
+  'unknown-mark': ['M9.4 5.2a2.6 2.6 0 1 1 3.8 2.3c-.75.4-1.2.95-1.2 1.8', 'M12 11.6v9.9'],
   star: ['M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z'],
   clock: [c(12, 13, 8), 'M12 9v4l2.5 2.5', 'M9 2h6'],
   info: [c(12, 12, 9), 'M12 11v6', 'M12 7.5h.01'],
@@ -165,6 +170,18 @@ export const ICON_GEOMETRY = {
     'M12 3c.6 4.5 2.5 6.4 7 7-4.5.6-6.4 2.5-7 7-.6-4.5-2.5-6.4-7-7 4.5-.6 6.4-2.5 7-7z',
     'M19 17v4',
     'M17 19h4',
+  ],
+  /**
+   * Bobine (v2.8, affaire 3) : bande magnétique sur sa bobine, trois jours et le moyeu, la bande
+   * qui file à droite. Pièce de type `recording` (« Enregistrement »).
+   */
+  reel: [
+    c(10.5, 10.5, 8),
+    c(10.5, 10.5, 1.5),
+    c(10.5, 6.1, 1.7),
+    c(14.3, 12.7, 1.7),
+    c(6.7, 12.7, 1.7),
+    'M10.5 18.5H21',
   ],
 } as const satisfies Record<string, readonly string[]>;
 

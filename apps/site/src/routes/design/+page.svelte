@@ -28,6 +28,7 @@
     KeyHint,
     LanguageSwitch,
     Loader,
+    MarkFrame,
     Ornament,
     ORNAMENT_NAMES,
     Panel,
@@ -114,6 +115,9 @@
   let declared = $state({ given: true, family: true, occupation: true });
   const anyDeclared = $derived(declared.given || declared.family || declared.occupation);
   let caseChoice = $state('hautcorvin');
+
+  // ── Case à marque (DESIGN §6.12) : marque de démonstration, hors de toute affaire ──
+  const demoMarkAlt = 'Fourche ; pied : entaille à droite ; un grain';
 
   // ── Langue et signalements (DESIGN §4.4, §9.35, §9.36, §13.8–13.10) ─
   // Toutes les primitives de la page lisent leurs textes par défaut dans ce contexte : basculer
@@ -368,6 +372,16 @@
 
 <div class="container sections">
   <!-- 1. Réglages -->
+  {#snippet demoMark()}
+    <svg class="art" viewBox="0 0 160 200" aria-hidden="true"
+      ><path class="paper" d="M0 0h160v200H0Z" /><path
+        class="ink"
+        stroke-width="7"
+        d="M80 70V172M80 70L58 36M80 70L102 36M80 118l12 -9"
+      /><circle class="ink" fill="currentColor" cx="80" cy="186" r="5" stroke-width="0" /></svg
+    >
+  {/snippet}
+
   <section aria-labelledby="d-settings" class="demo settings">
     <h2 id="d-settings">Réglages du joueur</h2>
     <p class="hint">
@@ -758,6 +772,60 @@
           y reviennent, sans rien en dévoiler.{/snippet}
       </CaseFolder>
     </CaseFolderGroup>
+  </section>
+
+  <section aria-labelledby="d-mark" class="demo">
+    <h2 id="d-mark">Case à marque et papier pelure (§6.12, §6.1)</h2>
+    <p class="hint">
+      Coins coupés à 45°, bande « Marque », trait <code>currentColor</code> (marque de
+      démonstration, hors affaire). Vide : le pied seul (<code>unknown-mark</code>). Tailles : case
+      72 px, vignette 96 px, en ligne 2,5 em. Essayer le contraste élevé et la taille du texte.
+    </p>
+    <div class="desk-demo desk-surface">
+      <div class="claim-cards">
+        <IndexCard title="Case à marque, vide" cote="II">
+          <span class="mark-row">
+            <MarkFrame tilt={-2} />
+            <span class="field">Prénom : ?</span>
+          </span>
+        </IndexCard>
+        <IndexCard title="Case à marque" cote="II">
+          <span class="mark-row">
+            <MarkFrame tilt={-2}>{@render demoMark()}</MarkFrame>
+            <span class="field">Prénom : Ervan<br />Métier : passeur</span>
+          </span>
+        </IndexCard>
+        <IndexCard title="Marque décrite" cote="II">
+          <span class="mark-row">
+            <MarkFrame tilt={-2}>{@render demoMark()}</MarkFrame>
+            <span class="field">Prénom : Ervan</span>
+          </span>
+          <span class="mark-desc">{demoMarkAlt}</span>
+        </IndexCard>
+      </div>
+    </div>
+    <div class="row mark-tiles">
+      <MarkFrame size="tile" alt={demoMarkAlt}>{@render demoMark()}</MarkFrame>
+      <MarkFrame size="tile" />
+      <p class="reading mark-inline">
+        Ervan Lostic <MarkFrame size="inline" alt={demoMarkAlt}>{@render demoMark()}</MarkFrame>,
+        passeur de la pointe, a fait sa marque.
+      </p>
+      <span class="row"
+        ><Icon name="unknown-mark" size="2rem" /><Icon name="reel" size="2rem" /><Icon
+          name="reel"
+          size="2rem"
+          wash
+        /></span
+      >
+    </div>
+    <PaperSheet tone="onion" fastener="clip" tilt={-0.6}>
+      <p class="kicker">Enregistrement · bande LG-00-01, face A · 19&#8217;30</p>
+      <p class="ink-type onion-demo">
+        <span class="num">[04&#8217;12]</span> <span class="caps">La conteuse.</span> Mon père ne
+        signait pas, il faisait sa marque. <em>[rire]</em>
+      </p>
+    </PaperSheet>
   </section>
 
   <!-- 6. Fiches -->
@@ -1576,6 +1644,21 @@
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
     gap: var(--space-8) var(--space-5);
     padding: var(--space-8) var(--space-5) var(--space-6);
+  }
+  .mark-row {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding-block: var(--space-2);
+  }
+  .mark-tiles {
+    align-items: center;
+  }
+  .mark-inline {
+    max-inline-size: 30ch;
+  }
+  .onion-demo {
+    margin: 0;
   }
   .claim-cards .field {
     display: block;

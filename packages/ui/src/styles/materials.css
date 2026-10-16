@@ -203,6 +203,24 @@
   min-inline-size: 0;
 }
 
+/* ── Case à marque (§6.12) : description verbale sous la marque ────────
+   Option « Décrire les marques sur l'arbre » (AFFAIRE-3 §1.6) : 12 px, deux lignes au plus, puis
+   points de suspension ; texte complet dans la fiche et le nom accessible. Décor : l'hôte le lit. */
+.mark-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  min-inline-size: 0;
+  font-family: var(--font-ui);
+  font-size: var(--mark-desc-text);
+  line-height: var(--leading-snug);
+  color: var(--ink-muted);
+  overflow-wrap: normal;
+  hyphens: auto;
+}
+
 /* ── Ruban adhésif mat (extrémités dentelées) ────────────────────── */
 .mat-tape {
   display: block;

@@ -31,6 +31,8 @@ export interface UiStrings {
     count: (n: number) => string;
   };
   claimTag: { label: string };
+  /** Bande de la case à marque (§6.12). */
+  mark: { label: string };
   decision: { stamp: string; unavailable: string };
   caseFolder: { lastDecision: string };
   loader: { label: string };
@@ -132,6 +134,7 @@ export const uiFr: UiStrings = {
     count: (n) => `${n} ${n > 1 ? 'candidats' : 'candidat'}`,
   },
   claimTag: { label: 'Déclaré' },
+  mark: { label: 'Marque' },
   decision: { stamp: 'Visé', unavailable: 'Indisponible : ' },
   caseFolder: { lastDecision: 'Dernière décision : ' },
   loader: { label: 'Chargement…' },
@@ -235,6 +238,7 @@ export const uiEn = {
     count: (n) => `${n} ${n === 1 ? 'candidate' : 'candidates'}`,
   },
   claimTag: { label: 'Declared' },
+  mark: { label: 'Mark' },
   decision: { stamp: 'Endorsed', unavailable: 'Unavailable: ' },
   caseFolder: { lastDecision: 'Last decision: ' },
   loader: { label: 'Loading…' },

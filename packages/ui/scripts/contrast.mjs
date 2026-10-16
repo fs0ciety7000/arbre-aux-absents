@@ -233,6 +233,8 @@ const night = (min) => [
   ['--art-ink-soft', ['--canvas'], min, 'légende sur le bureau'],
   ['--art-ink-faint', ['--canvas'], NT, 'trait fin sur le bureau (non-texte)'],
 ];
+/** Non-texte (contours, icônes) : 3:1, ou 7:1 en contraste élevé quand la spécification l'exige. */
+const gfx = (min) => (min === AAA ? AAA : NT);
 // v2 : matières du bureau (chemises, fiches, ruban, étiqueteuse, vermillon de marque)
 const materials = (min) => [
   ['--kraft-ink', ['--kraft'], min, 'texte sur kraft (chemise)'],
@@ -249,6 +251,18 @@ const materials = (min) => [
   ['--claim-edge', ['--card'], NT, 'bord en tirets de la case revendiquée (non-texte)'],
   ['--claim-edge', ['--claim-paper'], NT, 'filet du cartouche (non-texte)'],
   ['--claim-paper', ['--canvas'], NT, 'cartouche à cheval sur le bord, côté bureau (non-texte)'],
+  // Case à marque (§6.12) : en contraste élevé, le non-texte aussi passe à 7:1 (AFFAIRE-3 §1.7)
+  ['--mark-ink', ['--mark-paper'], min, 'trait de la marque (currentColor) sur papier'],
+  ['--mark-edge', ['--mark-paper'], gfx(min), 'contour à coins coupés, côté papier (non-texte)'],
+  ['--mark-edge', ['--card'], gfx(min), 'contour à coins coupés sur fiche bristol (non-texte)'],
+  ['--mark-band-ink', ['--mark-edge'], min, 'bande « Marque » : texte'],
+  ['--mark-empty', ['--mark-paper'], gfx(min), 'pied seul de la case vide (non-texte)'],
+  ['--mark-empty', ['--mark-grid', '--mark-paper'], gfx(min), 'pied seul sur le quadrillé'],
+  ['--ink-muted', ['--card'], min, 'description de la marque sur la case (.mark-desc)'],
+  ['--mark-paper', ['--canvas'], NT, 'fenêtre de la marque sur le bureau (non-texte)'],
+  ['--ink-type', ['--paper-onion'], min, 'machine à écrire sur papier pelure'],
+  ['--ink', ['--paper-onion'], min, 'texte sur papier pelure'],
+  ['--ink-muted', ['--paper-onion'], min, 'minutage, didascalies sur papier pelure'],
   ['--ink', ['--tape', '--paper'], min, 'texte sous ruban adhésif'],
   ['--label-tape-text', ['--label-tape'], min, 'étiqueteuse : lettres en relief (bleu)'],
   ['--label-tape-text', ['--label-tape-red'], min, 'étiqueteuse : lettres en relief (rouge)'],

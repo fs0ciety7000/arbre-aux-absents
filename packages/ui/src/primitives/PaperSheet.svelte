@@ -10,7 +10,8 @@
   import Tape from './Tape.svelte';
 
   interface Props {
-    tone?: 'new' | 'paper' | 'aged';
+    /** `onion` : papier pelure (enregistrements, transcriptions tapées). */
+    tone?: 'new' | 'paper' | 'aged' | 'onion';
     /** Inclinaison en degrés (bornée à ±3). */
     tilt?: number;
     edge?: 'straight' | 'torn' | 'perforated';
@@ -91,6 +92,13 @@
   }
   .aged {
     background: var(--paper-aged);
+  }
+  /* Papier pelure : feuille fine et froide, grain à moitié (la feuille est lisse). */
+  .onion {
+    background: var(--paper-onion);
+  }
+  .onion::after {
+    opacity: calc(var(--paper-grain) * 0.5);
   }
   .padded {
     padding: var(--space-6) var(--space-5);

@@ -154,6 +154,23 @@
   --claim-dash: 6px;
   --claim-gap: 4px;
   --claim-tag-h: 20px;
+  /* Case à marque (§6.12, affaire 3) : cadre à coins coupés, bande « Marque », marque tracée en
+     currentColor (art.css : --art-ink et --art-paper sont repris par le cadre). */
+  --mark-paper: var(--paper); /* papier sous la marque, fenêtre vide */
+  --mark-ink: var(--ink); /* trait de la marque (currentColor) */
+  --mark-edge: var(--ink); /* contour à coins coupés et fond de la bande */
+  --mark-band-ink: var(--paper-new); /* texte de la bande « Marque » */
+  --mark-empty: var(--ink-muted); /* pied seul de la case vide (icône unknown-mark) */
+  --mark-grid: oklch(0.5 0.05 250 / 0.1); /* quadrillé du carnet dans la fenêtre vide (décor) */
+  --mark-corner: 6px; /* coupe à 45° des quatre coins */
+  --mark-edge-width: 1.5px;
+  --mark-band-h: 16px; /* hauteur minimale de la bande (grandit avec le texte) */
+  --mark-band-text: calc(0.6875rem * var(--text-scale));
+  --mark-desc-text: calc(0.75rem * var(--text-scale)); /* description sous la marque (.mark-desc) */
+  --mark-h-slot: 72px; /* case de l'arbre */
+  --mark-h-tile: 96px; /* vignette de galerie, tuile du sélecteur */
+  --mark-h-sheet: 320px; /* fiche ouverte, agrandissement */
+  --mark-h-inline: 2.5em; /* ::mark dans le texte d'une pièce */
   --tape: oklch(0.93 0.045 95 / 0.78); /* ruban adhésif mat, translucide */
   --tape-edge: oklch(0.8 0.05 90 / 0.6);
   --label-tape: oklch(0.36 0.12 257); /* étiqueteuse à relief (bande bleue) */
@@ -187,6 +204,7 @@
   --paper-new: var(--raw-paper-new);
   --paper: var(--raw-paper);
   --paper-aged: var(--raw-paper-aged);
+  --paper-onion: oklch(0.95 0.007 200); /* papier pelure (enregistrements, §6.1) */
   --paper-stain: var(--raw-paper-stain);
   --paper-line: var(--raw-paper-line);
   --paper-line-strong: var(--raw-ink-gall-faint);
@@ -585,6 +603,8 @@
   --claim-ink: oklch(0.25 0.035 212);
   --claim-edge: oklch(0.25 0.035 212);
   --claim-ink-desk: oklch(0.93 0.035 200);
+  --mark-grid: transparent;
+  --mark-edge-width: 2px;
   --tape: oklch(0.9 0 0 / 0.9);
   --tape-edge: oklch(0.13 0 0);
   --label-tape: oklch(0.1 0 0);
@@ -597,6 +617,7 @@
   --paper-new: oklch(1 0 0);
   --paper: oklch(1 0 0);
   --paper-aged: oklch(0.97 0 0);
+  --paper-onion: oklch(1 0 0);
   --paper-stain: oklch(0.94 0 0);
   --paper-line: oklch(0.55 0 0);
   --paper-line-strong: oklch(0.25 0.02 264);

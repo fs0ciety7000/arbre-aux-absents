@@ -18,6 +18,11 @@
 > recettes « Signaler un problème », aperçu des diagnostics, « Mes signalements » et page de suivi
 > (§13.8–13.10, §14.6). Aucun nouveau token de couleur.
 >
+> **v2.8 — 16 oct. 2026 — affaire 3, « Les Marques de Longuegrève »** : case à marque (§6.12 :
+> tokens `--mark-*`, primitive `MarkFrame`, utilitaire `.mark-desc`), papier pelure des
+> enregistrements (`--paper-onion`, `PaperSheet tone="onion"`, §6.1), icônes `unknown-mark` et
+> `reel` (§9.0), recette de la case à marque (§13.3), texte `UiStrings.mark.label`.
+>
 > | Quoi | Où |
 > |---|---|
 > | Tokens | `packages/ui/src/styles/tokens.css` (palette brute, sémantique, matières, contextes, réglages, mouvement) |
@@ -233,7 +238,7 @@ grain, de liseré, de halo ni de lumière de lampe (`--lamp-pool: transparent`),
 ### 3.8 Contrastes calculés (résumé)
 
 Méthode : OKLCH → OKLab → sRGB linéaire → luminance WCAG ; translucides composés en sRGB sur leur
-fond. **720 paires, toutes conformes** (contextes lampe, papier, HC, carte, carte de nuit,
+fond. **750 paires, toutes conformes** (contextes lampe, papier, HC, carte, carte de nuit,
 **matières**, **matières HC**, **kraft**, **kraft HC**, et les douze contextes de vision des
 couleurs), plus 12 contrôles d'écart entre tons d'état. Détail : annexe §17.
 
@@ -251,6 +256,10 @@ couleurs), plus 12 contrôles d'écart entre tons d'état. Détail : annexe §17
 | `--claim-ink` sur `--paper-aged` (valeur déclarée, pire cas) | 6,61 | 4,5 |
 | `--claim-ink-desk` sur `--surface-3` (valeur déclarée sur le bureau, pire cas) | 7,75 (HC 14,59) | 4,5 (HC 7) |
 | `--text-muted` sur `--scrim-art` posé sur papier neuf (art clé, pire cas) | 9,92 | 4,5 |
+| `--mark-ink` sur `--mark-paper` (trait de la marque) | 13,26 (HC 20,12) | 4,5 (HC 7) |
+| `--mark-band-ink` sur `--mark-edge` (bande « Marque ») | 14,19 (HC 20,12) | 4,5 (HC 7) |
+| `--mark-empty` sur `--mark-grid` posé sur `--mark-paper` (pied seul, quadrillé) | 5,99 (HC 14,61) | 3 (HC 7) |
+| `--ink-muted` sur `--paper-onion` (minutage d'une bande, pire cas) | 6,73 (HC 14,61) | 4,5 (HC 7) |
 | `--brand` sur `--scrim-art` posé sur papier neuf | 6,11 | 4,5 |
 
 **Texte sur l'art clé**, vérifié aussi sur rendu : `packages/ui/.preview/scripts/bgcheck.mjs`
@@ -653,12 +662,19 @@ Calques `--z-*` inchangés (desk 0 … skip 100).
 
 ### 6.1 La feuille (`.mat-paper`, `PaperSheet`)
 
-Papier `--paper*` + grain + `--shadow-paper`, rayon 2. `PaperSheet` : `tone: new|paper|aged`,
+Papier `--paper*` + grain + `--shadow-paper`, rayon 2. `PaperSheet` : `tone: new|paper|aged|onion`,
 `tilt` (±3°, inclinaison de repos), `edge: straight|torn|perforated` (masques `.edge-torn` en bas,
 `.edge-perforated` en haut, alpha seul), `fastener: none|tape|clip|pin` (ruban en coins, trombone
 en haut à droite, punaise centrée), `sway` (balancement épinglé, couche interne, coupé en
 mouvement réduit), `enter: settle|sheet|deal|false`, `index` (cascade), `as`, `padded`. Pose
 `data-surface="paper"`.
+
+**Papier pelure** (v2.8, `tone="onion"`, `--paper-onion`) : feuille fine et froide des
+transcriptions d'enregistrements (affaire 3, pièce `recording`) — gris à peine bleuté
+`oklch(0.95 0.007 200)`, grain à moitié (la pelure est lisse), blanc pur en contraste élevé.
+Recette du Lecteur : `{ edge: 'straight', fastener: 'clip', tone: 'onion' }`, Courier Prime
+`--ink-type`, minutage et didascalies en `--ink-muted` (6,73:1). Pas d'autre matière : ce qui
+distingue la bande, c'est le papier, l'attache et l'icône `reel`.
 
 ### 6.2 La chemise (`.mat-kraft`, `.mat-manila`, `Folder`)
 
@@ -860,6 +876,86 @@ une étiquette) ; `DecisionGroup` est le `<fieldset>` qui les range.
 
 Rapport final : fiches d'**égale hauteur** en ligne ; le « Revenir au dossier » est posé **une fois
 sous le groupe** (le snippet `action` d'une fiche grandirait toute la rangée).
+
+### 6.12 La case à marque (`MarkFrame`, `.mark-desc`) — v2.8, affaire 3
+
+Dans l'affaire 3, 19 cases attendent une **marque** (AFFAIRE-3 §1) au lieu d'un visage. Le joueur
+ne doit jamais deviner quel champ est attendu, et la différence doit se lire **sans la couleur**,
+en niveaux de gris comme en contraste élevé. Métaphore : la marque est une **plaque relevée** —
+une page du carnet de Marest sertie dans un cadre d'encre dont on a **coupé les coins à 45°**,
+avec son **cartouche** gravé dessous. Les portraits gardent leurs coins arrondis et leur cadre
+de photographie ; la marque a des angles, comme une entaille dans le bois.
+
+| Token | Valeur (défaut / HC) | Usage |
+|---|---|---|
+| `--mark-paper` | `--paper` / blanc | papier sous la marque ; repris comme `--art-paper` dans la fenêtre |
+| `--mark-ink` | `--ink` / `--ink` HC | trait de la marque (`currentColor`) ; repris comme `--art-ink` |
+| `--mark-edge` | `--ink` | contour coupé **et** fond de la bande (l'encre s'épaissit sous la fenêtre) |
+| `--mark-band-ink` | `--paper-new` | lettres de la bande « Marque » |
+| `--mark-empty` | `--ink-muted` | pied seul de la case vide (icône `unknown-mark`) |
+| `--mark-grid` | encre 10 % / transparent | quadrillé du carnet dans la fenêtre vide (décor) |
+| `--mark-corner` | `6px` | coupe des quatre coins (×2 à 320 px, ≤ 0,15 em en ligne) |
+| `--mark-edge-width` | `1.5px` / `2px` | contour |
+| `--mark-band-h` | `16px` | hauteur **minimale** de la bande |
+| `--mark-band-text` | `0.6875rem × --text-scale` | lettres de la bande (rétrécies si elles débordent) |
+| `--mark-desc-text` | `0.75rem × --text-scale` | description sous la marque (`.mark-desc`) |
+| `--mark-h-slot` / `-tile` / `-sheet` / `-inline` | `72px` / `96px` / `320px` / `2.5em` | hauteur de la fenêtre : case, vignette et tuile, fiche ouverte et agrandissement, `::mark` dans le texte |
+
+Contrastes (§17, contextes matières et matières HC) : trait 13,26:1 (HC 20,12), bande 14,19:1
+(HC 20,12), contour 14,19:1 sur fiche bristol, pied seul 5,99:1 sur le quadrillé (HC 14,61). En
+**contraste élevé, le non-texte aussi passe à 7:1** (exigence AFFAIRE-3 §1.7), pas seulement le
+texte. Sur le bureau sombre (galerie, sélecteur), c'est le papier de la fenêtre qui dessine la
+forme (15,9:1 sur `--canvas`).
+
+**`MarkFrame`** (`@arbre/ui`) — fenêtre 4:5 (comme les SVG de 160 × 200), jamais interactive :
+
+| Prop | Type, défaut | Rôle |
+|---|---|---|
+| `size` | `'slot' \| 'tile' \| 'sheet' \| 'inline'`, `'slot'` | 72 px · 96 px · 320 px · 2,5 em de haut |
+| `band` | `boolean`, vrai pour `slot` seulement | bande « Marque » sous la fenêtre ; avec elle, seuls les coins du haut de la fenêtre sont coupés |
+| `label` | `string`, `UiStrings.mark.label` (« Marque » / « Mark ») | texte de la bande |
+| `empty` | `boolean`, vrai sans enfant | pied seul (`unknown-mark`) sur le quadrillé |
+| `tilt` | `number` (°, ±3), `0` | inclinaison de repos ; `-2` dans l'arbre, comme les portraits |
+| `alt` | `string` | description verbale (AFFAIRE-3 §1.6) : `role="img"` nommé ; sans elle, `aria-hidden` |
+| `children` | snippet | le SVG de la marque, inliné par l'application (`use:svgContent`) |
+| `class` | `string` | classe de l'enveloppe `.mark-frame` |
+
+- **Encre imposée** : la fenêtre pose `--art-ink: var(--mark-ink)` et `--art-paper:
+  var(--mark-paper)` ; le SVG (classes `art`, `ink` + `fill="currentColor"`) suit donc le
+  contraste élevé et reste sur papier même dans un contexte `.on-night`. Aucun code n'est écrit
+  dans le dessin (il n'existe que dans les relevés du carnet).
+- **Forme** : `clip-path` octogonal à épaisseur de biseau constante (coupe intérieure =
+  `--mark-corner − w·(√2 − 1)`), ombre portée par `filter: drop-shadow` sur l'enveloppe (un
+  `box-shadow` serait rogné). Couleurs forcées : contour et bande `CanvasText`, fenêtre `Canvas`,
+  trait `CanvasText`.
+- **Bande** : Oswald demi-gras capitales, `--tracking-stamp`, lettres de papier sur l'encre ;
+  elle grandit avec le texte (taille ×2) et ses lettres rétrécissent plutôt que de déborder
+  (`min(--mark-band-text, largeur / 5,6)`). Toujours `aria-hidden` : le nom accessible de la
+  case dit « Marque : … ».
+- **L'hôte porte tout le reste** : bouton, focus (`outline` 3 px `--focus` **sur l'hôte**, le
+  `clip-path` rognerait un anneau posé sur le cadre), cible ≥ 44 px (`::mark` en ligne : bouton
+  d'au moins 44 × 44 autour du cadre de 2,5 em), cible de dépôt (lavis `--accent-tint` + anneau
+  de la fiche), choix actuel (liseré `--accent` doublé + coche de la tuile, §13.13).
+- **Mouvement** : aucun propre. Marque posée : `in:inkIn` (§8.6) sur le contenu ; refus du
+  mauvais type : aucun mouvement (annonce seule, AFFAIRE-3 §1.5).
+- Classes internes préfixées `mf-` (aucune collision avec `.slot`, `.band` des applications).
+
+**`.mark-desc`** (materials.css) — option « Décrire les marques sur l'arbre » : description
+verbale sous la marque, sur toute la largeur de la fiche, `--font-ui` `--mark-desc-text`
+(12 px), `--ink-muted` (7,30:1 sur la fiche, HC 14,61), deux lignes au plus puis points de
+suspension, `hyphens: auto` (poser `lang`). Décor : l'hôte la lit dans son nom accessible.
+
+```svelte
+<!-- case de l'arbre (bouton = hôte, nom accessible complet) -->
+<MarkFrame tilt={-2} empty={!markId}>
+  <span class="svg" use:svgContent={markId ? portraitSvg(content, markId) : null}></span>
+</MarkFrame>
+{#if settings.describeMarks && alt}<span class="mark-desc" lang="fr">{alt}</span>{/if}
+<!-- vignette de galerie, tuile du sélecteur -->
+<MarkFrame size="tile" alt={alt}>…</MarkFrame>
+<!-- ::mark dans le texte (bouton 44 × 44 autour) -->
+<button class="mark-btn" aria-label={alt}><MarkFrame size="inline">…</MarkFrame></button>
+```
 
 ---
 
@@ -1116,13 +1212,16 @@ revoir seulement pour une scène défilée complexe (artbook interactif).
   `npm run icons:ink -w @arbre/ui`.
 - `Icon` : `name`, `size`, `weight` (déf. 1,75), `wash` (tache d'aquarelle derrière : `true` =
   safran, ou une couleur token), `clean` (géométrie nette, pour 16 px et moins).
-- **62 icônes** (`ICON_NAMES`) : panneaux `tree archives reader catalog notebook map pinboard
+- **64 icônes** (`ICON_NAMES`) : panneaux `tree archives reader catalog notebook map pinboard
   journal faces help` · navigation `menu pause back forward chevron-down chevron-up close plus minus
   external grip list layers settings sound` · verbes `look search take write pin use highlight note`
   · lecteur `flip transcript zoom-in zoom-out fit` · états `lock check stamp face unknown-person
   star clock info warning danger trash save quill` · **v2** `lamp fern folder envelope photo compass
   typewriter clip sparkle` · **v2.2** `staple` (agrafe de la case revendiquée) · **v2.6** `expand`
-  (plein écran : document, arbre ; `external` = ouvrir dans une fenêtre).
+  (plein écran : document, arbre ; `external` = ouvrir dans une fenêtre) · **v2.8** `unknown-mark`
+  (case à marque vide : la crosse d'un point d'interrogation sur un pied seul, sans tête ;
+  pendant de `unknown-person`) et `reel` (bobine de bande magnétique, trois jours, bande qui file :
+  type de pièce `recording`, « Enregistrement »).
 - Une icône = un sens partout. Toujours `aria-hidden` ; le nom est porté par le contrôle.
 - **Curseurs** v2 : flèche taillée à l'encre de nuit (`#182039`) à liseré vélin (`#f7efdc`), trait de
   safran (`#f2b33d`) sur le fût ; pastille du verbe dessinée à la plume. 32 px, point chaud (3, 2),
@@ -1177,11 +1276,12 @@ lus dans `UiStrings` (§4.4), jamais en dur.
 | 9.36 | `TicketStatus` | §9.36 | frise de tampons, l'étape actuelle frappe | `<ol>`, `aria-current="step"`, état lu en texte |
 | 9.37 | `MarkdownField`, `MarkdownPreview` | §9.37 | réglette d'outils au-dessus de la feuille, filet en tirets | `role="toolbar"` (un arrêt, flèches), `aria-keyshortcuts`, aperçu `region` |
 | 9.38 | `AttachmentTray`, `AttachmentGallery` | §9.38 | tirages photo à bord blanc posés de travers (±0,6°) | `group` nommé, état de chaque image lu (`status`), retrait nommé ; vignette = bouton qui agrandit |
+| 9.39 | `MarkFrame` | §6.12 · `size` · `band` · `label` · `empty` · `tilt` · `alt` · snippet | plaque à coins coupés, bande « Marque » à l'encre, quadrillé du carnet vide ; aucun mouvement propre | décor `aria-hidden`, ou `role="img"` + `alt` ; jamais interactif (l'hôte porte focus et nom) |
 | 9.31 | `Coachmark` | `anchor` (fonction) · `kicker` · `text` · `actionLabel`/`onaction` · `skipLabel`/`onskip` · `placement` · `bottomInset` · `id` · snippet | **Note de service** : bande de papier (contexte papier) à liseré safran, posée près de sa cible avec une flèche, liseré pointillé autour de la cible ; se pose comme une feuille (`--dur-open`, `--ease-paper`) | `<aside>` nommé par son surtitre, décrit par son texte ; jamais de focus pris ; §9.31 |
 
 Utilitaires CSS : base.css (`.reading`, `.ink-type`, `.ink-hand`, `.num`, `.caps`, `.grain`,
 `.kw[data-state]`, `.hl-1…5`, `.visually-hidden`, `.skip-link`, `[data-verb]`, `.logo-mono`),
-materials.css (§6, dont `.claim-frame`, `.claim-value`, `.claim-stack`), motion.css (§8.3).
+materials.css (§6, dont `.claim-frame`, `.claim-value`, `.claim-stack`, `.mark-desc`), motion.css (§8.3).
 
 ### 9.3 bis Onglets compacts (`line` et `folder`)
 
@@ -1460,6 +1560,12 @@ Objectif : **reconnaissables entre 25 et 35 personnes**, à 72 px (case) comme �
 - Traits du visage en `ink-soft` 0,8 ; contour en `ink` 1,2. Pas d'expression caricaturale.
 - Variante **photographie** (documents) : même dessin rendu en `photo-light|mid|dark` sur `photo-paper` (tirage argentique viré), sans couleur ni trait `ink` épais. Les **zones de visage** collectables sont des rectangles définis dans le contenu (≥ 44 × 44 px à zoom ajusté), pas des formes dans le SVG.
 - Budget : ≤ 25 Ko gzip après svgo ; `alt` décrit coiffure, accessoire, vêtement.
+- **Marques** (v2.8, affaire 3, `Portrait.kind = 'mark'`) : même carton 160 × 200, page du carnet
+  (quadrillé, marge rouge) en rendu **relevé** ; trait plein `class="ink" fill="currentColor"`
+  (seule couleur hors classes), affiché dans `MarkFrame` (§6.12). Gabarit chiffré d'AFFAIRE-3
+  §1.7 (pied = 100 u) : trait ≥ 6 u, grain ≥ 8 u de diamètre, 6 u entre grains, entaille 12 u,
+  talon au tiers séparé de 6 u. **Aucun code écrit** dans le SVG d'une marque ; `alt` = description
+  verbale normalisée (AFFAIRE-3 §1.6).
 
 ### 10.8 Documents (style par type)
 
@@ -1581,6 +1687,10 @@ vision des couleurs.
 v2.4 (fait) : section « Langue et signalements » : `LanguageSwitch` (radios, court, liens) qui
 pose `setUiStrings` sur toute la page, `TicketStatus` (statut au choix, tampon rejouable, trois
 variantes), maquette « Signaler un problème » avec aperçu des diagnostics.
+v2.8 (fait) : section « Case à marque et papier pelure » : trois fiches (vide, remplie,
+décrite), vignettes 96 px (pleine, vide), marque en ligne dans une phrase, icônes `unknown-mark`
+et `reel` (avec lavis), feuille pelure d'enregistrement. Marque de démonstration dessinée dans la
+page (aucune marque d'affaire, aucun code). Vérifié à 360 px, contraste élevé et texte ×2.
 v2.2 (fait) : section « Case revendiquée et chemises d'affaire » (fiche ordinaire, revendiquée
 avec retrait / rétablissement animé, établie ; `ClaimTag` seul ; `CaseFolderGroup` de deux chemises,
 mention et tampon de décision).
@@ -1657,6 +1767,12 @@ Le site vitrine, lui, garde le zoom.
   sceau et bandeau `CanvasText`. Sélectionnée : l'anneau `--accent` passe autour du liseré. Liste :
   filet gauche de 4 px et cadenas à l'encre `--established` ;
 - case **ouverte** : titre « ? », aide « Déposer une pièce » + `Icon unknown-person`, opacité 0,88 ;
+- case **à marque** (v2.8, affaire 3, `portraitKind = 'mark'`) : `MarkFrame tilt={-2}` à la place
+  du portrait (§6.12) — fenêtre 72 px, coins coupés, bande « Marque » toujours visible ; vide :
+  pied seul (`empty`), et l'aide de la case ouverte prend `Icon unknown-mark` ; option « Décrire
+  les marques » : `.mark-desc` sous la marque, à la place de la ligne du métier si la place
+  manque (le métier reste dans le nom accessible). Libellé du champ « Marque » partout (fiche,
+  sélecteur, lecteur d'écran) ; le code de la marque n'est jamais affiché ;
 - case **revendiquée** (affaire 2) : `.claim-frame` + `ClaimTag straddle decorative` + `.claim-value`
   sur chaque champ déclaré, sans cadenas ni tampon ; retrait en `unclaim` (§6.9) ;
 - cible de dépôt : lavis `--accent-tint` + anneau ; objet saisi : `mv-held` ;
@@ -1960,14 +2076,14 @@ Tokens et styles
 - [x] Composants ne lisant que la sémantique et les matières (jamais `--raw-*`)
 - [x] Aucune variable CSS utilisée sans définition (vérifié par script lors de la v2)
 - [x] Contextes papier et kraft : tout composant posé dedans reste conforme
-- [x] `contrast:check --strict` (720 paires : matières, kraft, art clé compris) dans `npm run check`
+- [x] `contrast:check --strict` (750 paires : matières, kraft, art clé, case à marque et pelure compris) dans `npm run check`
 - [ ] SVG d'art : seulement `ART_CLASSES`, `none`, `currentColor`, `url(#…)` (`content:check`)
 
 Accessibilité
 - [x] Contrastes calculés (§3.8, §17) ; texte sur l'art clé mesuré sur rendu (`bgcheck.mjs`)
 - [x] Focus visible 3 px sur tout contrôle, y compris onglets de chemise
 - [x] Cibles ≥ 44 px ; info-bulles jamais indispensables
-- [x] Aucune information par la couleur seule (tampon + texte, cadenas, motifs)
+- [x] Aucune information par la couleur seule (tampon + texte, cadenas, motifs, coins coupés de la case à marque)
 - [x] Réglages joueur (§4.2) tous effectifs, y compris sur `--font-label`, la réglure des fiches et le grain du kraft
 - [x] Décor (`LampLight`, `KeyArt`, `Tape`, `Ornament`, confettis) `aria-hidden`, absent en couleurs forcées
 - [ ] `/design` v2 (§12, frontend)
@@ -1992,6 +2108,7 @@ Généré par `node packages/ui/scripts/contrast.mjs --md` (à régénérer à c
 couleur). Fonds composés : « A sur B » = A translucide posé sur B. Seuils : 4,5 texte ; 3
 non-texte / grand texte ; 7 en contraste élevé. Contextes « vision des couleurs » : seules les
 paires impliquant un ton d'état, chacune en vision normale puis « (vision simulée) ».
+
 
 #### Vision des couleurs : tons d’état distinguables (ΔE OKLab, vision simulée)
 
@@ -2319,6 +2436,17 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--claim-edge` | `--card` | **7,74** ✓ | 3 | bord en tirets de la case revendiquée (non-texte) |
 | `--claim-edge` | `--claim-paper` | **7,09** ✓ | 3 | filet du cartouche (non-texte) |
 | `--claim-paper` | `--canvas` | **15,62** ✓ | 3 | cartouche à cheval sur le bord, côté bureau (non-texte) |
+| `--mark-ink` | `--mark-paper` | **13,26** ✓ | 4,5 | trait de la marque (currentColor) sur papier |
+| `--mark-edge` | `--mark-paper` | **13,26** ✓ | 3 | contour à coins coupés, côté papier (non-texte) |
+| `--mark-edge` | `--card` | **14,19** ✓ | 3 | contour à coins coupés sur fiche bristol (non-texte) |
+| `--mark-band-ink` | `--mark-edge` | **14,19** ✓ | 4,5 | bande « Marque » : texte |
+| `--mark-empty` | `--mark-paper` | **6,82** ✓ | 3 | pied seul de la case vide (non-texte) |
+| `--mark-empty` | `--mark-grid sur --mark-paper` | **5,99** ✓ | 3 | pied seul sur le quadrillé |
+| `--ink-muted` | `--card` | **7,30** ✓ | 4,5 | description de la marque sur la case (.mark-desc) |
+| `--mark-paper` | `--canvas` | **15,93** ✓ | 3 | fenêtre de la marque sur le bureau (non-texte) |
+| `--ink-type` | `--paper-onion` | **13,46** ✓ | 4,5 | machine à écrire sur papier pelure |
+| `--ink` | `--paper-onion` | **13,09** ✓ | 4,5 | texte sur papier pelure |
+| `--ink-muted` | `--paper-onion` | **6,73** ✓ | 4,5 | minutage, didascalies sur papier pelure |
 | `--ink` | `--tape sur --paper` | **12,53** ✓ | 4,5 | texte sous ruban adhésif |
 | `--label-tape-text` | `--label-tape` | **10,09** ✓ | 4,5 | étiqueteuse : lettres en relief (bleu) |
 | `--label-tape-text` | `--label-tape-red` | **5,33** ✓ | 4,5 | étiqueteuse : lettres en relief (rouge) |
@@ -2348,6 +2476,17 @@ paires impliquant un ton d'état, chacune en vision normale puis « (vision simu
 | `--claim-edge` | `--card` | **15,85** ✓ | 3 | bord en tirets de la case revendiquée (non-texte) |
 | `--claim-edge` | `--claim-paper` | **15,85** ✓ | 3 | filet du cartouche (non-texte) |
 | `--claim-paper` | `--canvas` | **20,59** ✓ | 3 | cartouche à cheval sur le bord, côté bureau (non-texte) |
+| `--mark-ink` | `--mark-paper` | **20,12** ✓ | 7 | trait de la marque (currentColor) sur papier |
+| `--mark-edge` | `--mark-paper` | **20,12** ✓ | 7 | contour à coins coupés, côté papier (non-texte) |
+| `--mark-edge` | `--card` | **20,12** ✓ | 7 | contour à coins coupés sur fiche bristol (non-texte) |
+| `--mark-band-ink` | `--mark-edge` | **20,12** ✓ | 7 | bande « Marque » : texte |
+| `--mark-empty` | `--mark-paper` | **14,61** ✓ | 7 | pied seul de la case vide (non-texte) |
+| `--mark-empty` | `--mark-grid sur --mark-paper` | **14,61** ✓ | 7 | pied seul sur le quadrillé |
+| `--ink-muted` | `--card` | **14,61** ✓ | 7 | description de la marque sur la case (.mark-desc) |
+| `--mark-paper` | `--canvas` | **20,59** ✓ | 3 | fenêtre de la marque sur le bureau (non-texte) |
+| `--ink-type` | `--paper-onion` | **20,12** ✓ | 7 | machine à écrire sur papier pelure |
+| `--ink` | `--paper-onion` | **20,12** ✓ | 7 | texte sur papier pelure |
+| `--ink-muted` | `--paper-onion` | **14,61** ✓ | 7 | minutage, didascalies sur papier pelure |
 | `--ink` | `--tape sur --paper` | **15,41** ✓ | 7 | texte sous ruban adhésif |
 | `--label-tape-text` | `--label-tape` | **20,59** ✓ | 7 | étiqueteuse : lettres en relief (bleu) |
 | `--label-tape-text` | `--label-tape-red` | **20,59** ✓ | 7 | étiqueteuse : lettres en relief (rouge) |

@@ -21,6 +21,7 @@ export { default as IconButton } from './IconButton.svelte';
 export { default as KeyHint, isFace, padLabel } from './KeyHint.svelte';
 export type { Device, PadButton, PadStyle } from './KeyHint.svelte';
 export { default as LanguageSwitch } from './LanguageSwitch.svelte';
+export { default as MarkFrame } from './MarkFrame.svelte';
 export { default as Loader } from './Loader.svelte';
 export { default as MarkdownField } from './MarkdownField.svelte';
 export { default as MarkdownPreview } from './MarkdownPreview.svelte';
