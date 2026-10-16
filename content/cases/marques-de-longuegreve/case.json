@@ -1,0 +1,11 @@
+{
+  "id": "marques-de-longuegreve",
+  "title": "Les Marques de Longuegrève",
+  "subtitle": "Office de Réinscription civile — dossier n° 77-0874",
+  "version": "0.1.0",
+  "intro": "of-01",
+  "epilogue": "ep-01",
+  "timedTargetsMs": [10800000, 16200000, 25200000],
+  "credits": ["CM Creative Lab (écriture)", "CM Interactive"],
+  "order": 3
+}
