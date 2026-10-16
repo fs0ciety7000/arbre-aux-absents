@@ -34,7 +34,7 @@
           "default": 440,
           "type": "integer",
           "minimum": 360,
-          "maximum": 640
+          "maximum": 1040
         },
         "layout": {
           "default": "investigate",
@@ -48,7 +48,7 @@
         "cardPosition": {
           "default": {
             "x": 1,
-            "y": 0
+            "y": 1
           },
           "type": "object",
           "properties": {
@@ -250,6 +250,12 @@
             "fr",
             "en"
           ]
+        },
+        "pickerDescriptions": {
+          "type": "boolean"
+        },
+        "describeMarks": {
+          "type": "boolean"
         }
       },
       "required": [
@@ -370,6 +376,10 @@
         ],
         "additionalProperties": false
       }
+    },
+    "changelogSeen": {
+      "type": "string",
+      "pattern": "^(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
     }
   },
   "required": [

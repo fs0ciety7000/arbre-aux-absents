@@ -10,7 +10,7 @@
  * - cellule de tableau : `[b, 0, c]` (en-tête), `[b, r + 1, c]` (ligne r)
  * Décalages : texte brut du conteneur, où `redacted` compte `length` caractères.
  */
-import type { Block, Inline, KeywordId } from '@arbre/contract';
+import type { Block, Inline, KeywordId, PortraitId } from '@arbre/contract';
 
 export type HighlightColor = 1 | 2 | 3 | 4 | 5;
 
@@ -34,7 +34,9 @@ export type RNode =
   | { t: 'text'; segments: Segment[] }
   | { t: 'em' | 'strong' | 'hand' | 'strike'; c: RNode[] }
   | { t: 'ref'; keyword: KeywordId; label: string; c: RNode[] }
-  | { t: 'redacted'; length: number; start: number };
+  | { t: 'redacted'; length: number; start: number }
+  /** Marque dessinée (`::mark`) : aucun caractère, rendu à la charge du Lecteur. */
+  | { t: 'mark'; portrait: PortraitId };
 
 /** Texte brut d'une suite d'inlines (redacted : `length` caractères pleins). */
 export function inlineText(nodes: readonly Inline[]): string {
@@ -42,7 +44,7 @@ export function inlineText(nodes: readonly Inline[]): string {
   for (const n of nodes) {
     if (n.t === 'text') out += n.v;
     else if (n.t === 'redacted') out += '█'.repeat(Math.max(0, n.length));
-    else out += inlineText(n.c);
+    else if (n.t !== 'mark') out += inlineText(n.c);
   }
   return out;
 }
@@ -112,6 +114,8 @@ export function layoutInlines(
         }
         case 'ref':
           return { t: 'ref', keyword: n.keyword, label: refLabel(n.c), c: walk(n.c) };
+        case 'mark':
+          return { t: 'mark', portrait: n.portrait };
         default:
           return { t: n.t, c: walk(n.c) };
       }

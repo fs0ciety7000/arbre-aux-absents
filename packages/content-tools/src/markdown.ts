@@ -566,6 +566,7 @@ export function inlineText(nodes: Inline[]): string {
   for (const n of nodes) {
     if (n.t === 'text') s += n.v;
     else if (n.t === 'redacted') s += ' ';
+    else if (n.t === 'mark') s += ' ';
     else s += inlineText(n.c);
   }
   return s;

@@ -56,7 +56,7 @@ function unwrapRefs(nodes: Inline[], keep: (k: string) => boolean): Inline[] {
     if (n.t === 'ref') {
       if (keep(n.keyword)) out.push({ ...n, c: unwrapRefs(n.c, keep) });
       else out.push(...unwrapRefs(n.c, keep));
-    } else if (n.t === 'text' || n.t === 'redacted') out.push(n);
+    } else if (n.t === 'text' || n.t === 'redacted' || n.t === 'mark') out.push(n);
     else out.push({ t: n.t, c: unwrapRefs(n.c, keep) });
   }
   // Fusionne les textes adjacents.

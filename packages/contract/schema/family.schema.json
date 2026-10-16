@@ -153,6 +153,13 @@
           "caption": {
             "type": "string",
             "pattern": "\\S"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "face",
+              "mark"
+            ]
           }
         },
         "required": [

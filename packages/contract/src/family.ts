@@ -11,8 +11,9 @@ export interface Person {
   family: string[];
   nicknames?: string[];
   occupation: OccupationId;
+  /** Visage, ou marque si la case de la personne est à marque (`TreeSlot.portraitKind`). */
   portrait: PortraitId;
-  /** Autres âges du même visage, acceptés dans sa case. */
+  /** Autres âges du même visage (ou marque de fille d'une épouse), acceptés dans sa case. */
   altPortraits?: PortraitId[];
   born?: PartialDate;
   died?: PartialDate;
@@ -27,12 +28,23 @@ export interface Occupation {
   label: string;
 }
 
+/**
+ * Type d'image d'un portrait : visage (photographie, dessin) ou marque (signe de la grammaire des
+ * marques, affaire 3). Absent = `face` : les affaires antérieures restent valides sans changement.
+ */
+export const PORTRAIT_KINDS = ['face', 'mark'] as const;
+export type PortraitKind = (typeof PORTRAIT_KINDS)[number];
+export const PortraitKindSchema = z.enum(PORTRAIT_KINDS);
+
 export interface Portrait {
   id: PortraitId;
   /** `portraits/<id>.svg` */
   file: string;
+  /** Pour une marque : description verbale normalisée (gabarit vérifié par `content:check`). */
   alt: string;
   caption?: string;
+  /** Absent = `face`. */
+  kind?: PortraitKind;
 }
 
 export interface Family {
@@ -68,6 +80,7 @@ export const PortraitSchema = z.strictObject({
   file: z.string().regex(PORTRAIT_FILE, { error: 'Chemin attendu : portraits/<id>.svg' }),
   alt: TextSchema,
   caption: TextSchema.optional(),
+  kind: PortraitKindSchema.optional(),
 });
 
 export const FamilySchema = z.strictObject({

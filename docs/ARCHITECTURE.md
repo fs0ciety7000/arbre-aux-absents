@@ -110,14 +110,16 @@ export interface Person {
   given: string[];   // variantes acceptées, la première = canonique
   family: string[];  // nom de naissance, d'usage, graphies
   nicknames?: string[];
-  occupation: OccupationId; portrait: PortraitId;
-  altPortraits?: PortraitId[]; // autres âges du même visage, acceptés dans sa case
+  occupation: OccupationId; portrait: PortraitId; // visage, ou marque si sa case est à marque
+  altPortraits?: PortraitId[]; // autres âges du même visage (marque de fille d'une épouse), acceptés dans sa case
   born?: PartialDate; died?: PartialDate;
   parents?: [PersonId | null, PersonId | null]; unions?: PersonId[];
   bibleNotes?: string; // retiré au build
 }
 export interface Occupation { id: OccupationId; label: string }
-export interface Portrait { id: PortraitId; file: string /* portraits/<id>.svg */; alt: string; caption?: string }
+export type PortraitKind = 'face' | 'mark'; // PORTRAIT_KINDS ; absent = 'face' (affaires 1 et 2 inchangées)
+export interface Portrait { id: PortraitId; file: string /* portraits/<id>.svg */; alt: string; caption?: string;
+  kind?: PortraitKind } // marque : `alt` = description verbale normalisée (gabarit, §3.7 règle 13)
 export interface Family { persons: Person[]; occupations: Occupation[]; portraits: Portrait[] }
 
 // tree.json (level-designer)
@@ -129,13 +131,15 @@ export interface TreeSlot {
   claim?: SlotClaim;        // case revendiquée : pré-remplie, contestable, dans un groupe ;
                             // exclusive de prefilled et de revealedBy
   revealedBy?: Condition;   // branche cachée
-}
+  portraitKind?: PortraitKind; // type du champ « portrait » : 'mark' = champ Marque ; absent = 'face'
+}                           // CompiledSlot en hérite tel quel
 export interface ValidationGroup { id: GroupId; label: string; slots: SlotId[]; threshold: number /* ≥ 3 */ }
 export interface TreeSpec { slots: TreeSlot[]; groups: ValidationGroup[] }
 
 // documents/<id>.md : frontmatter YAML (scenariste) + Markdown restreint
 export type DocumentKind = 'letter' | 'newspaper' | 'photo' | 'register' | 'certificate'
-  | 'postcard' | 'directory' | 'telegram' | 'catalog' | 'note' | 'object' | 'report' | 'advert';
+  | 'postcard' | 'directory' | 'telegram' | 'catalog' | 'note' | 'object' | 'report' | 'advert'
+  | 'recording'; // transcription d'une bande (aucun audio) ; ne révèle aucun portrait
 export interface DocumentFrontmatter {
   kind: DocumentKind; title: string; date?: PartialDate; author?: string;
   place?: PlaceId; archive?: string; // fonds, cote
@@ -146,7 +150,8 @@ export interface DocumentFrontmatter {
 export type Inline =
   | { t: 'text'; v: string } | { t: 'em' | 'strong' | 'hand' | 'strike'; c: Inline[] }   // strike : ~~texte barré~~
   | { t: 'ref'; keyword: KeywordId; c: Inline[] }
-  | { t: 'redacted'; length: number };
+  | { t: 'redacted'; length: number }
+  | { t: 'mark'; portrait: PortraitId }; // ::mark[<portraitId>] : marque dessinée dans le texte
 export type Block =
   | { t: 'p' | 'signature'; c: Inline[] } | { t: 'h'; level: 2 | 3; c: Inline[] }
   | { t: 'quote'; c: Block[] } | { t: 'list'; ordered: boolean; items: Inline[][] }
@@ -298,6 +303,7 @@ export interface Settings {
   confirmClear: boolean; inputGlyphs: 'auto' | 'keyboard' | 'gamepad';
   language?: 'system' | Locale; // facultatif : anciens profils valides ; absent = 'system'
   pickerDescriptions?: boolean; // choix du portrait : descriptions dépliées ; absent = repliées
+  describeMarks?: boolean; // accessibilité : description verbale sous chaque marque de l'arbre ; absent = non
 }
 // readScale et sideWidth (« Confort de lecture », PROPOSITION-INTERFACE option 1) : migration
 // douce, `SettingsSchema` les complète par défaut (1, 440) quand un profil antérieur ne les a pas.
@@ -369,7 +375,8 @@ parseSave(raw, c): { ok: true; state; dropped: string[] } | { ok: false; error; 
 // l'UI choisit son message par `code` (jamais par le texte d'`error`) ; facultatif dans le type jusqu'à A2
 summarize(s, c): SaveSlotSummary
 // sélecteurs
-knownKeywords, availablePortraits, availableOccupations, availableNames, visiblePlaces, visibleSlots, progress, endingFor,
+knownKeywords, availablePortraits(s, c, kind?), availableOccupations, availableNames, visiblePlaces, visibleSlots, progress, endingFor,
+portraitKindOf(portrait, c): PortraitKind, slotPortraitKind(slot, c): PortraitKind, // absent = 'face'
 reportQuestions /* questions posées + options disponibles + réponse */, endingSections /* sections visibles d'une fin */,
 slotStatus(slot, s, c): 'locked' | 'claimed' | 'filled' | 'empty',
 claimedFields(slot, s, c): (keyof SlotGuess)[]            // champs encore égaux à la déclaration
@@ -384,6 +391,12 @@ identique champ à champ à `claimedGuess` (`filled` si au moins un champ est re
 `locked` si établie) ; `claimedFields` liste les champs encore déclarés (guillemets à l'écran).
 `parseSave` ne repose jamais une déclaration effacée (contrairement aux cases pré-remplies).
 Un visage est juste s'il figure dans `answer.portrait` (canonique puis `altPortraits`).
+
+**Marques** (affaire 3, détail : `docs/game/AFFAIRE-3.md` §1) : une marque **est** un `PortraitId`
+(`Portrait.kind = 'mark'`) ; la case porte le type de son champ (`TreeSlot.portraitKind`). Validation,
+hachage, sauvegarde et conditions inchangés : **aucune migration**. Le moteur ne refuse pas un
+portrait du mauvais type (il serait simplement faux) : c'est l'interface qui filtre le sélecteur
+(`availablePortraits(s, c, slotPortraitKind(slot, c))`) et refuse le dépôt.
 
 **Validation par groupes** (détail : `docs/game/GAME_DESIGN.md`) : pour chaque groupe, on compte les
 cases non verrouillées dont les quatre champs sont justes ; si ce nombre atteint
@@ -431,7 +444,12 @@ structurelle est impossible par construction. Noms propres (personnes, lieux) ja
 
 Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, listes, tableaux pipe, `## titres`,
 `![alt](illustrations/x.svg "légende")`, `[[texte|keyword-id]]`, `::hand[…]`, `::stamp[…]`,
-`::signature[…]`, `::redacted[6]`, `---`. Tout HTML brut est une erreur.
+`::signature[…]`, `::redacted[6]`, `::mark[<portraitId>]`, `---`. Tout HTML brut est une erreur.
+
+`::mark[<portraitId>]` (inline, n'importe où dans un texte sauf dans un lien `[[…]]`) dessine une
+marque à côté du nom qu'elle signe ; au build, ses portraits rejoignent `reveals.portraits` de la pièce
+(union : frontmatter d'abord, puis marques dans l'ordre d'apparition). Dans une fin, elle s'affiche
+sans rien révéler. Les calques de langue reprennent les mêmes marques dans le même ordre (12.3).
 
 ### 3.7 Règles de `npm run content:check`
 
@@ -488,6 +506,22 @@ Markdown admis : paragraphes, `*em*`, `**strong**`, `~~barré~~`, `> citation`, 
 
 `content:build` écrit les affaires triées par `(meta.order ?? ∞, id)` ; tri des listes par
 `localeCompare(…, locale)` dans chaque langue.
+
+### 3.7 bis Règle 13 : marques et enregistrements (affaire 3)
+
+Erreurs (règle 2 ou 3 selon l'objet) :
+- `::mark[id]` vers un portrait existant de `kind: 'mark'` ;
+- réponses d'une case (`portrait` et `altPortraits` de sa personne) et `claim.portrait` du même type
+  que `portraitKind` (absent = `face`) ;
+- une pièce `recording` n'a ni `reveals.portraits` ni `::mark` (une marque dite n'est pas montrée) ;
+- `alt` d'une marque : ≤ 110 caractères ; s'il suit le gabarit (contient « ; ») : vocabulaire fermé
+  et ordre tête → pied → grains → talon (`markDescriptionProblems`, FR et EN) ; deux marques de même
+  description. Une marque sans « ; » (dessin sans code : marque de mer, croix, emblème) est une
+  description libre : avertissement.
+
+Règle 5 (mots-clés) : un terme normalisé de **moins de 2 caractères** (jamais cherchable) est une
+erreur ; deux mots-clés au même terme normalisé l'étaient déjà. Rapport du solveur : candidats par
+type (marques / cases à marque, visages / cases à visage), avertissement sous 1,5 pour le type marque.
 
 ### 3.8 Journal des versions (« Nouveautés »)
 

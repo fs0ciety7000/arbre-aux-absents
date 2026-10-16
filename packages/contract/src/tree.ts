@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import type { Condition } from './condition';
 import { ConditionSchema } from './condition';
+import type { PortraitKind } from './family';
+import { PortraitKindSchema } from './family';
 import type { GroupId, OccupationId, PersonId, PortraitId, SlotId } from './ids';
 import { IdSchema, TextSchema } from './ids';
 
@@ -27,6 +29,11 @@ export interface TreeSlot {
   claim?: SlotClaim;
   /** Branche cachée. */
   revealedBy?: Condition;
+  /**
+   * Type du champ « portrait » de la case : `mark` = champ Marque (attend un portrait de
+   * `kind: 'mark'`). Absent = `face`. Hérité tel quel par `CompiledSlot`.
+   */
+  portraitKind?: PortraitKind;
 }
 
 export interface ValidationGroup {
@@ -62,6 +69,7 @@ export const TreeSlotSchema = z
     prefilled: z.boolean().optional(),
     claim: SlotClaimSchema.optional(),
     revealedBy: ConditionSchema.optional(),
+    portraitKind: PortraitKindSchema.optional(),
   })
   .refine((s) => !(s.prefilled && s.claim), {
     error: 'claim et prefilled sont exclusifs',

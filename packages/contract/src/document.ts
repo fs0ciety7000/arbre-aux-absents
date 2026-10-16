@@ -16,6 +16,8 @@ export const DOCUMENT_KINDS = [
   'object',
   'report',
   'advert',
+  /** Transcription d'une bande d'enquête orale (aucun audio) ; ne révèle jamais de portrait. */
+  'recording',
 ] as const;
 export type DocumentKind = (typeof DOCUMENT_KINDS)[number];
 
@@ -40,7 +42,12 @@ export type Inline =
   | { t: 'text'; v: string }
   | { t: 'em' | 'strong' | 'hand' | 'strike'; c: Inline[] }
   | { t: 'ref'; keyword: KeywordId; c: Inline[] }
-  | { t: 'redacted'; length: number };
+  | { t: 'redacted'; length: number }
+  /**
+   * `::mark[<portraitId>]` : marque dessinée dans le texte, à côté du nom qu'elle signe. Le
+   * portrait doit être de `kind: 'mark'` ; il rejoint d'office `reveals.portraits` au build.
+   */
+  | { t: 'mark'; portrait: PortraitId };
 
 export type Block =
   | { t: 'p' | 'signature'; c: Inline[] }
@@ -88,6 +95,7 @@ export const InlineSchema: z.ZodType<Inline> = z.lazy(() =>
     z.strictObject({ t: z.enum(['em', 'strong', 'hand', 'strike']), c: z.array(InlineSchema) }),
     z.strictObject({ t: z.literal('ref'), keyword: IdSchema, c: z.array(InlineSchema) }),
     z.strictObject({ t: z.literal('redacted'), length: z.number().int().positive() }),
+    z.strictObject({ t: z.literal('mark'), portrait: IdSchema }),
   ]),
 );
 

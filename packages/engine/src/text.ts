@@ -8,6 +8,7 @@ function inlineText(nodes: readonly Inline[], out: string[]): void {
         out.push(n.v);
         break;
       case 'redacted':
+      case 'mark':
         out.push(' ');
         break;
       default:

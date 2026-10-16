@@ -813,6 +813,7 @@ export const en = {
     object: 'Object',
     report: 'Report',
     advert: 'Advert',
+    recording: 'Recording',
   },
 
   fieldLabels: {

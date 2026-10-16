@@ -595,7 +595,7 @@ function countBlocks(blocks: Block[]): { redacted: number; stamp: number } {
   const inl = (ns: Inline[]): void => {
     for (const n of ns) {
       if (n.t === 'redacted') redacted++;
-      else if (n.t !== 'text') inl(n.c);
+      else if (n.t !== 'text' && n.t !== 'mark') inl(n.c);
     }
   };
   const walk = (bs: Block[]) => {

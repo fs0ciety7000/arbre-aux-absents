@@ -91,6 +91,8 @@ export interface Settings {
   language?: LanguageSetting;
   /** Choix du portrait : descriptions sous chaque visage. Absent : repliées. */
   pickerDescriptions?: boolean;
+  /** Accessibilité : description verbale sous chaque marque de l'arbre. Absent : non affichée. */
+  describeMarks?: boolean;
 }
 
 /** Contenu des préréglages d'aide (§10). */
@@ -231,6 +233,7 @@ export const SettingsSchema = z.strictObject({
   inputGlyphs: z.enum(['auto', 'keyboard', 'gamepad']),
   language: LanguageSettingSchema.optional(),
   pickerDescriptions: z.boolean().optional(),
+  describeMarks: z.boolean().optional(),
 });
 
 export const CaseCompletionSchema = z.strictObject({

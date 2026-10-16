@@ -146,7 +146,7 @@ function linkInlines(nodes: Inline[], terms: LinkTerm[], overlaps: Overlap[]): I
   const out: Inline[] = [];
   for (const n of nodes) {
     if (n.t === 'text') out.push(...linkText(n.v, terms, overlaps));
-    else if (n.t === 'ref' || n.t === 'redacted') out.push(n);
+    else if (n.t === 'ref' || n.t === 'redacted' || n.t === 'mark') out.push(n);
     else out.push({ t: n.t, c: linkInlines(n.c, terms, overlaps) });
   }
   return out;
@@ -194,7 +194,7 @@ export function collectRefs(blocks: Block[]): KeywordId[] {
           out.push(n.keyword);
         }
         inl(n.c);
-      } else if (n.t !== 'text' && n.t !== 'redacted') inl(n.c);
+      } else if (n.t !== 'text' && n.t !== 'redacted' && n.t !== 'mark') inl(n.c);
     }
   };
   const walk = (bs: Block[]) => {

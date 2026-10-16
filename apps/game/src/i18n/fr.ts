@@ -855,6 +855,7 @@ export const fr = {
     object: 'Objet',
     report: 'Rapport',
     advert: 'Réclame',
+    recording: 'Enregistrement',
   } satisfies Record<DocumentKind, string>,
 
   fieldLabels: {
