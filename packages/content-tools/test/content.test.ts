@@ -355,18 +355,19 @@ describe('règles de content:check (un cas rouge par règle)', () => {
     expect(e).toMatch(/viewBox/);
   });
 
+  // Un seul chemin très long plutôt que 4 000 éléments : même poids gzip (> 25 Ko), mais le
+  // contrôle SVG travaille par élément (≈ 0,35 s au lieu de 1,5 s seul, > 5 s sous la charge de
+  // `npm run check`). Délai propre : `checkWith` copie la fixture et rejoue tout le contrôle.
   it('9 · budgets : portrait trop lourd', async () => {
     let seed = 1;
     const rnd = () => ((seed = (seed * 16807) % 2147483647) % 1000) / 10;
-    const paths = Array.from(
-      { length: 4000 },
-      () => `<path class="ink" d="M${rnd()} ${rnd()} L${rnd()} ${rnd()} L${rnd()} ${rnd()}"/>`,
-    ).join('');
+    const d = Array.from({ length: 12000 }, () => `L${rnd()} ${rnd()}`).join('');
+    const paths = `<path class="ink" d="M0 0${d}"/>`;
     const r = await checkWith((root) =>
       editText(root, 'portraits/portrait-c.svg', (s) => s.replace('</svg>', `${paths}</svg>`)),
     );
     expect(errorsOf(r, 9).join('\n')).toMatch(/portrait .* gzip > 25\.0 Ko/);
-  });
+  }, 15_000);
 
   it('10 · démo : fin de démo inatteignable', async () => {
     const r = await checkWith((root) =>

@@ -71,7 +71,9 @@ for (const viewport of [
       await startNewGame(page);
       const side = page.locator('aside.side');
       const handle = page.getByRole('separator', { name: 'Largeur du volet latéral' });
-      const width = async () => (await side.boundingBox())!.width;
+      // Largeur de mise en page, pas la boîte visuelle : juste après « Commencer », l'écran entre
+      // encore en `scale()` (screenIn), et sous charge la boîte mesurait jusqu'à 492 px pour 440.
+      const width = () => side.evaluate((el) => parseFloat(getComputedStyle(el).width));
       const w0 = await width();
 
       await handle.focus();
