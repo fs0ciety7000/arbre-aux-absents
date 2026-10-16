@@ -89,7 +89,7 @@
     vertical-align: middle;
     rotate: var(--mark-tilt);
     /* l'ombre suit la forme coupée (un box-shadow serait rogné par le clip-path) */
-    filter: drop-shadow(0 1px 1.5px var(--vignette));
+    filter: var(--mark-shadow);
     line-height: 1;
   }
   .size-tile {
@@ -169,8 +169,16 @@
   /* Fenêtre vide : quadrillé du carnet de Marest (décor), pied seul à l'encre */
   .mf-empty .mf-window {
     background:
-      repeating-linear-gradient(90deg, var(--mark-grid) 0 1px, transparent 1px 8px),
-      repeating-linear-gradient(180deg, var(--mark-grid) 0 1px, transparent 1px 8px),
+      repeating-linear-gradient(
+        90deg,
+        var(--mark-grid) 0 var(--mark-grid-line),
+        transparent var(--mark-grid-line) var(--mark-grid-step)
+      ),
+      repeating-linear-gradient(
+        180deg,
+        var(--mark-grid) 0 var(--mark-grid-line),
+        transparent var(--mark-grid-line) var(--mark-grid-step)
+      ),
       var(--mark-paper);
   }
   .mf-foot {
@@ -190,7 +198,7 @@
     display: grid;
     place-items: center;
     min-block-size: var(--mark-band-h);
-    padding: 1px 2px 0;
+    padding: var(--mark-band-pad);
     overflow: hidden;
     color: var(--mark-band-ink);
     font-family: var(--font-label);

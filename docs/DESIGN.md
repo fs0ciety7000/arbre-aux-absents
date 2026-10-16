@@ -900,6 +900,10 @@ de photographie ; la marque a des angles, comme une entaille dans le bois.
 | `--mark-band-text` | `0.6875rem × --text-scale` | lettres de la bande (rétrécies si elles débordent) |
 | `--mark-desc-text` | `0.75rem × --text-scale` | description sous la marque (`.mark-desc`) |
 | `--mark-h-slot` / `-tile` / `-sheet` / `-inline` | `72px` / `96px` / `320px` / `2.5em` | hauteur de la fenêtre : case, vignette et tuile, fiche ouverte et agrandissement, `::mark` dans le texte |
+| `--mark-shadow` | `drop-shadow(0 1px 1.5px --vignette)` / aucune (`--vignette` transparent) | ombre portée qui suit la coupe (`filter`, pas `box-shadow`) ; retirée en ligne et en couleurs forcées |
+| `--mark-grid-step` | `8px` | pas du quadrillé du carnet (fenêtre vide) |
+| `--mark-grid-line` | `1px` | trait du quadrillé |
+| `--mark-band-pad` | `1px 2px 0` | marge intérieure de la bande (centrage optique des capitales) |
 
 Contrastes (§17, contextes matières et matières HC) : trait 13,26:1 (HC 20,12), bande 14,19:1
 (HC 20,12), contour 14,19:1 sur fiche bristol, pied seul 5,99:1 sur le quadrillé (HC 14,61). En

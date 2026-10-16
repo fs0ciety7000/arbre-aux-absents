@@ -171,6 +171,10 @@
   --mark-h-tile: 96px; /* vignette de galerie, tuile du sélecteur */
   --mark-h-sheet: 320px; /* fiche ouverte, agrandissement */
   --mark-h-inline: 2.5em; /* ::mark dans le texte d'une pièce */
+  --mark-shadow: drop-shadow(0 1px 1.5px var(--vignette)); /* ombre qui suit la coupe (filter) */
+  --mark-grid-step: 8px; /* pas du quadrillé du carnet (fenêtre vide) */
+  --mark-grid-line: 1px; /* trait du quadrillé */
+  --mark-band-pad: 1px 2px 0; /* marge intérieure de la bande (centrage optique des capitales) */
   --tape: oklch(0.93 0.045 95 / 0.78); /* ruban adhésif mat, translucide */
   --tape-edge: oklch(0.8 0.05 90 / 0.6);
   --label-tape: oklch(0.36 0.12 257); /* étiqueteuse à relief (bande bleue) */
