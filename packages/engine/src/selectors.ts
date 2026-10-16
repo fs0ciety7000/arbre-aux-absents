@@ -10,6 +10,7 @@ import type {
   OccupationId,
   PlaceId,
   PortraitId,
+  PortraitKind,
   ReportQuestion,
   SaveState,
   SlotGuess,
@@ -133,8 +134,25 @@ export function slotStatus(slot: SlotId, s: SaveState, c: CompiledCase): SlotSta
   return 'empty';
 }
 
-/** Galerie des visages : portraits révélés par les documents lus (ordre de découverte). */
-export function availablePortraits(s: SaveState, c: CompiledCase): PortraitId[] {
+/** Type d'un portrait (`Portrait.kind`, absent = `face`) ; portrait inconnu : `face`. */
+export function portraitKindOf(portrait: PortraitId, c: CompiledCase): PortraitKind {
+  return own(c.portraits, portrait)?.kind ?? 'face';
+}
+
+/** Type du champ « portrait » d'une case (`portraitKind`, absent = `face`) ; case inconnue : `face`. */
+export function slotPortraitKind(slot: SlotId, c: CompiledCase): PortraitKind {
+  return own(c.slots, slot)?.portraitKind ?? 'face';
+}
+
+/**
+ * Galerie : portraits révélés par les documents lus (ordre de découverte), posés d'emblée
+ * compris. Avec `kind`, seulement ceux de ce type (sélecteur d'une case : `slotPortraitKind`).
+ */
+export function availablePortraits(
+  s: SaveState,
+  c: CompiledCase,
+  kind?: PortraitKind,
+): PortraitId[] {
   const out = new Set<PortraitId>();
   for (const g of seededGuesses(c))
     if (g.portrait && own(c.portraits, g.portrait)) out.add(g.portrait);
@@ -142,7 +160,8 @@ export function availablePortraits(s: SaveState, c: CompiledCase): PortraitId[] 
     for (const p of c.documents[docId]?.reveals?.portraits ?? [])
       if (own(c.portraits, p)) out.add(p);
   }
-  return [...out];
+  const all = [...out];
+  return kind === undefined ? all : all.filter((p) => portraitKindOf(p, c) === kind);
 }
 
 /** Métiers découverts : révélés par les documents lus, ou débloqués par condition. */
