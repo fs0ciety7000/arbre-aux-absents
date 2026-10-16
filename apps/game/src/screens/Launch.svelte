@@ -82,6 +82,12 @@
     outline: none;
     --lamp-x: 50%;
     --lamp-y: -8%;
+    /* Sans grain, comme l'écran d'attente : le motif (image en data URI, 220 px) n'est peint
+       qu'au montage de l'app. Plus grand que le titre, il devenait l'élément LCP (≈ 5 s en
+       Slow 4G) dès qu'un rendu (polices qui arrivent) tombait pendant le `screenOut` de cet
+       écran : réduit d'échelle, il n'est plus « plein écran » et Chromium le compte. Le grain
+       revient avec l'écran titre. */
+    --desk-grain-image: none;
   }
   .stage {
     display: grid;
