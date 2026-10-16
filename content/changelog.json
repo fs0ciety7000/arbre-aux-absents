@@ -1,5 +1,36 @@
 [
   {
+    "version": "1.4.6",
+    "date": "2026-10-16",
+    "title": {
+      "fr": "Couples dans les deux sens",
+      "en": "Couples either way round"
+    },
+    "items": [
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "Les couples fondateurs sont validés même posés dans l’autre sens (l’épouse à gauche, l’époux à droite) ; les fiches reprennent leur place au verrouillage.",
+          "en": "Founding couples are validated even when placed the other way round (wife on the left, husband on the right); the cards move back into place when locked."
+        }
+      },
+      {
+        "kind": "fixed",
+        "text": {
+          "fr": "Fiche des documents détachée et repliée : ouvrir un document dans l’autre fenêtre ne la redéplie plus.",
+          "en": "Detached and collapsed document card: opening a document in the other window no longer expands it."
+        }
+      },
+      {
+        "kind": "improved",
+        "text": {
+          "fr": "L’interrupteur « Afficher les descriptions » du choix du portrait est mémorisé d’une partie à l’autre.",
+          "en": "The portrait choice’s “Show descriptions” switch is remembered between sessions."
+        }
+      }
+    ]
+  },
+  {
     "version": "1.4.5",
     "date": "2026-10-15",
     "title": {
