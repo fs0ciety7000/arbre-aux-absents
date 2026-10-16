@@ -438,13 +438,16 @@
       </span>
       <span class="gen num">{genCote(id)}</span>
     </span>
-    <span class="body" class:blank={!g && !droppable} aria-hidden="true">
+    <span class="body" class:blank={!g && !droppable && !markSlot} aria-hidden="true">
       {#if droppable}
         <span class="drop"><Icon name="use" size="1.25rem" /> {pm.tree.carryDrop}</span>
       {:else if !g && markSlot}
         <!-- Case à marque vide : cadre à coins coupés, pied seul, bande « Marque » (§1.2). -->
         <MarkFrame size="slot" tilt={-2} label={pm.marks.field} empty />
-        <span class="occ hint"><Icon name="unknown-mark" size="1.25rem" /> {pm.tree.dropHint}</span>
+        <!-- Le cadre vide montre déjà le pied seul (marque inconnue) : l'aide va sans icône. -->
+        <span class="occ hint mark-hint" style:--occ-chars={longestUnbreakable(pm.tree.dropHint)}
+          >{pm.tree.dropHint}</span
+        >
       {:else if !g}
         <span class="occ hint"
           ><Icon name="unknown-person" size="1.25rem" /> {pm.tree.dropHint}</span
@@ -966,6 +969,22 @@
   .slot .mark-desc {
     -webkit-line-clamp: 5;
     line-clamp: 5;
+    align-self: center;
+  }
+  /* Case à marque vide : l'aide « Déposer une pièce » va dans la colonne libre à droite du cadre
+     (comme .mark-desc) ; sous le cadre, la ligne restante ne la contenait pas et `display: block`
+     annulait le line-clamp (débord sous la fiche). */
+  .slot .occ.hint.mark-hint {
+    grid-column: auto;
+    /* Colonne = corps moins le cadre (largeur 0,8 × hauteur, bordures comprises dans l'écart) :
+       le plus long mot y tient, comme le métier (même règle de réduction du corps). */
+    font-size: min(
+      1em,
+      (100cqi - var(--mark-h-slot) * 0.8 - var(--space-4)) / (var(--occ-chars, 1) * 0.66)
+    );
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
     align-self: center;
   }
   /* Objet en main du mauvais type : la case n'est pas une cible (aria-disabled, même raison). */

@@ -229,9 +229,14 @@
     font-size: var(--step--1);
     line-height: var(--leading-snug);
   }
-  /* 3 colonnes à 360 px (§1.4). */
+  /* Vignettes de marque : 9 rem, ou la moitié de la largeur si elle est moindre (deux colonnes à
+     360 px). À 6,5 rem (trois colonnes), « Utiliser dans l'arbre », « Marque n° 1 » et « Vu dans »
+     se coupaient lettre à lettre ; le dessin garde ses 96 px (MarkFrame `tile`). */
   .gallery.marks {
-    grid-template-columns: repeat(auto-fill, minmax(min(6.5rem, 30%), 1fr));
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(9rem, calc((100% - var(--space-4)) / 2)), 1fr)
+    );
   }
   .n {
     color: var(--text-muted);
@@ -257,6 +262,12 @@
   .face :global(.face-use) {
     white-space: normal;
     text-align: start;
+  }
+  /* Vignette de marque étroite (128 px à 360 px) : marges du bouton resserrées pour que
+     « Utiliser » tienne sur sa ligne. */
+  .gallery.marks :global(.face-use) {
+    gap: var(--space-1);
+    padding-inline: var(--space-2);
   }
   .link {
     min-block-size: var(--hit);

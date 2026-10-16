@@ -1121,6 +1121,11 @@
     text-transform: uppercase;
     color: var(--paper-accent-strong);
   }
+  /* Feuille agrafée d'un trombone (en haut à gauche, sur la marge) : le surtitre commence après
+     lui, sinon il cachait la moitié de l'icône `reel` d'un enregistrement (et le début du texte). */
+  .fasten-clip .doc-kicker {
+    padding-inline-start: var(--space-8);
+  }
   .doc-title {
     margin: var(--space-1) 0 var(--space-4);
     font-family: var(--font-display);
