@@ -89,6 +89,8 @@ export interface Settings {
   inputGlyphs: 'auto' | 'keyboard' | 'gamepad';
   /** Facultatif : anciens profils valides ; absent = 'system'. */
   language?: LanguageSetting;
+  /** Choix du portrait : descriptions sous chaque visage. Absent : repliées. */
+  pickerDescriptions?: boolean;
 }
 
 /** Contenu des préréglages d'aide (§10). */
@@ -228,6 +230,7 @@ export const SettingsSchema = z.strictObject({
   confirmClear: z.boolean(),
   inputGlyphs: z.enum(['auto', 'keyboard', 'gamepad']),
   language: LanguageSettingSchema.optional(),
+  pickerDescriptions: z.boolean().optional(),
 });
 
 export const CaseCompletionSchema = z.strictObject({

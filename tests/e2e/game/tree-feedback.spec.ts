@@ -291,6 +291,48 @@ test.describe('fiche des documents dans une fenêtre', () => {
   });
 });
 
+test('fiche détachée repliée : ouvrir un document dans la fenêtre la laisse repliée', async ({
+  page,
+  context,
+}) => {
+  // Retour de jeu : la fiche repliée sur le Bureau se redépliait à chaque document ouvert.
+  await startNewGame(page);
+  await layoutButton(page, 'Arbre').click();
+  const [win] = await Promise.all([
+    context.waitForEvent('page'),
+    card(page).getByRole('button', { name: 'Ouvrir dans une fenêtre' }).click(),
+  ]);
+  await expect(win.getByTestId('popout-docs')).toBeVisible();
+  await card(page).getByRole('button', { name: 'Replier la fiche' }).click();
+  const expand = card(page).getByRole('button', { name: /^Déplier la fiche/ });
+  await expect(expand).toBeVisible();
+  await expect(card(page).getByText(/ouverts dans une autre fenêtre/)).toHaveCount(0);
+
+  // Onglet puis document dans la fenêtre : le document s'ouvre, la fiche reste repliée.
+  await win.getByRole('tab', { name: /^Archives/ }).click();
+  await win.getByRole('button', { name: 'Note du notaire', exact: true }).first().click();
+  await expect(win.getByRole('heading', { name: 'Note du notaire' })).toBeVisible();
+  await expect(expand).toBeVisible();
+  await expect(expand).toHaveAttribute('aria-pressed', 'false');
+  await expect(card(page).getByText(/ouverts dans une autre fenêtre/)).toHaveCount(0);
+  await expect(
+    page.getByRole('button', { name: 'Déplier le volet latéral', exact: true }),
+  ).toBeVisible();
+
+  // Le joueur déplie lui-même : le renvoi vers la fenêtre revient.
+  await expand.click();
+  await expect(card(page).getByText(/ouverts dans une autre fenêtre/)).toBeVisible();
+  // Replier de nouveau puis ramener la fiche : elle revient repliée, comme laissée.
+  await card(page).getByRole('button', { name: 'Replier la fiche' }).click();
+  await win.close();
+  await expect(card(page).getByRole('button', { name: /^Déplier la fiche/ })).toBeVisible();
+  // Déplier la fiche ramenée montre le document ouvert dans la fenêtre.
+  await card(page)
+    .getByRole('button', { name: /^Déplier la fiche/ })
+    .click();
+  await expect(card(page).getByRole('heading', { name: 'Note du notaire' })).toBeVisible();
+});
+
 test('sans Document Picture-in-Picture : fenêtre surgissante, même partie', async ({
   page,
   context,

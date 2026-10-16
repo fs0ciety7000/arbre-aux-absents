@@ -2,7 +2,7 @@
   P10, champ Portrait : grille des visages collectés dans une grande boîte (`Dialog size="xl"`,
   plein écran au téléphone). Chaque tuile : le portrait, son numéro (celui de la Galerie des
   visages) et une ligne « vu dans : premier document (+n) » ; la description complète est
-  repliée (interrupteur « Afficher les descriptions », gardé pour la session) mais reste dans
+  repliée (interrupteur « Afficher les descriptions », réglage du profil) mais reste dans
   le nom accessible de la tuile, et s'affiche en grand dans l'aperçu (desktop) quand une tuile
   est survolée ou focalisée. Filtre plein texte (description, titres des documents) et
   « seulement le document ouvert ». Grille : un seul arrêt de tabulation, flèches, Début/Fin,
@@ -13,9 +13,8 @@
   import { Button, Icon, TextField, Toggle } from '@arbre/ui';
   import { svgContent } from '@arbre/map/svelte';
   import { portraitSvg } from './lib/assets.svelte';
-  import { getGame } from '../lib/game/context';
+  import { getApp, getGame } from '../lib/game/context';
   import { initialFocus } from '../lib/game/initial-focus';
-  import { pickerPrefs } from './lib/picker-prefs.svelte';
   import {
     columnsFromTops,
     filterPortraits,
@@ -35,6 +34,12 @@
   let { slot, currentValue, declared = null, onchoose }: Props = $props();
 
   const game = getGame();
+  const app = getApp();
+  /** « Afficher les descriptions » : réglage du profil (absent = repliées), gardé d'un lancement à l'autre. */
+  const showDescriptions = $derived(app.settings.pickerDescriptions ?? false);
+  function setShowDescriptions(on: boolean) {
+    app.updateSettings({ pickerDescriptions: on });
+  }
   const uid = `pp-${Math.random().toString(36).slice(2, 8)}`;
 
   const entries: PortraitEntry[] = $derived.by(() => {
@@ -114,7 +119,7 @@
   const total = $derived(entries.length);
 </script>
 
-<div class="pp" class:described={pickerPrefs.showDescriptions}>
+<div class="pp" class:described={showDescriptions}>
   {#if declared}
     <p class="declared">
       {pm.picker.declared} <span class="claim-value">{declared}</span>
@@ -133,7 +138,10 @@
       />
     </div>
     <div class="switches">
-      <Toggle label={pm.picker.showDescriptions} bind:checked={pickerPrefs.showDescriptions} />
+      <Toggle
+        label={pm.picker.showDescriptions}
+        bind:checked={() => showDescriptions, setShowDescriptions}
+      />
       {#if openDocUseful && openDoc}
         <Toggle
           label={pm.picker.onlyOpenDoc}
@@ -196,9 +204,7 @@
                     >
                   {/if}
                 </span>
-                <span class="alt" class:visually-hidden={!pickerPrefs.showDescriptions}
-                  >{e.alt}</span
-                >
+                <span class="alt" class:visually-hidden={!showDescriptions}>{e.alt}</span>
                 {#if e.docs.length > 0}
                   <span class="seen" aria-hidden="true">{seenIn(game.content, e.docs, 1)}</span>
                 {/if}

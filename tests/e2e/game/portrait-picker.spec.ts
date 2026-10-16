@@ -7,7 +7,16 @@
  */
 import AxeBuilder from '@axe-core/playwright';
 import type { Locator, Page } from '@playwright/test';
-import { expect, readForElders, showPanel, slotButton, startNewGame, test } from './helpers';
+import {
+  desk,
+  expect,
+  readForElders,
+  showPanel,
+  skipLaunch,
+  slotButton,
+  startNewGame,
+  test,
+} from './helpers';
 
 const SHOTS = process.env.E2E_PICKER_SHOTS;
 
@@ -24,6 +33,11 @@ async function axe(page: Page, picker: Locator): Promise<string[]> {
 async function openPortraitPicker(page: Page): Promise<{ sheet: Locator; picker: Locator }> {
   await startNewGame(page);
   await readForElders(page);
+  return reopenPortraitPicker(page);
+}
+
+/** Ouvre le choix du portrait d'Ida (partie en cours). */
+async function reopenPortraitPicker(page: Page): Promise<{ sheet: Locator; picker: Locator }> {
   await showPanel(page, 'Arbre');
   await slotButton(page, 's-ida').click();
   const sheet = page.getByRole('dialog').filter({ hasText: 'Fiche de la case' });
@@ -175,4 +189,35 @@ test('390 px : plein écran, deux colonnes, aucun défilement horizontal, axe', 
 
   await tiles(picker).filter({ hasText: 'Femme aux cheveux tressés' }).click();
   await expect(picker).toBeHidden();
+});
+
+test('« Afficher les descriptions » est gardé d’un lancement à l’autre (réglage du profil)', async ({
+  page,
+}) => {
+  const { picker } = await openPortraitPicker(page);
+  const describe = picker.getByRole('switch', { name: 'Afficher les descriptions' });
+  await expect(describe).not.toBeChecked();
+  await describe.click();
+  await expect(describe).toBeChecked();
+  await page.keyboard.press('Escape');
+  await expect(picker).toBeHidden();
+
+  // Laisse passer l'enregistrement différé du profil, recharge et reprend la partie.
+  await page.waitForTimeout(1_000);
+  await page.reload();
+  const skip = page.getByRole('button', { name: 'Passer', exact: true }).first();
+  const cont = page.getByRole('button', { name: /^Continuer/ });
+  await expect(skip.or(cont).first()).toBeVisible();
+  await skipLaunch(page);
+  await cont.click();
+  await expect(desk(page)).toBeVisible();
+
+  const again = (await reopenPortraitPicker(page)).picker;
+  const describeAgain = again.getByRole('switch', { name: 'Afficher les descriptions' });
+  await expect(describeAgain).toBeChecked();
+  const ida = tiles(again).filter({ hasText: 'Femme aux cheveux tressés' });
+  expect(await altWidth(ida)).toBeGreaterThan(60);
+  // Replier aussi est retenu.
+  await describeAgain.click();
+  await expect(describeAgain).not.toBeChecked();
 });

@@ -1822,7 +1822,7 @@ mobile="fullscreen"` :
 - **Outils** en tête : `TextField type="search"` « Chercher un visage » (aide « Description ou
   titre d'un document » ; mots sans accents ni casse, tous exigés, dans la description, les
   titres des documents « vu dans » et le numéro), `Toggle` « Afficher les descriptions » (replié
-  par défaut, gardé pour la session), `Toggle` « Seulement le document ouvert » (titre en
+  par défaut, réglage `Settings.pickerDescriptions` gardé d’un lancement à l’autre), `Toggle` « Seulement le document ouvert » (titre en
   description ; proposé seulement si le document ouvert a révélé un visage), compteur
   `role="status"` « 12 visages sur 30 ». Aucun résultat : « Aucun visage ne correspond. » +
   « Effacer les filtres ».

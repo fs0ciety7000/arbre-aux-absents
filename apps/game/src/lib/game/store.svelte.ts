@@ -13,6 +13,7 @@ import type {
   SecretId,
   Settings,
   SlotId,
+  ValidationResult,
 } from '@arbre/contract';
 import { hintPreset, SIDE_WIDTH } from '@arbre/contract';
 import {
@@ -25,6 +26,7 @@ import {
   isComplete,
   progress,
   settle,
+  swapGuesses,
   validate,
   type SweepGuard,
 } from '@arbre/engine';
@@ -493,14 +495,16 @@ export class GameStoreImpl implements GameStore {
       this.#handle([{ type: 'validationFailed' }], 'validate', group);
       return;
     }
-    this.#applyLocks(result.lock, result.groups, at);
+    this.#applyLocks(result, at);
   }
 
-  #applyLocks(lock: SlotId[], groups: GroupId[], at: number): void {
+  /** Verrouille ; un couple posé inversé mais juste est d'abord remis dans l'ordre de la solution. */
+  #applyLocks({ lock, groups, swap }: ValidationResult, at: number): void {
     const s = this.#state;
     const locked = { ...s.locked };
     for (const id of lock) locked[id] = at;
-    const settled = settle({ ...s, locked, updatedAt: at }, this.content);
+    const tree = swap?.length ? swapGuesses(s.tree, swap) : s.tree;
+    const settled = settle({ ...s, tree, locked, updatedAt: at }, this.content);
     this.#state = settled.state;
     this.#markDirty();
     this.#handle([{ type: 'slotsLocked', ids: lock, groups }, ...settled.events], 'validate');
@@ -750,7 +754,8 @@ export class GameStoreImpl implements GameStore {
       this.ui.main = id;
     } else {
       this.ui.side = id;
-      this.sideCollapsed = false;
+      // Fiche détachée : le panneau s'ouvre dans l'autre fenêtre, la fiche reste comme le joueur l'a laissée.
+      if (!this.docsPopped) this.sideCollapsed = false;
     }
     // Un panneau autre que l'arbre ne se voit pas sous l'arbre en plein écran.
     if (id !== 'tree' && !this.docsPopped) this.treeFull = false;
