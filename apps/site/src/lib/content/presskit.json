@@ -6,7 +6,7 @@
       "label": "Artbook : art clé, carte, vignettes, portraits, intention artistique",
       "format": "PDF",
       "detail": "A4 paysage, 19 pages",
-      "bytes": 5226462,
+      "bytes": 5238317,
       "preview": "apercus/arbre-aux-absents-artbook.jpg",
       "previewSize": [480, 340]
     },
@@ -16,7 +16,7 @@
       "label": "Fiche presse : présentation courte et longue, fiche technique, liens",
       "format": "PDF",
       "detail": "A4 portrait, 2 pages, imprimable",
-      "bytes": 628162,
+      "bytes": 637694,
       "preview": "apercus/arbre-aux-absents-fiche-presse.jpg",
       "previewSize": [340, 480]
     },
@@ -324,7 +324,7 @@
       "label": "Affiche « La Velmarche » (carte, sur papier)",
       "format": "PDF",
       "detail": "A3 portrait, vectoriel, pour l’impression",
-      "bytes": 3352275,
+      "bytes": 3636878,
       "preview": "apercus/arbre-aux-absents-affiche-carte-a3.jpg",
       "previewSize": [340, 480]
     },
@@ -334,7 +334,7 @@
       "label": "Affiche « La Velmarche » (carte, sur papier)",
       "format": "PNG",
       "detail": "1755 × 2480 px (A3 à 150 dpi, A4 à 300 dpi)",
-      "bytes": 1207024
+      "bytes": 1219332
     },
     {
       "group": "affiches",
@@ -424,7 +424,7 @@
       "label": "Le kit complet : logos, affiches, bannières, artbook et fiche",
       "format": "ZIP",
       "detail": "tout le kit, avec un fichier LISEZMOI",
-      "bytes": 19279739
+      "bytes": 19576641
     }
   ],
   "captures": [
