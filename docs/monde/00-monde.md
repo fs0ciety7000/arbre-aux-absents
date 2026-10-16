@@ -24,7 +24,11 @@ la **Thalberie** voisine.
 | 1811 | **Charte de Velmarche** : Grand-Duché constitutionnel, Chambre des députés élue. Création de l'**état civil** communal ; noms de famille fixes imposés aux Ostriens. |
 | 1834–1898 | L'ostrien est interdit à l'école. |
 | 1848 | Liberté de la presse ; fondation du *Courrier d'Aubrelieu*. |
+| 7 juil. 1868 | **Cadastre grand-ducal des îles du golfe** : plan des lanières de Longuegrève et matrice où les quatre chefs de maison, illettrés, « font leur marque » (affaire 3, provisoire). |
+| 1872 | **Feu de Longuegrève** (Phares et Balises), pointe du Feu ; feu à gaz sans gardien en 1908 (affaire 3, provisoire). |
+| 1882 ; 1886 | Loi scolaire (une école dans toute section de plus de vingt enfants) ; école de Longuegrève (4 oct. 1886). Fondation du **Comptoir des Ambres** à Port-Sénane (affaire 3, provisoire). |
 | 1889 | **Grande Exposition d'Aubrelieu** : la Velmarche se montre moderne (verre, papier, savon, navires). |
+| mars–juin 1908 | **Évacuation sanitaire de Longuegrève** (« fièvre typhoïde », 61 personnes relogées aux Cabanes d'Ambre), incendie des maisons et du registre de la chapelle (4 avril), concession des grèves au Comptoir des Ambres (1er juin) (affaire 3, provisoire). |
 | 1898 | L'ostrien redevient langue d'école ; fondation de *Vel Taalik*. |
 | 1911 | Centenaire de la Charte. |
 | 1916–1919 | **Guerre des Cols** contre la Thalberie pour le col de Corvenne ; paix de Brenzac, frontière inchangée. |
@@ -39,11 +43,15 @@ la **Thalberie** voisine.
 | 7–11 avr. 1952 | **Journées d'avril** : soulèvement d'Aubrelieu, fuite du Régent, fin de la Régence. |
 | 1953 | **Constitution de la République** ; procès des collaborateurs (dont le « Procès des Papetiers »). |
 | 1950 / 1971 | Télévision noir et blanc, puis couleur. |
+| 1964 | Enquête orale du Laboratoire des parlers et usages (Université d'Aubrelieu) sur la côte ouest ; émission RTV « Les voix de Longuegrève » (1965) (affaire 3, provisoire). |
 | 1er janv. 1968 | Ouverture des archives de la Régence aux historiens (sauf fonds réservés aux familles). |
+| 1972 | Création du **Service des Réserves naturelles** (affaire 3, provisoire). |
 | 14 mai 1973 | **Loi de réinscription civile** ; création de l'**ORC**. Art. 4 : réinscription d'un radié vivant non réinscrit en 1953 (deux pièces concordantes, reconnaissance de portrait). Art. 9 : fonds restreints. **Art. 12** (affaire 2) : pour l'exécution des libéralités, l'absent mort en détention est **représenté par ses descendants** dont la filiation est établie. |
+| 14 mai 1973 (suite) | **Art. 15** (affaire 3, provisoire) : lorsqu'un registre a été **détruit par le fait de l'autorité publique**, l'Office reconstitue les filiations sur deux pièces concordantes ; « la marque apposée de sa main par une personne qui ne savait signer vaut signature lorsqu'elle est reconnue sur deux pièces » (al. 2). |
 | nov. 1973 | Le **Lecteur LX-2** aux Archives nationales. |
 | oct. 1974 | **Temps du jeu** (affaire 1). |
 | févr.–mars 1976 | Temps de l'affaire 2 (« Le Revenant de Hautcorvin »). |
+| oct.–nov. 1977 | Temps de l'affaire 3 (« Les Marques de Longuegrève », provisoire). |
 
 ## 3. Géographie et lieux (pour la carte)
 
@@ -92,6 +100,23 @@ est à Vernezac), **Brenzac** (Verrerie de Brénica), **Kessaar** (cellule 14, i
 chaux), **col de Corvenne** (expulsions de 1916 ; fortin des Corneilles), **Vellaak** (audition d'un
 ancien gardien, 1976).
 
+### Lieux ajoutés par l'affaire 3 (« Les Marques de Longuegrève », provisoire)
+
+Détail, espacements vérifiés contre `art/tools/world.py` et demandes au `cartographe` :
+`docs/scenario/affaire-3/08-lieux.md`. Les lieux des affaires 1 et 2 ne bougent pas.
+
+| `PlaceId` | Lieu | Type | Position | Ce qu'on y trouve | Rôle dans l'affaire 3 |
+|---|---|---|---|---|---|
+| `longuegreve` | **Longuegrève** | île (`landmark`) | x 0,050 · y 0,520 (golfe d'Ambre, 4 lieues et demie au large des Cabanes) | Île longue et basse, nord-sud ; la **Longue Grève** (plage de l'ambre) à l'ouest ; hameau brûlé (quatorze ruines), chapelle en ruine, cimetière intact ; **pointe du Feu** et son feu (1872). Inhabitée depuis 1908 ; sternes, macareux. | Les quatre maisons et leurs lanières ; le cimetière et ses croix marquées. |
+| `cabanes-d-ambre` | **Les Cabanes d'Ambre** | hameau côtier (`village`) | x 0,112 · y 0,530 (côte ouest, un peu plus de 4 lieues au sud de Port-Sénane) | Hangars et cabanes de bois bâtis par le Comptoir en 1908, atelier de taille, jetée, hangar à bateaux, chapelle de planches. Section de la commune de Port-Sénane. | Les évacués et leurs descendants ; l'Amicale ; l'enquête orale de 1964. |
+
+Rôles nouveaux de lieux existants : **Port-Sénane** (Comptoir des Ambres et hôtel Garnaud, quai du
+Môle ; librairie Ferlay et Photographie Hamelot, quai des Messageries ; Caisse d'épargne ; Inscription
+maritime ; étude Lhermet ; église du Môle, où pend la cloche de Longuegrève ; halle aux poissons),
+**golfe d'Ambre** (« les îles du golfe, dont Longuegrève »), **Bains-de-Mérande** (retraite de
+l'institutrice Sidonie Brémoy), **Aubrelieu** (Laboratoire des parlers et usages, Domaines, Réserves
+naturelles).
+
 ### Toponymes secondaires de la carte (validés, passe de cohérence v0.2)
 
 Ajouts du `cartographe` (`art/tools/world.py`, `labels.py`), **gravés sur la carte mais sans
@@ -120,7 +145,9 @@ Môle, cours de l'Amirauté, quai des Messageries (Port-Sénane) ; fortin des Co
 Bec (col de Corvenne, PR-04) ; rue des Scieurs et hôpital de la Croix-de-Brénica (Brenzac). Affaire 2 : rue Haute, hospice, paroisse
 Saint-Éloi (Hautcorvin) ; halle des fours, four n° 2, magasin des emballages (Vernezac) ; refuge de
 l'Ourse ; *la Dalva* (torrent thalbère de Dalvezac, pièces seulement) ; route de la Vèze et sentiers
-du Pas (tracés demandés au `cartographe`, sans libellé obligatoire).
+du Pas (tracés demandés au `cartographe`, sans libellé obligatoire). Affaire 3 (provisoire) : la Longue Grève, la pointe du Feu, les quatre lanières (Longuegrève) ; la
+passe des Cabanes (chenal) ; hôtel Garnaud, église du Môle, halle aux poissons (Port-Sénane). Option
+sans pièce : l'îlot anonyme de 0,060 · 0,410 peut s'appeler « l'Enclume ».
 
 Suggestions de cartouche : « **Carte de la Velmarche et de l'Ostrie**, dressée pour l'Office de
 Réinscription civile d'après la carte de la Grande Exposition (1889), revue en 1974 ». Échelle en
@@ -138,6 +165,19 @@ suffixes *-lieu* (lieu, place), *-oue* et *-noue* (zones humides : *Grisenoue*),
 d'influence thalbère (*Brenzac*). **Noms de famille** : métiers et lieux anciens, suffixes régionaux
 *-que* (sud : *Varenque*), *-ot* (*Aubertot*), *-y* (*Daubry*), *-elle* (*Sorbelle*), *-al* (*Marsal*) ;
 plantes et objets (*Sauge*, *Castagne*). Prénoms : ceux du français, un peu désuets.
+
+**Parler de Longuegrève** (affaire 3, provisoire). Du velmarchois, **pas une troisième langue** : une
+dizaine de mots et une façon de nommer les marques. *garnaud* « ramasseur d'ambre à la grève » (d'où le
+nom pris par Blaise Garnaud) ; *la lanière* « le lot d'une maison, de la falaise à la grève » ; *le coup
+d'ouest* « la tempête qui jette l'ambre » ; *la Grand-Terre* « le continent » ; *faire sa marque*
+« signer » ; *l'enfant de mer* « l'enfant trouvé sur la grève et élevé par une maison » ; *les quatre*
+« le conseil des chefs de maison » ; *le premier ambre* « vers douze ans, le jour où l'on reçoit sa
+marque ». Les parties d'une marque : *le pied*, *la tête* (*la Fourche*, *l'Œil*, *la Flèche*, *la
+Potence*), *l'entaille*, *le grain*, *le talon*, *la barre* (grammaire : `docs/scenario/affaire-3/09-marques.md`).
+**Noms de famille insulaires** en ***-ard*** et ***-aud***, tirés des choses du rivage (*Goémard*,
+*Oyard*, *Cormaud*, *Lestaud*) ; les commis du continent les écrivent au son (*Gouémard*, *Oyart*,
+*Cormault*, *Lestot*) : des alias, que le Lecteur regroupe. Prénoms français anciens (Gervais, Josse,
+Médard, Siméon, Lubin, Perrine, Toinette, Apolline, Jacquette, Elzéar) ; *Noël* pour les enfants de mer.
 
 ### Ostrien (langue régionale du nord)
 Phonologie : *k, v, r, l, n, t, s, d, m* ; voyelles longues doublées (*aa, ee*) ; pas de *c, q, ph, x* ;
@@ -261,6 +301,19 @@ le panneau de la carte disent Brénica ; les pièces velmarchoises disent Brenza
 | 1972 | *Annuaire officiel des professions* | 45 Fn | AN-02 |
 | 1937 | assurance incendie de la halle (L'Égide), capital assuré | 1 200 000 puis 3 500 000 fl. | RP-02 |
 
+**Prix attestés dans les pièces de l'affaire 3** (provisoire ; `docs/scenario/affaire-3/06-corpus.md`) :
+
+| Année | Objet | Prix | Pièce (aff. 3) |
+|---|---|---|---|
+| 1889 ; 1908 | *L'Écho de Port-Sénane* | 5 sous | PR-02, PR-03 |
+| 1908 | location du coffre n° 108 de la Caisse d'épargne de Port-Sénane, cent ans payés d'avance | 600 fl. | RG-20 |
+| 1912 | catalogue du Comptoir des Ambres : collier ; broche d'ambre | 12 fl. ; 4 fl. | CT-01 |
+| 1924 | *L'Écho de Port-Sénane* | 12 sous | PR-04 |
+| 1958 | *L'Écho de Port-Sénane* | 0,30 Fn | PR-05 |
+| 1965 | *Antenne velmarchoise* | 0,35 Fn | PR-08 |
+| 1977 | *L'Écho de Port-Sénane* | 0,45 Fn | PR-06, PR-07 |
+| 1977 | offre des Domaines pour Longuegrève (118 ha) ; estimation des quatre coffrets d'ambre | 295 000 Fn ; 180 000 Fn | OF-02 ; PV-06 |
+
 Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadaire à 20 fl. d'ordre en
 1951 et un quotidien à 0,25 Fn (25 fl. d'ordre) en 1953. Le *Courrier* coûte 0,35 Fn de 1966 à 1973,
 0,40 Fn en 1974 ; la *Gazette*, régionale, suit avec un temps de retard.
@@ -271,7 +324,7 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
 |---|---|---|---|
 | *Le Courrier d'Aubrelieu* | Aubrelieu | 1848– (aligné 1938–1952) | quotidien libéral de référence |
 | *La Gazette de l'Orvelle* | Moulinvert | 1861– | régional, mondain, nécrologies ; paraît le mercredi et le samedi |
-| *L'Écho de Port-Sénane* | Port-Sénane | 1870– | maritime, faits divers |
+| *L'Écho de Port-Sénane* | Port-Sénane | 1870– | maritime, faits divers ; affaire 3 (provisoire) : avis aux ayants droit (1977), nécrologies du port, photographies de la jetée des Cabanes |
 | *L'Œil velmarchois* | Aubrelieu | 1902– | hebdomadaire illustré (photos), le samedi ; n° 832 en 1918, n° 2908 en 1958 |
 | *Vel Taalik* | Vellaak | 1898–1938, 1953– | bilingue ostrien-velmarchois, hebdomadaire du samedi ; première série jusqu'au n° ≈ 2000 (n° 1912 en mars 1936), seconde série depuis mai 1953 (n° 1012 en oct. 1972) ; édite aussi des livres |
 | *Le Héraut* | Aubrelieu | 1937–1952 | organe de la Régence, emphatique |
@@ -293,6 +346,14 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
 - Affaire 2 : **douanes velmarchoises** (brigade de la Vèze, à Vernezac) ; sous la Régence, la **Garde
   d'Ordre** a une lieutenance à Hautcorvin ; **Musée des Arts du feu** (Aubrelieu : verre, céramique,
   émail) ; hospice et hospitalières de Hautcorvin.
+- Affaire 3 (provisoire) : **districts** et **commissaires de district** (district de l'Estuaire, à
+  Port-Sénane, avec son **médecin des épidémies**), depuis le Grand-Duché ;
+  **Inscription maritime** de Port-Sénane (registre des gens de mer) ; **Cadastre grand-ducal des
+  îles** (1868) ; **Administration des Domaines** (Aubrelieu : biens de l'État, expropriations) ;
+  **Service des Réserves naturelles** (1972) ; **Laboratoire des parlers et usages** de l'Université
+  d'Aubrelieu (enquêtes orales, Fonds Marest) ; **Société ornithologique du golfe** (Port-Sénane) ;
+  **Caisse d'épargne de Port-Sénane** (1835 ; location de coffres) ; **Hôpital maritime** de Port-Sénane
+  (registres) ; sous Phares et Balises, le **feu de Longuegrève** (1872).
 - Services : **Phares et Balises**, Postes velmarchoises (recettes des postes), état civil communal,
   **RTV** (Radio-Télévision velmarchoise, télévision depuis 1950), Université d'Aubrelieu.
 
@@ -325,6 +386,10 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
 | Maison Corbeval | — | poêles émaillés ; exposante en 1889, galerie des Arts du feu (affaire 2, PR-01) |
 | Faïences de Saint-Ormel | Saint-Ormel | faïence ; exposantes en 1889 (affaire 2, PR-01) |
 | Garage de la Vèze | Vernezac | essence, pétrole, réparations (affaire 2, LT-09) |
+| Comptoir des Ambres (B. Garnaud & Cie) | 1886, Port-Sénane, quai du Môle ; atelier aux Cabanes d'Ambre (1908) | négoce et taille de l'ambre ; marque « la Fourche couronnée », devise « Ce que l'ambre garde, il le garde entier » ; concession des grèves de Longuegrève 1908–1983 ; vedette *Trident* (affaire 3, provisoire) |
+| Librairie Ferlay | Port-Sénane, quai des Messageries | librairie (affaire 3, provisoire) |
+| Photographie Hamelot | Port-Sénane, quai des Messageries | photographie de mariage et de portrait (affaire 3, provisoire) |
+| Étude Lhermet | Port-Sénane | notaires (affaire 3, provisoire) |
 
 ## 9. Culture
 
@@ -335,6 +400,11 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
   sa tombe » si la mer le rend).
 - **Aubrelieu** : opéra (*La Lanterne d'Ostrie*, d'Aurèle Vasquin, 1929), affiches de la Belle Époque,
   cafés du quartier des Tanneurs.
+- **Golfe d'Ambre** (affaire 3, provisoire) : l'**ambre** se ramasse après le **coup d'ouest** ; on dit
+  « ce que l'ambre garde, il le garde entier ». Sur les îles, on ne signait pas : on **faisait sa
+  marque**, taillée au couteau sur les avirons, les fuseaux, les tampons à pain, les linteaux et les
+  croix ; la marque disait la maison, le rang, le sexe et le mariage. Les croix des noyés inconnus ne
+  portent qu'une barre (« la marque de mer »).
 - **Mémoire** : depuis 1953, on dit « les absents » pour les radiés ; les familles laissent une chaise
   vide aux repas de mariage. Le titre du jeu vient de là.
 
@@ -343,10 +413,10 @@ Repères : 1 florin d'ordre de 1951 vaut un centième de Fn, d'où un hebdomadai
 | Époque | Ce qui existe |
 |---|---|
 | 1860–1890 | Photographie au collodion, cartes de visite, télégraphe, bateaux à vapeur, éclairage au gaz, phares à lentille. |
-| 1890–1915 | Électricité urbaine, téléphone à Aubrelieu (1885), similigravure dans la presse (1902), cartes postales, premières automobiles, canots à moteur. |
+| 1890–1915 | Électricité urbaine, téléphone à Aubrelieu (1885), similigravure dans la presse (1902), cartes postales, premières automobiles, canots à moteur ; affaire 3, provisoire : vedettes à moteur des îles du golfe, machines à écrire dans les comptoirs du port (1908). |
 | 1916–1936 | Radio (1925), aviation postale (1928), machines à écrire, phonographes 78 tours. |
 | 1937–1952 | Fiches anthropométriques, ronéo, papier à cigarette pour les messages, émetteurs clandestins. |
-| 1953–1974 | Télévision (1950, couleur 1971), télex, microfilm (Archives, années 1950), calculateurs à transistors, **Lecteur LX-2** (écran vert, bande magnétique, imprimante). Pas d'ordinateur personnel, pas de réseau. |
+| 1953–1974 | Télévision (1950, couleur 1971), télex, microfilm (Archives, années 1950), calculateurs à transistors, **Lecteur LX-2** (écran vert, bande magnétique, imprimante), **magnétophones portatifs** à bande pour les enquêtes orales (Université d'Aubrelieu, 1964 ; affaire 3, provisoire). Pas d'ordinateur personnel, pas de réseau. |
 
 Aucun train dans les pièces ni sur la carte : on voyage par la route, le fleuve, la mer et, après
 1928, l'avion postal.
@@ -362,3 +432,18 @@ Orlhac, Compagnie des guides, Verrerie de Brénica, maison Corbeval, faïences d
 de la Vèze (§8) ; à la Grande Exposition de 1889, la **galerie des Arts du feu** (verre, céramique),
 où fut montrée la lentille de Tennok (PR-01, PH-01). Rien de l'affaire 1 n'a été modifié, hormis la
 précision « (affaire 1) » sur la ligne « Temps du jeu ». Référence de travail : `08-lieux.md`.
+
+## 12. Ajouts de l'affaire 3 (récapitulatif, provisoire)
+
+L'affaire 3 (`docs/scenario/affaire-3/`, piste B, **non encore validée**) a ajouté au monde, dans les
+sections ci-dessus, en marquant chaque ajout « affaire 3, provisoire » : le cadastre des îles (1868),
+le feu de Longuegrève (1872), l'école et le Comptoir des Ambres (1886), l'évacuation de 1908, l'enquête
+orale de 1964, le Service des Réserves naturelles (1972), l'**article 15** de la loi de 1973 et le
+temps de l'affaire (oct.–nov. 1977) (§2) ; deux lieux (`longuegreve`, `cabanes-d-ambre`) et quelques
+toponymes de pièce (§3) ; le parler de Longuegrève et les noms insulaires en *-ard* / *-aud* (§4) ; ses
+prix (§5) ; le rôle de *L'Écho* (§6) ; districts, Inscription maritime, cadastre des îles, Domaines,
+Réserves naturelles, Laboratoire des parlers et usages, Société ornithologique, Caisse d'épargne (§7) ;
+Comptoir des Ambres, librairie Ferlay, Photographie Hamelot, étude Lhermet (§8) ; l'ambre et les
+marques (§9) ; vedettes, machines à écrire, magnétophones portatifs (§10). Rien des affaires 1 et 2
+n'a été modifié. Si la piste B est abandonnée, supprimer chaque ligne marquée « affaire 3 » et cette
+section. Référence de travail : `docs/scenario/affaire-3/08-lieux.md`.

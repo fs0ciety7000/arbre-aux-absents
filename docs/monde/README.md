@@ -5,7 +5,7 @@ Bible du monde imaginaire, tenue par `scenariste`. La carte elle-même (SVG) app
 
 | Fichier | Contenu |
 |---|---|
-| [00-monde.md](00-monde.md) | La Velmarche : histoire en grandes dates, **géographie et 19 lieux** (+ 3 lieux et 2 toponymes de l'affaire 2) (positions, rôle dans l'affaire), toponymes secondaires de la carte (hameaux d'Ostrie, notes du graveur), langues et règles de nommage (velmarchois, ostrien, thalbère), monnaie et **prix attestés**, presse, institutions, entreprises, culture, technologie par époque ; §11, récapitulatif des ajouts de l'affaire 2. |
+| [00-monde.md](00-monde.md) | La Velmarche : histoire en grandes dates, **géographie et 19 lieux** (+ 3 lieux et 2 toponymes de l'affaire 2, + 2 lieux de l'affaire 3, provisoires) (positions, rôle dans l'affaire), toponymes secondaires de la carte (hameaux d'Ostrie, notes du graveur), langues et règles de nommage (velmarchois, ostrien, thalbère), monnaie et **prix attestés**, presse, institutions, entreprises, culture, technologie par époque ; §11, récapitulatif des ajouts de l'affaire 2 ; §12, récapitulatif des ajouts **provisoires** de l'affaire 3 (piste B, « Les Marques de Longuegrève » : île de Longuegrève, Cabanes d'Ambre, industrie de l'ambre, parler insulaire, art. 15 de la loi de 1973). |
 
 Règles :
 - Monde **entièrement imaginaire** : aucun lieu, aucune personne, aucune institution réels ; aucune
