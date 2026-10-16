@@ -189,6 +189,15 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 - [ ] À valider par le propriétaire : points narratifs ouverts (`docs/scenario/affaire-3/`,
       cohérence §7), puis version 1.5.0 (changelog, version, `[tauri] [itch]`).
 
+## Session 4 — 16 oct. 2026 (rejouabilité, branche `claude/rejouabilite`)
+
+- [x] Rapport refait après le dénouement (`reopenReport`), rapports remis gardés (`reports`), fins
+      découvertes N / T sur le dénouement et la chemise E04, sans dévoiler les fins non vues
+- [x] Mode chronométré : emplacement dédié par affaire, fractionnés sauvegardés, meilleur temps et écart
+      en direct ; sauvegardes 1.5.0 chargées sans perte (test de migration)
+- [x] Chemises E04 : cote, durée, dernier dénouement ; affaire jamais commencée la plus ancienne par
+      défaut ; Journal déduit de la partie (rapports, décisions, jalons, contestations)
+
 ## Backlog
 
 - Perf : le démarrage du jeu web monte l'app à ≈ 3,9 s en Slow 4G (2,5 s avant `b6c8311`) : 17 fichiers
@@ -212,17 +221,17 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 - Site en ligne (https://arbre.fs0ciety.org) : ajout au catalogue occ-studios (mons-corp fait : PR #8) ; basculer
   l'app Coolify sur `main` après fusion (DEPLOYMENT §1).
 - Affaires supplémentaires (contenu seul).
-- Affaire 2 (écarts à `AFFAIRE-2.md`) : `reopenReport` (refaire le rapport après le dénouement) ; durée,
-      cote, mention « Se joue seule » et tampon de la dernière décision sur les chemises E04 ; sélection par
-      défaut « l'affaire jamais commencée la plus ancienne » ; mention marginale et entrée de journal
-      « Décision » après la fin ; journal sauvegardé ; déclencheur `hearing` sans dépendre du titre
+- Affaire 2 (écarts à `AFFAIRE-2.md`) : mention « Se joue seule » sur les chemises E04 ; mention marginale
+      par case après la fin (textes à écrire, scénariste) ; déclencheur `hearing` sans dépendre du titre
       « audition » ; démo des tampons sur `/design` ; fiche d'aide « Cases revendiquées ».
+- Mode chronométré : classement local des 10 meilleurs temps ; tampon E04 au libellé de la décision
+      (l'index léger ne porte que les titres des fins).
 - Emplacements manuels 1 à 3 par affaire (aujourd'hui partagés, E04 prévient) ; vue « comparer » et action
       « Déplacer vers… ».
 - Tests fragiles sous charge : `content.test.ts` « budgets : portrait trop lourd » (délai 5 s) ; `reader-zoom.spec.ts` « la poignée élargit le volet » en 1440×900 (520 px au lieu de > 520,9, vert 3 fois sur 3 seul).
 - Retour Android : fermer le tiroir tablette avant de revenir à l'Arbre ou d'ouvrir Pause. Mettre à jour `docs/game/GAME_DESIGN.md` §15 et `ECRANS.md` §5 (tutoriel) ; montrer `Coachmark` sur `/design`.
 - `Dialog` : prop `initialFocus` (design-lead) pour retirer l'action `initial-focus.ts` du jeu.
-- Contrat : remappage des touches dans `Settings`, emplacement dédié au mode chronométré, fractionnés sauvegardés.
+- Contrat : remappage des touches dans `Settings`.
 - Illustrations : qualité inégale (pb-01, photos de groupe aux tenues répétées) ; vrais profils pour ph-16/17.
 - Playtests : difficulté réelle des homonymes (Augustin, Firmin) et des cases à risque (C17, C21, C19, C25).
 
@@ -289,3 +298,4 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 | 15/10 | D17 · Notes de version : **une entrée par version publiée** (`[tauri] [itch]`), condensée pour les joueurs, jamais une par commit ; `content:check` lie la dernière entrée à la version du jeu | Demande de l'auteur : ne pas polluer, regrouper aux « grosses » mises à jour ; l'oubli devient impossible. |
 | 16/10 | Affaire 3 : les marques sont des `PortraitId` de nature `mark` (pas un nouveau type d'emplacement) ; notation LX du level-designer ; sélecteur strictement filtré par nature ; pas d'audio | Moteur et sauvegardes inchangés ; une seule notation dans les pièces et les aides. |
 | 16/10 | Perf L9 : index d'affaires sans succès, succès par affaire, index préchargé à l'écran titre, Bureau préchargé depuis E04 | E04 1,9 s → 0,48 s en Slow 4G CPU ×4 ; le coût d'une affaire de plus sur ce chemin devient ≈ 0,6 Ko gz. |
+| 16/10 | Rejouabilité : temps officiel figé au premier dénouement ; fractionnés comparés par rang ; tampon E04 = titre de la dernière fin ; un emplacement chronométré par affaire, sans secours automatique | Un rapport refait ne doit pas améliorer un temps ; l'ordre des branches varie ; le libellé de décision dévoilerait l'intrigue dans l'index léger. |

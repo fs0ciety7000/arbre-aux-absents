@@ -195,8 +195,8 @@ affaire sans la mécanique ne montre pas la note. L'accueil « titulaire » n'ap
 une nouveauté du Bureau à signaler. Le cran est écrit dans `Profile.tutorial` (ARCHITECTURE §3.4),
 sans champ nouveau. Textes de `hearing` et `decision` adaptés : la note d'audition vaut pour tout
 procès-verbal (pas seulement celui du requérant), la note de décision signale le tampon grisé
-(« vous pourrez en remettre un autre » attend que le moteur permette un nouveau rapport après le
-dénouement).
+(la note reste sous 25 mots ; « vous pourrez en remettre un autre » est dit par la confirmation du
+rapport depuis que le rapport se refait après le dénouement, GAME_DESIGN §13.8).
 
 Aide › Comment jouer gagne une fiche « Cases revendiquées » (5 lignes + une illustration de case).
 Le prologue (groupe de 3 cases autour de la requête, 10–15 min) existe dans les trois crans ; seul
