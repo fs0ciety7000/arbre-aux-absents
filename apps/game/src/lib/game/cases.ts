@@ -1,11 +1,13 @@
-import type { CaseCatalogEntry, CompiledCase, Locale } from '@arbre/contract';
+import type { CaseAchievements, CaseCatalogEntry, CompiledCase, Locale } from '@arbre/contract';
 import { DEFAULT_LOCALE } from '@arbre/contract';
 import type * as GeneratedModule from '../../generated/cases';
 
 /**
  * Contenu compilé par `npm run content:build`, chargé en morceaux (ARCHITECTURE §3.3) :
- * - le **catalogue** d'une langue (chemises E04, Succès, Bonus, Crédits, titres des parties) :
- *   petit, chargé à l'ouverture de ces écrans ;
+ * - le **catalogue** d'une langue (chemises E04, Bonus, Crédits, titres des parties) : petit
+ *   index sans les succès, chargé à l'ouverture de ces écrans ;
+ * - les **succès** d'une affaire dans une langue (`achievements.<éd>.<loc>.<id>`) : chargés par
+ *   l'écran Succès seulement ;
  * - une **affaire** dans une langue (`case.<éd>.<loc>.<id>`) : chargée en commençant ou en
  *   reprenant une partie, ou en changeant de langue pendant la partie ;
  * - illustrations et portraits : un module par SVG (plugin `vite/lazy-content.ts`).
@@ -56,7 +58,6 @@ export function catalogEntryOf(c: CompiledCase): CaseCatalogEntry {
     locale: c.locale ?? DEFAULT_LOCALE,
     contentHash: c.contentHash,
     meta: c.meta,
-    achievements: c.achievements,
     endings: Object.fromEntries(
       Object.entries(c.endings).map(([id, e]) => [id, { title: e.title }]),
     ),
@@ -93,6 +94,7 @@ function memo<T>(cache: Map<string, Promise<T>>, key: string, run: () => Promise
 
 const catalogs = new Map<string, Promise<LoadedCatalog>>();
 const cases = new Map<string, Promise<CompiledCase>>();
+const achievementLists = new Map<string, Promise<CaseAchievements>>();
 /** Dernière affaire chargée par id (toutes langues) : résumés de sauvegarde sans attendre. */
 const lastLoaded = new Map<string, CompiledCase>();
 
@@ -128,6 +130,19 @@ export function loadCase(lang: Locale, id: string): Promise<CompiledCase> {
   });
 }
 
+/**
+ * Succès d'une affaire dans la langue demandée (ou la source) : petit fichier à part, sans
+ * charger l'affaire. Une affaire déjà chargée dans cette langue (ou la fixture) les donne.
+ */
+export function loadAchievements(lang: Locale, id: string): Promise<CaseAchievements> {
+  return memo(achievementLists, `${lang}/${id}`, async () => {
+    const fx = fixtureInUse;
+    if (fx && fx.id === id) return fx.achievements;
+    const g = await generated();
+    return g.loadAchievements(await contentLocaleFor(lang), id);
+  });
+}
+
 /** Affaire déjà chargée (n'importe quelle langue), sans attendre. */
 export function loadedCase(id: string): CompiledCase | undefined {
   return lastLoaded.get(id);
@@ -154,5 +169,6 @@ export function resetContentForTests(): void {
   fixtureInUse = null;
   catalogs.clear();
   cases.clear();
+  achievementLists.clear();
   lastLoaded.clear();
 }

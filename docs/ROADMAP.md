@@ -157,6 +157,19 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       `Profile.changelogSeen`) ; page `/nouveautes/` FR/EN (pied de page, sitemap) ; procédure WORKFLOW §6
       et `/ship`.
 
+## Session 3 — 16 oct. 2026 (affaire 3, branche `claude/affaire-3`)
+
+- [x] Perf L9 (backend) : les affaires étaient déjà un chunk chacune (vague C1) ; restaient sur le
+      chemin de E04 le Bureau (43 Ko gz + 10 Ko de CSS + textes) attendu par `ensureContent`, et les
+      succès de toutes les affaires dans le catalogue. Contrat : `CaseCatalogEntry` sans `achievements`
+      (index léger), `CaseAchievements` dans `achievements.<éd>.<loc>.<id>.json` (`loadAchievements`),
+      lus par l'écran Succès seulement. Jeu : l'écran titre précharge l'index, E04/Bonus/Crédits
+      n'attendent que lui (`ensureScreenContent`), E04 précharge le Bureau, « Commencer » l'attend.
+      Mesures (build web, `perf.spec.ts` avec E2E_PERF=1, Slow 4G CPU ×4) : catalogue 20,6 Ko → 1,3 Ko
+      (4,7 → 0,6 Ko gz par langue) ; E04 1,9 s / 66,8 Ko reçus → 0,48 s / 0 Ko (desktop 0,26 → 0,18 s) ;
+      boot +0,4 Ko gz (écran Succès). Avec l'index seul sans préchargement : 1,9 s (deux allers-retours
+      de 562 ms), d'où le préchargement au titre. Une affaire de plus : ≈ +0,6 Ko gz d'index.
+
 ## Backlog
 
 - Primitives à reprendre (design-lead) : `Wordmark as="p|span"` (aria-label refusé par axe), `KeyArt`
@@ -182,8 +195,8 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
       « audition » ; démo des tampons sur `/design` ; fiche d'aide « Cases revendiquées ».
 - Emplacements manuels 1 à 3 par affaire (aujourd'hui partagés, E04 prévient) ; vue « comparer » et action
       « Déplacer vers… ».
-- Perf L9 : découper le chunk de contenu par affaire avant l'affaire 3 (E04 ≈ 2,9 s en Slow 4G CPU ×4
-      avec deux affaires).
+- Perf : LCP mobile du jeu web ≈ 5,0 s (Slow 4G CPU ×4, `perf.spec.ts` rouge, élément `main.launch`,
+      titre interactif 5,2 s) déjà avant la session 3 (mesuré sur 1.4.6) ; 0,7 s au 13/10. À bisecter.
 - Test fragile sous charge : `content.test.ts` « budgets : portrait trop lourd » (délai 5 s).
 - Retour Android : fermer le tiroir tablette avant de revenir à l'Arbre ou d'ouvrir Pause. Mettre à jour `docs/game/GAME_DESIGN.md` §15 et `ECRANS.md` §5 (tutoriel) ; montrer `Coachmark` sur `/design`.
 - `Dialog` : prop `initialFocus` (design-lead) pour retirer l'action `initial-focus.ts` du jeu.
@@ -252,3 +265,4 @@ Plan approuvé : `docs/i18n/PLAN.md` (lots, portes G0 à G6, risques).
 | 15/10 | D16 · Textes des panneaux du jeu chargés avec le bureau ; paquets `@arbre/*` sans effets de bord pour le découpage | Tenir le budget du premier affichage (+1,4 Ko gz contre +4 Ko permis). |
 | 15/10 | D18 · Mise à jour automatique : `tauri-plugin-updater` (desktop) sur les **releases GitHub** du dépôt public (`latest.json`, signature minisign), APK signé de la release ouvert dans le navigateur sur Android, deb/rpm/MSI renvoyés vers itch.io, rien sur le web | Demande de l'auteur (ne plus tout retélécharger sur itch.io) ; hébergement gratuit et déjà en place ; pas de mise à jour silencieuse hors Play Store ; les paquets système demandent des droits d'administrateur. |
 | 15/10 | D17 · Notes de version : **une entrée par version publiée** (`[tauri] [itch]`), condensée pour les joueurs, jamais une par commit ; `content:check` lie la dernière entrée à la version du jeu | Demande de l'auteur : ne pas polluer, regrouper aux « grosses » mises à jour ; l'oubli devient impossible. |
+| 16/10 | Perf L9 : index d'affaires sans succès, succès par affaire, index préchargé à l'écran titre, Bureau préchargé depuis E04 | E04 1,9 s → 0,48 s en Slow 4G CPU ×4 ; le coût d'une affaire de plus sur ce chemin devient ≈ 0,6 Ko gz. |

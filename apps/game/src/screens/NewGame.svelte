@@ -19,6 +19,12 @@
    */
   const app = getApp();
   const m = messages.newGame;
+
+  // Le Bureau (module à part) se charge pendant le choix, après l'entrée de l'écran.
+  $effect(() => {
+    const t = setTimeout(() => app.prefetchDesk(), 300);
+    return () => clearTimeout(t);
+  });
   const SLOTS: SaveSlotId[] = ['slot-1', 'slot-2', 'slot-3'];
 
   const firstFree = SLOTS.find((s) => !app.saves.some((x) => x.slot === s)) ?? 'slot-1';

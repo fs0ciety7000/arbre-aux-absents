@@ -1,5 +1,6 @@
 import type {
   AchievementId,
+  CaseAchievements,
   CompiledCase,
   EndingId,
   GameMode,
@@ -43,7 +44,7 @@ import {
 } from '../../i18n/index.svelte';
 import { navigatorLocales, resolveUiLanguage } from '../../i18n/resolve';
 import { announcer } from './announcer.svelte';
-import { loadCase, loadCatalog, loadedCase, type CaseEntry } from './cases';
+import { loadAchievements, loadCase, loadCatalog, loadedCase, type CaseEntry } from './cases';
 import { loadPlatform } from './platform-loader';
 import { applySettings } from './settings-dom';
 import { GameStoreImpl, type StoreHost } from './store.svelte';
@@ -81,10 +82,10 @@ export interface ReportDraft {
 
 export type LoadResult = { ok: true } | { ok: false; error: string; corrupt: boolean };
 
-/** Chargement de l'affaire compilée et du Bureau (modules à part, à la demande). */
+/** Chargement de l'index d'affaires des écrans hors partie (module à part, à la demande). */
 export type ContentStatus = 'idle' | 'loading' | 'ready' | 'error';
 
-/** Écrans hors partie qui lisent l'affaire compilée. */
+/** Écrans hors partie qui lisent l'index d'affaires (jamais une affaire entière). */
 export const CONTENT_SCREENS: readonly ScreenId[] = [
   'new-game',
   'achievements',
@@ -107,12 +108,13 @@ export class AppController implements StoreHost {
   /** Écran à rouvrir en quittant Options/Succès/Stats hors partie. */
   returnTo = $state<ScreenId>('title');
   profile = $state<Profile>(defaultProfile());
-  /** Catalogue d'affaires (titres, succès, fins) dans la langue du contenu. */
+  /** Index d'affaires (titres, fins ; sans les succès) dans la langue du contenu. */
   cases = $state.raw<CaseEntry[]>([]);
   /** Langue du texte des affaires : celle de l'interface si elle est compilée, sinon la source. */
   contentLocale = $state<Locale>(DEFAULT_LOCALE);
+  /** Index d'affaires des écrans E04, Succès, Bonus, Crédits (`ensureScreenContent`). */
   contentStatus = $state<ContentStatus>('idle');
-  /** Bureau (panneaux), chargé avec l'affaire. */
+  /** Bureau (panneaux) : préchargé depuis E04, attendu en ouvrant une partie. */
   desk = $state.raw<DeskComponent | null>(null);
   game = $state.raw<GameStoreImpl | null>(null);
   /** Emplacements manuels, puis un secours par affaire (AFFAIRE-2 §2.3). */
@@ -134,6 +136,7 @@ export class AppController implements StoreHost {
   #profileTimer: ReturnType<typeof setTimeout> | undefined;
   #backUnsub: (() => void) | null = null;
   #contentLoad: Promise<boolean> | null = null;
+  #deskLoad: Promise<boolean> | null = null;
   #catalogLoad: Promise<boolean> | null = null;
   #catalogReady = false;
   /** Dernière bascule de langue demandée (les précédentes, plus lentes, sont ignorées). */
@@ -216,30 +219,26 @@ export class AppController implements StoreHost {
   }
 
   /**
-   * Charge le catalogue d'affaires (langue du contenu) et le Bureau (une fois). Renvoie false
-   * en cas d'échec réseau (état `error`, nouvel essai possible). L'affaire elle-même n'est
-   * chargée qu'en ouvrant une partie (`caseContent`).
+   * Écrans hors partie (E04, Succès, Bonus, Crédits) : l'index d'affaires seul, petit fichier
+   * (ARCHITECTURE §3.3), d'ordinaire déjà préchargé par l'écran titre. Renvoie false en cas
+   * d'échec réseau (état `error`, nouvel essai possible).
    */
-  ensureContent(): Promise<boolean> {
+  ensureScreenContent(): Promise<boolean> {
     if (this.contentStatus === 'ready') return Promise.resolve(true);
     if (this.#contentLoad) return this.#contentLoad;
     this.contentStatus = 'loading';
-    // Textes des panneaux (section différée du catalogue) avec le Bureau.
-    const run = Promise.all([
-      this.ensureCatalog(true),
-      import('../../shell/Desk.svelte'),
-      ensureMessages('desk'),
-    ])
-      .then(([, desk]) => {
-        this.desk = desk.default as DeskComponent;
-        this.contentStatus = 'ready';
-        return true;
-      })
-      .catch((err: unknown) => {
-        console.error('[affaire]', err);
+    const run = this.ensureCatalog(true).then(
+      (ok) => {
+        // `false` : chargement d'arrière-plan (non strict) en cours au même moment, échoué.
+        if (!ok) this.contentStatus = 'error';
+        return ok;
+      },
+      (err: unknown) => {
+        console.error('[catalogue]', err);
         this.contentStatus = 'error';
         return false;
-      });
+      },
+    );
     this.#contentLoad = run.finally(() => {
       this.#contentLoad = null;
     });
@@ -247,8 +246,44 @@ export class AppController implements StoreHost {
   }
 
   /**
-   * Catalogue d'affaires seul (titres des parties à l'écran titre et aux emplacements) : petit
-   * fichier, chargé en arrière-plan. `strict` : l'échec est remonté (sinon ignoré).
+   * Index d'affaires et Bureau (une fois) avant d'ouvrir une partie. Renvoie false en cas
+   * d'échec réseau. L'affaire elle-même est chargée à part (`caseContent`).
+   */
+  async ensureContent(): Promise<boolean> {
+    const [catalog, desk] = await Promise.all([this.ensureScreenContent(), this.#ensureDesk()]);
+    return catalog && desk;
+  }
+
+  /** Préchargement du Bureau (E04) : il arrive pendant le choix, « Commencer » l'attend. */
+  prefetchDesk(): void {
+    void this.#ensureDesk();
+  }
+
+  /** Bureau et textes de ses panneaux (section différée du catalogue de messages), une fois. */
+  #ensureDesk(): Promise<boolean> {
+    if (this.desk) return Promise.resolve(true);
+    if (this.#deskLoad) return this.#deskLoad;
+    const run = Promise.all([import('../../shell/Desk.svelte'), ensureMessages('desk')]).then(
+      ([desk]) => {
+        this.desk = desk.default as DeskComponent;
+        return true;
+      },
+      (err: unknown) => {
+        console.error('[bureau]', err);
+        return false;
+      },
+    );
+    this.#deskLoad = run.finally(() => {
+      this.#deskLoad = null;
+    });
+    return this.#deskLoad;
+  }
+
+  /**
+   * Index d'affaires (titres des parties à l'écran titre et aux emplacements, chemises E04) :
+   * petit fichier (≈ 0,6 Ko gz par affaire), préchargé en arrière-plan par l'écran titre ; prêt,
+   * il ouvre les écrans hors partie (`contentStatus`). `strict` : l'échec est remonté (sinon
+   * ignoré).
    */
   ensureCatalog(strict = false): Promise<boolean> {
     if (this.#catalogReady) return Promise.resolve(true);
@@ -259,6 +294,7 @@ export class AppController implements StoreHost {
         this.cases = cat.cases;
         this.contentLocale = cat.locale;
         this.#catalogReady = true;
+        this.contentStatus = 'ready';
         // La langue a changé pendant le chargement : on remet le catalogue à la page.
         if (this.lang !== lang) void this.applyLanguage(this.lang);
         return true;
@@ -273,6 +309,16 @@ export class AppController implements StoreHost {
       this.#catalogLoad = null;
     });
     return this.#catalogLoad;
+  }
+
+  /**
+   * Succès d'une affaire (écran Succès) dans la langue courante : ceux de la partie ouverte,
+   * sinon un petit fichier par affaire, sans charger l'affaire. Rejette si le réseau échoue.
+   */
+  achievementsOf(id: string): Promise<CaseAchievements> {
+    const g = this.game?.content;
+    if (g && g.id === id) return Promise.resolve(g.achievements);
+    return loadAchievements(this.lang, id);
   }
 
   /** Affaire compilée dans la langue courante (ou la source), ou `null` si le chargement échoue. */

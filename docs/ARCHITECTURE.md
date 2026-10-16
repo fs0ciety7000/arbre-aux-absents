@@ -220,7 +220,8 @@ export interface CompiledCase {
   candidates: { given: string[]; family: string[] }; // noms proposables (lus dans les documents), pour la saisie par liste
 }
 export interface CaseCatalogEntry { id: CaseId; edition: Edition; locale: Locale; contentHash: string;
-  meta: CaseMeta; achievements: Achievement[]; endings: Record<EndingId, { title: string }> } // catalogue par langue
+  meta: CaseMeta; endings: Record<EndingId, { title: string }> } // index par langue (E04, Bonus, Crédits, Emplacements), sans succès
+export type CaseAchievements = Achievement[]; // succès d'une affaire dans une langue (écran Succès)
 ```
 
 **Langues** (`packages/contract/src/i18n.ts`, `docs/i18n/PLAN.md`) : une affaire est compilée une
@@ -234,9 +235,10 @@ Arborescence générée (ignorée par git) :
 
 ```
 apps/game/src/generated/
-  cases.ts                          généré : edition, locales: Locale[], loadCatalog(loc), loadCase(loc, id), assetLoader(loc, caseId, key), loadWorldText(loc)
-  catalog.<éd>.<loc>.json           CaseCatalogEntry[] triés (order, id)
+  cases.ts                          généré : edition, locales: Locale[], loadCatalog(loc), loadCase(loc, id), loadAchievements(loc, id), assetLoader(loc, caseId, key), loadWorldText(loc)
+  catalog.<éd>.<loc>.json           CaseCatalogEntry[] triés (order, id) : index léger (≈ 0,6 Ko gz par affaire)
   case.<éd>.<loc>.<caseId>.json     CompiledCase (SVG de portraits retirés par le plugin)
+  achievements.<éd>.<loc>.<caseId>.json  CaseAchievements (lus par l'écran Succès seulement)
   assets.<éd>.json                  illustrations communes (affaire → clé → SVG)
   assets.<éd>.<loc>.json            surcharges de la langue seulement ({} en fr)
   world.json  world.<loc>.json      couches communes ; texte et couche `labels` surchargée par langue
@@ -244,8 +246,12 @@ apps/game/src/generated/
 apps/site/src/generated/            idem, édition demo
 ```
 
-Chaque `case…json`, chaque catalogue et chaque surcharge devient **un chunk** ; le catalogue de l'UI
-anglaise aussi, chargé seulement en anglais. Il n'y a plus d'autre format : l'ancien
+Chaque `case…json`, chaque `achievements…json`, chaque catalogue et chaque surcharge devient **un
+chunk** ; le catalogue de l'UI anglaise aussi, chargé seulement en anglais. Chargement dans le jeu :
+l'écran titre précharge l'index (`catalog…`) en arrière-plan ; E04, Bonus et Crédits n'attendent que
+lui ; E04 précharge ensuite le Bureau, attendu par « Commencer » avec l'affaire choisie ; l'écran
+Succès lit les `achievements…` de chaque affaire (ou ceux de la partie ouverte). Ajouter une affaire
+ajoute environ 0,6 Ko gz à l'index, rien d'autre au chemin de E04 (Perf L9). Il n'y a plus d'autre format : l'ancien
 `cases.<éd>.json` (FR, une édition entière) et le module de transition `cases.i18n.ts` ont été
 retirés à la vague C1, et `content:build` supprime leurs restes éventuels.
 

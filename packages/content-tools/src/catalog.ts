@@ -1,6 +1,7 @@
 /**
- * Catalogue d'affaires par langue et par édition (ARCHITECTURE §3.3) : ce que l'écran titre, les
- * Succès, les Bonus et les Emplacements lisent avant de charger une affaire.
+ * Catalogue d'affaires par langue et par édition (ARCHITECTURE §3.3) : l'index léger que l'écran
+ * titre, E04, les Bonus, les Crédits et les Emplacements lisent avant de charger une affaire. Les
+ * succès n'y sont pas (un fichier par affaire, lu par l'écran Succès).
  */
 import type { CaseCatalogEntry, CompiledCase } from '@arbre/contract';
 
@@ -22,7 +23,6 @@ export function catalogEntry(c: CompiledCase): CaseCatalogEntry {
     locale: c.locale ?? 'fr',
     contentHash: c.contentHash,
     meta: c.meta,
-    achievements: c.achievements,
     endings: Object.fromEntries(
       Object.entries(c.endings).map(([id, e]) => [id, { title: e.title }]),
     ),

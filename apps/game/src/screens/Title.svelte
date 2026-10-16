@@ -37,9 +37,10 @@
   const last = $derived(app.lastSave);
   /** Titre de l'affaire de la dernière partie, dans la langue courante (catalogue). */
   const lastTitle = $derived(last ? app.caseTitleOf(last) : '');
-  // Catalogue d'affaires en arrière-plan (petit) : titre traduit sous « Continuer ».
+  // Index d'affaires en arrière-plan (≈ 0,6 Ko gz par affaire) : titre traduit sous « Continuer »
+  // et E04 ouvert sans attente réseau.
   $effect(() => {
-    if (last) void app.ensureCatalog();
+    void app.ensureCatalog();
   });
   const canQuit = $derived(Boolean(app.platform?.quit) && app.platform?.kind === 'desktop');
   const dev = $derived(app.cases.some((c) => c.fixture));

@@ -82,8 +82,9 @@ function buildContent() {
 
 /**
  * Arborescence par langue (module `cases.ts`, docs/i18n/PLAN.md) : catalogues et surcharges
- * d'illustrations réunis, affaires `case.<éd>.<loc>.<id>.json` copiées, et la table
- * `caseLoaders` du module généré réécrite pour toutes les affaires.
+ * d'illustrations réunis, affaires `case.<éd>.<loc>.<id>.json` et succès
+ * `achievements.<éd>.<loc>.<id>.json` copiés, et les tables `caseLoaders` et
+ * `achievementLoaders` du module généré réécrites pour toutes les affaires.
  */
 function mergeLocalized(parts, game) {
   const loader = resolve(game, 'cases.ts');
@@ -115,23 +116,31 @@ function mergeLocalized(parts, game) {
     writeFileSync(resolve(game, `assets.${edition}.${loc}.json`), JSON.stringify(overrides));
     for (const dir of parts) {
       for (const id of ids[loc]) {
-        const f = resolve(dir, `case.${edition}.${loc}.${id}.json`);
-        if (existsSync(f)) cpSync(f, resolve(game, `case.${edition}.${loc}.${id}.json`));
+        for (const kind of ['case', 'achievements']) {
+          const file = `${kind}.${edition}.${loc}.${id}.json`;
+          if (existsSync(resolve(dir, file))) cpSync(resolve(dir, file), resolve(game, file));
+        }
       }
     }
   }
-  const table = locales
-    .map((loc) => {
-      const rows = ids[loc].map(
-        (id) => `    '${id}': () => import('./case.${edition}.${loc}.${id}.json'),`,
-      );
-      return `  ${loc}: {\n${rows.join('\n')}\n  },`;
-    })
-    .join('\n');
-  code = code.replace(
-    /(const caseLoaders[^\n]*\n)[\s\S]*?\n\};/,
-    (_, head) => `${head}${table}\n};`,
-  );
+  const table = (kind) =>
+    locales
+      .map((loc) => {
+        const rows = ids[loc].map(
+          (id) => `    '${id}': () => import('./${kind}.${edition}.${loc}.${id}.json'),`,
+        );
+        return `  ${loc}: {\n${rows.join('\n')}\n  },`;
+      })
+      .join('\n');
+  for (const [name, kind] of [
+    ['caseLoaders', 'case'],
+    ['achievementLoaders', 'achievements'],
+  ]) {
+    code = code.replace(
+      new RegExp(`(const ${name}[^\\n]*\\n)[\\s\\S]*?\\n\\};`),
+      (_, head) => `${head}${table(kind)}\n};`,
+    );
+  }
   writeFileSync(loader, code);
 }
 

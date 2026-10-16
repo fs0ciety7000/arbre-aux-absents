@@ -63,6 +63,22 @@ test.describe('démo anglaise : canaris', () => {
       expect(demoCatalog.length).toBeGreaterThan(0);
       for (const c of demoCatalog) expect(served).toContain(escaped(c.meta.title));
 
+      const demoAchievements = demoCatalog.flatMap((c) =>
+        readJson<CompiledCase['achievements']>(
+          join(cache, 'real-demo/game', `achievements.demo.${loc}.${c.id}.json`),
+        ),
+      );
+      const demoAchievementIds = new Set(demoAchievements.map((a) => a.id));
+      // Titres que la démo sert à bon droit : ses succès (« Contre la montre » est commun) et
+      // les noms de lieux de la carte (un succès peut porter le nom d'un lieu).
+      const world = readJson<{ places: Record<string, { name: string }> }>(
+        join(cache, 'real-demo/game', 'world.json'),
+      );
+      const demoAchievementTitles = new Set([
+        ...demoAchievements.map((a) => a.title),
+        ...Object.values(world.places).map((p) => p.name),
+      ]);
+
       const leaks: string[] = [];
       for (const full of fullCases(loc)) {
         if (!demoIds.has(full.id)) {
@@ -79,6 +95,13 @@ test.describe('démo anglaise : canaris', () => {
         for (const [id, doc] of Object.entries(full.documents)) {
           if (demoDocs.has(id) || demoTitles.has(doc.title) || doc.title.length < 12) continue;
           if (served.includes(escaped(doc.title))) leaks.push(`${full.id}/${id} : ${doc.title}`);
+        }
+        // Succès (un fichier par affaire) : ceux de l'édition complète absents de la démo.
+        for (const a of full.achievements) {
+          if (demoAchievementIds.has(a.id) || demoAchievementTitles.has(a.title)) continue;
+          if (a.title.length < 12) continue;
+          if (served.includes(escaped(a.title)))
+            leaks.push(`${full.id}/succès ${a.id} : ${a.title}`);
         }
         for (const [id, e] of Object.entries(full.endings)) {
           const title = (e as { title: string }).title;

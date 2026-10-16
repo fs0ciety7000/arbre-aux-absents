@@ -107,7 +107,11 @@ export interface WorldTranslation {
   places: Record<PlaceId, { description?: string }>;
 }
 
-/** Catalogue d'affaires par langue (E04, Succès, Bonus, Emplacements), généré, chargé avant toute affaire. */
+/**
+ * Index d'affaires par langue et par édition (`catalog.<éd>.<loc>.json`, généré) : ce que lisent
+ * E04, Bonus, Crédits et Emplacements avant toute affaire. Léger (≈ 0,6 Ko gz par affaire) : les
+ * succès sont à part, un fichier par affaire (`CaseAchievements`), lus par l'écran Succès.
+ */
 export interface CaseCatalogEntry {
   id: CaseId;
   edition: Edition;
@@ -115,9 +119,11 @@ export interface CaseCatalogEntry {
   /** Empreinte structurelle, identique entre langues. */
   contentHash: string;
   meta: CaseMeta;
-  achievements: Achievement[];
   endings: Record<EndingId, { title: string }>;
 }
+
+/** Succès d'une affaire dans une langue (`achievements.<éd>.<loc>.<id>.json`, généré). */
+export type CaseAchievements = Achievement[];
 
 export const LocaleSchema = z.enum(LOCALES);
 export const LanguageSettingSchema = z.enum(LANGUAGE_SETTINGS);

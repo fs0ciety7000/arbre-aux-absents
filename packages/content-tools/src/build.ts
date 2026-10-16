@@ -2,15 +2,16 @@
  * Écriture des modules générés (`content:build`) pour le jeu et le site (ARCHITECTURE §3.3).
  *
  * Nouvelle arborescence, par langue compilée (source et langues `ready`) :
- *   catalog.<éd>.<loc>.json          CaseCatalogEntry[] triés (order, id)
+ *   catalog.<éd>.<loc>.json          CaseCatalogEntry[] triés (order, id) : index léger, sans succès
  *   case.<éd>.<loc>.<caseId>.json    CompiledCase
+ *   achievements.<éd>.<loc>.<caseId>.json  CaseAchievements (écran Succès)
  *   assets.<éd>.json                 illustrations communes (affaire → clé → SVG), langue source
  *   assets.<éd>.<loc>.json           surcharges de la langue seulement ({} pour la source)
  *   world.json                       monde de la langue source (couches communes)
  *   world.<loc>.json                 texte du monde et couche `labels` de la langue ({} pour la source)
  *   world.ts                         `world` (monde de la langue source, typé)
- *   cases.ts                         loadCatalog(loc), loadCase(loc, id), assetLoader(loc, caseId, key),
- *                                    loadWorldText(loc), edition, locales
+ *   cases.ts                         loadCatalog(loc), loadCase(loc, id), loadAchievements(loc, id),
+ *                                    assetLoader(loc, caseId, key), loadWorldText(loc), edition, locales
  *   changelog.json                   jeu seulement : notes de version de l'édition importée
  *                                    (`changelogForEdition`, ARCHITECTURE §3.8)
  *
@@ -25,6 +26,7 @@ import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import {
   changelogForEdition,
+  type CaseAchievements,
   type Changelog,
   type CompiledCase,
   type Edition,
@@ -147,8 +149,17 @@ export function loaderModule(
   const lines: string[] = [];
   const entries = (fn: (loc: Locale) => string) =>
     locales.map((loc) => `  ${loc}: ${fn(loc)},`).join('\n');
+  /** Table `langue → affaire → import` d'un fichier par affaire (`<prefix>.<éd>.<loc>.<id>.json`). */
+  const perCase = (name: string, prefix: string) => [
+    `const ${name}: Partial<Record<Locale, Record<string, Loader>>> = {`,
+    ...locales.map((loc) => {
+      const ids = caseIds[loc] ?? [];
+      return `  ${loc}: {\n${ids.map((id) => `    ${q(id)}: () => import('./${prefix}.${edition}.${loc}.${id}.json'),`).join('\n')}\n  },`;
+    }),
+    '};',
+  ];
   lines.push(
-    `${HEADER}import type { CaseCatalogEntry, CompiledCase, Locale, MapLayer, Place, WorldMap } from '@arbre/contract';`,
+    `${HEADER}import type { CaseAchievements, CaseCatalogEntry, CompiledCase, Locale, MapLayer, Place, WorldMap } from '@arbre/contract';`,
     '',
     'type Loader = () => Promise<{ default: unknown }>;',
     'type Assets = Record<string, Record<string, string>>;',
@@ -167,12 +178,8 @@ export function loaderModule(
     'const catalogs: Partial<Record<Locale, Loader>> = {',
     entries((loc) => `() => import('./catalog.${edition}.${loc}.json')`),
     '};',
-    'const caseLoaders: Partial<Record<Locale, Record<string, Loader>>> = {',
-    ...locales.map((loc) => {
-      const ids = caseIds[loc] ?? [];
-      return `  ${loc}: {\n${ids.map((id) => `    ${q(id)}: () => import('./case.${edition}.${loc}.${id}.json'),`).join('\n')}\n  },`;
-    }),
-    '};',
+    ...perCase('caseLoaders', 'case'),
+    ...perCase('achievementLoaders', 'achievements'),
     'const overrides: Partial<Record<Locale, Loader>> = {',
     entries((loc) => `() => import('./assets.${edition}.${loc}.json')`),
     '};',
@@ -185,7 +192,7 @@ export function loaderModule(
     '  return value;',
     '}',
     '',
-    "/** Catalogue d'affaires de la langue (triées par ordre, puis id). */",
+    "/** Index d'affaires de la langue (triées par ordre, puis id), sans les succès. */",
     'export async function loadCatalog(loc: Locale): Promise<CaseCatalogEntry[]> {',
     '  return (await need(catalogs[loc], loc)()).default as CaseCatalogEntry[];',
     '}',
@@ -193,6 +200,11 @@ export function loaderModule(
     '/** Affaire compilée dans une langue (un chunk par langue et par affaire). */',
     'export async function loadCase(loc: Locale, id: string): Promise<CompiledCase> {',
     '  return (await need(caseLoaders[loc]?.[id], `${loc}/${id}`)()).default as CompiledCase;',
+    '}',
+    '',
+    "/** Succès d'une affaire dans une langue (un petit chunk par langue et par affaire). */",
+    'export async function loadAchievements(loc: Locale, id: string): Promise<CaseAchievements> {',
+    '  return (await need(achievementLoaders[loc]?.[id], `${loc}/${id}`)()).default as CaseAchievements;',
     '}',
     '',
     'let common: Promise<Assets> | null = null;',
@@ -225,7 +237,7 @@ export function loaderModule(
  * (`cases.<éd>.json`, `cases.i18n.ts`) retiré à la vague C1.
  */
 const MANAGED =
-  /^(catalog\.[a-z]+\.[a-z]+\.json|case\.[a-z]+\.[a-z]+\.[a-z0-9-]+\.json|assets\.[a-z]+\.[a-z]+\.json|world\.[a-z]+\.json|changelog\.json|cases\.(full|demo)\.json|cases(\.i18n)?\.ts)$/;
+  /^(catalog\.[a-z]+\.[a-z]+\.json|(case|achievements)\.[a-z]+\.[a-z]+\.[a-z0-9-]+\.json|assets\.[a-z]+\.[a-z]+\.json|world\.[a-z]+\.json|changelog\.json|cases\.(full|demo)\.json|cases(\.i18n)?\.ts)$/;
 
 /**
  * Écrit les fichiers générés. Renvoie la liste des fichiers modifiés. `changelog` (journal des
@@ -265,8 +277,13 @@ export async function writeGenerated(
       for (const loc of locales) {
         const b = loc === src ? base : bundleFor(r, edition, loc);
         await write(`catalog.${edition}.${loc}.json`, JSON.stringify(catalogFor(b.cases)));
-        for (const c of b.cases)
+        for (const c of b.cases) {
           await write(`case.${edition}.${loc}.${c.id}.json`, JSON.stringify(c));
+          await write(
+            `achievements.${edition}.${loc}.${c.id}.json`,
+            JSON.stringify(c.achievements satisfies CaseAchievements),
+          );
+        }
         await write(
           `assets.${edition}.${loc}.json`,
           JSON.stringify(loc === src ? {} : assetOverrides(base.assets, b.assets)),

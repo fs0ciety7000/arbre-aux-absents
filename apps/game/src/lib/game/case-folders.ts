@@ -7,7 +7,7 @@ import { messages } from '../../i18n/index.svelte';
 import type { CaseEntry } from './cases';
 
 /** Ce qu'une chemise lit de l'affaire (entrée du catalogue ou affaire compilée). */
-export type CaseInfo = Pick<CaseCatalogEntry, 'id' | 'meta' | 'achievements' | 'endings'>;
+export type CaseInfo = Pick<CaseCatalogEntry, 'id' | 'meta' | 'endings'>;
 
 /**
  * Parties d'une affaire, associées par `caseId` (le titre change avec la langue). Un résumé

@@ -5,7 +5,7 @@
   import ScreenFrame from './ScreenFrame.svelte';
   import Spot from '../shell/Spot.svelte';
 
-  /** Ouverture des archives de l'affaire (chargée à la demande) : attente, puis erreur. */
+  /** Ouverture de l'index des affaires (chargé à la demande) : attente, puis erreur. */
   const app = getApp();
   const m = messages.errors;
 </script>
@@ -16,7 +16,9 @@
       <Spot name="archives" size="9rem" />
       <p>{m.contentLoad}</p>
       <div class="actions">
-        <Button variant="primary" onclick={() => void app.ensureContent()}>{messages.retry}</Button>
+        <Button variant="primary" onclick={() => void app.ensureScreenContent()}
+          >{messages.retry}</Button
+        >
         <Button onclick={() => app.goto('title')}>{m.toTitle}</Button>
       </div>
     </div>

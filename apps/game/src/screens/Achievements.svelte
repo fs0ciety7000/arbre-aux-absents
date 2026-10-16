@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { Badge, Icon } from '@arbre/ui';
+  import type { CaseAchievements } from '@arbre/contract';
+  import { Badge, Button, Icon, Loader } from '@arbre/ui';
   import type { CaseInfo } from '../lib/game/case-folders';
   import { getApp } from '../lib/game/context';
   import { formatDay } from '../lib/game/format';
@@ -8,7 +9,8 @@
 
   /**
    * E06 : obtenus, à obtenir, cachés (« ??? »), une section par affaire (ordre des affaires) avec
-   * son compteur. Les succès sont rangés par id dans le profil (ids préfixés par affaire).
+   * son compteur. Les succès sont rangés par id dans le profil (ids préfixés par affaire). Les
+   * listes viennent d'un petit fichier par affaire (hors index), chargées à l'ouverture.
    */
   const app = getApp();
   const m = messages.achievements;
@@ -21,6 +23,31 @@
   const single = $derived(contents.length === 1);
   const gotOf = (list: readonly { id: string }[]) =>
     list.filter((a) => app.profile.achievements[a.id] !== undefined).length;
+
+  /** Succès par affaire ; `null` tant que tout n'est pas chargé. */
+  let lists = $state.raw<Record<string, CaseAchievements> | null>(null);
+  let failed = $state(false);
+  let attempt = $state(0);
+
+  $effect(() => {
+    void attempt;
+    // Relu à chaque changement d'affaires ou de langue (l'index est rechargé avec la langue).
+    const ids = contents.map((c) => c.id);
+    let live = true;
+    failed = false;
+    Promise.all(ids.map((id) => app.achievementsOf(id))).then(
+      (all) => {
+        if (live) lists = Object.fromEntries(ids.map((id, i) => [id, all[i]!]));
+      },
+      (err: unknown) => {
+        console.error('[succès]', err);
+        if (live) failed = true;
+      },
+    );
+    return () => {
+      live = false;
+    };
+  });
 </script>
 
 <ScreenFrame
@@ -30,10 +57,19 @@
 >
   {#if contents.length === 0}
     <p class="muted" role="status">{m.none}</p>
+  {:else if failed}
+    <div class="state" role="alert">
+      <p>{messages.errors.contentLoad}</p>
+      <Button variant="primary" onclick={() => attempt++}>{messages.retry}</Button>
+    </div>
+  {:else if !lists}
+    <div class="state">
+      <Loader label={messages.errors.contentLoading} showLabel />
+    </div>
   {:else}
     <div class="sections">
       {#each contents as content (content.id)}
-        {@const list = content.achievements}
+        {@const list = lists[content.id] ?? []}
         <section class="stack" aria-labelledby="ach-{content.id}" data-case={content.id}>
           <h2 id="ach-{content.id}" class="case-title" class:visually-hidden={single}>
             {content.meta.title}
@@ -76,6 +112,13 @@
 </ScreenFrame>
 
 <style>
+  .state {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: center;
+    padding-block: var(--space-8);
+    text-align: center;
+  }
   .sections {
     display: grid;
     gap: var(--space-10);

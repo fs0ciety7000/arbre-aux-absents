@@ -16,8 +16,9 @@
  * Une valeur de l'index est un *thenable* paresseux : le `assetLoader` généré la rend depuis
  * une fonction `async`, donc elle est attendue et le chargeur rend bien la chaîne SVG, sans
  * changer le module généré. Deux SVG identiques (même portrait dans deux langues) partagent un
- * seul module. Les catalogues (`catalog.*.json`) et le monde restent des imports JSON ordinaires
- * (un chunk chacun).
+ * seul module. Les catalogues (`catalog.*.json`, index léger lu par E04), les succès
+ * (`achievements.<éd>.<loc>.<id>.json`, écran Succès) et le monde restent des imports JSON
+ * ordinaires (un chunk chacun).
  * Les fichiers lus sont ceux de l'édition que le module importe : le build démo ne contient que
  * l'édition démo (canaris de la règle 10 inchangés).
  * Sans ce plugin (autres outils, tests), le module généré reste valide : les portraits sont en

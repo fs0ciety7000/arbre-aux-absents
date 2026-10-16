@@ -439,6 +439,10 @@ describe('content:build : arborescence par langue', () => {
     await writeGenerated(base, { game, site }, 'full');
     const files = (await readdir(game)).sort();
     expect(files).toEqual([
+      'achievements.demo.en.mini.json',
+      'achievements.demo.fr.mini.json',
+      'achievements.full.en.mini.json',
+      'achievements.full.fr.mini.json',
       'assets.demo.en.json',
       'assets.demo.fr.json',
       'assets.demo.json',
@@ -470,6 +474,13 @@ describe('content:build : arborescence par langue', () => {
       endings: { 'fin-arbre': { title: 'The tree restored' } },
     });
     expect(catalog[0].contentHash).toBe((await json('catalog.full.fr.json'))[0].contentHash);
+    // Index léger : les succès sont à part, un fichier par affaire et par langue.
+    expect(catalog[0]).not.toHaveProperty('achievements');
+    const enCase = await json('case.full.en.mini.json');
+    expect(await json('achievements.full.en.mini.json')).toEqual(enCase.achievements);
+    expect(
+      (await json('achievements.full.en.mini.json')).map((a: { title: string }) => a.title),
+    ).toEqual(['Nothing Is Lost', 'Discretion']);
     expect(await json('assets.full.fr.json')).toEqual({});
     expect(Object.keys((await json('assets.full.en.json')).mini)).toEqual([
       'illustrations/carte-val.svg',
@@ -484,6 +495,9 @@ describe('content:build : arborescence par langue', () => {
     expect(loader).toContain("'mini': () => import('./case.full.en.mini.json'),");
     expect(loader).not.toContain('case.demo.');
     expect(loader).toContain('export async function loadCatalog(loc: Locale)');
+    expect(loader).toContain("'mini': () => import('./achievements.full.en.mini.json'),");
+    expect(loader).toContain('export async function loadAchievements(loc: Locale, id: string)');
+    expect(loader).not.toContain('achievements.demo.');
     expect(loader).toContain(
       'export function assetLoader(loc: Locale, caseId: string, key: string)',
     );
@@ -497,6 +511,10 @@ describe('content:build : arborescence par langue', () => {
     const next = await readdir(game);
     expect(next).not.toContain('cases.full.json');
     expect(next).not.toContain('cases.i18n.ts');
+    // Affaire retirée : ses succès compilés partent avec elle.
+    await writeFile(join(game, 'achievements.full.fr.retiree.json'), '[]');
+    await writeGenerated(base, { game }, 'demo');
+    expect(await readdir(game)).not.toContain('achievements.full.fr.retiree.json');
     expect(await readFile(join(game, 'cases.ts'), 'utf8')).toContain(
       "import('./case.demo.en.mini.json')",
     );

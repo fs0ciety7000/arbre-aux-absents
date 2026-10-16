@@ -39,10 +39,10 @@
   // Textes des primitives @arbre/ui dans la langue de l'interface (relu à chaque accès).
   setUiStrings(() => UI_STRINGS[uiLang()]);
 
-  // Écrans qui lisent l'affaire : elle est chargée à leur ouverture (module à part).
+  // Écrans qui lisent l'index d'affaires : il est chargé à leur ouverture (petit module à part).
   const needsContent = $derived(CONTENT_SCREENS.includes(app.screen));
   $effect(() => {
-    if (needsContent && app.contentStatus === 'idle') void app.ensureContent();
+    if (needsContent && app.contentStatus === 'idle') void app.ensureScreenContent();
   });
 
   // Musique générative : l'humeur suit l'écran (fondu enchaîné), les couches suivent l'arbre.
