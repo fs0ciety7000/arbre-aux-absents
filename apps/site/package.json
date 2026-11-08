@@ -22,10 +22,10 @@
     "@arbre/ui": "*"
   },
   "devDependencies": {
-    "@sveltejs/adapter-static": "^4.0.0",
-    "@sveltejs/kit": "^3.0.1",
+    "@sveltejs/adapter-static": "^4.0.1",
+    "@sveltejs/kit": "^3.1.1",
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "svelte": "^5.57.2",
-    "vite": "^8.3.4"
+    "vite": "^8.3.6"
   }
 }
